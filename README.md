@@ -51,3 +51,16 @@ Configure `urls.py`:
         (...),
         (r'^auth/', include('djoser.urls')),
     )
+    
+    
+## TODO
+
+Upcoming features:
+
+* registration customization (custom fields/profile, post-registration action)
+* password reset customization (custom HTML templates)
+* user auto login after registration (return token)
+* endpoints documentation
+* logout/token expired view (?)
+* user retrieve view
+* user email verify view
