@@ -117,11 +117,12 @@ class SetPasswordViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
             'token': default_token_generator.make_token(user),
             'new_password1': 'new password',
             'new_password2': 'new password',
         }
+
         request = self.factory.post(data=data)
 
         response = self.view(request)
@@ -158,7 +159,7 @@ class SetPasswordViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': urlsafe_base64_encode(force_bytes(user.pk + 1)),
+            'uid': urlsafe_base64_encode(force_bytes(user.pk + 1)).decode(),
             'token': default_token_generator.make_token(user),
             'new_password1': 'new password',
             'new_password2': 'new password',
@@ -179,7 +180,7 @@ class SetPasswordViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
             'token': 'wrong-token',
             'new_password1': 'new password',
             'new_password2': 'new password',
