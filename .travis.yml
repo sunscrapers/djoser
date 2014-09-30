@@ -11,6 +11,7 @@ env:
 
 install:
   - pip install -q Django==$DJANGO_VERSION
+  - pip install -q djangorestframework==2.4.3
   - python setup.py -q install
 
 script: testproject/manage.py test testapp
