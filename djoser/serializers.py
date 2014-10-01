@@ -20,7 +20,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
     def save(self, **kwargs):
-        self.object = User.objects.create_user(**self.init_data.dict())
+        self.object = User.objects.create_user(**dict(self.init_data.items()))
         return self.object
 
 
