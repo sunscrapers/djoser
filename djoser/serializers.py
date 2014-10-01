@@ -24,7 +24,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return self.object
 
 
-class UserRegistrationWithAuthTokenSerializer(serializers.ModelSerializer):
+class UserRegistrationWithAuthTokenSerializer(UserRegistrationSerializer):
 
     class Meta(UserRegistrationSerializer.Meta):
         model = User

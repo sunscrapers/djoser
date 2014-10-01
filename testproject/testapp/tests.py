@@ -28,6 +28,9 @@ class RegistrationViewTest(testcases.ViewTestCase,
         self.assert_status_equal(response, status.HTTP_201_CREATED)
         self.assert_instance_exists(get_user_model(), username=data['username'])
         self.assertNotIn('auth_token', response.data)
+        user = get_user_model().objects.get(username=data['username'])
+        self.assertTrue(user.check_password(data['password']))
+
 
     @override_settings(DJOSER={'LOGIN_AFTER_REGISTRATION': True})
     def test_post_should_create_user_with_login(self):
@@ -43,6 +46,7 @@ class RegistrationViewTest(testcases.ViewTestCase,
         self.assert_instance_exists(get_user_model(), username=data['username'])
         user = get_user_model().objects.get(username=data['username'])
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
+        self.assertTrue(user.check_password(data['password']))
 
 
 class LoginViewTest(testcases.ViewTestCase,
