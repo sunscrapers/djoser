@@ -242,7 +242,29 @@ class ActivationViewTest(testcases.ViewTestCase,
                          assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.ActivationView
 
-    def test_post_should_activate_user(self):
+    def test_post_should_activate_user_and_not_login(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'email': 'john@beatles.com',
+            'password': 'secret',
+        })
+        user.is_active = False
+        user.save()
+        data = {
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'token': default_token_generator.make_token(user),
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        user = utils.refresh(user)
+        self.assertTrue(user.is_active)
+        self.assertNotIn('auth_token', response.data)
+
+    @override_settings(DJOSER={'LOGIN_AFTER_ACTIVATION': True})
+    def test_post_should_activate_user_and_login(self):
         user = get_user_model().objects.create_user(**{
             'username': 'john',
             'email': 'john@beatles.com',

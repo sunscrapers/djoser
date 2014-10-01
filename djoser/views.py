@@ -152,9 +152,13 @@ class ActivationView(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.user.is_active = True
             serializer.user.save()
-            token, _ = Token.objects.get_or_create(user=serializer.user)
+            if settings.DJOSER['LOGIN_AFTER_ACTIVATION']:
+                token, _ = Token.objects.get_or_create(user=serializer.user)
+                data = serializers.TokenSerializer(token).data
+            else:
+                data = {}
             return Response(
-                data=serializers.TokenSerializer(token).data,
+                data=data,
                 status=status.HTTP_200_OK,
             )
         else:

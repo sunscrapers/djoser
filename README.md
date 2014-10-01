@@ -46,6 +46,7 @@ Configure `INSTALLED_APPS`:
         (...), 
         'rest_framework',
         'rest_framework.authtoken',
+        'djoser',
         (...), 
     )
     
@@ -55,6 +56,8 @@ Add `djoser` settings:
         'DOMAIN': 'frontend.com',
         'SITE_NAME': 'Frontend',
         'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+        'LOGIN_AFTER_REGISTRATION': True,
+        'LOGIN_AFTER_ACTIVATION': True,
     }
     
 Configure `urls.py`:
