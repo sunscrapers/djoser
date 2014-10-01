@@ -93,7 +93,7 @@ class PasswordRetypeSerializer(serializers.Serializer):
         return attrs
 
 
-class SetPasswordSerializer(PasswordRetypeSerializer):
+class CurrentPasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField()
 
     def validate_current_password(self, attrs, source):
@@ -103,8 +103,23 @@ class SetPasswordSerializer(PasswordRetypeSerializer):
         return attrs
 
 
+class SetPasswordSerializer(PasswordRetypeSerializer, CurrentPasswordSerializer):
+    pass
+
+
 class PasswordResetConfirmSerializer(UidAndTokenSerializer, PasswordRetypeSerializer):
     pass
+
+
+class SetUsernameSerializer(CurrentPasswordSerializer):
+    new_username1 = serializers.CharField()
+    new_username2 = serializers.CharField()
+
+    def validate(self, attrs):
+        attrs = super(SetUsernameSerializer, self).validate(attrs)
+        if attrs['new_username1'] != attrs['new_username2']:
+            raise serializers.ValidationError(constants.PASSWORD_MISMATCH_ERROR)
+        return attrs
 
 
 class TokenSerializer(serializers.ModelSerializer):

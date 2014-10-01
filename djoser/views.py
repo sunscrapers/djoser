@@ -188,3 +188,25 @@ class SetPasswordView(generics.GenericAPIView):
                 data=serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class SetUsernameView(generics.GenericAPIView):
+    serializer_class = serializers.SetUsernameSerializer
+    permission_classes = (
+        permissions.IsAuthenticated,
+    )
+
+    def post(self, request):
+        serializer = self.serializer_class(
+            data=request.DATA,
+            context=self.get_serializer_context(),
+        )
+        if serializer.is_valid():
+            setattr(request.user, request.user.USERNAME_FIELD, serializer.data['new_username1'])
+            request.user.save()
+            return response.Response(status=status.HTTP_200_OK)
+        else:
+            return response.Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )

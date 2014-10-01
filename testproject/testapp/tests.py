@@ -327,3 +327,25 @@ class SetPasswordViewTest(testcases.ViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
 
+class SetUsernameViewTest(testcases.ViewTestCase,
+                          assertions.StatusCodeAssertionsMixin):
+    view_class = djoser.views.SetUsernameView
+
+    def test_post_should_set_new_username(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'password': 'secret',
+        })
+        data = {
+            'new_username1': 'ringo',
+            'new_username2': 'ringo',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+        request._force_auth_user = user
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        user = utils.refresh(user)
+        self.assertEqual(data['new_username1'], user.username)
