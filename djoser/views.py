@@ -1,4 +1,4 @@
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
@@ -8,7 +8,7 @@ from rest_framework import generics, permissions, status, response
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
-from . import serializers
+from . import serializers, settings
 
 User = get_user_model()
 
@@ -19,12 +19,12 @@ class RegistrationView(generics.CreateAPIView):
     )
 
     def get_serializer_class(self):
-        if settings.DJOSER['LOGIN_AFTER_REGISTRATION']:
+        if settings.get('LOGIN_AFTER_REGISTRATION'):
             return serializers.UserRegistrationWithAuthTokenSerializer
         return serializers.UserRegistrationSerializer
 
     def post_save(self, obj, created=False):
-        if settings.DJOSER['LOGIN_AFTER_REGISTRATION']:
+        if settings.get('LOGIN_AFTER_REGISTRATION'):
             Token.objects.get_or_create(user=obj)
 
 
@@ -81,11 +81,11 @@ class PasswordResetView(generics.GenericAPIView):
     def get_email_context(self, user):
         token = self.token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        url = settings.DJOSER['PASSWORD_RESET_CONFIRM_URL'].format(uid=uid, token=token)
+        url = settings.get('PASSWORD_RESET_CONFIRM_URL').format(uid=uid, token=token)
         return {
             'user': user,
-            'domain': settings.DJOSER['DOMAIN'],
-            'site_name': settings.DJOSER['SITE_NAME'],
+            'domain': settings.get('DOMAIN'),
+            'site_name': settings.get('SITE_NAME'),
             'url': url,
             'uid': uid,
             'token': token,
@@ -96,7 +96,7 @@ class PasswordResetView(generics.GenericAPIView):
         return {
             'subject_template_name': 'password_reset_subject.txt',
             'email_template_name': 'password_reset_email.html',
-            'from_email': getattr(settings, 'DEFAULT_FROM_EMAIL'),
+            'from_email': getattr(django_settings, 'DEFAULT_FROM_EMAIL', None),
             'to_email': user.email,
         }
 
@@ -152,7 +152,7 @@ class ActivationView(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.user.is_active = True
             serializer.user.save()
-            if settings.DJOSER['LOGIN_AFTER_ACTIVATION']:
+            if settings.get('LOGIN_AFTER_ACTIVATION'):
                 token, _ = Token.objects.get_or_create(user=serializer.user)
                 data = serializers.TokenSerializer(token).data
             else:
