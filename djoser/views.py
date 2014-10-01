@@ -10,12 +10,22 @@ from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
 from . import serializers
 
+User = get_user_model()
+
 
 class RegistrationView(generics.CreateAPIView):
-    serializer_class = serializers.UserRegistrationSerializer
     permission_classes = (
         permissions.AllowAny,
     )
+
+    def get_serializer_class(self):
+        if settings.DJOSER['LOGIN_AFTER_REGISTRATION']:
+            return serializers.UserRegistrationWithAuthTokenSerializer
+        return serializers.UserRegistrationSerializer
+
+    def post_save(self, obj, created=False):
+        if settings.DJOSER['LOGIN_AFTER_REGISTRATION']:
+            Token.objects.get_or_create(user=obj)
 
 
 class LoginView(generics.GenericAPIView):
@@ -29,7 +39,7 @@ class LoginView(generics.GenericAPIView):
         if serializer.is_valid():
             token, _ = Token.objects.get_or_create(user=serializer.object)
             return Response(
-                data={'token': token.key},
+                data=serializers.TokenSerializer(token).data,
                 status=status.HTTP_200_OK,
             )
         return Response(
@@ -62,7 +72,7 @@ class PasswordResetView(generics.GenericAPIView):
             )
 
     def get_users(self, email):
-        active_users = get_user_model()._default_manager.filter(
+        active_users = User._default_manager.filter(
             email__iexact=email,
             is_active=True,
         )
@@ -142,7 +152,11 @@ class ActivationView(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.user.is_active = True
             serializer.user.save()
-            return response.Response(status=status.HTTP_200_OK)
+            token, _ = Token.objects.get_or_create(user=serializer.user)
+            return Response(
+                data=serializers.TokenSerializer(token).data,
+                status=status.HTTP_200_OK,
+            )
         else:
             return response.Response(
                 data=serializer.errors,

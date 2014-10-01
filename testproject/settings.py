@@ -29,4 +29,5 @@ DJOSER = {
     'DOMAIN': 'frontend.com',
     'SITE_NAME': 'Frontend',
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'LOGIN_AFTER_REGISTRATION': False,
 }

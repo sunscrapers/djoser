@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 from . import constants
+from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
@@ -19,7 +20,20 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
     def save(self, **kwargs):
-        return User.objects.create_user(**self.init_data.dict())
+        self.object = User.objects.create_user(**self.init_data.dict())
+        return self.object
+
+
+class UserRegistrationWithAuthTokenSerializer(serializers.ModelSerializer):
+
+    class Meta(UserRegistrationSerializer.Meta):
+        model = User
+        fields = UserRegistrationSerializer.Meta.fields + (
+            'auth_token',
+        )
+        read_only_fields = (
+            'auth_token',
+        )
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
@@ -76,3 +90,13 @@ class PasswordResetConfirmSerializer(UidAndTokenSerializer):
         if attrs['new_password1'] != attrs['new_password2']:
             raise serializers.ValidationError(constants.PASSWORD_MISMATCH_ERROR)
         return attrs
+
+
+class TokenSerializer(serializers.ModelSerializer):
+    auth_token = serializers.Field(source='key')
+
+    class Meta:
+        model = Token
+        fields = (
+            'auth_token',
+        )

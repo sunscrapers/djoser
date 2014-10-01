@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
+from django.test.utils import override_settings
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from djet import testcases, assertions, utils
@@ -15,7 +16,7 @@ class RegistrationViewTest(testcases.ViewTestCase,
                            assertions.InstanceAssertionsMixin):
     view_class = djoser.views.RegistrationView
 
-    def test_post_should_create_user(self):
+    def test_post_should_create_user_without_login(self):
         data = {
             'username': 'john',
             'password': 'secret',
@@ -26,6 +27,22 @@ class RegistrationViewTest(testcases.ViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
         self.assert_instance_exists(get_user_model(), username=data['username'])
+        self.assertNotIn('auth_token', response.data)
+
+    @override_settings(DJOSER={'LOGIN_AFTER_REGISTRATION': True})
+    def test_post_should_create_user_with_login(self):
+        data = {
+            'username': 'john',
+            'password': 'secret',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
+        self.assert_instance_exists(get_user_model(), username=data['username'])
+        user = get_user_model().objects.get(username=data['username'])
+        self.assertEqual(response.data['auth_token'], user.auth_token.key)
 
 
 class LoginViewTest(testcases.ViewTestCase,
@@ -44,7 +61,7 @@ class LoginViewTest(testcases.ViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        self.assertEqual(response.data['token'], user.auth_token.key)
+        self.assertEqual(response.data['auth_token'], user.auth_token.key)
 
     def test_post_should_not_login_if_user_is_not_active(self):
         data = {
@@ -240,3 +257,4 @@ class ActivationViewTest(testcases.ViewTestCase,
         self.assert_status_equal(response, status.HTTP_200_OK)
         user = utils.refresh(user)
         self.assertTrue(user.is_active)
+        self.assertEqual(response.data['auth_token'], user.auth_token.key)
