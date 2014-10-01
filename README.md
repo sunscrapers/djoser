@@ -48,13 +48,19 @@ Configure `INSTALLED_APPS`:
         (...), 
     )
     
+Add `djoser` settings:
+
+    DJOSER = {
+        'DOMAIN': 'frontend.com',
+        'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm',
+    }
+    
 Configure `urls.py`:
 
     urlpatterns = patterns('',
         (...),
         url(r'^auth/', include('djoser.urls')),
     )
-    
     
 ## TODO
 
