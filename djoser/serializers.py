@@ -49,7 +49,7 @@ class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
-class SetPasswordSerializer(serializers.Serializer):
+class PasswordResetConfirmSerializer(serializers.Serializer):
     new_password1 = serializers.CharField()
     new_password2 = serializers.CharField()
     uid = serializers.CharField()
@@ -67,4 +67,6 @@ class SetPasswordSerializer(serializers.Serializer):
     def validate(self, attrs):
         if not default_token_generator.check_token(self.user, attrs['token']):
             raise serializers.ValidationError(constants.INVALID_TOKEN_ERROR)
+        if attrs['new_password1'] != attrs['new_password2']:
+            raise serializers.ValidationError(constants.PASSWORD_MISMATCH_ERROR)
         return attrs

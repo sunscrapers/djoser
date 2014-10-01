@@ -25,3 +25,8 @@ INSTALLED_APPS = (
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
+
+DJOSER = {
+    'DOMAIN': 'frontend.com',
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm',
+}

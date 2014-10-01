@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
+from django.core import mail
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from djet import testcases, assertions, utils
@@ -93,6 +95,8 @@ class PasswordResetViewTest(testcases.ViewTestCase,
         self.assert_status_equal(response, status.HTTP_200_OK)
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[user.email])
+        self.assertIn(settings.DJOSER['DOMAIN'], mail.outbox[0].body)
+        self.assertIn(settings.DJOSER['PASSWORD_RESET_CONFIRM_URL'], mail.outbox[0].body)
 
     def test_post_should_not_send_email_to_user_if_user_does_not_exist(self):
         data = {
@@ -106,9 +110,9 @@ class PasswordResetViewTest(testcases.ViewTestCase,
         self.assert_emails_in_mailbox(0)
 
 
-class SetPasswordViewTest(testcases.ViewTestCase,
-                          assertions.StatusCodeAssertionsMixin):
-    view_class = djoser.views.SetPasswordView
+class PasswordResetConfirmViewTest(testcases.ViewTestCase,
+                                   assertions.StatusCodeAssertionsMixin):
+    view_class = djoser.views.PasswordResetConfirmView
 
     def test_post_should_set_new_password(self):
         user = get_user_model().objects.create_user(**{
@@ -193,3 +197,22 @@ class SetPasswordViewTest(testcases.ViewTestCase,
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_TOKEN_ERROR])
         user = utils.refresh(user)
         self.assertFalse(user.check_password(data['new_password1']))
+
+    def test_post_should_not_set_new_password_if_password_mismatch(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'email': 'john@beatles.com',
+            'password': 'secret',
+        })
+        data = {
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'token': default_token_generator.make_token(user),
+            'new_password1': 'new password',
+            'new_password2': 'other new password',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['non_field_errors'], [djoser.constants.PASSWORD_MISMATCH_ERROR])

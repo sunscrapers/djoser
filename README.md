@@ -7,6 +7,9 @@ REST version of Django authentication system. **djoser** is set of
 such things as registration, login and password reset. It works with custom
 user model.
 
+Instead of reusing Django code (e.g. `PasswordResetForm`), we were 
+reimplemented few things to fit better into Single Page App architecture.
+
 Developed by [SUNSCRAPERS](http://sunscrapers.com/) with passion & patience.
 
 Available endpoints:
@@ -14,7 +17,7 @@ Available endpoints:
  * `/register`
  * `/login`
  * `/password/reset`
- * `/password/set`
+ * `/password/reset/confirm`
  
 Supported Python versions:
 
@@ -49,7 +52,7 @@ Configure `urls.py`:
 
     urlpatterns = patterns('',
         (...),
-        (r'^auth/', include('djoser.urls')),
+        url(r'^auth/', include('djoser.urls')),
     )
     
     
