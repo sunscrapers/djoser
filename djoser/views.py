@@ -1,22 +1,47 @@
 from django.conf import settings as django_settings
 from django.contrib.auth import get_user_model
-from django.core.mail import EmailMultiAlternatives
-from django.template import loader
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework import generics, permissions, status, response
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
-from . import serializers, settings
+from . import serializers, settings, emails
 
 User = get_user_model()
 
 
-class RegistrationView(generics.CreateAPIView):
+class SendEmailViewMixin(object):
+
+    def get_send_email_kwargs(self, user):
+        return {
+            'from_email': getattr(django_settings, 'DEFAULT_FROM_EMAIL', None),
+            'to_email': user.email,
+        }
+
+    def send_email(self, **kwargs):
+        emails.send(**kwargs)
+
+    def get_email_context(self, user):
+        token = self.token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        url = settings.get('ACTIVATION_URL').format(uid=uid, token=token)
+        return {
+            'user': user,
+            'domain': settings.get('DOMAIN'),
+            'site_name': settings.get('SITE_NAME'),
+            'url': url,
+            'uid': uid,
+            'token': token,
+            'protocol': 'https' if self.request.is_secure() else 'http',
+        }
+
+
+class RegistrationView(SendEmailViewMixin, generics.CreateAPIView):
     permission_classes = (
         permissions.AllowAny,
     )
+    token_generator = default_token_generator
 
     def get_serializer_class(self):
         if settings.get('LOGIN_AFTER_REGISTRATION'):
@@ -26,6 +51,24 @@ class RegistrationView(generics.CreateAPIView):
     def post_save(self, obj, created=False):
         if settings.get('LOGIN_AFTER_REGISTRATION'):
             Token.objects.get_or_create(user=obj)
+        if settings.get('SEND_ACTIVATION_EMAIL'):
+            self.send_email(
+                context=self.get_email_context(obj),
+                **self.get_send_email_kwargs(obj)
+            )
+
+    def get_send_email_kwargs(self, user):
+        context = super(RegistrationView, self).get_send_email_kwargs(user)
+        context.update({
+            'subject_template_name': 'activation_email_subject.txt',
+            'plain_body_template_name': 'activation_email_body.txt',
+        })
+        return context
+
+    def get_email_context(self, user):
+        context = super(RegistrationView, self).get_email_context(user)
+        context['url'] = settings.get('ACTIVATION_URL').format(**context)
+        return context
 
 
 class LoginView(generics.GenericAPIView):
@@ -48,7 +91,7 @@ class LoginView(generics.GenericAPIView):
         )
 
 
-class PasswordResetView(generics.GenericAPIView):
+class PasswordResetView(SendEmailViewMixin, generics.GenericAPIView):
     serializer_class = serializers.PasswordResetSerializer
     permission_classes = (
         permissions.AllowAny,
@@ -78,40 +121,18 @@ class PasswordResetView(generics.GenericAPIView):
         )
         return (u for u in active_users if u.has_usable_password())
 
-    def get_email_context(self, user):
-        token = self.token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        url = settings.get('PASSWORD_RESET_CONFIRM_URL').format(uid=uid, token=token)
-        return {
-            'user': user,
-            'domain': settings.get('DOMAIN'),
-            'site_name': settings.get('SITE_NAME'),
-            'url': url,
-            'uid': uid,
-            'token': token,
-            'protocol': 'https' if self.request.is_secure() else 'http',
-        }
-
     def get_send_email_kwargs(self, user):
-        return {
+        context = super(PasswordResetView, self).get_send_email_kwargs(user)
+        context.update({
             'subject_template_name': 'password_reset_subject.txt',
-            'email_template_name': 'password_reset_email.html',
-            'from_email': getattr(django_settings, 'DEFAULT_FROM_EMAIL', None),
-            'to_email': user.email,
-        }
+            'plain_body_template_name': 'password_reset_email.html',
+        })
+        return context
 
-    def send_email(self, subject_template_name, email_template_name,
-                   context, from_email, to_email, html_email_template_name=None):
-        subject = loader.render_to_string(subject_template_name, context)
-        subject = ''.join(subject.splitlines())
-        body = loader.render_to_string(email_template_name, context)
-
-        email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
-        if html_email_template_name is not None:
-            html_email = loader.render_to_string(html_email_template_name, context)
-            email_message.attach_alternative(html_email, 'text/html')
-
-        email_message.send()
+    def get_email_context(self, user):
+        context = super(PasswordResetView, self).get_email_context(user)
+        context['url'] = settings.get('PASSWORD_RESET_CONFIRM_URL').format(**context)
+        return context
 
 
 class PasswordResetConfirmView(generics.GenericAPIView):

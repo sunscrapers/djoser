@@ -13,6 +13,7 @@ import djoser.constants
 
 class RegistrationViewTest(testcases.ViewTestCase,
                            assertions.StatusCodeAssertionsMixin,
+                           assertions.EmailAssertionsMixin,
                            assertions.InstanceAssertionsMixin):
     view_class = djoser.views.RegistrationView
 
@@ -47,6 +48,22 @@ class RegistrationViewTest(testcases.ViewTestCase,
         user = get_user_model().objects.get(username=data['username'])
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
         self.assertTrue(user.check_password(data['password']))
+
+    @override_settings(DJOSER={'SEND_ACTIVATION_EMAIL': True})
+    def test_post_should_create_user_with_login(self):
+        data = {
+            'username': 'john',
+            'email': 'john@beatles.com',
+            'password': 'secret',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
+        self.assert_instance_exists(get_user_model(), username=data['username'])
+        self.assert_emails_in_mailbox(1)
+        self.assert_email_exists(to=[data['email']])
 
 
 class LoginViewTest(testcases.ViewTestCase,
