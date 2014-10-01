@@ -215,3 +215,28 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.PASSWORD_MISMATCH_ERROR])
+
+
+class ActivationViewTest(testcases.ViewTestCase,
+                         assertions.StatusCodeAssertionsMixin):
+    view_class = djoser.views.ActivationView
+
+    def test_post_should_activate_user(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'email': 'john@beatles.com',
+            'password': 'secret',
+        })
+        user.is_active = False
+        user.save()
+        data = {
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'token': default_token_generator.make_token(user),
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        user = utils.refresh(user)
+        self.assertTrue(user.is_active)

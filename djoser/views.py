@@ -109,11 +109,38 @@ class PasswordResetConfirmView(generics.GenericAPIView):
     permission_classes = (
         permissions.AllowAny,
     )
+    token_generator = default_token_generator
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(
+            data=request.DATA,
+            context={'token_generator': self.token_generator},
+        )
         if serializer.is_valid():
             serializer.user.set_password(serializer.data['new_password1'])
+            serializer.user.save()
+            return response.Response(status=status.HTTP_200_OK)
+        else:
+            return response.Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class ActivationView(generics.GenericAPIView):
+    serializer_class = serializers.UidAndTokenSerializer
+    permission_classes = (
+        permissions.AllowAny,
+    )
+    token_generator = default_token_generator
+
+    def post(self, request):
+        serializer = self.serializer_class(
+            data=request.DATA,
+            context={'token_generator': self.token_generator},
+        )
+        if serializer.is_valid():
+            serializer.user.is_active = True
             serializer.user.save()
             return response.Response(status=status.HTTP_200_OK)
         else:

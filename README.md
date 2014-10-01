@@ -16,6 +16,7 @@ Available endpoints:
 
  * `/register`
  * `/login`
+ * `/activate`
  * `/password/reset`
  * `/password/reset/confirm`
  

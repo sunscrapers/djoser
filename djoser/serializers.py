@@ -1,5 +1,4 @@
 from django.contrib.auth import authenticate, get_user_model
-from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 from . import constants
@@ -49,9 +48,7 @@ class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
-class PasswordResetConfirmSerializer(serializers.Serializer):
-    new_password1 = serializers.CharField()
-    new_password2 = serializers.CharField()
+class UidAndTokenSerializer(serializers.Serializer):
     uid = serializers.CharField()
     token = serializers.CharField()
 
@@ -65,8 +62,17 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         return attrs
 
     def validate(self, attrs):
-        if not default_token_generator.check_token(self.user, attrs['token']):
+        if not self.context['token_generator'].check_token(self.user, attrs['token']):
             raise serializers.ValidationError(constants.INVALID_TOKEN_ERROR)
+        return attrs
+
+
+class PasswordResetConfirmSerializer(UidAndTokenSerializer):
+    new_password1 = serializers.CharField()
+    new_password2 = serializers.CharField()
+
+    def validate(self, attrs):
+        attrs = super(PasswordResetConfirmSerializer, self).validate(attrs)
         if attrs['new_password1'] != attrs['new_password2']:
             raise serializers.ValidationError(constants.PASSWORD_MISMATCH_ERROR)
         return attrs
