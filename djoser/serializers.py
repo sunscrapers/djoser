@@ -76,20 +76,35 @@ class UidAndTokenSerializer(serializers.Serializer):
         return attrs
 
     def validate(self, attrs):
-        if not self.context['token_generator'].check_token(self.user, attrs['token']):
+        attrs = super(UidAndTokenSerializer, self).validate(attrs)
+        if not self.context['view'].token_generator.check_token(self.user, attrs['token']):
             raise serializers.ValidationError(constants.INVALID_TOKEN_ERROR)
         return attrs
 
 
-class PasswordResetConfirmSerializer(UidAndTokenSerializer):
+class PasswordRetypeSerializer(serializers.Serializer):
     new_password1 = serializers.CharField()
     new_password2 = serializers.CharField()
 
     def validate(self, attrs):
-        attrs = super(PasswordResetConfirmSerializer, self).validate(attrs)
+        attrs = super(PasswordRetypeSerializer, self).validate(attrs)
         if attrs['new_password1'] != attrs['new_password2']:
             raise serializers.ValidationError(constants.PASSWORD_MISMATCH_ERROR)
         return attrs
+
+
+class SetPasswordSerializer(PasswordRetypeSerializer):
+    current_password = serializers.CharField()
+
+    def validate_current_password(self, attrs, source):
+        value = attrs[source]
+        if not self.context['request'].user.check_password(value):
+            raise serializers.ValidationError(constants.PASSWORD_MISMATCH_ERROR)
+        return attrs
+
+
+class PasswordResetConfirmSerializer(UidAndTokenSerializer, PasswordRetypeSerializer):
+    pass
 
 
 class TokenSerializer(serializers.ModelSerializer):

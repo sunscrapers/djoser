@@ -284,3 +284,46 @@ class ActivationViewTest(testcases.ViewTestCase,
         user = utils.refresh(user)
         self.assertTrue(user.is_active)
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
+
+
+class SetPasswordViewTest(testcases.ViewTestCase,
+                          assertions.StatusCodeAssertionsMixin):
+    view_class = djoser.views.SetPasswordView
+
+    def test_post_should_set_new_password(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'password': 'secret',
+        })
+        data = {
+            'new_password1': 'new password',
+            'new_password2': 'new password',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+        request._force_auth_user = user
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        user = utils.refresh(user)
+        self.assertTrue(user.check_password(data['new_password1']))
+
+    def test_post_should_not_set_new_password_if_wrong_current_password(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'password': 'secret',
+        })
+        data = {
+            'new_password1': 'new password',
+            'new_password2': 'new password',
+            'current_password': 'wrong',
+        }
+        request = self.factory.post(user=user, data=data)
+        request._force_auth_user = user
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+
+
