@@ -2,25 +2,36 @@ from django.conf import settings as django_settings
 from django.contrib.auth import get_user_model
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django.core.mail import EmailMultiAlternatives
+from django.template import loader
 from rest_framework import generics, permissions, status, response
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
-from . import serializers, settings, emails
+from . import serializers, settings
 
 User = get_user_model()
 
 
 class SendEmailViewMixin(object):
 
+    def send_email(self, to_email, from_email, context, subject_template_name,
+                   plain_body_template_name, html_body_template_name=None):
+        subject = loader.render_to_string(subject_template_name, context)
+        subject = ''.join(subject.splitlines())
+        body = loader.render_to_string(plain_body_template_name, context)
+        email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
+        if html_body_template_name is not None:
+            html_email = loader.render_to_string(html_body_template_name, context)
+            email_message.attach_alternative(html_email, 'text/html')
+        email_message.send()
+
     def get_send_email_kwargs(self, user):
         return {
             'from_email': getattr(django_settings, 'DEFAULT_FROM_EMAIL', None),
             'to_email': user.email,
+            'context': self.get_email_context(user),
         }
-
-    def send_email(self, **kwargs):
-        emails.send(**kwargs)
 
     def get_email_context(self, user):
         token = self.token_generator.make_token(user)
@@ -35,6 +46,19 @@ class SendEmailViewMixin(object):
             'token': token,
             'protocol': 'https' if self.request.is_secure() else 'http',
         }
+
+
+class PostActionViewMixin(object):
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.DATA)
+        if serializer.is_valid():
+            return self.action(serializer)
+        else:
+            return response.Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class RegistrationView(SendEmailViewMixin, generics.CreateAPIView):
@@ -52,10 +76,7 @@ class RegistrationView(SendEmailViewMixin, generics.CreateAPIView):
         if settings.get('LOGIN_AFTER_REGISTRATION'):
             Token.objects.get_or_create(user=obj)
         if settings.get('SEND_ACTIVATION_EMAIL'):
-            self.send_email(
-                context=self.get_email_context(obj),
-                **self.get_send_email_kwargs(obj)
-            )
+            self.send_email(**self.get_send_email_kwargs(obj))
 
     def get_send_email_kwargs(self, user):
         context = super(RegistrationView, self).get_send_email_kwargs(user)
@@ -71,23 +92,17 @@ class RegistrationView(SendEmailViewMixin, generics.CreateAPIView):
         return context
 
 
-class LoginView(generics.GenericAPIView):
+class LoginView(PostActionViewMixin, generics.GenericAPIView):
     serializer_class = serializers.UserLoginSerializer
     permission_classes = (
         permissions.AllowAny,
     )
 
-    def post(self, request):
-        serializer = self.get_serializer(data=request.DATA)
-        if serializer.is_valid():
-            token, _ = Token.objects.get_or_create(user=serializer.object)
-            return Response(
-                data=serializers.TokenSerializer(token).data,
-                status=status.HTTP_200_OK,
-            )
+    def action(self, serializer):
+        token, _ = Token.objects.get_or_create(user=serializer.object)
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=serializers.TokenSerializer(token).data,
+            status=status.HTTP_200_OK,
         )
 
 
@@ -102,11 +117,7 @@ class PasswordResetView(SendEmailViewMixin, generics.GenericAPIView):
         serializer = self.get_serializer(data=request.DATA)
         if serializer.is_valid():
             for user in self.get_users(serializer.data['email']):
-                self.send_email(
-                    context=self.get_email_context(user),
-                    **self.get_send_email_kwargs(user)
-                )
-
+                self.send_email(**self.get_send_email_kwargs(user))
             return response.Response(status=status.HTTP_200_OK)
         else:
             return response.Response(
@@ -135,87 +146,56 @@ class PasswordResetView(SendEmailViewMixin, generics.GenericAPIView):
         return context
 
 
-class PasswordResetConfirmView(generics.GenericAPIView):
+class SetPasswordView(PostActionViewMixin, generics.GenericAPIView):
+    serializer_class = serializers.SetPasswordSerializer
+    permission_classes = (
+        permissions.IsAuthenticated,
+    )
+
+    def action(self, serializer):
+        self.request.user.set_password(serializer.data['new_password1'])
+        self.request.user.save()
+        return response.Response(status=status.HTTP_200_OK)
+
+
+class PasswordResetConfirmView(PostActionViewMixin, generics.GenericAPIView):
     serializer_class = serializers.PasswordResetConfirmSerializer
     permission_classes = (
         permissions.AllowAny,
     )
     token_generator = default_token_generator
 
-    def post(self, request):
-        serializer = self.get_serializer(data=request.DATA)
-        if serializer.is_valid():
-            serializer.user.set_password(serializer.data['new_password1'])
-            serializer.user.save()
-            return response.Response(status=status.HTTP_200_OK)
-        else:
-            return response.Response(
-                data=serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+    def action(self, serializer):
+        serializer.user.set_password(serializer.data['new_password1'])
+        serializer.user.save()
+        return response.Response(status=status.HTTP_200_OK)
 
 
-class ActivationView(generics.GenericAPIView):
+class ActivationView(PostActionViewMixin, generics.GenericAPIView):
     serializer_class = serializers.UidAndTokenSerializer
     permission_classes = (
         permissions.AllowAny,
     )
     token_generator = default_token_generator
 
-    def post(self, request):
-        serializer = self.get_serializer(data=request.DATA)
-        if serializer.is_valid():
-            serializer.user.is_active = True
-            serializer.user.save()
-            if settings.get('LOGIN_AFTER_ACTIVATION'):
-                token, _ = Token.objects.get_or_create(user=serializer.user)
-                data = serializers.TokenSerializer(token).data
-            else:
-                data = {}
-            return Response(
-                data=data,
-                status=status.HTTP_200_OK,
-            )
+    def action(self, serializer):
+        serializer.user.is_active = True
+        serializer.user.save()
+        if settings.get('LOGIN_AFTER_ACTIVATION'):
+            token, _ = Token.objects.get_or_create(user=serializer.user)
+            data = serializers.TokenSerializer(token).data
         else:
-            return response.Response(
-                data=serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            data = {}
+        return Response(data=data, status=status.HTTP_200_OK)
 
 
-class SetPasswordView(generics.GenericAPIView):
-    serializer_class = serializers.SetPasswordSerializer
-    permission_classes = (
-        permissions.IsAuthenticated,
-    )
-
-    def post(self, request):
-        serializer = self.get_serializer(data=request.DATA)
-        if serializer.is_valid():
-            request.user.set_password(serializer.data['new_password1'])
-            request.user.save()
-            return response.Response(status=status.HTTP_200_OK)
-        else:
-            return response.Response(
-                data=serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class SetUsernameView(generics.GenericAPIView):
+class SetUsernameView(PostActionViewMixin, generics.GenericAPIView):
     serializer_class = serializers.SetUsernameSerializer
     permission_classes = (
         permissions.IsAuthenticated,
     )
 
-    def post(self, request):
-        serializer = self.get_serializer(data=request.DATA)
-        if serializer.is_valid():
-            setattr(request.user, request.user.USERNAME_FIELD, serializer.data['new_username1'])
-            request.user.save()
-            return response.Response(status=status.HTTP_200_OK)
-        else:
-            return response.Response(
-                data=serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+    def action(self, serializer):
+        setattr(self.request.user, self.request.user.USERNAME_FIELD, serializer.data['new_username1'])
+        self.request.user.save()
+        return response.Response(status=status.HTTP_200_OK)
