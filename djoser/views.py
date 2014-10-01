@@ -69,19 +69,23 @@ class PasswordResetView(generics.GenericAPIView):
         return (u for u in active_users if u.has_usable_password())
 
     def get_email_context(self, user):
+        token = self.token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        url = settings.DJOSER['PASSWORD_RESET_CONFIRM_URL'].format(uid=uid, token=token)
         return {
             'user': user,
             'domain': settings.DJOSER['DOMAIN'],
-            'url': settings.DJOSER['PASSWORD_RESET_CONFIRM_URL'],
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-            'token': self.token_generator.make_token(user),
-            'protocol': self.request.is_secure(),
+            'site_name': settings.DJOSER['SITE_NAME'],
+            'url': url,
+            'uid': uid,
+            'token': token,
+            'protocol': 'https' if self.request.is_secure() else 'http',
         }
 
     def get_send_email_kwargs(self, user):
         return {
-            'subject_template_name': 'registration/password_reset_subject.txt',
-            'email_template_name': 'registration/password_reset_email.html',
+            'subject_template_name': 'password_reset_subject.txt',
+            'email_template_name': 'password_reset_email.html',
             'from_email': getattr(settings, 'DEFAULT_FROM_EMAIL'),
             'to_email': user.email,
         }

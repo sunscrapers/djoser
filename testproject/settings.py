@@ -18,8 +18,7 @@ INSTALLED_APPS = (
 
     'rest_framework',
     'rest_framework.authtoken',
-
-    'testapp',
+    'djoser',
 )
 
 TEMPLATE_DIRS = (
@@ -28,5 +27,6 @@ TEMPLATE_DIRS = (
 
 DJOSER = {
     'DOMAIN': 'frontend.com',
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm',
+    'SITE_NAME': 'Frontend',
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
 }

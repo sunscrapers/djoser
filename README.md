@@ -52,7 +52,8 @@ Add `djoser` settings:
 
     DJOSER = {
         'DOMAIN': 'frontend.com',
-        'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm',
+        'SITE_NAME': 'Frontend',
+        'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     }
     
 Configure `urls.py`:

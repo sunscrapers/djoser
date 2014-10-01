@@ -96,7 +96,6 @@ class PasswordResetViewTest(testcases.ViewTestCase,
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[user.email])
         self.assertIn(settings.DJOSER['DOMAIN'], mail.outbox[0].body)
-        self.assertIn(settings.DJOSER['PASSWORD_RESET_CONFIRM_URL'], mail.outbox[0].body)
 
     def test_post_should_not_send_email_to_user_if_user_does_not_exist(self):
         data = {
