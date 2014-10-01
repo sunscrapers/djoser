@@ -78,7 +78,7 @@ class LoginView(generics.GenericAPIView):
     )
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.get_serializer(data=request.DATA)
         if serializer.is_valid():
             token, _ = Token.objects.get_or_create(user=serializer.object)
             return Response(
@@ -99,7 +99,7 @@ class PasswordResetView(SendEmailViewMixin, generics.GenericAPIView):
     token_generator = default_token_generator
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.get_serializer(data=request.DATA)
         if serializer.is_valid():
             for user in self.get_users(serializer.data['email']):
                 self.send_email(
@@ -143,10 +143,7 @@ class PasswordResetConfirmView(generics.GenericAPIView):
     token_generator = default_token_generator
 
     def post(self, request):
-        serializer = self.serializer_class(
-            data=request.DATA,
-            context=self.get_serializer_context(),
-        )
+        serializer = self.get_serializer(data=request.DATA)
         if serializer.is_valid():
             serializer.user.set_password(serializer.data['new_password1'])
             serializer.user.save()
@@ -166,10 +163,7 @@ class ActivationView(generics.GenericAPIView):
     token_generator = default_token_generator
 
     def post(self, request):
-        serializer = self.serializer_class(
-            data=request.DATA,
-            context=self.get_serializer_context(),
-        )
+        serializer = self.get_serializer(data=request.DATA)
         if serializer.is_valid():
             serializer.user.is_active = True
             serializer.user.save()
@@ -196,10 +190,7 @@ class SetPasswordView(generics.GenericAPIView):
     )
 
     def post(self, request):
-        serializer = self.serializer_class(
-            data=request.DATA,
-            context=self.get_serializer_context(),
-        )
+        serializer = self.get_serializer(data=request.DATA)
         if serializer.is_valid():
             request.user.set_password(serializer.data['new_password1'])
             request.user.save()
@@ -218,10 +209,7 @@ class SetUsernameView(generics.GenericAPIView):
     )
 
     def post(self, request):
-        serializer = self.serializer_class(
-            data=request.DATA,
-            context=self.get_serializer_context(),
-        )
+        serializer = self.get_serializer(data=request.DATA)
         if serializer.is_valid():
             setattr(request.user, request.user.USERNAME_FIELD, serializer.data['new_username1'])
             request.user.save()
