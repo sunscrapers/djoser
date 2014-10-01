@@ -12,7 +12,6 @@ setup(
     tests_require=[
         'djet>=0.0.9'
     ],
-    package_data={
-        'templates': ['templates/*.html', 'templates/*.txt']
-    },
+    include_package_data=True,
+    zip_safe=False,
 )
