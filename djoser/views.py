@@ -135,8 +135,8 @@ class PasswordResetView(SendEmailViewMixin, generics.GenericAPIView):
     def get_send_email_kwargs(self, user):
         context = super(PasswordResetView, self).get_send_email_kwargs(user)
         context.update({
-            'subject_template_name': 'password_reset_subject.txt',
-            'plain_body_template_name': 'password_reset_email.html',
+            'subject_template_name': 'password_reset_email_subject.txt',
+            'plain_body_template_name': 'password_reset_email_body.txt',
         })
         return context
 
