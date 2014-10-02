@@ -75,6 +75,7 @@ Configure `urls.py`:
 
 Upcoming features:
 
+* **documentation**
 * registration customization (custom fields/profile, post-registration action)
 * password reset customization (custom HTML templates)
 * endpoints documentation
