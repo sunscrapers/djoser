@@ -97,8 +97,8 @@ method and have [`USERNAME_FIELD`](https://docs.djangoproject.com/en/dev/topics/
 and [`REQUIRED_FIELDS`](https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.REQUIRED_FIELDS)
 fields.
 
-If `LOGIN_AFTER_ACTIVATION` setting is `True`, you will receive authentication 
-token withing response.
+If `LOGIN_AFTER_ACTIVATION` is `True`, you will receive authentication token
+within response.
 
 ### Login
 
