@@ -17,7 +17,7 @@ Available endpoints:
  * `/register`
  * `/login`
  * `/activate`
- * `/username`
+ * `/{{ User.USERNAME_FIELD }}`
  * `/password`
  * `/password/reset`
  * `/password/reset/confirm`
@@ -136,14 +136,14 @@ Use this endpoint to activate user account.
 
 ### Set username
 
-URL: `/username`
+URL: `/{{ User.USERNAME_FIELD }}`
 
 Methods: `POST`
 
 `POST` request data:
 
-* `new_username1`
-* `new_username2`
+* `new_{{ User.USERNAME_FIELD }}1`
+* `new_{{ User.USERNAME_FIELD }}2`
 * `current_password`
 
 Use this endpoint to change user username (`USERNAME_FIELD`).

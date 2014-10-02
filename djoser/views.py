@@ -196,6 +196,6 @@ class SetUsernameView(PostActionViewMixin, generics.GenericAPIView):
     )
 
     def action(self, serializer):
-        setattr(self.request.user, self.request.user.USERNAME_FIELD, serializer.data['new_username1'])
+        setattr(self.request.user, User.USERNAME_FIELD, serializer.data['new_' + User.USERNAME_FIELD + '1'])
         self.request.user.save()
         return response.Response(status=status.HTTP_200_OK)

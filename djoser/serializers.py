@@ -112,13 +112,18 @@ class PasswordResetConfirmSerializer(UidAndTokenSerializer, PasswordRetypeSerial
 
 
 class SetUsernameSerializer(CurrentPasswordSerializer):
-    new_username1 = serializers.CharField()
-    new_username2 = serializers.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super(SetUsernameSerializer, self).__init__(*args, **kwargs)
+        username_field = User._meta.get_field(User.USERNAME_FIELD)
+        field_class = serializers.ModelSerializer.field_mapping[username_field.__class__]
+        self.fields['new_' + User.USERNAME_FIELD + '1'] = field_class()
+        self.fields['new_' + User.USERNAME_FIELD + '2'] = field_class()
 
     def validate(self, attrs):
         attrs = super(SetUsernameSerializer, self).validate(attrs)
-        if attrs['new_username1'] != attrs['new_username2']:
-            raise serializers.ValidationError(constants.PASSWORD_MISMATCH_ERROR)
+        if attrs['new_' + User.USERNAME_FIELD + '1'] != attrs['new_' + User.USERNAME_FIELD + '2']:
+            raise serializers.ValidationError(constants.USERNAME_MISMATCH_ERROR.format(User.USERNAME_FIELD))
         return attrs
 
 
