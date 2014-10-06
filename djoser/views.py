@@ -1,14 +1,12 @@
 from django.conf import settings as django_settings
 from django.contrib.auth import get_user_model
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
 from rest_framework import generics, permissions, status, response
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
-from . import serializers, settings
+from . import serializers, settings, utils
 
 User = get_user_model()
 
@@ -35,7 +33,7 @@ class SendEmailViewMixin(object):
 
     def get_email_context(self, user):
         token = self.token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        uid = utils.encode_uid(user.pk)
         url = settings.get('ACTIVATION_URL').format(uid=uid, token=token)
         return {
             'user': user,

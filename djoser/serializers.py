@@ -1,8 +1,7 @@
 from django.contrib.auth import authenticate, get_user_model
-from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
-from . import constants
 from rest_framework.authtoken.models import Token
+from . import constants, utils
 
 User = get_user_model()
 
@@ -69,7 +68,7 @@ class UidAndTokenSerializer(serializers.Serializer):
     def validate_uid(self, attrs, source):
         value = attrs[source]
         try:
-            uid = urlsafe_base64_decode(value)
+            uid = utils.decode_uid(value)
             self.user = User.objects.get(pk=uid)
         except (User.DoesNotExist, ValueError, TypeError, ValueError, OverflowError) as error:
             raise serializers.ValidationError(error)

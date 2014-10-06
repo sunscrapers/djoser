@@ -19,6 +19,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+
+    'testapp',
 )
 
 TEMPLATE_DIRS = (

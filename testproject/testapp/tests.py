@@ -3,12 +3,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.test.utils import override_settings
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 from djet import testcases, assertions, utils
 from rest_framework import status
 import djoser.views
 import djoser.constants
+import djoser.utils
 
 
 class RegistrationViewTest(testcases.ViewTestCase,
@@ -158,7 +157,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'uid': djoser.utils.encode_uid(user.pk).decode(),
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
         }
@@ -198,7 +197,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': urlsafe_base64_encode(force_bytes(user.pk + 1)).decode(),
+            'uid': djoser.utils.encode_uid(user.pk + 1).decode(),
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
         }
@@ -218,7 +217,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'uid': djoser.utils.encode_uid(user.pk).decode(),
             'token': 'wrong-token',
             'new_password': 'new password',
         }
@@ -239,7 +238,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'uid': djoser.utils.encode_uid(user.pk).decode(),
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
             're_new_password': 'wrong',
@@ -259,7 +258,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'uid': djoser.utils.encode_uid(user.pk).decode(),
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
             're_new_password': 'wrong',
@@ -287,7 +286,7 @@ class ActivationViewTest(testcases.ViewTestCase,
         user.is_active = False
         user.save()
         data = {
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'uid': djoser.utils.encode_uid(user.pk).decode(),
             'token': default_token_generator.make_token(user),
         }
         request = self.factory.post(data=data)
@@ -309,7 +308,7 @@ class ActivationViewTest(testcases.ViewTestCase,
         user.is_active = False
         user.save()
         data = {
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'uid': djoser.utils.encode_uid(user.pk).decode(),
             'token': default_token_generator.make_token(user),
         }
         request = self.factory.post(data=data)
