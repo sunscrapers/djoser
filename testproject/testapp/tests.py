@@ -160,8 +160,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         data = {
             'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
             'token': default_token_generator.make_token(user),
-            'new_password1': 'new password',
-            'new_password2': 'new password',
+            'new_password': 'new password',
         }
 
         request = self.factory.post(data=data)
@@ -170,7 +169,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_200_OK)
         user = utils.refresh(user)
-        self.assertTrue(user.check_password(data['new_password1']))
+        self.assertTrue(user.check_password(data['new_password']))
 
     def test_post_should_not_set_new_password_if_broken_uid(self):
         user = get_user_model().objects.create_user(**{
@@ -181,8 +180,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         data = {
             'uid': 'x',
             'token': default_token_generator.make_token(user),
-            'new_password1': 'new password',
-            'new_password2': 'new password',
+            'new_password': 'new password',
         }
         request = self.factory.post(data=data)
 
@@ -191,7 +189,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('uid', response.data)
         user = utils.refresh(user)
-        self.assertFalse(user.check_password(data['new_password1']))
+        self.assertFalse(user.check_password(data['new_password']))
 
     def test_post_should_not_set_new_password_if_user_does_not_exist(self):
         user = get_user_model().objects.create_user(**{
@@ -202,8 +200,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         data = {
             'uid': urlsafe_base64_encode(force_bytes(user.pk + 1)).decode(),
             'token': default_token_generator.make_token(user),
-            'new_password1': 'new password',
-            'new_password2': 'new password',
+            'new_password': 'new password',
         }
         request = self.factory.post(data=data)
 
@@ -212,7 +209,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('uid', response.data)
         user = utils.refresh(user)
-        self.assertFalse(user.check_password(data['new_password1']))
+        self.assertFalse(user.check_password(data['new_password']))
 
     def test_post_should_not_set_new_password_if_wrong_token(self):
         user = get_user_model().objects.create_user(**{
@@ -223,8 +220,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         data = {
             'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
             'token': 'wrong-token',
-            'new_password1': 'new password',
-            'new_password2': 'new password',
+            'new_password': 'new password',
         }
         request = self.factory.post(data=data)
 
@@ -233,8 +229,9 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_TOKEN_ERROR])
         user = utils.refresh(user)
-        self.assertFalse(user.check_password(data['new_password1']))
+        self.assertFalse(user.check_password(data['new_password']))
 
+    @override_settings(DJOSER={'PASSWORD_RESET_CONFIRM_RETYPE': True})
     def test_post_should_not_set_new_password_if_password_mismatch(self):
         user = get_user_model().objects.create_user(**{
             'username': 'john',
@@ -244,8 +241,8 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         data = {
             'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
             'token': default_token_generator.make_token(user),
-            'new_password1': 'new password',
-            'new_password2': 'other new password',
+            'new_password': 'new password',
+            're_new_password': 'wrong',
         }
         request = self.factory.post(data=data)
 
@@ -253,6 +250,28 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.PASSWORD_MISMATCH_ERROR])
+
+    @override_settings(DJOSER={'PASSWORD_RESET_CONFIRM_RETYPE': True})
+    def test_post_should_not_set_new_password_if_mismatch(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'email': 'john@beatles.com',
+            'password': 'secret',
+        })
+        data = {
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'token': default_token_generator.make_token(user),
+            'new_password': 'new password',
+            're_new_password': 'wrong',
+        }
+
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        user = utils.refresh(user)
+        self.assertFalse(user.check_password(data['new_password']))
 
 
 class ActivationViewTest(testcases.ViewTestCase,
@@ -313,8 +332,7 @@ class SetPasswordViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'new_password1': 'new password',
-            'new_password2': 'new password',
+            'new_password': 'new password',
             'current_password': 'secret',
         }
         request = self.factory.post(user=user, data=data)
@@ -324,7 +342,7 @@ class SetPasswordViewTest(testcases.ViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_200_OK)
         user = utils.refresh(user)
-        self.assertTrue(user.check_password(data['new_password1']))
+        self.assertTrue(user.check_password(data['new_password']))
 
     def test_post_should_not_set_new_password_if_wrong_current_password(self):
         user = get_user_model().objects.create_user(**{
@@ -332,8 +350,7 @@ class SetPasswordViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'new_password1': 'new password',
-            'new_password2': 'new password',
+            'new_password': 'new password',
             'current_password': 'wrong',
         }
         request = self.factory.post(user=user, data=data)
@@ -342,6 +359,26 @@ class SetPasswordViewTest(testcases.ViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(DJOSER={'SET_PASSWORD_RETYPE': True})
+    def test_post_should_not_set_new_password_if_mismatch(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'password': 'secret',
+        })
+        data = {
+            'new_password': 'new password',
+            're_new_password': 'wrong',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+        request._force_auth_user = user
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        user = utils.refresh(user)
+        self.assertTrue(user.check_password(data['current_password']))
 
 
 class SetUsernameViewTest(testcases.ViewTestCase,
@@ -354,8 +391,7 @@ class SetUsernameViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'new_username1': 'ringo',
-            'new_username2': 'ringo',
+            'new_username': 'ringo',
             'current_password': 'secret',
         }
         request = self.factory.post(user=user, data=data)
@@ -365,4 +401,24 @@ class SetUsernameViewTest(testcases.ViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_200_OK)
         user = utils.refresh(user)
-        self.assertEqual(data['new_username1'], user.username)
+        self.assertEqual(data['new_username'], user.username)
+
+    @override_settings(DJOSER={'SET_USERNAME_RETYPE': True})
+    def test_post_should_not_set_new_username_if_mismatch(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'password': 'secret',
+        })
+        data = {
+            'new_username': 'ringo',
+            're_new_username': 'wrong',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+        request._force_auth_user = user
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        user = utils.refresh(user)
+        self.assertNotEqual(data['new_username'], user.username)

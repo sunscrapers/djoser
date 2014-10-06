@@ -147,26 +147,34 @@ class PasswordResetView(SendEmailViewMixin, generics.GenericAPIView):
 
 
 class SetPasswordView(PostActionViewMixin, generics.GenericAPIView):
-    serializer_class = serializers.SetPasswordSerializer
     permission_classes = (
         permissions.IsAuthenticated,
     )
 
+    def get_serializer_class(self):
+        if settings.get('SET_PASSWORD_RETYPE'):
+            return serializers.SetPasswordRetypeSerializer
+        return serializers.SetPasswordSerializer
+
     def action(self, serializer):
-        self.request.user.set_password(serializer.data['new_password1'])
+        self.request.user.set_password(serializer.data['new_password'])
         self.request.user.save()
         return response.Response(status=status.HTTP_200_OK)
 
 
 class PasswordResetConfirmView(PostActionViewMixin, generics.GenericAPIView):
-    serializer_class = serializers.PasswordResetConfirmSerializer
     permission_classes = (
         permissions.AllowAny,
     )
     token_generator = default_token_generator
 
+    def get_serializer_class(self):
+        if settings.get('PASSWORD_RESET_CONFIRM_RETYPE'):
+            return serializers.PasswordResetConfirmRetypeSerializer
+        return serializers.PasswordResetConfirmSerializer
+
     def action(self, serializer):
-        serializer.user.set_password(serializer.data['new_password1'])
+        serializer.user.set_password(serializer.data['new_password'])
         serializer.user.save()
         return response.Response(status=status.HTTP_200_OK)
 
@@ -195,7 +203,12 @@ class SetUsernameView(PostActionViewMixin, generics.GenericAPIView):
         permissions.IsAuthenticated,
     )
 
+    def get_serializer_class(self):
+        if settings.get('SET_USERNAME_RETYPE'):
+            return serializers.SetUsernameRetypeSerializer
+        return serializers.SetUsernameSerializer
+
     def action(self, serializer):
-        setattr(self.request.user, User.USERNAME_FIELD, serializer.data['new_' + User.USERNAME_FIELD + '1'])
+        setattr(self.request.user, User.USERNAME_FIELD, serializer.data['new_' + User.USERNAME_FIELD])
         self.request.user.save()
         return response.Response(status=status.HTTP_200_OK)

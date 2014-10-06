@@ -142,8 +142,8 @@ Methods: `POST`
 
 `POST` request data:
 
-* `new_{{ User.USERNAME_FIELD }}1`
-* `new_{{ User.USERNAME_FIELD }}2`
+* `new_{{ User.USERNAME_FIELD }}`
+* `re_new_{{ User.USERNAME_FIELD }}` (if `SET_USERNAME_RETYPE` is `True`)
 * `current_password`
 
 Use this endpoint to change user username (`USERNAME_FIELD`).
@@ -156,8 +156,8 @@ Methods: `POST`
 
 `POST` request data:
 
-* `new_password1`
-* `new_password2`
+* `new_password`
+* `re_new_password` (if `SET_PASSWORD_RETYPE` is `True`)
 * `current_password`
 
 Use this endpoint to change user password.
@@ -185,6 +185,8 @@ Methods: `POST`
 
 * `uid`
 * `token`
+* `new_password`
+* `re_new_password` (if `PASSWORD_RESET_CONFIRM_RETYPE` is `True`)
 
 Use this endpoint to finish reset password process.
  
@@ -221,6 +223,27 @@ placeholders, e.g. `#/activate/{uid}/{token}`. Default: `''`.
 #### `LOGIN_AFTER_ACTIVATION`
 
 If `True`, activate endpoint will return `auth_token` within response.
+
+Default: `False`
+
+### `SET_USERNAME_RETYPE`
+
+If `True`, you need to pass `re_new_{{ User.USERNAME_FIELD }}` to
+`/{{ User.USERNAME_FIELD }}` endpoint, to validate username equality.
+
+Default: `False`
+
+### `SET_PASSWORD_RETYPE`
+
+If `True`, you need to pass `re_new_password` to `/password` endpoint, to
+validate password equality.
+
+Default: `False`
+
+### `PASSWORD_RESET_CONFIRM_RETYPE`
+
+If `True`, you need to pass `re_new_password` to `/password/reset/confirm`
+endpoint, to validate password equality.
 
 Default: `False`
 

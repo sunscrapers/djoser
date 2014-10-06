@@ -82,13 +82,16 @@ class UidAndTokenSerializer(serializers.Serializer):
         return attrs
 
 
-class PasswordRetypeSerializer(serializers.Serializer):
-    new_password1 = serializers.CharField()
-    new_password2 = serializers.CharField()
+class PasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField()
+
+
+class PasswordRetypeSerializer(PasswordSerializer):
+    re_new_password = serializers.CharField()
 
     def validate(self, attrs):
         attrs = super(PasswordRetypeSerializer, self).validate(attrs)
-        if attrs['new_password1'] != attrs['new_password2']:
+        if attrs['new_password'] != attrs['re_new_password']:
             raise serializers.ValidationError(constants.PASSWORD_MISMATCH_ERROR)
         return attrs
 
@@ -99,15 +102,23 @@ class CurrentPasswordSerializer(serializers.Serializer):
     def validate_current_password(self, attrs, source):
         value = attrs[source]
         if not self.context['request'].user.check_password(value):
-            raise serializers.ValidationError(constants.PASSWORD_MISMATCH_ERROR)
+            raise serializers.ValidationError(constants.INVALID_PASSWORD_ERROR)
         return attrs
 
 
-class SetPasswordSerializer(PasswordRetypeSerializer, CurrentPasswordSerializer):
+class SetPasswordSerializer(PasswordSerializer, CurrentPasswordSerializer):
     pass
 
 
-class PasswordResetConfirmSerializer(UidAndTokenSerializer, PasswordRetypeSerializer):
+class SetPasswordRetypeSerializer(PasswordRetypeSerializer, CurrentPasswordSerializer):
+    pass
+
+
+class PasswordResetConfirmSerializer(UidAndTokenSerializer, PasswordSerializer):
+    pass
+
+
+class PasswordResetConfirmRetypeSerializer(UidAndTokenSerializer, PasswordRetypeSerializer):
     pass
 
 
@@ -115,14 +126,23 @@ class SetUsernameSerializer(CurrentPasswordSerializer):
 
     def __init__(self, *args, **kwargs):
         super(SetUsernameSerializer, self).__init__(*args, **kwargs)
+        self.fields['new_' + User.USERNAME_FIELD] = self._get_username_serializer_field()
+
+    def _get_username_serializer_field(self):
         username_field = User._meta.get_field(User.USERNAME_FIELD)
         field_class = serializers.ModelSerializer.field_mapping[username_field.__class__]
-        self.fields['new_' + User.USERNAME_FIELD + '1'] = field_class()
-        self.fields['new_' + User.USERNAME_FIELD + '2'] = field_class()
+        return field_class()
+
+
+class SetUsernameRetypeSerializer(SetUsernameSerializer):
+
+    def __init__(self, *args, **kwargs):
+        super(SetUsernameRetypeSerializer, self).__init__(*args, **kwargs)
+        self.fields['re_new_' + User.USERNAME_FIELD] = self._get_username_serializer_field()
 
     def validate(self, attrs):
-        attrs = super(SetUsernameSerializer, self).validate(attrs)
-        if attrs['new_' + User.USERNAME_FIELD + '1'] != attrs['new_' + User.USERNAME_FIELD + '2']:
+        attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
+        if attrs['new_' + User.USERNAME_FIELD] != attrs['re_new_' + User.USERNAME_FIELD]:
             raise serializers.ValidationError(constants.USERNAME_MISMATCH_ERROR.format(User.USERNAME_FIELD))
         return attrs
 
