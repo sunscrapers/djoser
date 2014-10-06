@@ -42,34 +42,40 @@ Use `pip`:
 ## Usage
 
 Configure `INSTALLED_APPS`:
-        
-    INSTALLED_APPS = (
-        'django.contrib.auth',
-        (...), 
-        'rest_framework',
-        'rest_framework.authtoken',
-        'djoser',
-        (...), 
-    )
+
+```python
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    (...), 
+    'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
+    (...), 
+)
+```
     
 Add `djoser` settings:
 
-    DJOSER = {
-        'DOMAIN': 'frontend.com',
-        'SITE_NAME': 'Frontend',
-        'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-        'ACTIVATION_URL': '#/activate/{uid}/{token}',
-        'LOGIN_AFTER_REGISTRATION': True,
-        'LOGIN_AFTER_ACTIVATION': True,
-        'SEND_ACTIVATION_EMAIL': True,
-    }
+```python
+DJOSER = {
+    'DOMAIN': 'frontend.com',
+    'SITE_NAME': 'Frontend',
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'LOGIN_AFTER_REGISTRATION': True,
+    'LOGIN_AFTER_ACTIVATION': True,
+    'SEND_ACTIVATION_EMAIL': True,
+}
+```
     
 Configure `urls.py`:
 
-    urlpatterns = patterns('',
-        (...),
-        url(r'^auth/', include('djoser.urls')),
-    )
+```python
+urlpatterns = patterns('',
+    (...),
+    url(r'^auth/', include('djoser.urls')),
+)
+```
     
 ## Endpoints
     
