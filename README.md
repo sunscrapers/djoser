@@ -252,9 +252,10 @@ Default: `False`
 Upcoming features:
 
 * **documentation**
-* "retype" enable/disable
+    * views/serializers customization
+    * endpoints
+    * email templates
 * registration customization (custom fields/profile, post-registration action)
 * password reset customization (custom HTML templates)
-* endpoints documentation
 * logout/token expired view (?)
 * user retrieve view
