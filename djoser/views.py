@@ -1,7 +1,4 @@
-from django.conf import settings as django_settings
 from django.contrib.auth import get_user_model
-from django.core.mail import EmailMultiAlternatives
-from django.template import loader
 from rest_framework import generics, permissions, status, response
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -11,42 +8,7 @@ from . import serializers, settings, utils
 User = get_user_model()
 
 
-class SendEmailViewMixin(object):
-
-    def send_email(self, to_email, from_email, context, subject_template_name,
-                   plain_body_template_name, html_body_template_name=None):
-        subject = loader.render_to_string(subject_template_name, context)
-        subject = ''.join(subject.splitlines())
-        body = loader.render_to_string(plain_body_template_name, context)
-        email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
-        if html_body_template_name is not None:
-            html_email = loader.render_to_string(html_body_template_name, context)
-            email_message.attach_alternative(html_email, 'text/html')
-        email_message.send()
-
-    def get_send_email_kwargs(self, user):
-        return {
-            'from_email': getattr(django_settings, 'DEFAULT_FROM_EMAIL', None),
-            'to_email': user.email,
-            'context': self.get_email_context(user),
-        }
-
-    def get_email_context(self, user):
-        token = self.token_generator.make_token(user)
-        uid = utils.encode_uid(user.pk)
-        url = settings.get('ACTIVATION_URL').format(uid=uid, token=token)
-        return {
-            'user': user,
-            'domain': settings.get('DOMAIN'),
-            'site_name': settings.get('SITE_NAME'),
-            'url': url,
-            'uid': uid,
-            'token': token,
-            'protocol': 'https' if self.request.is_secure() else 'http',
-        }
-
-
-class RegistrationView(SendEmailViewMixin, generics.CreateAPIView):
+class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
     permission_classes = (
         permissions.AllowAny,
     )
@@ -91,7 +53,7 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
         )
 
 
-class PasswordResetView(SendEmailViewMixin, generics.GenericAPIView):
+class PasswordResetView(utils.SendEmailViewMixin, generics.GenericAPIView):
     serializer_class = serializers.PasswordResetSerializer
     permission_classes = (
         permissions.AllowAny,
@@ -200,7 +162,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class UserView(generics.RetrieveUpdateAPIView):
-    model = get_user_model()
+    model = User
     serializer_class = serializers.UserSerializer
     permission_classes = (
         permissions.IsAuthenticated,
