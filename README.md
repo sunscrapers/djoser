@@ -76,7 +76,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-Optionally add `djoser` settings:
+Optionally add `DJOSER` settings:
 
 ```python
 DJOSER = {
