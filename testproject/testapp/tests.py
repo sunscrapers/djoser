@@ -3,14 +3,26 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.test.utils import override_settings
-from djet import testcases, assertions, utils, restframework
+from djet import assertions, utils, restframework
 from rest_framework import status
 import djoser.views
 import djoser.constants
 import djoser.utils
 
 
-class RegistrationViewTest(testcases.ViewTestCase,
+def create_user(**kwargs):
+    data = {
+        'username': 'john',
+        'password': 'secret',
+        'email': 'john@beatles.com',
+    }
+    data.update(kwargs)
+    user = get_user_model().objects.create_user(**data)
+    user.raw_password = data['password']
+    return user
+
+
+class RegistrationViewTest(restframework.APIViewTestCase,
                            assertions.StatusCodeAssertionsMixin,
                            assertions.EmailAssertionsMixin,
                            assertions.InstanceAssertionsMixin):
@@ -65,7 +77,7 @@ class RegistrationViewTest(testcases.ViewTestCase,
         self.assert_email_exists(to=[data['email']])
 
 
-class LoginViewTest(testcases.ViewTestCase,
+class LoginViewTest(restframework.APIViewTestCase,
                     assertions.StatusCodeAssertionsMixin,
                     assertions.InstanceAssertionsMixin):
     view_class = djoser.views.LoginView
@@ -111,17 +123,13 @@ class LoginViewTest(testcases.ViewTestCase,
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
 
 
-class PasswordResetViewTest(testcases.ViewTestCase,
+class PasswordResetViewTest(restframework.APIViewTestCase,
                             assertions.StatusCodeAssertionsMixin,
                             assertions.EmailAssertionsMixin):
     view_class = djoser.views.PasswordResetView
 
     def test_post_should_send_email_to_user_with_password_rest_link(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'email': user.email,
         }
@@ -146,16 +154,12 @@ class PasswordResetViewTest(testcases.ViewTestCase,
         self.assert_emails_in_mailbox(0)
 
 
-class PasswordResetConfirmViewTest(testcases.ViewTestCase,
+class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
                                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.PasswordResetConfirmView
 
     def test_post_should_set_new_password(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
@@ -171,11 +175,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         self.assertTrue(user.check_password(data['new_password']))
 
     def test_post_should_not_set_new_password_if_broken_uid(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'uid': 'x',
             'token': default_token_generator.make_token(user),
@@ -191,11 +191,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         self.assertFalse(user.check_password(data['new_password']))
 
     def test_post_should_not_set_new_password_if_user_does_not_exist(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk + 1),
             'token': default_token_generator.make_token(user),
@@ -211,11 +207,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         self.assertFalse(user.check_password(data['new_password']))
 
     def test_post_should_not_set_new_password_if_wrong_token(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
             'token': 'wrong-token',
@@ -232,11 +224,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
 
     @override_settings(DJOSER={'PASSWORD_RESET_CONFIRM_RETYPE': True})
     def test_post_should_not_set_new_password_if_password_mismatch(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
@@ -252,11 +240,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
 
     @override_settings(DJOSER={'PASSWORD_RESET_CONFIRM_RETYPE': True})
     def test_post_should_not_set_new_password_if_mismatch(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
@@ -273,16 +257,12 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
         self.assertFalse(user.check_password(data['new_password']))
 
 
-class ActivationViewTest(testcases.ViewTestCase,
+class ActivationViewTest(restframework.APIViewTestCase,
                          assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.ActivationView
 
     def test_post_should_activate_user_and_not_login(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        })
+        user = create_user()
         user.is_active = False
         user.save()
         data = {
@@ -300,11 +280,7 @@ class ActivationViewTest(testcases.ViewTestCase,
 
     @override_settings(DJOSER={'LOGIN_AFTER_ACTIVATION': True})
     def test_post_should_activate_user_and_login(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        })
+        user = create_user()
         user.is_active = False
         user.save()
         data = {
@@ -326,10 +302,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
     view_class = djoser.views.SetPasswordView
 
     def test_post_should_set_new_password(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'new_password': 'new password',
             'current_password': 'secret',
@@ -343,10 +316,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
         self.assertTrue(user.check_password(data['new_password']))
 
     def test_post_should_not_set_new_password_if_wrong_current_password(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'new_password': 'new password',
             'current_password': 'wrong',
@@ -359,10 +329,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
 
     @override_settings(DJOSER={'SET_PASSWORD_RETYPE': True})
     def test_post_should_not_set_new_password_if_mismatch(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'new_password': 'new password',
             're_new_password': 'wrong',
@@ -382,10 +349,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
     view_class = djoser.views.SetUsernameView
 
     def test_post_should_set_new_username(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'new_username': 'ringo',
             'current_password': 'secret',
@@ -400,10 +364,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
 
     @override_settings(DJOSER={'SET_USERNAME_RETYPE': True})
     def test_post_should_not_set_new_username_if_mismatch(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'password': 'secret',
-        })
+        user = create_user()
         data = {
             'new_username': 'ringo',
             're_new_username': 'wrong',
@@ -423,11 +384,7 @@ class UserViewTest(restframework.APIViewTestCase,
     view_class = djoser.views.UserView
 
     def test_get_should_return_user(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'password': 'secret',
-            'email': 'john@beatles.com',
-        })
+        user = create_user()
         request = self.factory.get(user=user)
 
         response = self.view(request)
@@ -438,11 +395,7 @@ class UserViewTest(restframework.APIViewTestCase,
         ))
 
     def test_put_should_update_user(self):
-        user = get_user_model().objects.create_user(**{
-            'username': 'john',
-            'password': 'secret',
-            'email': 'john@beatles.com',
-        })
+        user = create_user()
         data = {
             'email': 'ringo@beatles.com',
         }
