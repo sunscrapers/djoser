@@ -46,19 +46,6 @@ class SendEmailViewMixin(object):
         }
 
 
-class PostActionViewMixin(object):
-
-    def post(self, request):
-        serializer = self.get_serializer(data=request.DATA)
-        if serializer.is_valid():
-            return self.action(serializer)
-        else:
-            return response.Response(
-                data=serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
 class RegistrationView(SendEmailViewMixin, generics.CreateAPIView):
     permission_classes = (
         permissions.AllowAny,
@@ -90,7 +77,7 @@ class RegistrationView(SendEmailViewMixin, generics.CreateAPIView):
         return context
 
 
-class LoginView(PostActionViewMixin, generics.GenericAPIView):
+class LoginView(ActionViewMixin, generics.GenericAPIView):
     serializer_class = serializers.UserLoginSerializer
     permission_classes = (
         permissions.AllowAny,
@@ -144,7 +131,7 @@ class PasswordResetView(SendEmailViewMixin, generics.GenericAPIView):
         return context
 
 
-class SetPasswordView(PostActionViewMixin, generics.GenericAPIView):
+class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
     permission_classes = (
         permissions.IsAuthenticated,
     )
@@ -160,7 +147,7 @@ class SetPasswordView(PostActionViewMixin, generics.GenericAPIView):
         return response.Response(status=status.HTTP_200_OK)
 
 
-class PasswordResetConfirmView(PostActionViewMixin, generics.GenericAPIView):
+class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
     permission_classes = (
         permissions.AllowAny,
     )
@@ -177,7 +164,7 @@ class PasswordResetConfirmView(PostActionViewMixin, generics.GenericAPIView):
         return response.Response(status=status.HTTP_200_OK)
 
 
-class ActivationView(PostActionViewMixin, generics.GenericAPIView):
+class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
     serializer_class = serializers.UidAndTokenSerializer
     permission_classes = (
         permissions.AllowAny,
@@ -195,7 +182,7 @@ class ActivationView(PostActionViewMixin, generics.GenericAPIView):
         return Response(data=data, status=status.HTTP_200_OK)
 
 
-class SetUsernameView(PostActionViewMixin, generics.GenericAPIView):
+class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
     serializer_class = serializers.SetUsernameSerializer
     permission_classes = (
         permissions.IsAuthenticated,
