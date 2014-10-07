@@ -118,9 +118,9 @@ Methods: `POST`
 * `auth_token` (if `LOGIN_AFTER_ACTIVATION` is `True`)
 
 Use this endpoint to register new user. Your user model manager should
-implement [`create_user`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.UserManager.create_user)
-method and have [`USERNAME_FIELD`](https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.USERNAME_FIELD)
-and [`REQUIRED_FIELDS`](https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.REQUIRED_FIELDS)
+implement [create_user](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.UserManager.create_user)
+method and have [USERNAME_FIELD](https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.USERNAME_FIELD)
+and [REQUIRED_FIELDS](https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.REQUIRED_FIELDS)
 fields.
 
 If `LOGIN_AFTER_ACTIVATION` is `True`, you will receive authentication token
@@ -226,16 +226,16 @@ Default: `False`
 
 ### DOMAIN
 
-Domain of your frontend app. Default: `''`.
+Domain of your frontend app.
 
 ### SITE_NAME
 
-Name of your frontend app. Default: `''`.
+Name of your frontend app.
 
 ### PASSWORD_RESET_CONFIRM_URL
 
 URL to your frontend password reset page. It should containt `{uid}` and
-`{token}` placeholders, e.g. `#/password-reset/{uid}/{token}`. Default: `''`.
+`{token}` placeholders, e.g. `#/password-reset/{uid}/{token}`.
 
 ### SEND_ACTIVATION_EMAIL
 
@@ -316,8 +316,8 @@ class CustomRegistrationView(djoser.views.RegistrationView):
 
 You could check `djoser` API in source code:
 
-* [`djoser.views`](https://github.com/sunscrapers/djoser/blob/master/djoser/views.py)
-* [`djoser.serializers`](https://github.com/sunscrapers/djoser/blob/master/djoser/serializers.py)
+* [djoser.views](https://github.com/sunscrapers/djoser/blob/master/djoser/views.py)
+* [djoser.serializers](https://github.com/sunscrapers/djoser/blob/master/djoser/serializers.py)
 
 ## Similar projects
 
