@@ -65,6 +65,17 @@ urlpatterns = patterns('',
 )
 ```
 
+Use `TokenAuthentication` as default Django Rest Framework authentication
+strategy:
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+```
+
 Optionally add `djoser` settings:
 
 ```python
