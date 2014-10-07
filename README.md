@@ -314,5 +314,5 @@ class CustomRegistrationView(djoser.views.RegistrationView):
 
 You could check `djoser` API in source code:
 
-* [`djoser.views`](https://github.com/sunscrapers/djoser/blob/master/djoser/serializers.py)
-* [`djoser.serializers`](https://github.com/sunscrapers/djoser/blob/master/djoser/views.py)
+* [`djoser.views`](https://github.com/sunscrapers/djoser/blob/master/djoser/views.py)
+* [`djoser.serializers`](https://github.com/sunscrapers/djoser/blob/master/djoser/serializers.py)
