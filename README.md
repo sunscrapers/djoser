@@ -250,35 +250,69 @@ If `True`, activate endpoint will return `auth_token` within response.
 
 Default: `False`
 
-### `SET_USERNAME_RETYPE`
+#### `SET_USERNAME_RETYPE`
 
 If `True`, you need to pass `re_new_{{ User.USERNAME_FIELD }}` to
 `/{{ User.USERNAME_FIELD }}` endpoint, to validate username equality.
 
 Default: `False`
 
-### `SET_PASSWORD_RETYPE`
+#### `SET_PASSWORD_RETYPE`
 
 If `True`, you need to pass `re_new_password` to `/password` endpoint, to
 validate password equality.
 
 Default: `False`
 
-### `PASSWORD_RESET_CONFIRM_RETYPE`
+#### `PASSWORD_RESET_CONFIRM_RETYPE`
 
 If `True`, you need to pass `re_new_password` to `/password/reset/confirm`
 endpoint, to validate password equality.
 
 Default: `False`
 
-## TODO
+## Emails
 
-Upcoming features:
+There are few email templates which you could override:
+ 
+* `activation_email_body.txt`
+* `activation_email_subject.txt`
+* `password_reset_email_body.txt`
+* `password_reset_email_subject.txt`
 
-* **documentation**
-    * views/serializers customization
-    * endpoints
-    * email templates
-* registration customization (custom fields/profile, post-registration action)
-* password reset customization (custom HTML templates)
-* logout/token expired view (?)
+All of them have following context:
+
+* `user`
+* `domain`
+* `site_name`
+* `url`
+* `uid`
+* `token`
+* `protocol`
+
+## Customization
+
+If you need to override some `djoser` behaviour, you could define your custom view/serializer.
+
+Define custom urls instead of reusing `djoser.urls`:
+
+```python
+urlpatterns = patterns('',
+    (...),
+    url(r'^register$', views.CustomRegistrationView.as_view()),
+)
+```
+
+Define custom view/serializer (inherit from one of `djoser` class) and override necessary method/field:
+
+```python
+class CustomRegistrationView(djoser.views.RegistrationView):
+
+    def send_email(self, *args, **kwargs):
+        your_custom_email_sender(*args, **kwargs)
+```
+
+You could check `djoser` API in source code:
+
+* [`djoser.views`](https://github.com/sunscrapers/djoser/blob/master/djoser/serializers.py)
+* [`djoser.serializers`](https://github.com/sunscrapers/djoser/blob/master/djoser/views.py)
