@@ -157,7 +157,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': djoser.utils.encode_uid(user.pk).decode(),
+            'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
         }
@@ -197,7 +197,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': djoser.utils.encode_uid(user.pk + 1).decode(),
+            'uid': djoser.utils.encode_uid(user.pk + 1),
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
         }
@@ -217,7 +217,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': djoser.utils.encode_uid(user.pk).decode(),
+            'uid': djoser.utils.encode_uid(user.pk),
             'token': 'wrong-token',
             'new_password': 'new password',
         }
@@ -238,7 +238,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': djoser.utils.encode_uid(user.pk).decode(),
+            'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
             're_new_password': 'wrong',
@@ -258,7 +258,7 @@ class PasswordResetConfirmViewTest(testcases.ViewTestCase,
             'password': 'secret',
         })
         data = {
-            'uid': djoser.utils.encode_uid(user.pk).decode(),
+            'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
             're_new_password': 'wrong',
@@ -286,7 +286,7 @@ class ActivationViewTest(testcases.ViewTestCase,
         user.is_active = False
         user.save()
         data = {
-            'uid': djoser.utils.encode_uid(user.pk).decode(),
+            'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
         }
         request = self.factory.post(data=data)
@@ -308,7 +308,7 @@ class ActivationViewTest(testcases.ViewTestCase,
         user.is_active = False
         user.save()
         data = {
-            'uid': djoser.utils.encode_uid(user.pk).decode(),
+            'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
         }
         request = self.factory.post(data=data)
