@@ -39,7 +39,7 @@ Supported Django versions:
 
 Use `pip`:
 
-    $ pip install git+https://github.com/sunscrapers/djoser.git
+    $ pip install djoser
     
 ## Usage
 
