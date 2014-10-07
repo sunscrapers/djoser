@@ -4,6 +4,7 @@ from setuptools import setup
 
 setup(
     name='djoser',
+    version='0.0.1',
     packages=['djoser'],
     license='MIT',
     author='SUNSCRAPERS',
