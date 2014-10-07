@@ -77,7 +77,7 @@ class RegistrationView(SendEmailViewMixin, generics.CreateAPIView):
         return context
 
 
-class LoginView(ActionViewMixin, generics.GenericAPIView):
+class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
     serializer_class = serializers.UserLoginSerializer
     permission_classes = (
         permissions.AllowAny,
