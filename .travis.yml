@@ -12,7 +12,7 @@ env:
 install:
   - pip install -q Django==$DJANGO_VERSION
   - pip install -q djangorestframework==2.4.3
-  - pip install -q djet==0.0.9
+  - pip install -q djet==0.0.10
   - python setup.py -q install
 
 script: testproject/manage.py test testapp

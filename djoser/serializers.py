@@ -6,6 +6,18 @@ from . import constants, utils
 User = get_user_model()
 
 
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = tuple(User.REQUIRED_FIELDS) + (
+            User.USERNAME_FIELD,
+        )
+        read_only_fields = (
+            User.USERNAME_FIELD,
+        )
+
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:

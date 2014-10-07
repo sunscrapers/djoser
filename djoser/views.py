@@ -210,3 +210,15 @@ class SetUsernameView(PostActionViewMixin, generics.GenericAPIView):
         setattr(self.request.user, User.USERNAME_FIELD, serializer.data['new_' + User.USERNAME_FIELD])
         self.request.user.save()
         return response.Response(status=status.HTTP_200_OK)
+
+
+class UserView(generics.RetrieveUpdateAPIView):
+    model = get_user_model()
+    serializer_class = serializers.UserSerializer
+    permission_classes = (
+        permissions.IsAuthenticated,
+    )
+
+    def get_object(self, *args, **kwargs):
+        return self.request.user
+

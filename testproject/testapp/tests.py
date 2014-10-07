@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.test.utils import override_settings
-from djet import testcases, assertions, utils
+from djet import testcases, assertions, utils, restframework
 from rest_framework import status
 import djoser.views
 import djoser.constants
@@ -321,7 +321,7 @@ class ActivationViewTest(testcases.ViewTestCase,
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
 
 
-class SetPasswordViewTest(testcases.ViewTestCase,
+class SetPasswordViewTest(restframework.APIViewTestCase,
                           assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.SetPasswordView
 
@@ -335,7 +335,6 @@ class SetPasswordViewTest(testcases.ViewTestCase,
             'current_password': 'secret',
         }
         request = self.factory.post(user=user, data=data)
-        request._force_auth_user = user
 
         response = self.view(request)
 
@@ -353,7 +352,6 @@ class SetPasswordViewTest(testcases.ViewTestCase,
             'current_password': 'wrong',
         }
         request = self.factory.post(user=user, data=data)
-        request._force_auth_user = user
 
         response = self.view(request)
 
@@ -371,7 +369,6 @@ class SetPasswordViewTest(testcases.ViewTestCase,
             'current_password': 'secret',
         }
         request = self.factory.post(user=user, data=data)
-        request._force_auth_user = user
 
         response = self.view(request)
 
@@ -380,7 +377,7 @@ class SetPasswordViewTest(testcases.ViewTestCase,
         self.assertTrue(user.check_password(data['current_password']))
 
 
-class SetUsernameViewTest(testcases.ViewTestCase,
+class SetUsernameViewTest(restframework.APIViewTestCase,
                           assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.SetUsernameView
 
@@ -394,7 +391,6 @@ class SetUsernameViewTest(testcases.ViewTestCase,
             'current_password': 'secret',
         }
         request = self.factory.post(user=user, data=data)
-        request._force_auth_user = user
 
         response = self.view(request)
 
@@ -414,10 +410,46 @@ class SetUsernameViewTest(testcases.ViewTestCase,
             'current_password': 'secret',
         }
         request = self.factory.post(user=user, data=data)
-        request._force_auth_user = user
 
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         user = utils.refresh(user)
         self.assertNotEqual(data['new_username'], user.username)
+
+
+class UserViewTest(restframework.APIViewTestCase,
+                   assertions.StatusCodeAssertionsMixin):
+    view_class = djoser.views.UserView
+
+    def test_get_should_return_user(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'password': 'secret',
+            'email': 'john@beatles.com',
+        })
+        request = self.factory.get(user=user)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assertEqual(set(response.data.keys()), set(
+            [get_user_model().USERNAME_FIELD] + get_user_model().REQUIRED_FIELDS
+        ))
+
+    def test_put_should_update_user(self):
+        user = get_user_model().objects.create_user(**{
+            'username': 'john',
+            'password': 'secret',
+            'email': 'john@beatles.com',
+        })
+        data = {
+            'email': 'ringo@beatles.com',
+        }
+        request = self.factory.put(user=user, data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        user = utils.refresh(user)
+        self.assertEqual(data['email'], user.email)

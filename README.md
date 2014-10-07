@@ -14,6 +14,7 @@ Developed by [SUNSCRAPERS](http://sunscrapers.com/) with passion & patience.
 
 Available endpoints:
 
+ * `/me`
  * `/register`
  * `/login`
  * `/activate`
@@ -79,6 +80,23 @@ urlpatterns = patterns('',
     
 ## Endpoints
     
+### User
+
+URL: `/me`
+
+Methods: `GET`, `PUT`
+
+`PUT` request data:
+
+* `{{ User.REQUIRED_FIELDS }}`
+
+`PUT` and `GET` response data:
+
+* `{{ User.USERNAME_FIELD }}`
+* `{{ User.REQUIRED_FIELDS }}`
+
+Use this endpoint to retrieve/update user.
+
 ### Register
 
 URL: `/register`
@@ -264,4 +282,3 @@ Upcoming features:
 * registration customization (custom fields/profile, post-registration action)
 * password reset customization (custom HTML templates)
 * logout/token expired view (?)
-* user retrieve view

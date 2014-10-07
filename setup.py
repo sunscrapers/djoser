@@ -10,7 +10,7 @@ setup(
       'djangorestframework>=2.4.3',
     ],
     tests_require=[
-       'djet>=0.0.9'
+       'djet>=0.0.10'
     ],
     include_package_data=True,
     zip_safe=False,
