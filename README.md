@@ -234,7 +234,7 @@ Name of your frontend app.
 
 ### PASSWORD_RESET_CONFIRM_URL
 
-URL to your frontend password reset page. It should containt `{uid}` and
+URL to your frontend password reset page. It should contain `{uid}` and
 `{token}` placeholders, e.g. `#/password-reset/{uid}/{token}`.
 
 ### SEND_ACTIVATION_EMAIL
@@ -243,7 +243,7 @@ If `True`, register endpoint will send activation email to user.
  
 ### ACTIVATION_URL
 
-URL to your frontend activation page. It should containt `{uid}` and `{token}`
+URL to your frontend activation page. It should contain `{uid}` and `{token}`
 placeholders, e.g. `#/activate/{uid}/{token}`. Default: `''`.
 
 ### LOGIN_AFTER_ACTIVATION
