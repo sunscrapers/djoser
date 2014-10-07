@@ -11,7 +11,7 @@ except (IOError, ImportError):
 
 setup(
     name='djoser',
-    version='0.0.2',
+    version='0.0.3',
     packages=['djoser'],
     license='MIT',
     author='SUNSCRAPERS',
