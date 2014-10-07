@@ -78,7 +78,7 @@ DJOSER = {
 }
 ```
 
-Check [settings](#settings) section for more info.
+Check "Settings" section for more info.
     
 ## Endpoints
     
