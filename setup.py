@@ -2,6 +2,13 @@
 
 from setuptools import setup
 
+try:
+    import pypandoc
+    description = pypandoc.convert('README.md', 'rst')
+except (IOError, ImportError):
+    description = open('README.md').read()
+
+
 setup(
     name='djoser',
     version='0.0.1',
@@ -10,7 +17,7 @@ setup(
     author='SUNSCRAPERS',
     description='REST version of Django authentication system.',
     author_email='info@sunscrapers.com',
-    long_description=open('README.md').read(),
+    long_description=description,
     install_requires=[
       'Django>=1.5',
       'djangorestframework>=2.4.0',
