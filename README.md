@@ -56,20 +56,6 @@ INSTALLED_APPS = (
 )
 ```
     
-Add `djoser` settings:
-
-```python
-DJOSER = {
-    'DOMAIN': 'frontend.com',
-    'SITE_NAME': 'Frontend',
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'LOGIN_AFTER_REGISTRATION': True,
-    'LOGIN_AFTER_ACTIVATION': True,
-    'SEND_ACTIVATION_EMAIL': True,
-}
-```
-    
 Configure `urls.py`:
 
 ```python
@@ -78,6 +64,21 @@ urlpatterns = patterns('',
     url(r'^auth/', include('djoser.urls')),
 )
 ```
+
+Optionally add `djoser` settings:
+
+```python
+DJOSER = {
+    'DOMAIN': 'frontend.com',
+    'SITE_NAME': 'Frontend',
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'LOGIN_AFTER_ACTIVATION': True,
+    'SEND_ACTIVATION_EMAIL': True,
+}
+```
+
+Check [settings](#settings) section for more info.
     
 ## Endpoints
     

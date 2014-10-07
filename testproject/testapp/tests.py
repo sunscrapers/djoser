@@ -44,7 +44,7 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assertTrue(user.check_password(data['password']))
 
 
-    @override_settings(DJOSER={'LOGIN_AFTER_REGISTRATION': True})
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'LOGIN_AFTER_REGISTRATION': True}))
     def test_post_should_create_user_with_login(self):
         data = {
             'username': 'john',
@@ -60,8 +60,8 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
         self.assertTrue(user.check_password(data['password']))
 
-    @override_settings(DJOSER={'SEND_ACTIVATION_EMAIL': True})
-    def test_post_should_create_user_with_login(self):
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True}))
+    def test_post_should_create_user_with_login_and_send_activation_email(self):
         data = {
             'username': 'john',
             'email': 'john@beatles.com',
@@ -223,7 +223,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertFalse(user.check_password(data['new_password']))
 
-    @override_settings(DJOSER={'PASSWORD_RESET_CONFIRM_RETYPE': True})
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True}))
     def test_post_should_not_set_new_password_if_password_mismatch(self):
         user = create_user()
         data = {
@@ -239,7 +239,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.PASSWORD_MISMATCH_ERROR])
 
-    @override_settings(DJOSER={'PASSWORD_RESET_CONFIRM_RETYPE': True})
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True}))
     def test_post_should_not_set_new_password_if_mismatch(self):
         user = create_user()
         data = {
@@ -328,7 +328,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(DJOSER={'SET_PASSWORD_RETYPE': True})
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'SET_PASSWORD_RETYPE': True}))
     def test_post_should_not_set_new_password_if_mismatch(self):
         user = create_user()
         data = {
@@ -363,7 +363,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertEqual(data['new_username'], user.username)
 
-    @override_settings(DJOSER={'SET_USERNAME_RETYPE': True})
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True}))
     def test_post_should_not_set_new_username_if_mismatch(self):
         user = create_user()
         data = {

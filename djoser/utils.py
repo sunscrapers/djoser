@@ -60,12 +60,10 @@ class SendEmailViewMixin(object):
     def get_email_context(self, user):
         token = self.token_generator.make_token(user)
         uid = encode_uid(user.pk)
-        url = settings.get('ACTIVATION_URL').format(uid=uid, token=token)
         return {
             'user': user,
             'domain': settings.get('DOMAIN'),
             'site_name': settings.get('SITE_NAME'),
-            'url': url,
             'uid': uid,
             'token': token,
             'protocol': 'https' if self.request.is_secure() else 'http',
