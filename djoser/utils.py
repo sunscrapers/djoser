@@ -24,6 +24,18 @@ def decode_uid(pk):
         return base36_to_int(pk)
 
 
+def send_email(to_email, from_email, context, subject_template_name,
+               plain_body_template_name, html_body_template_name=None):
+    subject = loader.render_to_string(subject_template_name, context)
+    subject = ''.join(subject.splitlines())
+    body = loader.render_to_string(plain_body_template_name, context)
+    email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
+    if html_body_template_name is not None:
+        html_email = loader.render_to_string(html_body_template_name, context)
+        email_message.attach_alternative(html_email, 'text/html')
+    email_message.send()
+
+
 class ActionViewMixin(object):
 
     def post(self, request):
@@ -39,16 +51,8 @@ class ActionViewMixin(object):
 
 class SendEmailViewMixin(object):
 
-    def send_email(self, to_email, from_email, context, subject_template_name,
-                   plain_body_template_name, html_body_template_name=None):
-        subject = loader.render_to_string(subject_template_name, context)
-        subject = ''.join(subject.splitlines())
-        body = loader.render_to_string(plain_body_template_name, context)
-        email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
-        if html_body_template_name is not None:
-            html_email = loader.render_to_string(html_body_template_name, context)
-            email_message.attach_alternative(html_email, 'text/html')
-        email_message.send()
+    def send_email(self, to_email, from_email, context):
+        send_email(to_email, from_email, context, **self.get_send_email_extras())
 
     def get_send_email_kwargs(self, user):
         return {
@@ -56,6 +60,9 @@ class SendEmailViewMixin(object):
             'to_email': user.email,
             'context': self.get_email_context(user),
         }
+
+    def get_send_email_extras(self):
+        raise NotImplemented
 
     def get_email_context(self, user):
         token = self.token_generator.make_token(user)
