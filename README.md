@@ -2,10 +2,10 @@
 
 [![Build Status](https://travis-ci.org/sunscrapers/djoser.svg?branch=master)](https://travis-ci.org/sunscrapers/djoser)
 
-REST version of Django authentication system. **djoser** is set of
-[Django Rest Framework](http://www.django-rest-framework.org/) views to handle
-such things as registration, login and password reset. It works with custom
-user model.
+REST version of [Django](https://www.djangoproject.com/) authentication system. 
+**djoser** is set of [Django Rest Framework](http://www.django-rest-framework.org/)
+views to handle such things as registration, login and password reset. It
+works with [custom user model](https://docs.djangoproject.com/en/dev/topics/auth/customizing/).
 
 Instead of reusing Django code (e.g. `PasswordResetForm`), we reimplemented
 few things to fit better into Single Page App architecture.
