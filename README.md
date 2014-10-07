@@ -244,7 +244,7 @@ If `True`, register endpoint will send activation email to user.
 ### ACTIVATION_URL
 
 URL to your frontend activation page. It should contain `{uid}` and `{token}`
-placeholders, e.g. `#/activate/{uid}/{token}`. Default: `''`.
+placeholders, e.g. `#/activate/{uid}/{token}`.
 
 ### LOGIN_AFTER_ACTIVATION
 
