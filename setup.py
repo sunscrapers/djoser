@@ -9,7 +9,7 @@ setup(
     license='MIT',
     author='SUNSCRAPERS',
     description='REST version of Django authentication system.',
-    author_email='admin@sunscrapers.com',
+    author_email='info@sunscrapers.com',
     long_description=open('README.md').read(),
     install_requires=[
       'Django>=1.5',
