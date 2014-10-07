@@ -316,3 +316,15 @@ You could check `djoser` API in source code:
 
 * [`djoser.views`](https://github.com/sunscrapers/djoser/blob/master/djoser/views.py)
 * [`djoser.serializers`](https://github.com/sunscrapers/djoser/blob/master/djoser/serializers.py)
+
+## Similar projects
+
+List of projects related to Django, REST and authentication:
+
+- [django-rest-auth](https://github.com/Tivix/django-rest-auth)
+- [django-rest-framework-digestauth](https://github.com/juanriaza/django-rest-framework-digestauth)
+- [django-oauth-toolkit](https://github.com/evonove/django-oauth-toolkit)
+- [doac](https://github.com/Rediker-Software/doac)
+- [django-rest-framework-jwt](https://github.com/GetBlimp/django-rest-framework-jwt)
+- [django-rest-framework-httpsignature](https://github.com/etoccalino/django-rest-framework-httpsignature)
+- [hawkrest](https://github.com/kumar303/hawkrest)
