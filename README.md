@@ -218,55 +218,55 @@ Use this endpoint to finish reset password process.
  
 ## Settings
 
-#### `LOGIN_AFTER_REGISTRATION`
+**`LOGIN_AFTER_REGISTRATION`**
 
 If `True`, register endpoint will return `auth_token` within response.
 
 Default: `False`
 
-#### `DOMAIN`
+**`DOMAIN`**
 
 Domain of your frontend app. Default: `''`.
 
-#### `SITE_NAME`
+**`SITE_NAME`**
 
 Name of your frontend app. Default: `''`.
 
-#### `PASSWORD_RESET_CONFIRM_URL`
+**`PASSWORD_RESET_CONFIRM_URL`**
 
 URL to your frontend password reset page. It should containt `{uid}` and
 `{token}` placeholders, e.g. `#/password-reset/{uid}/{token}`. Default: `''`.
 
-#### `SEND_ACTIVATION_EMAIL`
+**`SEND_ACTIVATION_EMAIL`**
 
 If `True`, register endpoint will send activation email to user.
  
-#### `ACTIVATION_URL`
+**`ACTIVATION_URL`**
 
 URL to your frontend activation page. It should containt `{uid}` and `{token}`
 placeholders, e.g. `#/activate/{uid}/{token}`. Default: `''`.
 
-#### `LOGIN_AFTER_ACTIVATION`
+**`LOGIN_AFTER_ACTIVATION`**
 
 If `True`, activate endpoint will return `auth_token` within response.
 
 Default: `False`
 
-#### `SET_USERNAME_RETYPE`
+**`SET_USERNAME_RETYPE`**
 
 If `True`, you need to pass `re_new_{{ User.USERNAME_FIELD }}` to
 `/{{ User.USERNAME_FIELD }}` endpoint, to validate username equality.
 
 Default: `False`
 
-#### `SET_PASSWORD_RETYPE`
+**`SET_PASSWORD_RETYPE`**
 
 If `True`, you need to pass `re_new_password` to `/password` endpoint, to
 validate password equality.
 
 Default: `False`
 
-#### `PASSWORD_RESET_CONFIRM_RETYPE`
+**`PASSWORD_RESET_CONFIRM_RETYPE`**
 
 If `True`, you need to pass `re_new_password` to `/password/reset/confirm`
 endpoint, to validate password equality.
