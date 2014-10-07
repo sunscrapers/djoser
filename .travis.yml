@@ -13,6 +13,9 @@ install:
   - pip install -q Django==$DJANGO_VERSION
   - pip install -q djangorestframework==2.4.3
   - pip install -q djet==0.0.10
+  - pip install coveralls
   - python setup.py -q install
 
-script: testproject/manage.py test testapp
+script: coverage run --source=djoser testproject/manage.py test testapp
+after_success:
+  coveralls
