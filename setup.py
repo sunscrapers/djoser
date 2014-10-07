@@ -20,4 +20,14 @@ setup(
     ],
     include_package_data=True,
     zip_safe=False,
+    url='https://github.com/sunscrapers/djoser',
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Framework :: Django',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+    ]
 )
