@@ -13,7 +13,7 @@ setup(
     long_description=open('README.md').read(),
     install_requires=[
       'Django>=1.5',
-      'djangorestframework>=2.4.3',
+      'djangorestframework>=2.4.0',
     ],
     tests_require=[
        'djet>=0.0.10'
