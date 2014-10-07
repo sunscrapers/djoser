@@ -16,6 +16,6 @@ install:
   - pip install coveralls
   - python setup.py -q install
 
-script: coverage run --source=djoser testproject/manage.py test testapp
+script: coverage run --source=. testproject/manage.py test testapp
 after_success:
   coveralls
