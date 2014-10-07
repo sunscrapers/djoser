@@ -83,11 +83,11 @@ class LoginViewTest(restframework.APIViewTestCase,
     view_class = djoser.views.LoginView
 
     def test_post_should_login_user(self):
+        user = create_user()
         data = {
-            'username': 'john',
-            'password': 'secret',
+            'username': user.username,
+            'password': user.raw_password,
         }
-        user = get_user_model().objects.create_user(**data)
         request = self.factory.post(data=data)
 
         response = self.view(request)
@@ -96,11 +96,11 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
 
     def test_post_should_not_login_if_user_is_not_active(self):
+        user = create_user()
         data = {
-            'username': 'john',
-            'password': 'secret',
+            'username': user.username,
+            'password': user.raw_password,
         }
-        user = get_user_model().objects.create_user(**data)
         user.is_active = False
         user.save()
         request = self.factory.post(data=data)
@@ -111,9 +111,10 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.DISABLE_ACCOUNT_ERROR])
 
     def test_post_should_not_login_if_invalid_credentials(self):
+        user = create_user()
         data = {
-            'username': 'john',
-            'password': 'wrong'
+            'username': user.username,
+            'password': 'wrong',
         }
         request = self.factory.post(data=data)
 
