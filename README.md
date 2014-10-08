@@ -1,6 +1,7 @@
 # djoser
 
 [![Build Status](https://travis-ci.org/sunscrapers/djoser.svg?branch=master)](https://travis-ci.org/sunscrapers/djoser)
+[![Coverage Status](https://coveralls.io/repos/sunscrapers/djoser/badge.png?branch=master)](https://coveralls.io/r/sunscrapers/djoser?branch=master)
 
 REST version of [Django](https://www.djangoproject.com/) authentication system. 
 **djoser** is set of [Django Rest Framework](http://www.django-rest-framework.org/)
