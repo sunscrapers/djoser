@@ -110,8 +110,9 @@ Retrieve user.
  
     * data: 
 
-        {{ User.USERNAME_FIELD }}
-        {{ User.REQUIRED_FIELDS }}
+        `{{ User.USERNAME_FIELD }}`
+        
+        `{{ User.REQUIRED_FIELDS }}`
 
 #### `PUT`
 
@@ -123,7 +124,7 @@ Update user.
 
     * data:
  
-        {{ User.REQUIRED_FIELDS }}
+        `{{ User.REQUIRED_FIELDS }}`
 
 * **response**
 
@@ -131,8 +132,9 @@ Update user.
  
     * data: 
 
-        {{ User.USERNAME_FIELD }}
-        {{ User.REQUIRED_FIELDS }}
+        `{{ User.USERNAME_FIELD }}`
+        
+        `{{ User.REQUIRED_FIELDS }}`
 
 ### Register
 
@@ -153,9 +155,11 @@ URL: `/register`
 
     * data:
  
-        {{ User.USERNAME_FIELD }}
-        {{ User.REQUIRED_FIELDS }}
-        password
+        `{{ User.USERNAME_FIELD }}`
+        
+        `{{ User.REQUIRED_FIELDS }}`
+        
+        `password`
 
 * **response**
 
@@ -163,9 +167,11 @@ URL: `/register`
  
     * data: 
 
-        {{ User.USERNAME_FIELD }}
-        {{ User.REQUIRED_FIELDS }}
-        auth_token (if LOGIN_AFTER_ACTIVATION is True)
+        `{{ User.USERNAME_FIELD }}`
+        
+        `{{ User.REQUIRED_FIELDS }}`
+        
+        `auth_token` (if `LOGIN_AFTER_ACTIVATION` is `True`)
 
 ### Login
 
@@ -179,8 +185,9 @@ URL: `/login`
 
     * data:
  
-        {{ User.USERNAME_FIELD }}
-        password
+        `{{ User.USERNAME_FIELD }}`
+        
+        `password`
 
 * **response**
 
@@ -188,7 +195,7 @@ URL: `/login`
  
     * data: 
 
-        auth_token
+        `auth_token`
 
 ### Activate
 
@@ -202,8 +209,9 @@ URL: `/activate`
 
     * data:
  
-        uid
-        token
+        `uid`
+        
+        `token`
 
 * **response**
 
@@ -211,7 +219,7 @@ URL: `/activate`
  
     * data: 
 
-        auth_token (if LOGIN_AFTER_ACTIVATION is True)
+        `auth_token` (if `LOGIN_AFTER_ACTIVATION` is `True`)
         
 ### Set username
 
@@ -225,9 +233,11 @@ URL: `/{{ User.USERNAME_FIELD }}`
 
     * data:
  
-        new_{{ User.USERNAME_FIELD }}
-        re_new_{{ User.USERNAME_FIELD }} (if SET_USERNAME_RETYPE is True)
-        current_password
+        `new_{{ User.USERNAME_FIELD }}`
+        
+        `re_new_{{ User.USERNAME_FIELD }}` (if `SET_USERNAME_RETYPE` is `True`)
+        
+        `current_password`
 
 * **response**
 
@@ -245,9 +255,11 @@ URL: `/password`
 
     * data:
  
-        new_password
-        re_new_password (if SET_PASSWORD_RETYPE is True)
-        current_password
+        `new_password`
+        
+        `re_new_password` (if `SET_PASSWORD_RETYPE` is `True`)
+        
+        `current_password`
 
 * **response**
 
@@ -266,7 +278,7 @@ URL: `/password/reset`
 
     * data:
  
-        email
+        `email`
 
 * **response**
 
@@ -284,10 +296,13 @@ URL: `/password/reset/confirm`
 
     * data:
  
-        uid
-        token
-        new_password
-        re_new_password (if PASSWORD_RESET_CONFIRM_RETYPE is True)
+        `uid`
+        
+        `token`
+        
+        `new_password`
+        
+        `re_new_password` (if `PASSWORD_RESET_CONFIRM_RETYPE` is `True`)
 
 * **response**
 
