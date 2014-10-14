@@ -96,38 +96,45 @@ Check "Settings" section for more info.
     
 ### User
 
-URL: `/me`
-
-Methods: `GET`, `PUT`
-
-`PUT` request data:
-
-* `{{ User.REQUIRED_FIELDS }}`
-
-`PUT` and `GET` response data:
-
-* `{{ User.USERNAME_FIELD }}`
-* `{{ User.REQUIRED_FIELDS }}`
-
 Use this endpoint to retrieve/update user.
 
+#### `GET`
+
+URL: `/me`
+
+Retrieve user.
+
+* **response**
+
+    * status: `HTTP_200_OK` (success)
+ 
+    * data: 
+
+        {{ User.USERNAME_FIELD }}
+        {{ User.REQUIRED_FIELDS }}
+
+#### `PUT`
+
+URL: `/me`
+
+Update user.
+
+* **request**
+
+    * data:
+ 
+        {{ User.REQUIRED_FIELDS }}
+
+* **response**
+
+    * status: `HTTP_200_OK` (success)
+ 
+    * data: 
+
+        {{ User.USERNAME_FIELD }}
+        {{ User.REQUIRED_FIELDS }}
+
 ### Register
-
-URL: `/register`
-
-Methods: `POST`
-
-`POST` request data:
-
-* `{{ User.USERNAME_FIELD }}`
-* `{{ User.REQUIRED_FIELDS }}`
-* `password`
-
-`POST` response data:
-
-* `{{ User.USERNAME_FIELD }}`
-* `{{ User.REQUIRED_FIELDS }}`
-* `auth_token` (if `LOGIN_AFTER_ACTIVATION` is `True`)
 
 Use this endpoint to register new user. Your user model manager should
 implement [create_user](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.UserManager.create_user)
@@ -138,95 +145,153 @@ fields.
 If `LOGIN_AFTER_ACTIVATION` is `True`, you will receive authentication token
 within response.
 
+#### `POST`
+
+URL: `/register`
+
+* **request**
+
+    * data:
+ 
+        {{ User.USERNAME_FIELD }}
+        {{ User.REQUIRED_FIELDS }}
+        password
+
+* **response**
+
+    * status: `HTTP_201_CREATED` (success)
+ 
+    * data: 
+
+        {{ User.USERNAME_FIELD }}
+        {{ User.REQUIRED_FIELDS }}
+        auth_token (if LOGIN_AFTER_ACTIVATION is True)
+
 ### Login
-
-URL: `/login`
-
-Methods: `POST`
-
-`POST` request data:
-
-* `{{ User.USERNAME_FIELD }}`
-* `password`
-
-`POST` response data:
-
-* `auth_token`
 
 Use this endpoint to obtain user [authentication token](http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication).
 
+#### `POST`
+
+URL: `/login`
+
+* **request**
+
+    * data:
+ 
+        {{ User.USERNAME_FIELD }}
+        password
+
+* **response**
+
+    * status: `HTTP_200_OK` (success)
+ 
+    * data: 
+
+        auth_token
+
 ### Activate
-
-URL: `/activate`
-
-Methods: `POST`
-
-`POST` request data:
-
-* `uid`
-* `token`
-
-`POST` response data:
-
-* `auth_token` (if `LOGIN_AFTER_ACTIVATION` is `True`)
 
 Use this endpoint to activate user account.
 
+#### `POST`
+
+URL: `/activate`
+
+* **request**
+
+    * data:
+ 
+        uid
+        token
+
+* **response**
+
+    * status: `HTTP_200_OK` (success)
+ 
+    * data: 
+
+        auth_token (if LOGIN_AFTER_ACTIVATION is True)
+        
 ### Set username
-
-URL: `/{{ User.USERNAME_FIELD }}`
-
-Methods: `POST`
-
-`POST` request data:
-
-* `new_{{ User.USERNAME_FIELD }}`
-* `re_new_{{ User.USERNAME_FIELD }}` (if `SET_USERNAME_RETYPE` is `True`)
-* `current_password`
 
 Use this endpoint to change user username (`USERNAME_FIELD`).
 
+#### `POST`
+
+URL: `/{{ User.USERNAME_FIELD }}`
+
+* **request**
+
+    * data:
+ 
+        new_{{ User.USERNAME_FIELD }}
+        re_new_{{ User.USERNAME_FIELD }} (if SET_USERNAME_RETYPE is True)
+        current_password
+
+* **response**
+
+    * status: `HTTP_200_OK` (success)
+ 
 ### Set password
-
-URL: `/password`
-
-Methods: `POST`
-
-`POST` request data:
-
-* `new_password`
-* `re_new_password` (if `SET_PASSWORD_RETYPE` is `True`)
-* `current_password`
 
 Use this endpoint to change user password.
 
+#### `POST`
+
+URL: `/password`
+
+* **request**
+
+    * data:
+ 
+        new_password
+        re_new_password (if SET_PASSWORD_RETYPE is True)
+        current_password
+
+* **response**
+
+    * status: `HTTP_200_OK` (success)
+
 ### Reset password
-
-URL: `/password/reset`
-
-Methods: `POST`
-
-`POST` request data:
-
-* `email`
 
 Use this endpoint to send email to user with password reset link. You have to 
 setup `DOMAIN`, `SITE_NAME`, `PASSWORD_RESET_CONFIRM_URL`.
 
+#### `POST`
+
+URL: `/password/reset`
+
+* **request**
+
+    * data:
+ 
+        email
+
+* **response**
+
+    * status: `HTTP_200_OK` (success)
+
 ### Reset password confirmation
+
+Use this endpoint to finish reset password process.
+
+#### `POST`
 
 URL: `/password/reset/confirm`
 
-Methods: `POST`
+* **request**
 
-`POST` request data:
+    * data:
+ 
+        uid
+        token
+        new_password
+        re_new_password (if PASSWORD_RESET_CONFIRM_RETYPE is True)
 
-* `uid`
-* `token`
-* `new_password`
-* `re_new_password` (if `PASSWORD_RESET_CONFIRM_RETYPE` is `True`)
+* **response**
 
-Use this endpoint to finish reset password process.
+    * status: `HTTP_200_OK` (success)
  
 ## Settings
 
@@ -234,60 +299,70 @@ Use this endpoint to finish reset password process.
 
 If `True`, register endpoint will return `auth_token` within response.
 
-Default: `False`
+**Default**: `False`
 
 ### DOMAIN
 
 Domain of your frontend app.
 
+**Required**: `True`
+
 ### SITE_NAME
 
 Name of your frontend app.
+
+**Required**: `True`
 
 ### PASSWORD_RESET_CONFIRM_URL
 
 URL to your frontend password reset page. It should contain `{uid}` and
 `{token}` placeholders, e.g. `#/password-reset/{uid}/{token}`.
 
+**Required**: `True`
+
 ### SEND_ACTIVATION_EMAIL
 
 If `True`, register endpoint will send activation email to user.
+ 
+**Default**: `False`
  
 ### ACTIVATION_URL
 
 URL to your frontend activation page. It should contain `{uid}` and `{token}`
 placeholders, e.g. `#/activate/{uid}/{token}`.
 
+**Required**: `True`
+
 ### LOGIN_AFTER_ACTIVATION
 
 If `True`, activate endpoint will return `auth_token` within response.
 
-Default: `False`
+**Default**: `False`
 
 ### SET_USERNAME_RETYPE
 
 If `True`, you need to pass `re_new_{{ User.USERNAME_FIELD }}` to
 `/{{ User.USERNAME_FIELD }}` endpoint, to validate username equality.
 
-Default: `False`
+**Default**: `False`
 
 ### SET_PASSWORD_RETYPE
 
 If `True`, you need to pass `re_new_password` to `/password` endpoint, to
 validate password equality.
 
-Default: `False`
+**Default**: `False`
 
 ### PASSWORD_RESET_CONFIRM_RETYPE
 
 If `True`, you need to pass `re_new_password` to `/password/reset/confirm`
-endpoint, to validate password equality.
+endpoint in order to validate password equality.
 
-Default: `False`
+**Default**: `False`
 
 ## Emails
 
-There are few email templates which you could override:
+There are few email templates which you may want to override:
  
 * `activation_email_body.txt`
 * `activation_email_subject.txt`
