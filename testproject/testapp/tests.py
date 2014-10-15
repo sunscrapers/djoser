@@ -124,6 +124,28 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
 
 
+class LogoutViewTest(restframework.APIViewTestCase,
+                     assertions.StatusCodeAssertionsMixin):
+    view_class = djoser.views.LogoutView
+
+    def test_post_should_logout_logged_in_user(self):
+        user = create_user()
+
+        request = self.factory.post(user=user)
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assertEqual(response.data, None)
+
+    def test_post_should_deny_logging_out_when_user_not_logged_in(self):
+        user = create_user()
+
+        request = self.factory.post()
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_401_UNAUTHORIZED)
+
+
 class PasswordResetViewTest(restframework.APIViewTestCase,
                             assertions.StatusCodeAssertionsMixin,
                             assertions.EmailAssertionsMixin):

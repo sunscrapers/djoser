@@ -12,7 +12,12 @@ Instead of reusing Django code (e.g. `PasswordResetForm`), we reimplemented
 few things to fit better into [Single Page App](http://en.wikipedia.org/wiki/Single-page_application)
 architecture.
 
-We use **token based authentication**. The concept is simple - first of all, users obtain a token by providing their credentials (e.g. username, password) during logging in. Once the token is obtained users can offer it in order to retrieve a specific resource. In other words, users have been granted access to a specific resource for a fixed time period. Django REST framework supports [token based authentication](http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication) but you might be interested in other authentication mechanisms like OAuth or session-based authentication.
+We use **token based authentication**. The concept is simple - first of all, users obtain a token by 
+providing their credentials (e.g. username, password) during logging in. Once the token is obtained 
+users can offer it in order to retrieve a specific resource. In other words, users have been 
+granted access to a specific resource for a fixed time period. Django REST framework 
+supports [token based authentication](http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication) 
+but you might be interested in other authentication mechanisms like OAuth or session-based authentication.
 
 Developed by [SUNSCRAPERS](http://sunscrapers.com/) with passion & patience.
 
@@ -21,6 +26,7 @@ Available endpoints:
  * `/me`
  * `/register`
  * `/login`
+ * `/logout`
  * `/activate`
  * `/{{ User.USERNAME_FIELD }}`
  * `/password`
@@ -198,6 +204,18 @@ URL: `/login`
     * data: 
 
         `auth_token`
+
+### Logout
+
+Use this endpoint to logout user (remove user authentication token).
+
+#### `POST`
+
+URL: `/logout`
+
+* **response**
+
+    * status: `HTTP_200_OK` (success)
 
 ### Activate
 

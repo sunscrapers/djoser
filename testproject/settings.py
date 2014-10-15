@@ -1,10 +1,13 @@
 import os
 
+DEBUG = True
+
 BASE_DIR = os.path.dirname(__file__)
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -22,6 +25,14 @@ INSTALLED_APPS = (
 
     'testapp',
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),

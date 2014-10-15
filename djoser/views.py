@@ -51,6 +51,17 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
         )
 
 
+class LogoutView(generics.GenericAPIView):
+    permission_classes = (
+        permissions.IsAuthenticated,
+    )
+
+    def post(self, request):
+        Token.objects.filter(user=request.user).delete()
+
+        return response.Response(status=status.HTTP_200_OK)
+
+
 class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generics.GenericAPIView):
     serializer_class = serializers.PasswordResetSerializer
     permission_classes = (

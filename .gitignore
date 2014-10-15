@@ -2,3 +2,4 @@
 *.egg-info/
 .idea/
 dist/
+testproject/db.sqlite3
