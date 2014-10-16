@@ -8,6 +8,7 @@ try:
 except (IOError, ImportError):
     description = open('README.md').read()
 
+REQUIREMENTS = [i.strip() for i in open('requirements.txt').readlines()]
 
 setup(
     name='djoser',
@@ -18,15 +19,8 @@ setup(
     description='REST version of Django authentication system.',
     author_email='info@sunscrapers.com',
     long_description=description,
-    install_requires=[
-      'Django>=1.5',
-      'djangorestframework>=2.4.0',
-    ],
-    tests_require=[
-       'djet>=0.0.10'
-    ],
+    install_requires=REQUIREMENTS,
     include_package_data=True,
-    zip_safe=False,
     url='https://github.com/sunscrapers/djoser',
     classifiers=[
         'Development Status :: 3 - Alpha',

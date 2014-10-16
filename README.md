@@ -420,6 +420,14 @@ We provide a standalone test app for you to start easily, see how everything wor
 
 In this extremely short tutorial we are going to mimic the simplest flow: register user, log in and log out. We will also check resource access on each consecutive step. Let's go!
 
+* Clone repository and install **djoser** to your virtualenv:
+
+    `$ git clone git@github.com:sunscrapers/djoser.git`
+    
+    `$ cd djoser`
+    
+    `$ pip install -e .`
+
 * Go to the `testproject` directory, migrate the database and start the development server:
   
     `$ cd testproject`
@@ -504,6 +512,23 @@ You could check `djoser` API in source code:
 
 * [djoser.views](https://github.com/sunscrapers/djoser/blob/master/djoser/views.py)
 * [djoser.serializers](https://github.com/sunscrapers/djoser/blob/master/djoser/serializers.py)
+
+
+## Development
+
+To start developing on **djoser**, clone the repository:
+
+`$ git clone git@github.com:sunscrapers/djoser.git`
+
+In order to run the tests create virtualenv, go to repo directory and then:
+
+`$ pip install -r requirements-test.txt`
+
+`$ cd testproject`
+
+`$ ./manage.py migrate`
+
+`$ ./manage.py test`
 
 ## Similar projects
 
