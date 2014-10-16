@@ -3,10 +3,10 @@
 [![Build Status](https://travis-ci.org/sunscrapers/djoser.svg?branch=master)](https://travis-ci.org/sunscrapers/djoser)
 [![Coverage Status](https://coveralls.io/repos/sunscrapers/djoser/badge.png?branch=master)](https://coveralls.io/r/sunscrapers/djoser?branch=master)
 
-REST version of [Django](https://www.djangoproject.com/) authentication system. 
-**djoser** is set of [Django Rest Framework](http://www.django-rest-framework.org/)
-views to handle such things as registration, login and password reset. It
-works with [custom user model](https://docs.djangoproject.com/en/dev/topics/auth/customizing/).
+REST implementation of [Django](https://www.djangoproject.com/) authentication
+system. **Djoser** library provides a set of [Django Rest Framework](http://www.django-rest-framework.org/)
+views to handle basic actions such as registration, login, logout, password
+reset and account activation. It works with [custom user model](https://docs.djangoproject.com/en/dev/topics/auth/customizing/).
 
 Instead of reusing Django code (e.g. `PasswordResetForm`), we reimplemented
 few things to fit better into [Single Page App](http://en.wikipedia.org/wiki/Single-page_application)
