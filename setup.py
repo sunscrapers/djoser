@@ -12,7 +12,7 @@ REQUIREMENTS = [i.strip() for i in open('requirements.txt').readlines()]
 
 setup(
     name='djoser',
-    version='0.0.3',
+    version='0.1.0',
     packages=['djoser'],
     license='MIT',
     author='SUNSCRAPERS',
