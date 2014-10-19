@@ -2,20 +2,24 @@ language: python
 
 python:
   - "2.7"
+  - "3.3"
   - "3.4"
+  - "pypy"
 
 env:
-  - DJANGO_VERSION=1.5.10
-  - DJANGO_VERSION=1.6.7
-  - DJANGO_VERSION=1.7
+  - DJANGO_VERSION='DJANGO>=1.5.0,<1.6.0'
+  - DJANGO_VERSION='DJANGO>=1.6.0,<1.7.0'
+  - DJANGO_VERSION='DJANGO>=1.7.0,<1.8.0'
 
 install:
-  - pip install -q Django==$DJANGO_VERSION
-  - pip install -q djangorestframework==2.4.3
-  - pip install -q djet==0.0.10
-  - pip install coveralls
+  - travis_retry pip install -q $DJANGO_VERSION
+  - travis_retry pip install -q djangorestframework==2.4.3
+  - travis_retry pip install -q djet==0.0.10
+  - travis_retry pip install coveralls
   - python setup.py -q develop
 
 script: coverage run --source=djoser testproject/manage.py test testapp
 after_success:
   coveralls
+matrix:
+  fast_finish: true
