@@ -36,7 +36,9 @@ Available endpoints:
 Supported Python versions:
 
  * Python 2.7
+ * Python 3.3
  * Python 3.4
+ * PyPy 2
  
 Supported Django versions:
 
