@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, status, response
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.contrib.auth.tokens import default_token_generator
 from . import serializers, settings, utils
 
@@ -51,7 +52,7 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
         )
 
 
-class LogoutView(generics.GenericAPIView):
+class LogoutView(APIView):
     permission_classes = (
         permissions.IsAuthenticated,
     )
