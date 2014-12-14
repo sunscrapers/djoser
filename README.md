@@ -97,6 +97,10 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
 }
 ```
+Mandatory to execute this for creating `authtoken_token`  table.
+```python 
+./manage.py migrate
+```
 
 Check "Settings" section for more info.
     
