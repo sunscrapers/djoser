@@ -25,6 +25,10 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
         if settings.get('SEND_ACTIVATION_EMAIL'):
             self.send_email(**self.get_send_email_kwargs(obj))
 
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        self.post_save(obj=instance, created=True)
+
     def get_send_email_extras(self):
         return {
             'subject_template_name': 'activation_email_subject.txt',

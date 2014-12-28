@@ -6,6 +6,16 @@ from . import constants, utils
 User = get_user_model()
 
 
+def create_username_field():
+    username_field = User._meta.get_field(User.USERNAME_FIELD)
+    if hasattr(serializers.ModelSerializer, 'field_mapping'):
+        mapping_dict = serializers.ModelSerializer.field_mapping
+    else:
+        mapping_dict = serializers.ModelSerializer._field_mapping.mapping
+    field_class = mapping_dict[username_field.__class__]
+    return field_class()
+
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -31,20 +41,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
     def save(self, **kwargs):
-        self.object = User.objects.create_user(**dict(self.init_data.items()))
+        data = self.init_data if hasattr(self, 'init_data') else self.initial_data
+        self.object = User.objects.create_user(**dict(data.items()))
         return self.object
 
 
 class UserRegistrationWithAuthTokenSerializer(UserRegistrationSerializer):
+    auth_token = serializers.SerializerMethodField(method_name='get_user_auth_token')
 
     class Meta(UserRegistrationSerializer.Meta):
         model = User
         fields = UserRegistrationSerializer.Meta.fields + (
             'auth_token',
         )
-        read_only_fields = (
-            'auth_token',
-        )
+
+    def get_user_auth_token(self, _):
+        return self.object.auth_token.key
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
@@ -52,12 +64,15 @@ class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            User.USERNAME_FIELD,
             'password',
         )
         write_only_fields = (
             'password',
         )
+
+    def __init__(self, *args, **kwargs):
+        super(UserLoginSerializer, self).__init__(*args, **kwargs)
+        self.fields[User.USERNAME_FIELD] = create_username_field()
 
     def validate(self, attrs):
         self.object = authenticate(username=attrs[User.USERNAME_FIELD], password=attrs['password'])
@@ -77,14 +92,14 @@ class UidAndTokenSerializer(serializers.Serializer):
     uid = serializers.CharField()
     token = serializers.CharField()
 
-    def validate_uid(self, attrs, source):
-        value = attrs[source]
+    def validate_uid(self, attrs_or_value, source=None):
+        value = attrs_or_value[source] if source else attrs_or_value
         try:
             uid = utils.decode_uid(value)
             self.user = User.objects.get(pk=uid)
         except (User.DoesNotExist, ValueError, TypeError, ValueError, OverflowError) as error:
             raise serializers.ValidationError(error)
-        return attrs
+        return attrs_or_value
 
     def validate(self, attrs):
         attrs = super(UidAndTokenSerializer, self).validate(attrs)
@@ -110,11 +125,11 @@ class PasswordRetypeSerializer(PasswordSerializer):
 class CurrentPasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField()
 
-    def validate_current_password(self, attrs, source):
-        value = attrs[source]
+    def validate_current_password(self, attrs_or_value, source=None):
+        value = attrs_or_value[source] if source else attrs_or_value
         if not self.context['request'].user.check_password(value):
             raise serializers.ValidationError(constants.INVALID_PASSWORD_ERROR)
-        return attrs
+        return attrs_or_value
 
 
 class SetPasswordSerializer(PasswordSerializer, CurrentPasswordSerializer):
@@ -137,19 +152,14 @@ class SetUsernameSerializer(CurrentPasswordSerializer):
 
     def __init__(self, *args, **kwargs):
         super(SetUsernameSerializer, self).__init__(*args, **kwargs)
-        self.fields['new_' + User.USERNAME_FIELD] = self._get_username_serializer_field()
-
-    def _get_username_serializer_field(self):
-        username_field = User._meta.get_field(User.USERNAME_FIELD)
-        field_class = serializers.ModelSerializer.field_mapping[username_field.__class__]
-        return field_class()
+        self.fields['new_' + User.USERNAME_FIELD] = create_username_field()
 
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer):
 
     def __init__(self, *args, **kwargs):
         super(SetUsernameRetypeSerializer, self).__init__(*args, **kwargs)
-        self.fields['re_new_' + User.USERNAME_FIELD] = self._get_username_serializer_field()
+        self.fields['re_new_' + User.USERNAME_FIELD] = create_username_field()
 
     def validate(self, attrs):
         attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
@@ -159,7 +169,7 @@ class SetUsernameRetypeSerializer(SetUsernameSerializer):
 
 
 class TokenSerializer(serializers.ModelSerializer):
-    auth_token = serializers.Field(source='key')
+    auth_token = serializers.CharField(source='key')
 
     class Meta:
         model = Token
