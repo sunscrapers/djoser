@@ -18,6 +18,7 @@ MIDDLEWARE_CLASSES = ()
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.staticfiles',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -25,6 +26,8 @@ INSTALLED_APPS = (
 
     'testapp',
 )
+
+STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
