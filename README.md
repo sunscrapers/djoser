@@ -44,6 +44,11 @@ Supported Django versions:
  * Django 1.6
  * Django 1.7
 
+Supported Django Rest Framework versions:
+
+ * Django Rest Framework 2.4
+ * Django Rest Framework 3.0
+ 
 ## Installation
 
 Use `pip`:
