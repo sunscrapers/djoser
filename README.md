@@ -90,7 +90,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-Run migrations - this step will create tables for `auth` and `authtoken` apps:
+Run migrations (if you are using Django 1.7+ or South) - this step will create tables for `auth` and `authtoken` apps:
 
     $ ./manage.py migrate
 
