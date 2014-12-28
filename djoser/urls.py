@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 urlpatterns = patterns('',
+    url(r'^$', views.RootView.as_view(), name='root'),
     url(r'^me$', views.UserView.as_view(), name='user'),
     url(r'^register$', views.RegistrationView.as_view(), name='register'),
     url(r'^login$', views.LoginView.as_view(), name='login'),

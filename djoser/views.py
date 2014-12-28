@@ -2,10 +2,32 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, status, response
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from django.contrib.auth.tokens import default_token_generator
 from . import serializers, settings, utils
 
 User = get_user_model()
+
+
+class RootView(generics.GenericAPIView):
+    """
+    Root endpoint - use one of sub endpoints.
+    """
+
+    def get(self, request, format=None):
+        urls_mapping = {
+            'me': 'user',
+            'register': 'register',
+            'login': 'login',
+            'logout': 'logout',
+            'activate': 'activate',
+            'change-' + User.USERNAME_FIELD: 'set_username',
+            'change-password': 'set_password',
+            'password-reset': 'password_reset',
+            'password-reset-confirm': 'password_reset_confirm',
+        }
+        return Response({key: reverse(url_name, request=request, format=format)
+                         for key, url_name in urls_mapping.items()})
 
 
 class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
