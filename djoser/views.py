@@ -9,6 +9,9 @@ User = get_user_model()
 
 
 class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
+    """
+    Use this endpoint to register new user.
+    """
     permission_classes = (
         permissions.AllowAny,
     )
@@ -42,6 +45,9 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
 
 
 class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
+    """
+    Use this endpoint to obtain user authentication token.
+    """
     serializer_class = serializers.UserLoginSerializer
     permission_classes = (
         permissions.AllowAny,
@@ -56,6 +62,9 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class LogoutView(generics.GenericAPIView):
+    """
+    Use this endpoint to logout user (remove user authentication token).
+    """
     permission_classes = (
         permissions.IsAuthenticated,
     )
@@ -67,6 +76,9 @@ class LogoutView(generics.GenericAPIView):
 
 
 class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generics.GenericAPIView):
+    """
+    Use this endpoint to send email to user with password reset link.
+    """
     serializer_class = serializers.PasswordResetSerializer
     permission_classes = (
         permissions.AllowAny,
@@ -98,6 +110,9 @@ class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generic
 
 
 class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
+    """
+    Use this endpoint to change user password.
+    """
     permission_classes = (
         permissions.IsAuthenticated,
     )
@@ -114,6 +129,9 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
+    """
+    Use this endpoint to finish reset password process.
+    """
     permission_classes = (
         permissions.AllowAny,
     )
@@ -131,6 +149,9 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
+    """
+    Use this endpoint to activate user account.
+    """
     serializer_class = serializers.UidAndTokenSerializer
     permission_classes = (
         permissions.AllowAny,
@@ -149,6 +170,9 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
+    """
+    Use this endpoint to change user username.
+    """
     serializer_class = serializers.SetUsernameSerializer
     permission_classes = (
         permissions.IsAuthenticated,
@@ -166,6 +190,9 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class UserView(generics.RetrieveUpdateAPIView):
+    """
+    Use this endpoint to retrieve/update user.
+    """
     model = User
     serializer_class = serializers.UserSerializer
     permission_classes = (
