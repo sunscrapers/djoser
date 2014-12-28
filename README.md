@@ -90,6 +90,10 @@ REST_FRAMEWORK = {
 }
 ```
 
+Run migrations - this step will create tables for `auth` and `authtoken` apps:
+
+    $ ./manage.py migrate
+
 Optionally add `DJOSER` settings:
 
 ```python
