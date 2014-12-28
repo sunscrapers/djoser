@@ -14,7 +14,7 @@ env:
 
 install:
   - pip install -q Django==$DJANGO_VERSION
-  - pip install -q djangorestframework==2.4.3
+  - pip install -q djangorestframework==$DRF_VERSION
   - pip install -q djet==0.0.10
   - pip install coveralls
   - python setup.py -q develop
