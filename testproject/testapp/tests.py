@@ -32,6 +32,7 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         data = {
             'username': 'john',
             'password': 'secret',
+            'csrftoken': 'asdf',
         }
         request = self.factory.post(data=data)
 

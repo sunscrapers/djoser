@@ -1,5 +1,7 @@
+from distutils import version
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
+import rest_framework
 from rest_framework.authtoken.models import Token
 from . import constants, utils
 
@@ -28,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class UserRegistrationSerializer(serializers.ModelSerializer):
+class AbstractUserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
@@ -40,10 +42,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             'password',
         )
 
-    def save(self, **kwargs):
-        data = self.init_data if hasattr(self, 'init_data') else self.initial_data
-        self.object = User.objects.create_user(**dict(data.items()))
-        return self.object
+if version.StrictVersion(rest_framework.VERSION) >= version.StrictVersion('3.0.0'):
+
+    class UserRegistrationSerializer(AbstractUserRegistrationSerializer):
+
+        def create(self, validated_data):
+            return User.objects.create_user(**validated_data)
+
+else:
+
+    class UserRegistrationSerializer(AbstractUserRegistrationSerializer):
+
+        def restore_object(self, attrs, instance=None):
+            return User.objects.create_user(**attrs)
+
+        def save_object(self, obj, **kwargs):
+            return obj
 
 
 class UserRegistrationWithAuthTokenSerializer(UserRegistrationSerializer):
@@ -55,8 +69,8 @@ class UserRegistrationWithAuthTokenSerializer(UserRegistrationSerializer):
             'auth_token',
         )
 
-    def get_user_auth_token(self, _):
-        return self.object.auth_token.key
+    def get_user_auth_token(self, obj):
+        return obj.auth_token.key
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
