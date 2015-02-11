@@ -129,6 +129,8 @@ Retrieve user.
 
         `{{ User.USERNAME_FIELD }}`
         
+        `{{ User._meta.pk.name }}`
+        
         `{{ User.REQUIRED_FIELDS }}`
 
 #### `PUT`
@@ -150,6 +152,8 @@ Update user.
     * data: 
 
         `{{ User.USERNAME_FIELD }}`
+        
+        `{{ User._meta.pk.name }}`
         
         `{{ User.REQUIRED_FIELDS }}`
 
@@ -185,6 +189,8 @@ URL: `/register`
     * data: 
 
         `{{ User.USERNAME_FIELD }}`
+        
+        `{{ User._meta.pk.name }}`
         
         `{{ User.REQUIRED_FIELDS }}`
         

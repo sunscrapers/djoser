@@ -415,7 +415,7 @@ class UserViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_200_OK)
         self.assertEqual(set(response.data.keys()), set(
-            [get_user_model().USERNAME_FIELD] + get_user_model().REQUIRED_FIELDS
+            [get_user_model().USERNAME_FIELD, get_user_model()._meta.pk.name] + get_user_model().REQUIRED_FIELDS
         ))
 
     def test_put_should_update_user(self):
