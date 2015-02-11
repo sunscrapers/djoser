@@ -54,7 +54,10 @@ else:
     class UserRegistrationSerializer(AbstractUserRegistrationSerializer):
 
         def restore_object(self, attrs, instance=None):
-            return User.objects.create_user(**attrs)
+            try:
+                return User.objects.get(**{User.USERNAME_FIELD: attrs[User.USERNAME_FIELD]})
+            except User.DoesNotExist:
+                return User.objects.create_user(**attrs)
 
         def save_object(self, obj, **kwargs):
             return obj
