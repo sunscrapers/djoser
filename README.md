@@ -14,8 +14,7 @@ architecture.
 
 We use **token based authentication**. The concept is simple - first of all, users obtain a token by 
 providing their credentials (e.g. username, password) during logging in. Once the token is obtained 
-users can offer it in order to retrieve a specific resource. In other words, users have been 
-granted access to a specific resource for a fixed time period. Django REST framework 
+users can offer it in order to retrieve a specific resource. Django REST framework 
 supports [token based authentication](http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication) 
 but you might be interested in other authentication mechanisms like OAuth or session-based authentication.
 
