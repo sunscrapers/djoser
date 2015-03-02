@@ -26,8 +26,12 @@ class RootView(generics.GenericAPIView):
             'password-reset': 'password_reset',
             'password-reset-confirm': 'password_reset_confirm',
         }
-        return Response({key: reverse(url_name, request=request, format=format)
-                         for key, url_name in urls_mapping.items()})
+
+        # Do this in a way that works on Python 2.6.
+        return Response(
+            dict([(key, reverse(url_name, request=request, format=format))
+                  for key, url_name in urls_mapping.items()])
+        )
 
 
 class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
