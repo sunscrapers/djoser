@@ -1,6 +1,7 @@
 language: python
 
 python:
+  - "2.6"
   - "2.7"
   - "3.4"
 
@@ -11,6 +12,14 @@ env:
   - DJANGO_VERSION=1.5.10 DRF_VERSION=3.0.2
   - DJANGO_VERSION=1.6.7 DRF_VERSION=3.0.2
   - DJANGO_VERSION=1.7.1 DRF_VERSION=3.0.2
+
+matrix:
+  exclude:
+    # Django 1.7 dropped support for Python 2.6.
+    - python: "2.6"
+      env: DJANGO_VERSION=1.7.1 DRF_VERSION=2.4.4
+    - python: "2.6"
+      env: DJANGO_VERSION=1.7.1 DRF_VERSION=3.0.2
 
 install:
   - pip install -q Django==$DJANGO_VERSION
