@@ -27,8 +27,6 @@ class RootView(generics.GenericAPIView):
             'password-reset-confirm': 'password_reset_confirm',
         }
 
-        # Python 2.6 doesn't have dict compehensions, so we can't use one
-        # here.
         return Response(
             dict([(key, reverse(url_name, request=request, format=format))
                   for key, url_name in urls_mapping.items()])
