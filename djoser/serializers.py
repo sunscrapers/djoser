@@ -12,8 +12,15 @@ def create_username_field():
     username_field = User._meta.get_field(User.USERNAME_FIELD)
     if hasattr(serializers.ModelSerializer, 'field_mapping'):
         mapping_dict = serializers.ModelSerializer.field_mapping
-    else:
+    elif hasattr(serializers.ModelSerializer, '_field_mapping'):
         mapping_dict = serializers.ModelSerializer._field_mapping.mapping
+    elif hasattr(serializers.ModelSerializer, 'serializer_field_mapping'):
+        mapping_dict = serializers.ModelSerializer.serializer_field_mapping
+    else:
+        raise AttributeError(
+            'serializers.ModelSerializer doesn\'t have any of these attributes: '
+            'field_mapping, _field_mapping, serializer_field_mapping '
+        )
     field_class = mapping_dict[username_field.__class__]
     return field_class()
 
