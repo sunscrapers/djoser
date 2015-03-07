@@ -47,7 +47,7 @@ Supported Django versions:
 Supported Django Rest Framework versions:
 
  * Django Rest Framework 2.4
- * Django Rest Framework 3.0
+ * Django Rest Framework 3.x
  
 ## Installation
 

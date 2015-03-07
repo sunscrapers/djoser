@@ -10,11 +10,11 @@ User = get_user_model()
 
 def create_username_field():
     username_field = User._meta.get_field(User.USERNAME_FIELD)
-    if hasattr(serializers.ModelSerializer, 'field_mapping'):
+    if hasattr(serializers.ModelSerializer, 'field_mapping'):  # DRF 2.x
         mapping_dict = serializers.ModelSerializer.field_mapping
-    elif hasattr(serializers.ModelSerializer, '_field_mapping'):
+    elif hasattr(serializers.ModelSerializer, '_field_mapping'):  # DRF 3.0
         mapping_dict = serializers.ModelSerializer._field_mapping.mapping
-    elif hasattr(serializers.ModelSerializer, 'serializer_field_mapping'):
+    elif hasattr(serializers.ModelSerializer, 'serializer_field_mapping'):  # DRF 3.1
         mapping_dict = serializers.ModelSerializer.serializer_field_mapping
     else:
         raise AttributeError(
