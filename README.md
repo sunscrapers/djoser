@@ -22,15 +22,15 @@ Developed by [SUNSCRAPERS](http://sunscrapers.com/) with passion & patience.
 
 Available endpoints:
 
- * `/me`
- * `/register`
- * `/login`
- * `/logout`
- * `/activate`
- * `/{{ User.USERNAME_FIELD }}`
- * `/password`
- * `/password/reset`
- * `/password/reset/confirm`
+ * `/me/`
+ * `/register/`
+ * `/login/`
+ * `/logout/`
+ * `/activate/`
+ * `/{{ User.USERNAME_FIELD }}/`
+ * `/password/`
+ * `/password/reset/`
+ * `/password/reset/confirm/`
  
 Supported Python versions:
 
@@ -117,7 +117,7 @@ Use this endpoint to retrieve/update user.
 
 #### `GET`
 
-URL: `/me`
+URL: `/me/`
 
 Retrieve user.
 
@@ -135,7 +135,7 @@ Retrieve user.
 
 #### `PUT`
 
-URL: `/me`
+URL: `/me/`
 
 Update user.
 
@@ -170,7 +170,7 @@ within response.
 
 #### `POST`
 
-URL: `/register`
+URL: `/register/`
 
 * **request**
 
@@ -202,7 +202,7 @@ Use this endpoint to obtain user [authentication token](http://www.django-rest-f
 
 #### `POST`
 
-URL: `/login`
+URL: `/login/`
 
 * **request**
 
@@ -226,7 +226,7 @@ Use this endpoint to logout user (remove user authentication token).
 
 #### `POST`
 
-URL: `/logout`
+URL: `/logout/`
 
 * **response**
 
@@ -238,7 +238,7 @@ Use this endpoint to activate user account.
 
 #### `POST`
 
-URL: `/activate`
+URL: `/activate/`
 
 * **request**
 
@@ -262,7 +262,7 @@ Use this endpoint to change user username (`USERNAME_FIELD`).
 
 #### `POST`
 
-URL: `/{{ User.USERNAME_FIELD }}`
+URL: `/{{ User.USERNAME_FIELD }}/`
 
 * **request**
 
@@ -284,7 +284,7 @@ Use this endpoint to change user password.
 
 #### `POST`
 
-URL: `/password`
+URL: `/password/`
 
 * **request**
 
@@ -307,7 +307,7 @@ setup `DOMAIN`, `SITE_NAME`, `PASSWORD_RESET_CONFIRM_URL`.
 
 #### `POST`
 
-URL: `/password/reset`
+URL: `/password/reset/`
 
 * **request**
 
@@ -325,7 +325,7 @@ Use this endpoint to finish reset password process.
 
 #### `POST`
 
-URL: `/password/reset/confirm`
+URL: `/password/reset/confirm/`
 
 * **request**
 
@@ -392,20 +392,20 @@ If `True`, activate endpoint will return `auth_token` within response.
 ### SET_USERNAME_RETYPE
 
 If `True`, you need to pass `re_new_{{ User.USERNAME_FIELD }}` to
-`/{{ User.USERNAME_FIELD }}` endpoint, to validate username equality.
+`/{{ User.USERNAME_FIELD }}/` endpoint, to validate username equality.
 
 **Default**: `False`
 
 ### SET_PASSWORD_RETYPE
 
-If `True`, you need to pass `re_new_password` to `/password` endpoint, to
+If `True`, you need to pass `re_new_password` to `/password/` endpoint, to
 validate password equality.
 
 **Default**: `False`
 
 ### PASSWORD_RESET_CONFIRM_RETYPE
 
-If `True`, you need to pass `re_new_password` to `/password/reset/confirm`
+If `True`, you need to pass `re_new_password` to `/password/reset/confirm/`
 endpoint in order to validate password equality.
 
 **Default**: `False`
@@ -453,7 +453,7 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
     
 * Register a new user:
     
-    `$ curl -X POST http://127.0.0.1:8088/auth/register --data 'username=djoser&password=djoser'`
+    `$ curl -X POST http://127.0.0.1:8088/auth/register/ --data 'username=djoser&password=djoser'`
 
     `{"email": "", "username": "djoser"}`
     
@@ -461,7 +461,7 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
     
 * Let's access user's details:
 
-    `$ curl -X GET http://127.0.0.1:8088/auth/me`
+    `$ curl -X GET http://127.0.0.1:8088/auth/me/`
 
     `{"detail": "Authentication credentials were not provided."}`
     
@@ -469,7 +469,7 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
     
 * Let's log in:
 
-    `curl -X POST http://127.0.0.1:8088/auth/login --data 'username=djoser&password=djoser'`
+    `curl -X POST http://127.0.0.1:8088/auth/login/ --data 'username=djoser&password=djoser'`
     
     `{"auth_token": "b704c9fc3655635646356ac2950269f352ea1139"}`
     
@@ -477,13 +477,13 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
     
 * Let's access user's details again:
 
-    `$ curl -X GET http://127.0.0.1:8088/auth/me`
+    `$ curl -X GET http://127.0.0.1:8088/auth/me/`
 
     `{"detail": "Authentication credentials were not provided."}`
     
     Access is still forbidden but let's offer the token we obtained:
     
-    `$ curl -X GET http://127.0.0.1:8088/auth/me -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
+    `$ curl -X GET http://127.0.0.1:8088/auth/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
     
     `{"email": "", "username": "djoser"}`
     
@@ -491,11 +491,11 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
     
 * Now let's log out:
 
-    `curl -X POST http://127.0.0.1:8088/auth/logout -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
+    `curl -X POST http://127.0.0.1:8088/auth/logout/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
     
     And try access user profile again:
     
-    `$ curl -X GET http://127.0.0.1:8088/auth/me -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
+    `$ curl -X GET http://127.0.0.1:8088/auth/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
     
     `{"detail": "Invalid token"}`
     
@@ -510,7 +510,7 @@ Define custom urls instead of reusing `djoser.urls`:
 ```python
 urlpatterns = patterns('',
     (...),
-    url(r'^register$', views.CustomRegistrationView.as_view()),
+    url(r'^register/$', views.CustomRegistrationView.as_view()),
 )
 ```
 
