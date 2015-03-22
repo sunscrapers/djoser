@@ -43,6 +43,7 @@ Supported Django versions:
  * Django 1.5
  * Django 1.6
  * Django 1.7
+ * Django 1.8
 
 Supported Django Rest Framework versions:
 
