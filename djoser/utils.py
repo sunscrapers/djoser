@@ -104,6 +104,6 @@ def get_login_serializer():
 def get_or_create_token(user, serializer_data=None):
     Token = get_token_model()
     serializer_data = serializer_data or {}
-    token_data = {k: v for k, v in serializer_data.items() if k in getattr(Token, 'LOGIN_FIELDS', [])}
+    token_data = dict((k, v) for k, v in serializer_data.items() if k in getattr(Token, 'LOGIN_FIELDS', []))
     token, _ = Token.objects.get_or_create(user=user, **token_data)
     return token
