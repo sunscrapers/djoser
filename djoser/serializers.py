@@ -71,19 +71,6 @@ else:
             return obj
 
 
-class UserRegistrationWithAuthTokenSerializer(UserRegistrationSerializer):
-    auth_token = serializers.SerializerMethodField(method_name='get_user_auth_token')
-
-    class Meta(UserRegistrationSerializer.Meta):
-        model = User
-        fields = UserRegistrationSerializer.Meta.fields + (
-            'auth_token',
-        )
-
-    def get_user_auth_token(self, obj):
-        return obj.auth_token.key
-
-
 class UserLoginSerializer(serializers.ModelSerializer):
 
     class Meta:

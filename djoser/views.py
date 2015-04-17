@@ -40,15 +40,9 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
         permissions.AllowAny,
     )
     token_generator = default_token_generator
-
-    def get_serializer_class(self):
-        if settings.get('LOGIN_AFTER_REGISTRATION'):
-            return serializers.UserRegistrationWithAuthTokenSerializer
-        return serializers.UserRegistrationSerializer
+    serializer_class = serializers.UserRegistrationSerializer
 
     def post_save(self, obj, created=False):
-        if settings.get('LOGIN_AFTER_REGISTRATION'):
-            utils.get_or_create_token(user=obj) # FIXME: it doesn't work with djoser.token
         if settings.get('SEND_ACTIVATION_EMAIL'):
             self.send_email(**self.get_send_email_kwargs(obj))
 
@@ -187,12 +181,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
     def action(self, serializer):
         serializer.user.is_active = True
         serializer.user.save()
-        if settings.get('LOGIN_AFTER_ACTIVATION'):
-            token = utils.get_or_create_token(user=serializer.user) # FIXME: it doesn't work with djoser.token
-            data = serializers.TokenSerializer(token).data
-        else:
-            data = {}
-        return Response(data=data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
 
 class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
