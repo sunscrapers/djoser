@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, status, response
-from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from django.contrib.auth.tokens import default_token_generator
@@ -49,7 +48,7 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
 
     def post_save(self, obj, created=False):
         if settings.get('LOGIN_AFTER_REGISTRATION'):
-            Token.objects.get_or_create(user=obj)
+            utils.get_or_create_token(user=obj) # FIXME: it doesn't work with djoser.token
         if settings.get('SEND_ACTIVATION_EMAIL'):
             self.send_email(**self.get_send_email_kwargs(obj))
 
@@ -73,17 +72,19 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to obtain user authentication token.
     """
-    serializer_class = serializers.UserLoginSerializer
     permission_classes = (
         permissions.AllowAny,
     )
 
     def action(self, serializer):
-        token, _ = Token.objects.get_or_create(user=serializer.object)
+        token = utils.get_or_create_token(user=serializer.object, serializer_data=serializer.data)
         return Response(
             data=serializers.TokenSerializer(token).data,
             status=status.HTTP_200_OK,
         )
+
+    def get_serializer_class(self):
+        return utils.get_login_serializer()
 
 
 class LogoutView(generics.GenericAPIView):
@@ -95,8 +96,8 @@ class LogoutView(generics.GenericAPIView):
     )
 
     def post(self, request):
-        Token.objects.filter(user=request.user).delete()
-
+        if request.auth:
+            request.auth.delete()
         return response.Response(status=status.HTTP_200_OK)
 
 
@@ -187,7 +188,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
         serializer.user.is_active = True
         serializer.user.save()
         if settings.get('LOGIN_AFTER_ACTIVATION'):
-            token, _ = Token.objects.get_or_create(user=serializer.user)
+            token = utils.get_or_create_token(user=serializer.user) # FIXME: it doesn't work with djoser.token
             data = serializers.TokenSerializer(token).data
         else:
             data = {}

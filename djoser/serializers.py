@@ -2,7 +2,6 @@ from distutils import version
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 import rest_framework
-from rest_framework.authtoken.models import Token
 from . import constants, utils
 
 User = get_user_model()
@@ -198,7 +197,7 @@ class TokenSerializer(serializers.ModelSerializer):
     auth_token = serializers.CharField(source='key')
 
     class Meta:
-        model = Token
+        model = utils.get_token_model()
         fields = (
             'auth_token',
         )

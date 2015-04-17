@@ -124,6 +124,23 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
 
+    @override_settings(REST_FRAMEWORK = {'DEFAULT_AUTHENTICATION_CLASSES': ('djoser.token.authentication.TokenAuthentication',),})
+    def test_post_should_login_user_with_djoser_token(self):
+        user = create_user()
+        data = {
+            'username': user.username,
+            'password': user.raw_password,
+            'client': 'my-device',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        token = user.auth_tokens.get()
+        self.assertEqual(response.data['auth_token'], token.key)
+        self.assertEqual(data['client'], token.client)
+
 
 class LogoutViewTest(restframework.APIViewTestCase,
                      assertions.StatusCodeAssertionsMixin):

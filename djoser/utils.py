@@ -1,8 +1,11 @@
 from django.conf import settings as django_settings
+from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
 from rest_framework import response, status
 from . import settings
+from rest_framework.settings import import_from_string
+from rest_framework.authentication import TokenAuthentication
 
 
 def encode_uid(pk):
@@ -75,3 +78,32 @@ class SendEmailViewMixin(object):
             'token': token,
             'protocol': 'https' if self.request.is_secure() else 'http',
         }
+
+def get_authentication_token_class():
+    setting_name = 'DEFAULT_AUTHENTICATION_CLASSES'
+    for authentication_class_path in django_settings.REST_FRAMEWORK[setting_name]:
+        authentication_class = import_from_string(
+            val=authentication_class_path,
+            setting_name=setting_name,
+        )
+        if issubclass(authentication_class, TokenAuthentication):
+            return authentication_class
+    else:
+        raise ImproperlyConfigured()
+
+def get_token_model():
+    return get_authentication_token_class().model
+
+def get_login_serializer():
+    from . import serializers
+    authentication_class = get_authentication_token_class()
+    if hasattr(authentication_class, 'get_login_serializer_class'):
+        return authentication_class.get_login_serializer_class()
+    return serializers.UserLoginSerializer
+
+def get_or_create_token(user, serializer_data=None):
+    Token = get_token_model()
+    serializer_data = serializer_data or {}
+    token_data = {k: v for k, v in serializer_data.items() if k in getattr(Token, 'LOGIN_FIELDS', [])}
+    token, _ = Token.objects.get_or_create(user=user, **token_data)
+    return token
