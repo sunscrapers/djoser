@@ -2,7 +2,6 @@ from distutils import version
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 import rest_framework
-from rest_framework.authtoken.models import Token
 from . import constants, utils
 
 User = get_user_model()
@@ -70,19 +69,6 @@ else:
 
         def save_object(self, obj, **kwargs):
             return obj
-
-
-class UserRegistrationWithAuthTokenSerializer(UserRegistrationSerializer):
-    auth_token = serializers.SerializerMethodField(method_name='get_user_auth_token')
-
-    class Meta(UserRegistrationSerializer.Meta):
-        model = User
-        fields = UserRegistrationSerializer.Meta.fields + (
-            'auth_token',
-        )
-
-    def get_user_auth_token(self, obj):
-        return obj.auth_token.key
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
@@ -198,7 +184,7 @@ class TokenSerializer(serializers.ModelSerializer):
     auth_token = serializers.CharField(source='key')
 
     class Meta:
-        model = Token
+        model = utils.get_token_model()
         fields = (
             'auth_token',
         )

@@ -44,23 +44,6 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         user = get_user_model().objects.get(username=data['username'])
         self.assertTrue(user.check_password(data['password']))
 
-
-    @override_settings(DJOSER=dict(settings.DJOSER, **{'LOGIN_AFTER_REGISTRATION': True}))
-    def test_post_should_create_user_with_login(self):
-        data = {
-            'username': 'john',
-            'password': 'secret',
-        }
-        request = self.factory.post(data=data)
-
-        response = self.view(request)
-
-        self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assert_instance_exists(get_user_model(), username=data['username'])
-        user = get_user_model().objects.get(username=data['username'])
-        self.assertEqual(response.data['auth_token'], user.auth_token.key)
-        self.assertTrue(user.check_password(data['password']))
-
     @override_settings(DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True}))
     def test_post_should_create_user_with_login_and_send_activation_email(self):
         data = {
@@ -123,6 +106,23 @@ class LoginViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
+
+    @override_settings(REST_FRAMEWORK = {'DEFAULT_AUTHENTICATION_CLASSES': ('djoser.token.authentication.TokenAuthentication',),})
+    def test_post_should_login_user_with_djoser_token(self):
+        user = create_user()
+        data = {
+            'username': user.username,
+            'password': user.raw_password,
+            'client': 'my-device',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        token = user.auth_tokens.get()
+        self.assertEqual(response.data['auth_token'], token.key)
+        self.assertEqual(data['client'], token.client)
 
 
 class LogoutViewTest(restframework.APIViewTestCase,
@@ -285,7 +285,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
                          assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.ActivationView
 
-    def test_post_should_activate_user_and_not_login(self):
+    def test_post_should_activate_user(self):
         user = create_user()
         user.is_active = False
         user.save()
@@ -300,25 +300,6 @@ class ActivationViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_200_OK)
         user = utils.refresh(user)
         self.assertTrue(user.is_active)
-        self.assertNotIn('auth_token', response.data)
-
-    @override_settings(DJOSER={'LOGIN_AFTER_ACTIVATION': True})
-    def test_post_should_activate_user_and_login(self):
-        user = create_user()
-        user.is_active = False
-        user.save()
-        data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
-        }
-        request = self.factory.post(data=data)
-
-        response = self.view(request)
-
-        self.assert_status_equal(response, status.HTTP_200_OK)
-        user = utils.refresh(user)
-        self.assertTrue(user.is_active)
-        self.assertEqual(response.data['auth_token'], user.auth_token.key)
 
 
 class SetPasswordViewTest(restframework.APIViewTestCase,
