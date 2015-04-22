@@ -7,7 +7,7 @@ from django.db import models
 class Token(models.Model):
     key = models.CharField(max_length=40, primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='auth_tokens')
-    client = models.CharField(max_length=500)
+    client = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -12,7 +12,7 @@ class Migration(SchemaMigration):
         db.create_table(u'token_token', (
             ('key', self.gf('django.db.models.fields.CharField')(max_length=40, primary_key=True)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='auth_tokens', to=orm['auth.User'])),
-            ('client', self.gf('django.db.models.fields.CharField')(max_length=500)),
+            ('client', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
         db.send_create_signal(u'token', ['Token'])
