@@ -146,6 +146,14 @@ class LogoutViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_401_UNAUTHORIZED)
 
+    def test_options(self):
+        user = create_user()
+
+        request = self.factory.options(user=user)
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+
 
 class PasswordResetViewTest(restframework.APIViewTestCase,
                             assertions.StatusCodeAssertionsMixin,

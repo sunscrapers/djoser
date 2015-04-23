@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics, permissions, status, response
+from rest_framework import generics, permissions, status, response, views
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -86,7 +86,7 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
         )
 
 
-class LogoutView(generics.GenericAPIView):
+class LogoutView(views.APIView):
     """
     Use this endpoint to logout user (remove user authentication token).
     """
