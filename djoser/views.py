@@ -9,7 +9,7 @@ from . import serializers, settings, utils
 User = get_user_model()
 
 
-class RootView(generics.GenericAPIView):
+class RootView(views.APIView):
     """
     Root endpoint - use one of sub endpoints.
     """
