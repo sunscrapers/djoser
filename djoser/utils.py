@@ -18,7 +18,8 @@ def encode_uid(pk):
 def decode_uid(pk):
     try:
         from django.utils.http import urlsafe_base64_decode
-        return urlsafe_base64_decode(pk)
+        from django.utils.encoding import force_text
+        return force_text(urlsafe_base64_decode(pk))
     except ImportError:
         from django.utils.http import base36_to_int
         return base36_to_int(pk)
