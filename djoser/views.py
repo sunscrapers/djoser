@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from django.contrib.auth.tokens import default_token_generator
-from . import serializers, settings, utils
+from . import serializers, settings, utils, signals
 
 User = get_user_model()
 
@@ -55,6 +55,8 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
 
     def perform_create(self, serializer):
         instance = serializer.save()
+        signals.user_registered.send(
+            sender=self.__class__, user=instance, request=self.request)
         self.post_save(obj=instance, created=True)
 
     def get_send_email_extras(self):
@@ -186,6 +188,8 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
     def action(self, serializer):
         serializer.user.is_active = True
         serializer.user.save()
+        signals.user_activated.send(
+            sender=self.__class__, user=serializer.user, request=self.request)
         if settings.get('LOGIN_AFTER_ACTIVATION'):
             token, _ = Token.objects.get_or_create(user=serializer.user)
             data = serializers.TokenSerializer(token).data
