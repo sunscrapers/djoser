@@ -1,8 +1,8 @@
 from django.conf import settings as django_settings
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
 from rest_framework import response, status
-from . import settings
 
 
 def encode_uid(pk):
@@ -68,10 +68,16 @@ class SendEmailViewMixin(object):
     def get_email_context(self, user):
         token = self.token_generator.make_token(user)
         uid = encode_uid(user.pk)
+        try:
+            domain = django_settings.DJOSER['DOMAIN']
+            site_name = django_settings.DJOSER['SITE_NAME']
+        except KeyError:
+            site = get_current_site(self.request)
+            domain, site_name = site.domain, site.name
         return {
             'user': user,
-            'domain': settings.get('DOMAIN'),
-            'site_name': settings.get('SITE_NAME'),
+            'domain': domain,
+            'site_name': site_name,
             'uid': uid,
             'token': token,
             'protocol': 'https' if self.request.is_secure() else 'http',

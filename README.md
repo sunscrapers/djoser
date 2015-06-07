@@ -307,7 +307,7 @@ URL: `/password/`
 ### Reset password
 
 Use this endpoint to send email to user with password reset link. You have to
-setup `DOMAIN`, `SITE_NAME`, `PASSWORD_RESET_CONFIRM_URL`.
+setup `PASSWORD_RESET_CONFIRM_URL`.
 
 #### `POST`
 
@@ -360,15 +360,17 @@ If `True`, register endpoint will return `auth_token` within response.
 
 ### DOMAIN
 
-Domain of your frontend app.
+Domain of your frontend app. If not provided, domain of current site will be
+used.
 
-**Required**: `True`
+**Required**: `False`
 
 ### SITE_NAME
 
-Name of your frontend app.
+Name of your frontend app. If not provided, name of current site will be
+used.
 
-**Required**: `True`
+**Required**: `False`
 
 ### PASSWORD_RESET_CONFIRM_URL
 

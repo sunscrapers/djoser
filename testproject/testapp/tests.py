@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
 from django.core import mail
 from django.test.utils import override_settings
 from djet import assertions, utils, restframework
@@ -172,7 +173,22 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_200_OK)
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[user.email])
+        site = get_current_site(request)
+        self.assertIn(site.domain, mail.outbox[0].body)
+        self.assertIn(site.name, mail.outbox[0].body)
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'DOMAIN': 'custom.com', 'SITE_NAME': 'Custom'}))
+    def test_post_should_send_email_to_user_with_custom_domain_and_site_name(self):
+        user = create_user()
+        data = {
+            'email': user.email,
+        }
+        request = self.factory.post(data=data)
+
+        self.view(request)
+
         self.assertIn(settings.DJOSER['DOMAIN'], mail.outbox[0].body)
+        self.assertIn(settings.DJOSER['SITE_NAME'], mail.outbox[0].body)
 
     def test_post_should_not_send_email_to_user_if_user_does_not_exist(self):
         data = {
