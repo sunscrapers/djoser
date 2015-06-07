@@ -235,7 +235,10 @@ URL: `/logout/`
 
 ### Activate
 
-Use this endpoint to activate user account.
+Use this endpoint to activate user account. This enpoint is not a URL which
+will be directly exposed to your users - you should provide site in your
+frontend application (cofigured by `ACTIVATION_URL`) which will send `POST`
+request to activate endpoint.
 
 #### `POST`
 
@@ -303,7 +306,7 @@ URL: `/password/`
 
 ### Reset password
 
-Use this endpoint to send email to user with password reset link. You have to 
+Use this endpoint to send email to user with password reset link. You have to
 setup `DOMAIN`, `SITE_NAME`, `PASSWORD_RESET_CONFIRM_URL`.
 
 #### `POST`
@@ -322,7 +325,10 @@ URL: `/password/reset/`
 
 ### Reset password confirmation
 
-Use this endpoint to finish reset password process.
+Use this endpoint to finish reset password process. This enpoint is not a URL
+which will be directly exposed to your users - you should provide site in your
+frontend application (cofigured by `PASSWORD_RESET_CONFIRM_URL_URL`) which
+will send `POST` request to reset password confirmation endpoint.
 
 #### `POST`
 
@@ -367,7 +373,8 @@ Name of your frontend app.
 ### PASSWORD_RESET_CONFIRM_URL
 
 URL to your frontend password reset page. It should contain `{uid}` and
-`{token}` placeholders, e.g. `#/password-reset/{uid}/{token}`.
+`{token}` placeholders, e.g. `#/password-reset/{uid}/{token}`. You should pass
+`uid` and `token` to reset password confirmation endpoint.
 
 **Required**: `True`
 
@@ -380,7 +387,8 @@ If `True`, register endpoint will send activation email to user.
 ### ACTIVATION_URL
 
 URL to your frontend activation page. It should contain `{uid}` and `{token}`
-placeholders, e.g. `#/activate/{uid}/{token}`.
+placeholders, e.g. `#/activate/{uid}/{token}`. You should pass `uid` and
+`token` to activation endpoint.
 
 **Required**: `True`
 
