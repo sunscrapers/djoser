@@ -1,5 +1,5 @@
 from django.conf import settings as django_settings
-from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
 from rest_framework import response, status
