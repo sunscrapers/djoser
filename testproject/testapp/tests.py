@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.models import get_current_site
 from django.core import mail
@@ -45,7 +45,6 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         user = get_user_model().objects.get(username=data['username'])
         self.assertTrue(user.check_password(data['password']))
 
-
     @override_settings(DJOSER=dict(settings.DJOSER, **{'LOGIN_AFTER_REGISTRATION': True}))
     def test_post_should_create_user_with_login(self):
         data = {
@@ -84,18 +83,26 @@ class LoginViewTest(restframework.APIViewTestCase,
                     assertions.InstanceAssertionsMixin):
     view_class = djoser.views.LoginView
 
+    def setUp(self):
+        self.signal_sent = False
+
+    def signal_receiver(self, *args, **kwargs):
+        self.signal_sent = True
+
     def test_post_should_login_user(self):
         user = create_user()
         data = {
             'username': user.username,
             'password': user.raw_password,
         }
+        user_logged_in.connect(self.signal_receiver)
         request = self.factory.post(data=data)
 
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
+        self.assertTrue(self.signal_sent)
 
     def test_post_should_not_login_if_user_is_not_active(self):
         user = create_user()
@@ -105,12 +112,14 @@ class LoginViewTest(restframework.APIViewTestCase,
         }
         user.is_active = False
         user.save()
+        user_logged_in.connect(self.signal_receiver)
         request = self.factory.post(data=data)
 
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.DISABLE_ACCOUNT_ERROR])
+        self.assertFalse(self.signal_sent)
 
     def test_post_should_not_login_if_invalid_credentials(self):
         user = create_user()
@@ -118,39 +127,49 @@ class LoginViewTest(restframework.APIViewTestCase,
             'username': user.username,
             'password': 'wrong',
         }
+        user_login_failed.connect(self.signal_receiver)
         request = self.factory.post(data=data)
 
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
+        self.assertTrue(self.signal_sent)
 
 
 class LogoutViewTest(restframework.APIViewTestCase,
                      assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.LogoutView
 
+    def setUp(self):
+        self.signal_sent = False
+
+    def signal_receiver(self, *args, **kwargs):
+        self.signal_sent = True
+
     def test_post_should_logout_logged_in_user(self):
         user = create_user()
-
+        user_logged_out.connect(self.signal_receiver)
         request = self.factory.post(user=user)
+
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
         self.assertEqual(response.data, None)
+        self.assertTrue(self.signal_sent)
 
     def test_post_should_deny_logging_out_when_user_not_logged_in(self):
         user = create_user()
-
         request = self.factory.post()
+
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_401_UNAUTHORIZED)
 
     def test_options(self):
         user = create_user()
-
         request = self.factory.options(user=user)
+
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_200_OK)

@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, user_logged_in, user_logged_out, user_login_failed, _clean_credentials
 from rest_framework import generics, permissions, status, response, views
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -81,7 +81,9 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
     )
 
     def action(self, serializer):
-        token, _ = Token.objects.get_or_create(user=serializer.object)
+        user = serializer.object
+        token, _ = Token.objects.get_or_create(user=user)
+        user_logged_in.send(sender=user.__class__, request=self.request, user=user)
         return Response(
             data=serializers.TokenSerializer(token).data,
             status=status.HTTP_200_OK,
@@ -98,7 +100,7 @@ class LogoutView(views.APIView):
 
     def post(self, request):
         Token.objects.filter(user=request.user).delete()
-
+        user_logged_out.send(sender=request.user.__class__, request=request, user=request.user)
         return response.Response(status=status.HTTP_200_OK)
 
 
