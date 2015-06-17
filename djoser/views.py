@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model, user_logged_in, user_logged_out, user_login_failed, _clean_credentials
+from django.contrib.auth import get_user_model, user_logged_in, user_logged_out
 from rest_framework import generics, permissions, status, response, views
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -75,13 +75,13 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to obtain user authentication token.
     """
-    serializer_class = serializers.UserLoginSerializer
+    serializer_class = serializers.LoginSerializer
     permission_classes = (
         permissions.AllowAny,
     )
 
     def action(self, serializer):
-        user = serializer.object
+        user = serializer.user
         token, _ = Token.objects.get_or_create(user=user)
         user_logged_in.send(sender=user.__class__, request=self.request, user=user)
         return Response(

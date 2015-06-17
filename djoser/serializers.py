@@ -85,25 +85,18 @@ class UserRegistrationWithAuthTokenSerializer(UserRegistrationSerializer):
         return obj.auth_token.key
 
 
-class UserLoginSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = (
-            'password',
-        )
-        write_only_fields = (
-            'password',
-        )
+class LoginSerializer(serializers.Serializer):
+    password = serializers.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
-        super(UserLoginSerializer, self).__init__(*args, **kwargs)
-        self.fields[User.USERNAME_FIELD] = create_username_field()
+        super(LoginSerializer, self).__init__(*args, **kwargs)
+        self.user = None
+        self.fields[User.USERNAME_FIELD] = serializers.CharField(required=False)
 
     def validate(self, attrs):
-        self.object = authenticate(username=attrs[User.USERNAME_FIELD], password=attrs['password'])
-        if self.object:
-            if not self.object.is_active:
+        self.user = authenticate(username=attrs[User.USERNAME_FIELD], password=attrs['password'])
+        if self.user:
+            if not self.user.is_active:
                 raise serializers.ValidationError(constants.DISABLE_ACCOUNT_ERROR)
             return attrs
         else:
