@@ -167,22 +167,34 @@ class PasswordResetConfirmRetypeSerializer(UidAndTokenSerializer, PasswordRetype
     pass
 
 
-class SetUsernameSerializer(CurrentPasswordSerializer):
+class SetUsernameSerializer(serializers.ModelSerializer, CurrentPasswordSerializer):
+
+    class Meta(object):
+        model = User
+        fields = (
+            User.USERNAME_FIELD,
+            'current_password',
+        )
 
     def __init__(self, *args, **kwargs):
         super(SetUsernameSerializer, self).__init__(*args, **kwargs)
-        self.fields['new_' + User.USERNAME_FIELD] = create_username_field()
+        self.fields['new_' + User.USERNAME_FIELD] = self.fields[User.USERNAME_FIELD]
+        del self.fields[User.USERNAME_FIELD]
 
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer):
 
     def __init__(self, *args, **kwargs):
         super(SetUsernameRetypeSerializer, self).__init__(*args, **kwargs)
-        self.fields['re_new_' + User.USERNAME_FIELD] = create_username_field()
+        self.fields['re_new_' + User.USERNAME_FIELD] = serializers.CharField()
 
     def validate(self, attrs):
         attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
-        if attrs['new_' + User.USERNAME_FIELD] != attrs['re_new_' + User.USERNAME_FIELD]:
+        if User.USERNAME_FIELD in attrs:
+            new_username = attrs[User.USERNAME_FIELD]
+        else:  # DRF 2.4
+            new_username = attrs['new_' + User.USERNAME_FIELD]
+        if new_username != attrs['re_new_' + User.USERNAME_FIELD]:
             raise serializers.ValidationError(constants.USERNAME_MISMATCH_ERROR.format(User.USERNAME_FIELD))
         return attrs
 

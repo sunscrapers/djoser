@@ -1,3 +1,4 @@
+from unittest.case import skipIf
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
@@ -5,6 +6,7 @@ from django.contrib.sites.models import get_current_site
 from django.core import mail
 from django.test.utils import override_settings
 from djet import assertions, utils, restframework
+import rest_framework
 from rest_framework import status
 import djoser.views
 import djoser.constants
@@ -76,6 +78,20 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assert_instance_exists(get_user_model(), username=data['username'])
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data['email']])
+
+    @skipIf(rest_framework.VERSION.startswith('2'), "Doesn't work on DRF 2.4")
+    def test_post_should_not_create_new_user_if_username_exists(self):
+        create_user(username='john')
+        data = {
+            'username': 'john',
+            'password': 'secret',
+            'csrftoken': 'asdf',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
 
 class LoginViewTest(restframework.APIViewTestCase,
@@ -444,6 +460,38 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         user = utils.refresh(user)
         self.assertNotEqual(data['new_username'], user.username)
+
+    @skipIf(rest_framework.VERSION.startswith('2'), "Doesn't work on DRF 2.4")
+    def test_post_should_not_set_new_username_if_exists(self):
+        username = 'tom'
+        create_user(username=username)
+        user = create_user(username='john')
+        data = {
+            'new_username': username,
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        user = utils.refresh(user)
+        self.assertNotEqual(user.username, username)
+
+    @skipIf(rest_framework.VERSION.startswith('2'), "Doesn't work on DRF 2.4")
+    def test_post_should_not_set_new_username_if_invalid(self):
+        user = create_user()
+        data = {
+            'new_username': '$ wrong username #',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        user = utils.refresh(user)
+        self.assertNotEqual(user.username, data['new_username'])
 
 
 class UserViewTest(restframework.APIViewTestCase,
