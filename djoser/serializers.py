@@ -87,9 +87,11 @@ class UserRegistrationWithAuthTokenSerializer(UserRegistrationSerializer):
 
 class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=False)
-    
-    DISABLE_ACCOUNT_ERROR = constants.DISABLE_ACCOUNT_ERROR
-    INVALID_CREDENTIALS_ERROR = constants.INVALID_CREDENTIALS_ERROR
+
+    default_error_messages = {
+        'inactive_account': constants.INACTIVE_ACCOUNT_ERROR,
+        'invalid_credentials': constants.INVALID_CREDENTIALS_ERROR,
+    }
 
     def __init__(self, *args, **kwargs):
         super(LoginSerializer, self).__init__(*args, **kwargs)
@@ -100,10 +102,10 @@ class LoginSerializer(serializers.Serializer):
         self.user = authenticate(username=attrs[User.USERNAME_FIELD], password=attrs['password'])
         if self.user:
             if not self.user.is_active:
-                raise serializers.ValidationError(self.DISABLE_ACCOUNT_ERROR)
+                raise serializers.ValidationError(self.error_messages['inactive_account'])
             return attrs
         else:
-            raise serializers.ValidationError(self.INVALID_CREDENTIALS_ERROR)
+            raise serializers.ValidationError(self.error_messages['invalid_credentials'])
 
 
 class PasswordResetSerializer(serializers.Serializer):
@@ -114,7 +116,9 @@ class UidAndTokenSerializer(serializers.Serializer):
     uid = serializers.CharField()
     token = serializers.CharField()
 
-    INVALID_TOKEN_ERROR = constants.INVALID_TOKEN_ERROR
+    default_error_messages = {
+        'invalid_token': constants.INVALID_TOKEN_ERROR
+    }
 
     def validate_uid(self, attrs_or_value, source=None):
         value = attrs_or_value[source] if source else attrs_or_value
@@ -128,7 +132,7 @@ class UidAndTokenSerializer(serializers.Serializer):
     def validate(self, attrs):
         attrs = super(UidAndTokenSerializer, self).validate(attrs)
         if not self.context['view'].token_generator.check_token(self.user, attrs['token']):
-            raise serializers.ValidationError(self.INVALID_TOKEN_ERROR)
+            raise serializers.ValidationError(self.error_messages['invalid_token'])
         return attrs
 
 
@@ -139,24 +143,28 @@ class PasswordSerializer(serializers.Serializer):
 class PasswordRetypeSerializer(PasswordSerializer):
     re_new_password = serializers.CharField()
 
-    PASSWORD_MISMATCH_ERROR = constants.PASSWORD_MISMATCH_ERROR
+    default_error_messages = {
+        'password_mismatch': constants.PASSWORD_MISMATCH_ERROR,
+    }
 
     def validate(self, attrs):
         attrs = super(PasswordRetypeSerializer, self).validate(attrs)
         if attrs['new_password'] != attrs['re_new_password']:
-            raise serializers.ValidationError(self.PASSWORD_MISMATCH_ERROR)
+            raise serializers.ValidationError(self.error_messages['password_mismatch'])
         return attrs
 
 
 class CurrentPasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField()
 
-    INVALID_PASSWORD_ERROR = constants.INVALID_PASSWORD_ERROR
+    default_error_messages = {
+        'invalid_password': constants.INVALID_PASSWORD_ERROR,
+    }
 
     def validate_current_password(self, attrs_or_value, source=None):
         value = attrs_or_value[source] if source else attrs_or_value
         if not self.context['request'].user.check_password(value):
-            raise serializers.ValidationError(self.INVALID_PASSWORD_ERROR)
+            raise serializers.ValidationError(self.error_messages['invalid_password'])
         return attrs_or_value
 
 
@@ -192,7 +200,9 @@ class SetUsernameSerializer(serializers.ModelSerializer, CurrentPasswordSerializ
 
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer):
-    USERNAME_MISMATCH_ERROR = constants.USERNAME_MISMATCH_ERROR.format(User.USERNAME_FIELD)
+    default_error_messages = {
+        'username_mismatch': constants.USERNAME_MISMATCH_ERROR.format(User.USERNAME_FIELD),
+    }
 
     def __init__(self, *args, **kwargs):
         super(SetUsernameRetypeSerializer, self).__init__(*args, **kwargs)
@@ -205,7 +215,7 @@ class SetUsernameRetypeSerializer(SetUsernameSerializer):
         else:  # DRF 2.4
             new_username = attrs['new_' + User.USERNAME_FIELD]
         if new_username != attrs['re_new_' + User.USERNAME_FIELD]:
-            raise serializers.ValidationError(self.USERNAME_MISMATCH_ERROR.format(User.USERNAME_FIELD))
+            raise serializers.ValidationError(self.error_messages['username_mismatch'].format(User.USERNAME_FIELD))
         return attrs
 
 

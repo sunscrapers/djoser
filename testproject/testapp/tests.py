@@ -134,7 +134,7 @@ class LoginViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['non_field_errors'], [djoser.constants.DISABLE_ACCOUNT_ERROR])
+        self.assertEqual(response.data['non_field_errors'], [djoser.constants.INACTIVE_ACCOUNT_ERROR])
         self.assertFalse(self.signal_sent)
 
     def test_post_should_not_login_if_invalid_credentials(self):
