@@ -12,10 +12,10 @@ Instead of reusing Django code (e.g. `PasswordResetForm`), we reimplemented
 few things to fit better into [Single Page App](http://en.wikipedia.org/wiki/Single-page_application)
 architecture.
 
-We use **token based authentication**. The concept is simple - first of all, users obtain a token by 
-providing their credentials (e.g. username, password) during logging in. Once the token is obtained 
-users can offer it in order to retrieve a specific resource. Django REST framework 
-supports [token based authentication](http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication) 
+We use **token based authentication**. The concept is simple - first of all, users obtain a token by
+providing their credentials (e.g. username, password) during logging in. Once the token is obtained
+users can offer it in order to retrieve a specific resource. Django REST framework
+supports [token based authentication](http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication)
 but you might be interested in other authentication mechanisms like OAuth or session-based authentication.
 
 Developed by [SUNSCRAPERS](http://sunscrapers.com/) with passion & patience.
@@ -31,13 +31,13 @@ Available endpoints:
  * `/password/`
  * `/password/reset/`
  * `/password/reset/confirm/`
- 
+
 Supported Python versions:
 
  * Python 2.6
  * Python 2.7
  * Python 3.4
- 
+
 Supported Django versions:
 
  * Django 1.5
@@ -49,13 +49,13 @@ Supported Django Rest Framework versions:
 
  * Django Rest Framework 2.4
  * Django Rest Framework 3.x
- 
+
 ## Installation
 
 Use `pip`:
 
     $ pip install djoser
-    
+
 ## Usage
 
 Configure `INSTALLED_APPS`:
@@ -63,14 +63,14 @@ Configure `INSTALLED_APPS`:
 ```python
 INSTALLED_APPS = (
     'django.contrib.auth',
-    (...), 
+    (...),
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
-    (...), 
+    (...),
 )
 ```
-    
+
 Configure `urls.py`:
 
 ```python
@@ -109,9 +109,9 @@ DJOSER = {
 ```
 
 Check "Settings" section for more info.
-    
+
 ## Endpoints
-    
+
 ### User
 
 Use this endpoint to retrieve/update user.
@@ -125,13 +125,13 @@ Retrieve user.
 * **response**
 
     * status: `HTTP_200_OK` (success)
- 
-    * data: 
+
+    * data:
 
         `{{ User.USERNAME_FIELD }}`
-        
+
         `{{ User._meta.pk.name }}`
-        
+
         `{{ User.REQUIRED_FIELDS }}`
 
 #### `PUT`
@@ -143,19 +143,19 @@ Update user.
 * **request**
 
     * data:
- 
+
         `{{ User.REQUIRED_FIELDS }}`
 
 * **response**
 
     * status: `HTTP_200_OK` (success)
- 
-    * data: 
+
+    * data:
 
         `{{ User.USERNAME_FIELD }}`
-        
+
         `{{ User._meta.pk.name }}`
-        
+
         `{{ User.REQUIRED_FIELDS }}`
 
 ### Register
@@ -166,7 +166,7 @@ method and have [USERNAME_FIELD](https://docs.djangoproject.com/en/dev/topics/au
 and [REQUIRED_FIELDS](https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.REQUIRED_FIELDS)
 fields.
 
-If `LOGIN_AFTER_ACTIVATION` is `True`, you will receive authentication token
+If `LOGIN_AFTER_REGISTRATION` is `True`, you will receive authentication token
 within response.
 
 #### `POST`
@@ -176,26 +176,26 @@ URL: `/register/`
 * **request**
 
     * data:
- 
+
         `{{ User.USERNAME_FIELD }}`
-        
+
         `{{ User.REQUIRED_FIELDS }}`
-        
+
         `password`
 
 * **response**
 
     * status: `HTTP_201_CREATED` (success)
- 
-    * data: 
+
+    * data:
 
         `{{ User.USERNAME_FIELD }}`
-        
+
         `{{ User._meta.pk.name }}`
-        
+
         `{{ User.REQUIRED_FIELDS }}`
-        
-        `auth_token` (if `LOGIN_AFTER_ACTIVATION` is `True`)
+
+        `auth_token` (if `LOGIN_AFTER_REGISTRATION` is `True`)
 
 ### Login
 
@@ -208,16 +208,16 @@ URL: `/login/`
 * **request**
 
     * data:
- 
+
         `{{ User.USERNAME_FIELD }}`
-        
+
         `password`
 
 * **response**
 
     * status: `HTTP_200_OK` (success)
- 
-    * data: 
+
+    * data:
 
         `auth_token`
 
@@ -247,19 +247,19 @@ URL: `/activate/`
 * **request**
 
     * data:
- 
+
         `uid`
-        
+
         `token`
 
 * **response**
 
     * status: `HTTP_200_OK` (success)
- 
-    * data: 
+
+    * data:
 
         `auth_token` (if `LOGIN_AFTER_ACTIVATION` is `True`)
-        
+
 ### Set username
 
 Use this endpoint to change user username (`USERNAME_FIELD`).
@@ -271,17 +271,17 @@ URL: `/{{ User.USERNAME_FIELD }}/`
 * **request**
 
     * data:
- 
+
         `new_{{ User.USERNAME_FIELD }}`
-        
+
         `re_new_{{ User.USERNAME_FIELD }}` (if `SET_USERNAME_RETYPE` is `True`)
-        
+
         `current_password`
 
 * **response**
 
     * status: `HTTP_200_OK` (success)
- 
+
 ### Set password
 
 Use this endpoint to change user password.
@@ -293,11 +293,11 @@ URL: `/password/`
 * **request**
 
     * data:
- 
+
         `new_password`
-        
+
         `re_new_password` (if `SET_PASSWORD_RETYPE` is `True`)
-        
+
         `current_password`
 
 * **response**
@@ -316,7 +316,7 @@ URL: `/password/reset/`
 * **request**
 
     * data:
- 
+
         `email`
 
 * **response**
@@ -337,19 +337,19 @@ URL: `/password/reset/confirm/`
 * **request**
 
     * data:
- 
+
         `uid`
-        
+
         `token`
-        
+
         `new_password`
-        
+
         `re_new_password` (if `PASSWORD_RESET_CONFIRM_RETYPE` is `True`)
 
 * **response**
 
     * status: `HTTP_200_OK` (success)
- 
+
 ## Settings
 
 ### LOGIN_AFTER_REGISTRATION
@@ -383,9 +383,9 @@ URL to your frontend password reset page. It should contain `{uid}` and
 ### SEND_ACTIVATION_EMAIL
 
 If `True`, register endpoint will send activation email to user.
- 
+
 **Default**: `False`
- 
+
 ### ACTIVATION_URL
 
 URL to your frontend activation page. It should contain `{uid}` and `{token}`
@@ -424,7 +424,7 @@ endpoint in order to validate password equality.
 ## Emails
 
 There are few email templates which you may want to override:
- 
+
 * `activation_email_body.txt`
 * `activation_email_subject.txt`
 * `password_reset_email_body.txt`
@@ -449,67 +449,67 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
 * Clone repository and install **djoser** to your virtualenv:
 
     `$ git clone git@github.com:sunscrapers/djoser.git`
-    
+
     `$ cd djoser`
-    
+
     `$ pip install -e .`
 
 * Go to the `testproject` directory, migrate the database and start the development server:
-  
+
     `$ cd testproject`
 
     `$ ./manage.py migrate`
-    
+
     `$ ./manage.py runserver 8088`
-    
+
 * Register a new user:
-    
+
     `$ curl -X POST http://127.0.0.1:8088/auth/register/ --data 'username=djoser&password=djoser'`
 
     `{"email": "", "username": "djoser"}`
-    
+
     So far, so good. We have just created a new user using REST API.
-    
+
 * Let's access user's details:
 
     `$ curl -X GET http://127.0.0.1:8088/auth/me/`
 
     `{"detail": "Authentication credentials were not provided."}`
-    
+
     As we can see, we cannot access user profile without logging in. Pretty obvious.
-    
+
 * Let's log in:
 
     `curl -X POST http://127.0.0.1:8088/auth/login/ --data 'username=djoser&password=djoser'`
-    
+
     `{"auth_token": "b704c9fc3655635646356ac2950269f352ea1139"}`
-    
+
     We have just obtained an authorization token that we may use later in order to retrieve specific resources.
-    
+
 * Let's access user's details again:
 
     `$ curl -X GET http://127.0.0.1:8088/auth/me/`
 
     `{"detail": "Authentication credentials were not provided."}`
-    
+
     Access is still forbidden but let's offer the token we obtained:
-    
+
     `$ curl -X GET http://127.0.0.1:8088/auth/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
-    
+
     `{"email": "", "username": "djoser"}`
-    
+
     Yay, it works!
-    
+
 * Now let's log out:
 
     `curl -X POST http://127.0.0.1:8088/auth/logout/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
-    
+
     And try access user profile again:
-    
+
     `$ curl -X GET http://127.0.0.1:8088/auth/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
-    
+
     `{"detail": "Invalid token"}`
-    
+
     As we can see, user has been logged out successfully and the proper token has been removed.
 
 ## Customization
