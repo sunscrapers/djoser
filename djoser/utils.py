@@ -1,6 +1,6 @@
 from django.conf import settings as django_settings
 from django.contrib.sites.models import get_current_site
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import loader
 from rest_framework import response, status
 
@@ -26,14 +26,22 @@ def decode_uid(pk):
 
 
 def send_email(to_email, from_email, context, subject_template_name,
-               plain_body_template_name, html_body_template_name=None):
+               plain_body_template_name=None, html_body_template_name=None):
+    assert plain_body_template_name or html_body_template_name
     subject = loader.render_to_string(subject_template_name, context)
     subject = ''.join(subject.splitlines())
-    body = loader.render_to_string(plain_body_template_name, context)
-    email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
-    if html_body_template_name is not None:
-        html_email = loader.render_to_string(html_body_template_name, context)
-        email_message.attach_alternative(html_email, 'text/html')
+
+    if plain_body_template_name:
+        plain_body = loader.render_to_string(plain_body_template_name, context)
+        email_message = EmailMultiAlternatives(subject, plain_body, from_email, [to_email])
+        if html_body_template_name:
+            html_body = loader.render_to_string(html_body_template_name, context)
+            email_message.attach_alternative(html_body, 'text/html')
+    else:
+        html_body = loader.render_to_string(html_body_template_name, context)
+        email_message = EmailMessage(subject, html_body, from_email, [to_email])
+        email_message.content_subtype = 'html'
+
     email_message.send()
 
 
@@ -51,6 +59,9 @@ class ActionViewMixin(object):
 
 
 class SendEmailViewMixin(object):
+    subject_template_name = None
+    plain_body_template_name = None
+    html_body_template_name = None
 
     def send_email(self, to_email, from_email, context):
         send_email(to_email, from_email, context, **self.get_send_email_extras())
@@ -63,7 +74,20 @@ class SendEmailViewMixin(object):
         }
 
     def get_send_email_extras(self):
-        raise NotImplemented
+        return {
+            'subject_template_name': self.get_subject_template_name(),
+            'plain_body_template_name': self.get_plain_body_template_name(),
+            'html_body_template_name': self.get_html_body_template_name(),
+        }
+
+    def get_subject_template_name(self):
+        return self.subject_template_name
+
+    def get_plain_body_template_name(self):
+        return self.plain_body_template_name
+
+    def get_html_body_template_name(self):
+        return self.html_body_template_name
 
     def get_email_context(self, user):
         token = self.token_generator.make_token(user)

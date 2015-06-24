@@ -41,6 +41,8 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
         permissions.AllowAny,
     )
     token_generator = default_token_generator
+    subject_template_name = 'activation_email_subject.txt'
+    plain_body_template_name = 'activation_email_body.txt'
 
     def get_serializer_class(self):
         if settings.get('LOGIN_AFTER_REGISTRATION'):
@@ -58,12 +60,6 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
         signals.user_registered.send(
             sender=self.__class__, user=instance, request=self.request)
         self.post_save(obj=instance, created=True)
-
-    def get_send_email_extras(self):
-        return {
-            'subject_template_name': 'activation_email_subject.txt',
-            'plain_body_template_name': 'activation_email_body.txt',
-        }
 
     def get_email_context(self, user):
         context = super(RegistrationView, self).get_email_context(user)
@@ -113,6 +109,8 @@ class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generic
         permissions.AllowAny,
     )
     token_generator = default_token_generator
+    subject_template_name = 'password_reset_email_subject.txt'
+    plain_body_template_name = 'password_reset_email_body.txt'
 
     def action(self, serializer):
         for user in self.get_users(serializer.data['email']):
@@ -125,12 +123,6 @@ class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generic
             is_active=True,
         )
         return (u for u in active_users if u.has_usable_password())
-
-    def get_send_email_extras(self):
-        return {
-            'subject_template_name': 'password_reset_email_subject.txt',
-            'plain_body_template_name': 'password_reset_email_body.txt',
-        }
 
     def get_email_context(self, user):
         context = super(PasswordResetView, self).get_email_context(user)
