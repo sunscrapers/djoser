@@ -10,6 +10,7 @@ User = get_user_model()
 
 
 class RootView(views.APIView):
+
     """
     Root endpoint - use one of sub endpoints.
     """
@@ -34,6 +35,7 @@ class RootView(views.APIView):
 
 
 class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
+
     """
     Use this endpoint to register new user.
     """
@@ -68,6 +70,7 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
 
 
 class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
+
     """
     Use this endpoint to obtain user authentication token.
     """
@@ -87,6 +90,7 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class LogoutView(views.APIView):
+
     """
     Use this endpoint to logout user (remove user authentication token).
     """
@@ -101,6 +105,7 @@ class LogoutView(views.APIView):
 
 
 class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generics.GenericAPIView):
+
     """
     Use this endpoint to send email to user with password reset link.
     """
@@ -131,6 +136,7 @@ class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generic
 
 
 class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
+
     """
     Use this endpoint to change user password.
     """
@@ -150,6 +156,7 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
+
     """
     Use this endpoint to finish reset password process.
     """
@@ -170,6 +177,7 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
+
     """
     Use this endpoint to activate user account.
     """
@@ -193,6 +201,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
+
     """
     Use this endpoint to change user username.
     """
@@ -213,6 +222,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class UserView(generics.RetrieveUpdateAPIView):
+
     """
     Use this endpoint to retrieve/update user.
     """
@@ -224,4 +234,3 @@ class UserView(generics.RetrieveUpdateAPIView):
 
     def get_object(self, *args, **kwargs):
         return self.request.user
-
