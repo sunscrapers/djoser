@@ -59,6 +59,7 @@ class ActionViewMixin(object):
 
 
 class SendEmailViewMixin(object):
+    token_generator = None
     subject_template_name = None
     plain_body_template_name = None
     html_body_template_name = None

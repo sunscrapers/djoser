@@ -6,9 +6,6 @@ python:
   - "3.4"
 
 env:
-  - DJANGO_VERSION=1.5.12 DRF_VERSION=2.4.5
-  - DJANGO_VERSION=1.6.11 DRF_VERSION=2.4.5
-  - DJANGO_VERSION=1.7.8 DRF_VERSION=2.4.5
   - DJANGO_VERSION=1.5.12 DRF_VERSION=3.1.3
   - DJANGO_VERSION=1.6.11 DRF_VERSION=3.1.3
   - DJANGO_VERSION=1.7.8 DRF_VERSION=3.1.3
@@ -18,8 +15,6 @@ matrix:
   exclude:
     # Django 1.7 and 1.8 dropped support for Python 2.6.
     - python: "2.6"
-      env: DJANGO_VERSION=1.7.8 DRF_VERSION=2.4.5
-    - python: "2.6"
       env: DJANGO_VERSION=1.7.8 DRF_VERSION=3.1.3
     - python: "2.6"
       env: DJANGO_VERSION=1.8.2 DRF_VERSION=3.1.3
@@ -28,7 +23,6 @@ install:
   - pip install -q Django==$DJANGO_VERSION
   - pip install -q djangorestframework==$DRF_VERSION
   - pip install -q djet==0.0.10
-  - pip install -q unittest2==1.0.1
   - pip install coveralls
   - python setup.py -q develop
 

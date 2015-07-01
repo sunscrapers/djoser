@@ -1,4 +1,3 @@
-from unittest2.case import skipIf
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
@@ -79,7 +78,6 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data['email']])
 
-    @skipIf(rest_framework.VERSION.startswith('2'), "Doesn't work on DRF 2.4")
     def test_post_should_not_create_new_user_if_username_exists(self):
         create_user(username='john')
         data = {
@@ -175,7 +173,7 @@ class LogoutViewTest(restframework.APIViewTestCase,
         self.assertTrue(self.signal_sent)
 
     def test_post_should_deny_logging_out_when_user_not_logged_in(self):
-        user = create_user()
+        create_user()
         request = self.factory.post()
 
         response = self.view(request)
@@ -461,7 +459,6 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertNotEqual(data['new_username'], user.username)
 
-    @skipIf(rest_framework.VERSION.startswith('2'), "Doesn't work on DRF 2.4")
     def test_post_should_not_set_new_username_if_exists(self):
         username = 'tom'
         create_user(username=username)
@@ -478,7 +475,6 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertNotEqual(user.username, username)
 
-    @skipIf(rest_framework.VERSION.startswith('2'), "Doesn't work on DRF 2.4")
     def test_post_should_not_set_new_username_if_invalid(self):
         user = create_user()
         data = {

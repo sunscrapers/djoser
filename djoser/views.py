@@ -224,4 +224,3 @@ class UserView(generics.RetrieveUpdateAPIView):
 
     def get_object(self, *args, **kwargs):
         return self.request.user
-

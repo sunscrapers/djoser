@@ -1,28 +1,9 @@
-from distutils import version
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
-import rest_framework
 from rest_framework.authtoken.models import Token
 from . import constants, utils
 
 User = get_user_model()
-
-
-def create_username_field():
-    username_field = User._meta.get_field(User.USERNAME_FIELD)
-    if hasattr(serializers.ModelSerializer, 'field_mapping'):  # DRF 2.x
-        mapping_dict = serializers.ModelSerializer.field_mapping
-    elif hasattr(serializers.ModelSerializer, '_field_mapping'):  # DRF 3.0
-        mapping_dict = serializers.ModelSerializer._field_mapping.mapping
-    elif hasattr(serializers.ModelSerializer, 'serializer_field_mapping'):  # DRF 3.1
-        mapping_dict = serializers.ModelSerializer.serializer_field_mapping
-    else:
-        raise AttributeError(
-            'serializers.ModelSerializer doesn\'t have any of these attributes: '
-            'field_mapping, _field_mapping, serializer_field_mapping '
-        )
-    field_class = mapping_dict[username_field.__class__]
-    return field_class()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -51,25 +32,11 @@ class AbstractUserRegistrationSerializer(serializers.ModelSerializer):
             'password',
         )
 
-if version.StrictVersion(rest_framework.VERSION) >= version.StrictVersion('3.0.0'):
 
-    class UserRegistrationSerializer(AbstractUserRegistrationSerializer):
+class UserRegistrationSerializer(AbstractUserRegistrationSerializer):
 
-        def create(self, validated_data):
-            return User.objects.create_user(**validated_data)
-
-else:
-
-    class UserRegistrationSerializer(AbstractUserRegistrationSerializer):
-
-        def restore_object(self, attrs, instance=None):
-            try:
-                return User.objects.get(**{User.USERNAME_FIELD: attrs[User.USERNAME_FIELD]})
-            except User.DoesNotExist:
-                return User.objects.create_user(**attrs)
-
-        def save_object(self, obj, **kwargs):
-            return obj
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
 
 
 class UserRegistrationWithAuthTokenSerializer(UserRegistrationSerializer):
@@ -120,14 +87,13 @@ class UidAndTokenSerializer(serializers.Serializer):
         'invalid_token': constants.INVALID_TOKEN_ERROR
     }
 
-    def validate_uid(self, attrs_or_value, source=None):
-        value = attrs_or_value[source] if source else attrs_or_value
+    def validate_uid(self, value):
         try:
             uid = utils.decode_uid(value)
             self.user = User.objects.get(pk=uid)
         except (User.DoesNotExist, ValueError, TypeError, ValueError, OverflowError) as error:
             raise serializers.ValidationError(error)
-        return attrs_or_value
+        return value
 
     def validate(self, attrs):
         attrs = super(UidAndTokenSerializer, self).validate(attrs)
@@ -161,11 +127,10 @@ class CurrentPasswordSerializer(serializers.Serializer):
         'invalid_password': constants.INVALID_PASSWORD_ERROR,
     }
 
-    def validate_current_password(self, attrs_or_value, source=None):
-        value = attrs_or_value[source] if source else attrs_or_value
+    def validate_current_password(self, value):
         if not self.context['request'].user.check_password(value):
             raise serializers.ValidationError(self.error_messages['invalid_password'])
-        return attrs_or_value
+        return value
 
 
 class SetPasswordSerializer(PasswordSerializer, CurrentPasswordSerializer):
@@ -210,10 +175,7 @@ class SetUsernameRetypeSerializer(SetUsernameSerializer):
 
     def validate(self, attrs):
         attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
-        if User.USERNAME_FIELD in attrs:
-            new_username = attrs[User.USERNAME_FIELD]
-        else:  # DRF 2.4
-            new_username = attrs['new_' + User.USERNAME_FIELD]
+        new_username = attrs[User.USERNAME_FIELD]
         if new_username != attrs['re_new_' + User.USERNAME_FIELD]:
             raise serializers.ValidationError(self.error_messages['username_mismatch'].format(User.USERNAME_FIELD))
         return attrs
