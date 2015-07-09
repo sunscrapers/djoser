@@ -1,11 +1,9 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.sites.models import get_current_site
 from django.core import mail
 from django.test.utils import override_settings
 from djet import assertions, utils, restframework
-import rest_framework
 from rest_framework import status
 import djoser.views
 import djoser.constants
@@ -206,7 +204,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_200_OK)
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[user.email])
-        site = get_current_site(request)
+        site = djoser.utils.get_current_site(request)
         self.assertIn(site.domain, mail.outbox[0].body)
         self.assertIn(site.name, mail.outbox[0].body)
 
