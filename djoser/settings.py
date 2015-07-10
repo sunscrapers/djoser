@@ -10,6 +10,7 @@ def get(key):
         'SET_PASSWORD_RETYPE': False,
         'SET_USERNAME_RETYPE': False,
         'PASSWORD_RESET_CONFIRM_RETYPE': False,
+        'ROOT_VIEW_URLS_MAPPING': {},
     }
     defaults.update(getattr(settings, 'DJOSER', {}))
     try:

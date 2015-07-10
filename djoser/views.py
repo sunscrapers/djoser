@@ -13,23 +13,29 @@ class RootView(views.APIView):
     """
     Root endpoint - use one of sub endpoints.
     """
+    urls_mapping = {
+        'me': 'user',
+        'register': 'register',
+        'activate': 'activate',
+        'change-' + User.USERNAME_FIELD: 'set_username',
+        'change-password': 'set_password',
+        'password-reset': 'password_reset',
+        'password-reset-confirm': 'password_reset_confirm',
+    }
+    urls_extra_mapping = None
+
+    def get_urls_mapping(self, **kwargs):
+        mapping = self.urls_mapping.copy()
+        mapping.update(kwargs)
+        if self.urls_extra_mapping:
+            mapping.update(self.urls_extra_mapping)
+        mapping.update(settings.get('ROOT_VIEW_URLS_MAPPING'))
+        return mapping
 
     def get(self, request, format=None):
-        urls_mapping = {
-            'me': 'user',
-            'register': 'register',
-            'login': 'login',
-            'logout': 'logout',
-            'activate': 'activate',
-            'change-' + User.USERNAME_FIELD: 'set_username',
-            'change-password': 'set_password',
-            'password-reset': 'password_reset',
-            'password-reset-confirm': 'password_reset_confirm',
-        }
-
         return Response(
             dict([(key, reverse(url_name, request=request, format=format))
-                  for key, url_name in urls_mapping.items()])
+                  for key, url_name in self.get_urls_mapping().items()])
         )
 
 
