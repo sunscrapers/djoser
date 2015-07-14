@@ -43,6 +43,7 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
     """
     Use this endpoint to register new user.
     """
+    serializer_class = serializers.UserRegistrationSerializer
     permission_classes = (
         permissions.AllowAny,
     )
@@ -50,22 +51,11 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
     subject_template_name = 'activation_email_subject.txt'
     plain_body_template_name = 'activation_email_body.txt'
 
-    def get_serializer_class(self):
-        if settings.get('LOGIN_AFTER_REGISTRATION'):
-            return serializers.UserRegistrationWithAuthTokenSerializer
-        return serializers.UserRegistrationSerializer
-
-    def post_save(self, obj, created=False):
-        if settings.get('LOGIN_AFTER_REGISTRATION'):
-            Token.objects.get_or_create(user=obj)
-        if settings.get('SEND_ACTIVATION_EMAIL'):
-            self.send_email(**self.get_send_email_kwargs(obj))
-
     def perform_create(self, serializer):
         instance = serializer.save()
-        signals.user_registered.send(
-            sender=self.__class__, user=instance, request=self.request)
-        self.post_save(obj=instance, created=True)
+        signals.user_registered.send(sender=self.__class__, user=instance, request=self.request)
+        if settings.get('SEND_ACTIVATION_EMAIL'):
+            self.send_email(**self.get_send_email_kwargs(instance))
 
     def get_email_context(self, user):
         context = super(RegistrationView, self).get_email_context(user)
@@ -190,12 +180,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
         serializer.user.save()
         signals.user_activated.send(
             sender=self.__class__, user=serializer.user, request=self.request)
-        if settings.get('LOGIN_AFTER_ACTIVATION'):
-            token, _ = Token.objects.get_or_create(user=serializer.user)
-            data = serializers.TokenSerializer(token).data
-        else:
-            data = {}
-        return Response(data=data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
 
 class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):

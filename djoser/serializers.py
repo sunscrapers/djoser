@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class AbstractUserRegistrationSerializer(serializers.ModelSerializer):
+class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
@@ -32,24 +32,8 @@ class AbstractUserRegistrationSerializer(serializers.ModelSerializer):
             'password',
         )
 
-
-class UserRegistrationSerializer(AbstractUserRegistrationSerializer):
-
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
-
-
-class UserRegistrationWithAuthTokenSerializer(UserRegistrationSerializer):
-    auth_token = serializers.SerializerMethodField(method_name='get_user_auth_token')
-
-    class Meta(UserRegistrationSerializer.Meta):
-        model = User
-        fields = UserRegistrationSerializer.Meta.fields + (
-            'auth_token',
-        )
-
-    def get_user_auth_token(self, obj):
-        return obj.auth_token.key
 
 
 class LoginSerializer(serializers.Serializer):

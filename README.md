@@ -146,7 +146,6 @@ DJOSER = {
     'SITE_NAME': 'Frontend',
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'LOGIN_AFTER_ACTIVATION': True,
     'SEND_ACTIVATION_EMAIL': True,
 }
 ```
@@ -209,9 +208,6 @@ method and have [USERNAME_FIELD](https://docs.djangoproject.com/en/dev/topics/au
 and [REQUIRED_FIELDS](https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.REQUIRED_FIELDS)
 fields.
 
-If `LOGIN_AFTER_REGISTRATION` is `True`, you will receive authentication token
-within response.
-
 #### `POST`
 
 URL: `/register/`
@@ -237,8 +233,6 @@ URL: `/register/`
         `{{ User._meta.pk.name }}`
 
         `{{ User.REQUIRED_FIELDS }}`
-
-        `auth_token` (if `LOGIN_AFTER_REGISTRATION` is `True`)
 
 ### Login
 
@@ -298,10 +292,6 @@ URL: `/activate/`
 * **response**
 
     * status: `HTTP_200_OK` (success)
-
-    * data:
-
-        `auth_token` (if `LOGIN_AFTER_ACTIVATION` is `True`)
 
 ### Set username
 
@@ -395,12 +385,6 @@ URL: `/password/reset/confirm/`
 
 ## Settings
 
-### LOGIN_AFTER_REGISTRATION
-
-If `True`, register endpoint will return `auth_token` within response.
-
-**Default**: `False`
-
 ### DOMAIN
 
 Domain of your frontend app. If not provided, domain of current site will be
@@ -436,12 +420,6 @@ placeholders, e.g. `#/activate/{uid}/{token}`. You should pass `uid` and
 `token` to activation endpoint.
 
 **Required**: `True`
-
-### LOGIN_AFTER_ACTIVATION
-
-If `True`, activate endpoint will return `auth_token` within response.
-
-**Default**: `False`
 
 ### SET_USERNAME_RETYPE
 
