@@ -14,6 +14,10 @@ architecture.
 
 Developed by [SUNSCRAPERS](http://sunscrapers.com/) with passion & patience.
 
+> **Note**
+> Djoser is under active development. Check out [latest releases](https://github.com/sunscrapers/djoser/releases)
+> for stable versions and documentation.
+
 ## Features
 
 Here is a list of supported authentication backends:
