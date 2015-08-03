@@ -37,7 +37,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    password = serializers.CharField(required=False)
+    password = serializers.CharField(style={'input_type': 'password'}, required=False)
 
     default_error_messages = {
         'inactive_account': constants.INACTIVE_ACCOUNT_ERROR,
