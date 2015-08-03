@@ -11,7 +11,7 @@ class EmailAuthenticationBackend(ModelBackend):
     def _authenticate_by_email(self, **credentials):
         User = get_user_model()
 
-        email = credentials.get('email', credentials.get('username'))
+        email = credentials.get('email')
         if email:
             user = User.objects.get(email=email)
             if user.check_password(credentials["password"]):
