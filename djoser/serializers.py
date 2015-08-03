@@ -37,7 +37,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    password = serializers.CharField(style={'input_type': 'password'}, required=False)
+    password = serializers.CharField(required=False, style={'input_type': 'password'})
 
     default_error_messages = {
         'inactive_account': constants.INACTIVE_ACCOUNT_ERROR,
@@ -87,11 +87,11 @@ class UidAndTokenSerializer(serializers.Serializer):
 
 
 class PasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField()
+    new_password = serializers.CharField(style={'input_type': 'password'})
 
 
 class PasswordRetypeSerializer(PasswordSerializer):
-    re_new_password = serializers.CharField()
+    re_new_password = serializers.CharField(style={'input_type': 'password'})
 
     default_error_messages = {
         'password_mismatch': constants.PASSWORD_MISMATCH_ERROR,
@@ -105,7 +105,7 @@ class PasswordRetypeSerializer(PasswordSerializer):
 
 
 class CurrentPasswordSerializer(serializers.Serializer):
-    current_password = serializers.CharField()
+    current_password = serializers.CharField(style={'input_type': 'password'})
 
     default_error_messages = {
         'invalid_password': constants.INVALID_PASSWORD_ERROR,
