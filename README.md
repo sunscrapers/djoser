@@ -81,7 +81,7 @@ Configure `urls.py`:
 ```python
 urlpatterns = patterns('',
     (...),
-    url(r'^auth/', include('djoser.urls')),
+    url(r'^auth/', include('djoser.urls', namespace='djoser')),
 )
 ```
 
@@ -122,7 +122,7 @@ Configure `urls.py`. Pay attention to `djoser.url.authtoken` module path.
 ```python
 urlpatterns = patterns('',
     (...),
-    url(r'^auth/', include('djoser.urls.authtoken')),
+    url(r'^auth/', include('djoser.urls.authtoken', namespace='djoser')),
 )
 ```
 
