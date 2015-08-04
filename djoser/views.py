@@ -34,7 +34,7 @@ class RootView(views.APIView):
 
     def get(self, request, format=None):
         return Response(
-            dict([(key, reverse('djoser:{}'.format(url_name), request=request, format=format))
+            dict([(key, reverse('djoser:{0}'.format(url_name), request=request, format=format))
                   for key, url_name in self.get_urls_mapping().items()])
         )
 
