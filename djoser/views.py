@@ -13,6 +13,9 @@ class RootView(views.APIView):
     """
     Root endpoint - use one of sub endpoints.
     """
+    permission_classes = (
+        permissions.AllowAny,
+    )
     urls_mapping = {
         'me': 'user',
         'register': 'register',
