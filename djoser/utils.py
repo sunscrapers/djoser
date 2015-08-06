@@ -52,7 +52,7 @@ def send_email(to_email, from_email, context, subject_template_name,
 class ActionViewMixin(object):
 
     def post(self, request):
-        serializer = self.get_serializer(data=request.DATA)
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             return self.action(serializer)
         else:
