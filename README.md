@@ -261,6 +261,12 @@ URL: `/login/`
     * data:
 
         `auth_token`
+        `user` : 
+            `{{ User.USERNAME_FIELD }}`
+
+            `{{ User._meta.pk.name }}`
+
+            `{{ User.REQUIRED_FIELDS }}`
 
 ### Logout
 
