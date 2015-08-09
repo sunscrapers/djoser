@@ -173,3 +173,14 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = (
             'auth_token',
         )
+
+
+class UserTokenSerializer(serializers.ModelSerializer):
+    auth_token = serializers.CharField(source='key')
+    user = UserSerializer()
+
+    class Meta:
+        model = Token
+        fields = (
+            'auth_token', 'user',
+        )
