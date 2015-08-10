@@ -276,9 +276,9 @@ URL: `/logout/`
 
 ### Activate
 
-Use this endpoint to activate user account. This enpoint is not a URL which
+Use this endpoint to activate user account. This endpoint is not a URL which
 will be directly exposed to your users - you should provide site in your
-frontend application (cofigured by `ACTIVATION_URL`) which will send `POST`
+frontend application (configured by `ACTIVATION_URL`) which will send `POST`
 request to activate endpoint.
 
 #### `POST`
@@ -362,9 +362,9 @@ URL: `/password/reset/`
 
 ### Reset password confirmation
 
-Use this endpoint to finish reset password process. This enpoint is not a URL
+Use this endpoint to finish reset password process. This endpoint is not a URL
 which will be directly exposed to your users - you should provide site in your
-frontend application (cofigured by `PASSWORD_RESET_CONFIRM_URL_URL`) which
+frontend application (configured by `PASSWORD_RESET_CONFIRM_URL`) which
 will send `POST` request to reset password confirmation endpoint.
 
 #### `POST`
