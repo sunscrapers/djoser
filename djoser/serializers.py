@@ -42,6 +42,7 @@ class LoginSerializer(serializers.Serializer):
     default_error_messages = {
         'inactive_account': constants.INACTIVE_ACCOUNT_ERROR,
         'invalid_credentials': constants.INVALID_CREDENTIALS_ERROR,
+        'empty_username': constants.EMPTY_USERNAME_ERROR,
     }
 
     def __init__(self, *args, **kwargs):
@@ -50,7 +51,11 @@ class LoginSerializer(serializers.Serializer):
         self.fields[User.USERNAME_FIELD] = serializers.CharField(required=False)
 
     def validate(self, attrs):
-        self.user = authenticate(username=attrs[User.USERNAME_FIELD], password=attrs['password'])
+        username, password = attrs.get(User.USERNAME_FIELD), attrs.get('password')
+        if not username:
+            raise serializers.ValidationError(self.error_messages['empty_username'])
+        self.user = authenticate(username=username, password=password)
+
         if self.user:
             if not self.user.is_active:
                 raise serializers.ValidationError(self.error_messages['inactive_account'])
