@@ -13,7 +13,7 @@ REQUIREMENTS = [i.strip() for i in open('requirements.txt').readlines()]
 setup(
     name='djoser',
     version='0.3.1',
-    packages=['djoser'],
+    packages=['djoser', 'djoser.urls'],
     license='MIT',
     author='SUNSCRAPERS',
     description='REST version of Django authentication system.',
