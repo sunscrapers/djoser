@@ -28,9 +28,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             User._meta.pk.name,
             'password',
         )
-        write_only_fields = (
-            'password',
-        )
+        extra_kwargs = {
+            'password': {
+                'write_only': True,
+            },
+        }
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
