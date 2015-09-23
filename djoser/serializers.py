@@ -20,15 +20,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
             User.USERNAME_FIELD,
             User._meta.pk.name,
-            'password',
-        )
-        write_only_fields = (
             'password',
         )
 
