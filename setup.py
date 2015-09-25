@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 from setuptools import setup
 
 try:
@@ -8,18 +9,27 @@ try:
 except (IOError, ImportError):
     description = open('README.md').read()
 
-REQUIREMENTS = [i.strip() for i in open('requirements.txt').readlines()]
+
+def get_packages(package):
+    return [dirpath
+            for dirpath, dirnames, filenames in os.walk(package)
+            if os.path.exists(os.path.join(dirpath, '__init__.py'))]
+
+
+def get_requirements(file_name):
+    return [i.strip() for i in open(file_name).readlines()]
+
 
 setup(
     name='djoser',
     version='0.3.1',
-    packages=['djoser'],
+    packages=get_packages('djoser'),
     license='MIT',
     author='SUNSCRAPERS',
     description='REST version of Django authentication system.',
     author_email='info@sunscrapers.com',
     long_description=description,
-    install_requires=REQUIREMENTS,
+    install_requires=get_requirements('requirements.txt'),
     include_package_data=True,
     url='https://github.com/sunscrapers/djoser',
     classifiers=[
