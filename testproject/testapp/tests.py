@@ -147,6 +147,15 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
         self.assertTrue(self.signal_sent)
 
+    def test_post_should_not_login_if_empty_request(self):
+        data = {}
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
+
 
 class LogoutViewTest(restframework.APIViewTestCase,
                      assertions.StatusCodeAssertionsMixin):

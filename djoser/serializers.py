@@ -48,7 +48,7 @@ class LoginSerializer(serializers.Serializer):
         self.fields[User.USERNAME_FIELD] = serializers.CharField(required=False)
 
     def validate(self, attrs):
-        self.user = authenticate(username=attrs[User.USERNAME_FIELD], password=attrs['password'])
+        self.user = authenticate(username=attrs.get(User.USERNAME_FIELD), password=attrs.get('password'))
         if self.user:
             if not self.user.is_active:
                 raise serializers.ValidationError(self.error_messages['inactive_account'])
