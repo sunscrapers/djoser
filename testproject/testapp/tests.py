@@ -54,6 +54,7 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
+        self.assertTrue('password' not in response.data)
         self.assert_instance_exists(get_user_model(), username=data['username'])
         user = get_user_model().objects.get(username=data['username'])
         self.assertTrue(user.check_password(data['password']))
