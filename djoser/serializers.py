@@ -35,7 +35,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    password = serializers.CharField(required=False, style={'input_type': 'password'})
+    password = serializers.CharField(required=True, style={'input_type': 'password'})
 
     default_error_messages = {
         'inactive_account': constants.INACTIVE_ACCOUNT_ERROR,
@@ -45,7 +45,7 @@ class LoginSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         super(LoginSerializer, self).__init__(*args, **kwargs)
         self.user = None
-        self.fields[User.USERNAME_FIELD] = serializers.CharField(required=False)
+        self.fields[User.USERNAME_FIELD] = serializers.CharField(required=True)
 
     def validate(self, attrs):
         self.user = authenticate(username=attrs.get(User.USERNAME_FIELD), password=attrs.get('password'))
@@ -170,4 +170,15 @@ class TokenSerializer(serializers.ModelSerializer):
         model = Token
         fields = (
             'auth_token',
+        )
+
+
+class UserTokenSerializer(serializers.ModelSerializer):
+    auth_token = serializers.CharField(source='key')
+    user = UserSerializer()
+
+    class Meta:
+        model = Token
+        fields = (
+            'auth_token', 'user',
         )
