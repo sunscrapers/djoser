@@ -45,10 +45,11 @@ class LoginSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         super(LoginSerializer, self).__init__(*args, **kwargs)
         self.user = None
-        self.fields[User.USERNAME_FIELD] = serializers.CharField(required=False)
+        self.fields[User.USERNAME_FIELD] = serializers.CharField(required=False, allow_blank=True)
+        self.fields['email'] = serializers.EmailField(required=False, allow_blank=True)
 
     def validate(self, attrs):
-        self.user = authenticate(username=attrs[User.USERNAME_FIELD], password=attrs['password'])
+        self.user = authenticate(**attrs)
         if self.user:
             if not self.user.is_active:
                 raise serializers.ValidationError(self.error_messages['inactive_account'])

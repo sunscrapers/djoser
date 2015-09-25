@@ -15,6 +15,11 @@ SECRET_KEY = '_'
 
 MIDDLEWARE_CLASSES = ()
 
+AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend',
+        'auth_backends.EmailAuthenticationBackend',
+    )
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
