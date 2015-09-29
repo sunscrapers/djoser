@@ -14,10 +14,6 @@ architecture.
 
 Developed by [SUNSCRAPERS](http://sunscrapers.com/) with passion & patience.
 
-> **Note**
-> Djoser is under active development. Check out [latest releases](https://github.com/sunscrapers/djoser/releases)
-> for stable versions and documentation.
-
 ## Features
 
 Here is a list of supported authentication backends:
@@ -54,7 +50,7 @@ Supported Django Rest Framework versions:
 
  * Django Rest Framework 3.x
  
-For Django Rest Framework 2.4 support check [djoser 0.3.1](https://github.com/sunscrapers/djoser/tree/0.3.1). 
+For Django Rest Framework 2.4 support check [djoser 0.3.2](https://github.com/sunscrapers/djoser/tree/0.3.2). 
 
 ## Installation
 
