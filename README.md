@@ -147,6 +147,7 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
+    'PASSWORD_VALIDATORS': []
 }
 ```
 
@@ -441,6 +442,14 @@ If `True`, you need to pass `re_new_password` to `/password/reset/confirm/`
 endpoint in order to validate password equality.
 
 **Default**: `False`
+
+### PASSWORD_VALIDATORS
+
+List containing import strings of [REST Framework Validators](http://www.django-rest-framework.org/api-guide/validators/).
+
+**Default**: `[]`
+
+**Example**: `["myapp.validators.validate_long_password", "myapp.validators.validate_strong_password"]`
 
 ## Emails
 
