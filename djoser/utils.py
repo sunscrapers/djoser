@@ -1,7 +1,9 @@
 from django.conf import settings as django_settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import loader
+from django.utils.module_loading import import_string
 from rest_framework import response, status
+from . import settings
 
 try:
     from django.contrib.sites.shortcuts import get_current_site
@@ -47,6 +49,11 @@ def send_email(to_email, from_email, context, subject_template_name,
         email_message.content_subtype = 'html'
 
     email_message.send()
+
+
+def get_password_validators():
+    return [import_string(validator_string)
+            for validator_string in settings.get('PASSWORD_VALIDATORS')]
 
 
 class ActionViewMixin(object):
