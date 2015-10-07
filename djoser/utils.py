@@ -1,7 +1,6 @@
 from django.conf import settings as django_settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import loader
-from django.utils.module_loading import import_string
 from rest_framework import response, status
 from . import settings
 
@@ -9,6 +8,11 @@ try:
     from django.contrib.sites.shortcuts import get_current_site
 except ImportError:
     from django.contrib.sites.models import get_current_site
+
+try:
+    from django.utils.module_loading import import_string
+except ImportError:
+    from django.utils.module_loading import import_by_path as import_string
 
 
 def encode_uid(pk):
