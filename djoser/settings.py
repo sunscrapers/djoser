@@ -7,6 +7,7 @@ def get(key):
         'SEND_ACTIVATION_EMAIL': False,
         'SET_PASSWORD_RETYPE': False,
         'SET_USERNAME_RETYPE': False,
+        'SET_TOKEN_ON_REGISTRATION': False,
         'PASSWORD_RESET_CONFIRM_RETYPE': False,
         'ROOT_VIEW_URLS_MAPPING': {},
     }

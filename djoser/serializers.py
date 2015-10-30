@@ -21,6 +21,23 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+
+    class Meta:
+        model = User
+        fields = tuple(User.REQUIRED_FIELDS) + (
+            User.USERNAME_FIELD,
+            User._meta.pk.name,
+            'password',
+        )
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        Token.objects.get_or_create(user=user)
+        return user
+
+
+class UserRegistrationTokenSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     token = serializers.CharField(source="auth_token.key", read_only=True)
 
     class Meta:
