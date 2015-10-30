@@ -31,9 +31,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        Token.objects.get_or_create(user=user)
-        return user
+        return User.objects.create_user(**validated_data)
 
 
 class UserRegistrationTokenSerializer(serializers.ModelSerializer):

@@ -1,7 +1,7 @@
 # djoser
 
-[![Build Status](https://travis-ci.org/debetux/djoser.svg?branch=master)](https://travis-ci.org/debetux/djoser)
-[![Coverage Status](https://coveralls.io/repos/debetux/djoser/badge.png?branch=master)](https://coveralls.io/r/debetux/djoser?branch=master)
+[![Build Status](https://travis-ci.org/sunscrapers/djoser.svg?branch=master)](https://travis-ci.org/sunscrapers/djoser)
+[![Coverage Status](https://coveralls.io/repos/sunscrapers/djoser/badge.png?branch=master)](https://coveralls.io/r/sunscrapers/djoser?branch=master)
 
 REST implementation of [Django](https://www.djangoproject.com/) authentication
 system. **Djoser** library provides a set of [Django Rest Framework](http://www.django-rest-framework.org/)
