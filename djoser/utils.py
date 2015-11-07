@@ -97,12 +97,8 @@ class SendEmailViewMixin(object):
     def get_email_context(self, user):
         token = self.token_generator.make_token(user)
         uid = encode_uid(user.pk)
-        try:
-            domain = django_settings.DJOSER['DOMAIN']
-            site_name = django_settings.DJOSER['SITE_NAME']
-        except KeyError:
-            site = get_current_site(self.request)
-            domain, site_name = site.domain, site.name
+        domain = django_settings.DJOSER.get('DOMAIN') or get_current_site(self.request).domain
+        site_name = django_settings.DJOSER.get('SITE_NAME') or get_current_site(self.request).name
         return {
             'user': user,
             'domain': domain,

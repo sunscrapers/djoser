@@ -229,6 +229,17 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         self.assertIn(settings.DJOSER['DOMAIN'], mail.outbox[0].body)
         self.assertIn(settings.DJOSER['SITE_NAME'], mail.outbox[0].body)
 
+    def test_post_should_send_email_to_user_with_domain_and_site_name_from_request(self):
+        user = create_user()
+        data = {
+            'email': user.email,
+        }
+        request = self.factory.post(data=data)
+
+        self.view(request)
+
+        self.assertIn(request.get_host(), mail.outbox[0].body)
+
     def test_post_should_not_send_email_to_user_if_user_does_not_exist(self):
         data = {
             'email': 'john@beatles.com',
