@@ -38,6 +38,7 @@ Supported Python versions:
  * Python 2.6
  * Python 2.7
  * Python 3.4
+ * Python 3.5
 
 Supported Django versions:
 

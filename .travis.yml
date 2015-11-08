@@ -4,6 +4,7 @@ python:
   - "2.6"
   - "2.7"
   - "3.4"
+  - "3.5"
 
 env:
   - DJANGO_VERSION=1.5.12 DRF_VERSION=3.2.4
