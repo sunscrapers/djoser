@@ -46,13 +46,17 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
     """
     Use this endpoint to register new user.
     """
-    serializer_class = serializers.UserRegistrationSerializer
     permission_classes = (
         permissions.AllowAny,
     )
     token_generator = default_token_generator
     subject_template_name = 'activation_email_subject.txt'
     plain_body_template_name = 'activation_email_body.txt'
+
+    def get_serializer_class(self):
+        if settings.get('SET_TOKEN_ON_REGISTRATION'):
+            return serializers.UserRegistrationTokenSerializer
+        return serializers.UserRegistrationSerializer
 
     def perform_create(self, serializer):
         instance = serializer.save()
@@ -69,6 +73,17 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
 class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to obtain user authentication token.
+    ---
+    POST:
+        parameters:
+            - name: username
+              required: true
+              paramType: string
+              description: Username.
+            - name: password
+              required: true
+              paramType: password
+              description: Password.
     """
     serializer_class = serializers.LoginSerializer
     permission_classes = (

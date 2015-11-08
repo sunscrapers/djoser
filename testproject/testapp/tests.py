@@ -75,6 +75,21 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data['email']])
 
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'SET_TOKEN_ON_REGISTRATION': True}))
+    def test_post_should_create_user_with_login_and_return_token(self):
+        data = {
+            'username': 'john',
+            'email': 'jane@beatles.com',
+            'password': 'secret',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
+        self.assert_instance_exists(get_user_model(), username=data['username'])
+        self.assertIn('token', response.data)
+
     def test_post_should_not_create_new_user_if_username_exists(self):
         create_user(username='john')
         data = {
