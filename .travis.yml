@@ -19,6 +19,13 @@ matrix:
       env: DJANGO_VERSION=1.7.10 DRF_VERSION=3.2.4
     - python: "2.6"
       env: DJANGO_VERSION=1.8.4 DRF_VERSION=3.2.4
+    # Only Django 1.8+ supports Python 3.5
+    - python: "3.5"
+      env: DJANGO_VERSION=1.5.12 DRF_VERSION=3.2.4
+    - python: "3.5"
+      env: DJANGO_VERSION=1.6.11 DRF_VERSION=3.2.4
+    - python: "3.5"
+      env: DJANGO_VERSION=1.7.10 DRF_VERSION=3.2.4
 
 install:
   - pip install -q Django==$DJANGO_VERSION
