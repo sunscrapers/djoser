@@ -25,8 +25,8 @@ Available endpoints:
 
  * `/me/`
  * `/register/`
- * `/login/`
- * `/logout/`
+ * `/login/` (token based authentication)
+ * `/logout/` (token based authentication)
  * `/activate/`
  * `/{{ User.USERNAME_FIELD }}/`
  * `/password/`
@@ -238,6 +238,7 @@ URL: `/register/`
 ### Login
 
 Use this endpoint to obtain user [authentication token](http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication).
+This endpoint is available only if you are using token based authentication.
 
 #### `POST`
 
@@ -261,7 +262,8 @@ URL: `/login/`
 
 ### Logout
 
-Use this endpoint to logout user (remove user authentication token).
+Use this endpoint to logout user (remove user authentication token). This endpoint is available only if you are using
+token based authentication.
 
 #### `POST`
 
