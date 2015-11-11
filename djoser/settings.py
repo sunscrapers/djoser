@@ -10,7 +10,9 @@ def get(key):
         'PASSWORD_RESET_CONFIRM_RETYPE': False,
         'ROOT_VIEW_URLS_MAPPING': {},
         'USER_SERIALIZER': 'djoser.serializers.UserSerializer',
-        'REGISTER_SERIALIZER': 'djoser.serializers.UserRegistrationSerializer'
+        'REGISTER_SERIALIZER': 'djoser.serializers.UserRegistrationSerializer',
+        'ACTIVATION_EMAIL_SUBJECT': 'activation_email_subject.txt',
+        'ACTIVATION_EMAIL_BODY': 'activation_email_body.txt',
 
     }
     defaults.update(getattr(settings, 'DJOSER', {}))

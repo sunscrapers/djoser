@@ -53,8 +53,8 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
         permissions.AllowAny,
     )
     token_generator = default_token_generator
-    subject_template_name = 'activation_email_subject.txt'
-    plain_body_template_name = 'activation_email_body.txt'
+    subject_template_name = settings.get("ACTIVATION_EMAIL_SUBJECT")
+    plain_body_template_name = settings.get("ACTIVATION_EMAIL_BODY")
 
     def perform_create(self, serializer):
         instance = serializer.save()
