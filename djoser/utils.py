@@ -1,3 +1,4 @@
+import importlib
 from django.conf import settings as django_settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import loader
@@ -27,6 +28,12 @@ def decode_uid(pk):
     except ImportError:
         from django.utils.http import base36_to_int
         return base36_to_int(pk)
+
+
+def import_from_string(absolute_class_name):
+    module_name = absolute_class_name[0:absolute_class_name.rindex(".")]
+    class_name = absolute_class_name[absolute_class_name.rindex(".")+1:]
+    return getattr(importlib.import_module(module_name), class_name)
 
 
 def send_email(to_email, from_email, context, subject_template_name,

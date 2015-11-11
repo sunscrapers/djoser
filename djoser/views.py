@@ -7,7 +7,8 @@ from django.contrib.auth.tokens import default_token_generator
 from . import serializers, settings, utils, signals
 
 User = get_user_model()
-
+user_serializer_class = utils.import_from_string(settings.get("USER_SERIALIZER"))
+registration_serializer_class = utils.import_from_string(settings.get("REGISTER_SERIALIZER"))
 
 class RootView(views.APIView):
     """
@@ -46,7 +47,7 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
     """
     Use this endpoint to register new user.
     """
-    serializer_class = serializers.UserRegistrationSerializer
+    serializer_class = registration_serializer_class
     permission_classes = (
         permissions.AllowAny,
     )
@@ -211,7 +212,7 @@ class UserView(generics.RetrieveUpdateAPIView):
     Use this endpoint to retrieve/update user.
     """
     model = User
-    serializer_class = serializers.UserSerializer
+    serializer_class = user_serializer_class
     permission_classes = (
         permissions.IsAuthenticated,
     )
