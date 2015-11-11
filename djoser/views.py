@@ -10,6 +10,7 @@ User = get_user_model()
 user_serializer_class = utils.import_from_string(settings.get("USER_SERIALIZER"))
 registration_serializer_class = utils.import_from_string(settings.get("REGISTER_SERIALIZER"))
 
+
 class RootView(views.APIView):
     """
     Root endpoint - use one of sub endpoints.
