@@ -61,6 +61,8 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
         signals.user_registered.send(sender=self.__class__, user=instance, request=self.request)
         if settings.get('SEND_ACTIVATION_EMAIL'):
             self.send_email(**self.get_send_email_kwargs(instance))
+            instance.is_active = False            
+            instance.save()
 
     def get_email_context(self, user):
         context = super(RegistrationView, self).get_email_context(user)
