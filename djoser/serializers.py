@@ -66,7 +66,8 @@ class UidAndTokenSerializer(serializers.Serializer):
     token = serializers.CharField()
 
     default_error_messages = {
-        'invalid_token': constants.INVALID_TOKEN_ERROR
+        'invalid_token': constants.INVALID_TOKEN_ERROR,
+        'invalid_uid': constants.INVALID_UID_ERROR
     }
 
     def validate_uid(self, value):
@@ -74,7 +75,7 @@ class UidAndTokenSerializer(serializers.Serializer):
             uid = utils.decode_uid(value)
             self.user = User.objects.get(pk=uid)
         except (User.DoesNotExist, ValueError, TypeError, OverflowError) as error:
-            raise serializers.ValidationError(error)
+            raise serializers.ValidationError(self.error_messages['invalid_uid'])
         return value
 
     def validate(self, attrs):
