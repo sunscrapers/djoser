@@ -7,6 +7,8 @@ from django.contrib.auth.tokens import default_token_generator
 from . import serializers, settings, utils, signals
 
 User = get_user_model()
+user_serializer_class = utils.import_from_string(settings.get("USER_SERIALIZER"))
+registration_serializer_class = utils.import_from_string(settings.get("REGISTER_SERIALIZER"))
 
 
 class RootView(views.APIView):
@@ -46,19 +48,21 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
     """
     Use this endpoint to register new user.
     """
-    serializer_class = serializers.UserRegistrationSerializer
+    serializer_class = registration_serializer_class
     permission_classes = (
         permissions.AllowAny,
     )
     token_generator = default_token_generator
-    subject_template_name = 'activation_email_subject.txt'
-    plain_body_template_name = 'activation_email_body.txt'
+    subject_template_name = settings.get("ACTIVATION_EMAIL_SUBJECT")
+    plain_body_template_name = settings.get("ACTIVATION_EMAIL_BODY")
 
     def perform_create(self, serializer):
         instance = serializer.save()
         signals.user_registered.send(sender=self.__class__, user=instance, request=self.request)
         if settings.get('SEND_ACTIVATION_EMAIL'):
             self.send_email(**self.get_send_email_kwargs(instance))
+            instance.is_active = False            
+            instance.save()
 
     def get_email_context(self, user):
         context = super(RegistrationView, self).get_email_context(user)
@@ -211,7 +215,7 @@ class UserView(generics.RetrieveUpdateAPIView):
     Use this endpoint to retrieve/update user.
     """
     model = User
-    serializer_class = serializers.UserSerializer
+    serializer_class = user_serializer_class
     permission_classes = (
         permissions.IsAuthenticated,
     )
