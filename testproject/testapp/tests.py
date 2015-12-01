@@ -375,6 +375,17 @@ class ActivationViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertTrue(user.is_active)
 
+    def test_post_should_respond_with_bad_request_when_wrong_uid(self):
+        data = {
+            'uid': djoser.utils.encode_uid(1),
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+        response.render()
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+
 
 class SetPasswordViewTest(restframework.APIViewTestCase,
                           assertions.StatusCodeAssertionsMixin):
