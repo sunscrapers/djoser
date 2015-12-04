@@ -580,6 +580,12 @@ In order to run the tests create virtualenv, go to repo directory and then:
 
 `$ ./manage.py test`
 
+If you need to run tests against all supported Python and Django versions then invoke:
+
+`$ pip install tox`
+
+`$ tox`
+
 ## Similar projects
 
 List of projects related to Django, REST and authentication:

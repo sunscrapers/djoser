@@ -1,5 +1,7 @@
 *.pyc
 *.egg-info/
 .idea/
+.tox/
+.coverage
 dist/
 testproject/db.sqlite3

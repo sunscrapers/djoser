@@ -1,3 +1,4 @@
 -e .
-djet>=0.0.10
-unittest2==1.0.1
+djet
+unittest2
+coverage==3.7.1
