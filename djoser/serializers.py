@@ -66,7 +66,8 @@ class UidAndTokenSerializer(serializers.Serializer):
     token = serializers.CharField()
 
     default_error_messages = {
-        'invalid_token': constants.INVALID_TOKEN_ERROR
+        'invalid_token': constants.INVALID_TOKEN_ERROR,
+        'stale_token': constants.STALE_TOKEN_ERROR
     }
 
     def validate_uid(self, value):
@@ -81,6 +82,8 @@ class UidAndTokenSerializer(serializers.Serializer):
         attrs = super(UidAndTokenSerializer, self).validate(attrs)
         if not self.context['view'].token_generator.check_token(self.user, attrs['token']):
             raise serializers.ValidationError(self.error_messages['invalid_token'])
+        if self.user.is_active and not attrs.get('new_password'):
+            raise serializers.ValidationError(self.error_messages['stale_token'])
         return attrs
 
 
