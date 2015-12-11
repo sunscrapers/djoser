@@ -172,7 +172,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to activate user account.
     """
-    serializer_class = serializers.UidAndTokenSerializer
+    serializer_class = serializers.ActivationSerializer
     permission_classes = (
         permissions.AllowAny,
     )

@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, get_user_model
-from rest_framework import serializers
+from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
 from . import constants, utils
 
@@ -66,7 +66,7 @@ class UidAndTokenSerializer(serializers.Serializer):
     token = serializers.CharField()
 
     default_error_messages = {
-        'invalid_token': constants.INVALID_TOKEN_ERROR
+        'invalid_token': constants.INVALID_TOKEN_ERROR,
     }
 
     def validate_uid(self, value):
@@ -81,6 +81,18 @@ class UidAndTokenSerializer(serializers.Serializer):
         attrs = super(UidAndTokenSerializer, self).validate(attrs)
         if not self.context['view'].token_generator.check_token(self.user, attrs['token']):
             raise serializers.ValidationError(self.error_messages['invalid_token'])
+        return attrs
+
+
+class ActivationSerializer(UidAndTokenSerializer):
+    default_error_messages = {
+        'stale_token': constants.STALE_TOKEN_ERROR,
+    }
+
+    def validate(self, attrs):
+        attrs = super(ActivationSerializer, self).validate(attrs)
+        if self.user.is_active:
+            raise exceptions.PermissionDenied(self.error_messages['stale_token'])
         return attrs
 
 
