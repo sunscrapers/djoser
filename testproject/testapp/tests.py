@@ -9,7 +9,6 @@ import djoser.views
 import djoser.constants
 import djoser.utils
 from rest_framework_jwt.views import ObtainJSONWebToken
-import jwt
 
 
 def create_user(**kwargs):
@@ -176,10 +175,6 @@ class LoginViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_200_OK)
         self.assertTrue('token' in response.data)
-
-        decoded = jwt.decode(response.data['token'], settings.SECRET_KEY)
-        self.assertEqual(decoded['username'],'john')
-        self.assertEqual(decoded['email'],'john@beatles.com')
 
 
 class LogoutViewTest(restframework.APIViewTestCase,
