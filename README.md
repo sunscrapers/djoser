@@ -137,6 +137,18 @@ Run migrations (if you are using Django 1.7+ or South) - this step will create t
 
     $ ./manage.py migrate
 
+##### Note.
+It is also possible to configure the popular [django-rest-framework-jwt](https://github.com/GetBlimp/django-rest-framework-jwt)
+token based auth with **Djoser**. As shown in the [Customization](https://github.com/sunscrapers/djoser#customization) section,
+you can simply override the `/login/` URI and hook it into `django-rest-framework-jwt`:
+
+```python
+urlpatterns = patterns('',
+    (...),
+    url(r'^login/$', 'rest_framework_jwt.views.obtain_jwt_token'),
+)
+```
+
 ## Settings
 
 Optionally add `DJOSER` settings:

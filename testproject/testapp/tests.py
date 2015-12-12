@@ -8,6 +8,8 @@ from rest_framework import status
 import djoser.views
 import djoser.constants
 import djoser.utils
+from rest_framework_jwt.views import ObtainJSONWebToken
+import jwt
 
 
 def create_user(**kwargs):
@@ -155,6 +157,29 @@ class LoginViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
+
+    @override_settings(REST_FRAMEWORK=dict(settings.DJOSER, **{
+        'DEFAULT_AUTHENTICATION_CLASSES':
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication'
+    }))
+    def test_post_should_login_user_with_jwt_token_auth(self):
+        self.view_class = ObtainJSONWebToken
+
+        user = create_user()
+        data = {
+            'username': user.username,
+            'password': user.raw_password,
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assertTrue('token' in response.data)
+
+        decoded = jwt.decode(response.data['token'], settings.SECRET_KEY)
+        self.assertEqual(decoded['username'],'john')
+        self.assertEqual(decoded['email'],'john@beatles.com')
 
 
 class LogoutViewTest(restframework.APIViewTestCase,
