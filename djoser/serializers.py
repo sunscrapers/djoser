@@ -2,6 +2,12 @@ from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from . import constants, utils
+try:
+    # Django 1.9 validation support
+    from django.contrib.auth.password_validation import validate_password
+    password_validators = [validate_password]
+except ImportError:
+    password_validators = []
 
 User = get_user_model()
 
@@ -20,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    password = serializers.CharField(style={'input_type': 'password'}, write_only=True, validators=password_validators)
 
     class Meta:
         model = User
