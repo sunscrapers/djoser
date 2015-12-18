@@ -2,11 +2,17 @@ from django.conf import settings as django_settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import loader
 from rest_framework import response, status
+from . import settings
 
 try:
     from django.contrib.sites.shortcuts import get_current_site
 except ImportError:
     from django.contrib.sites.models import get_current_site
+
+try:
+    from django.utils.module_loading import import_string
+except ImportError:
+    from django.utils.module_loading import import_by_path as import_string
 
 
 def encode_uid(pk):
@@ -47,6 +53,11 @@ def send_email(to_email, from_email, context, subject_template_name,
         email_message.content_subtype = 'html'
 
     email_message.send()
+
+
+def get_password_validators():
+    return [import_string(validator_string)
+            for validator_string in settings.get('PASSWORD_VALIDATORS')]
 
 
 class ActionViewMixin(object):

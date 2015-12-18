@@ -20,7 +20,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    password = serializers.CharField(style={'input_type': 'password'},
+                                     write_only=True,
+                                     validators=utils.get_password_validators())
 
     class Meta:
         model = User
@@ -97,7 +99,8 @@ class ActivationSerializer(UidAndTokenSerializer):
 
 
 class PasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField(style={'input_type': 'password'})
+    new_password = serializers.CharField(style={'input_type': 'password'},
+                                         validators=utils.get_password_validators())
 
 
 class PasswordRetypeSerializer(PasswordSerializer):
