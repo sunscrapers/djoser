@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
-from . import constants, utils
+from . import constants, settings, utils
 
 User = get_user_model()
 
@@ -31,7 +31,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        if settings.get('SEND_ACTIVATION_EMAIL'):
+            user.is_active = False
+            user.save(update_fields=['is_active'])
+        return user
 
 
 class LoginSerializer(serializers.Serializer):
