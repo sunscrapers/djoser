@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 try:
     import pypandoc
@@ -13,7 +13,7 @@ REQUIREMENTS = [i.strip() for i in open('requirements.txt').readlines()]
 setup(
     name='djoser',
     version='0.2.1',
-    packages=['djoser'],
+    packages=find_packages(include=('djoser*',)),
     license='MIT',
     author='SUNSCRAPERS',
     description='REST version of Django authentication system.',
