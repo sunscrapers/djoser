@@ -96,7 +96,7 @@ class LogoutView(views.APIView):
     def post(self, request):
         Token.objects.filter(user=request.user).delete()
         user_logged_out.send(sender=request.user.__class__, request=request, user=request.user)
-        return response.Response(status=status.HTTP_200_OK)
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generics.GenericAPIView):
@@ -114,7 +114,7 @@ class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generic
     def action(self, serializer):
         for user in self.get_users(serializer.data['email']):
             self.send_email(**self.get_send_email_kwargs(user))
-        return response.Response(status=status.HTTP_200_OK)
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_users(self, email):
         active_users = User._default_manager.filter(
@@ -145,7 +145,7 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
     def action(self, serializer):
         self.request.user.set_password(serializer.data['new_password'])
         self.request.user.save()
-        return response.Response(status=status.HTTP_200_OK)
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -165,7 +165,7 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
     def action(self, serializer):
         serializer.user.set_password(serializer.data['new_password'])
         serializer.user.save()
-        return response.Response(status=status.HTTP_200_OK)
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -183,7 +183,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
         serializer.user.save()
         signals.user_activated.send(
             sender=self.__class__, user=serializer.user, request=self.request)
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -203,7 +203,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
     def action(self, serializer):
         setattr(self.request.user, User.USERNAME_FIELD, serializer.data['new_' + User.USERNAME_FIELD])
         self.request.user.save()
-        return response.Response(status=status.HTTP_200_OK)
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserView(generics.RetrieveUpdateAPIView):
