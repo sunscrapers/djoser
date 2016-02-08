@@ -200,7 +200,7 @@ class LogoutViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assertEqual(response.data, None)
         self.assertTrue(self.signal_sent)
 
@@ -235,7 +235,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[user.email])
         site = djoser.utils.get_current_site(request)
@@ -274,7 +274,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(0)
 
 
@@ -294,7 +294,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user = utils.refresh(user)
         self.assertTrue(user.check_password(data['new_password']))
 
@@ -442,7 +442,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user = utils.refresh(user)
         self.assertTrue(user.is_active)
 
@@ -486,7 +486,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user = utils.refresh(user)
         self.assertTrue(user.check_password(data['new_password']))
 
@@ -547,7 +547,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user = utils.refresh(user)
         self.assertEqual(data['new_username'], user.username)
 
