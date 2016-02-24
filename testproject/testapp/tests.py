@@ -89,6 +89,19 @@ class RegistrationViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
+    def test_post_should_not_register_if_fails_password_validation(self):
+        data = {
+            'username': 'john',
+            'password': '666',
+            'csrftoken': 'asdf',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'password': ['Woops, 666 is not allowed.']})
+
 
 class LoginViewTest(restframework.APIViewTestCase,
                     assertions.StatusCodeAssertionsMixin,
@@ -355,6 +368,21 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertFalse(user.check_password(data['new_password']))
 
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True}))
+    def test_post_should_not_reset_if_fails_password_validation(self):
+        user = create_user()
+        data = {
+            'uid': djoser.utils.encode_uid(user.pk),
+            'token': default_token_generator.make_token(user),
+            'new_password': '666',
+            're_new_password': 'isokpassword',
+        }
+
+        request = self.factory.post(data=data)
+        response = self.view(request)
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'new_password': ['Woops, 666 is not allowed.']})
+
 
 class ActivationViewTest(restframework.APIViewTestCase,
                          assertions.StatusCodeAssertionsMixin):
@@ -453,6 +481,20 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         user = utils.refresh(user)
         self.assertTrue(user.check_password(data['current_password']))
+
+    def test_post_should_not_set_new_password_if_fails_password_validation(self):
+        user = create_user()
+        data = {
+            'new_password': '666',
+            're_new_password': '666',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'new_password': ['Woops, 666 is not allowed.']})
 
 
 class SetUsernameViewTest(restframework.APIViewTestCase,
