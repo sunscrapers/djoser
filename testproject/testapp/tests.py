@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.conf.urls import url, include
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
@@ -23,6 +24,10 @@ def create_user(**kwargs):
     return user
 
 
+class FakeUrlsWithNamespace(object):
+    urlpatterns = [url(r'^auth/', include('djoser.urls.authtoken', 'some_namespace'))]
+
+
 class RootViewTest(restframework.APIViewTestCase,
                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.RootView
@@ -36,6 +41,35 @@ class RootViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_200_OK)
         for key in view_object.get_urls_mapping().keys():
             self.assertIn(key, response.data)
+
+    # @override_settings(
+    #     DJOSER=dict(settings.DJOSER, **{'URL_NAMESPACE': 'some_namespace'}),
+    #     ROOT_URLCONF=FakeUrlsWithNamespace,
+    # )
+    def test_get_should_return_urls_mappings_whit_namespace_setup(self):
+        request = self.factory.get()
+        request.urlconf = [url(r'^auth/', include('djoser.urls.authtoken', namespace='some_namespace'))]
+
+        view_object = self.create_view_object(request)
+
+        fake_settings = {
+            'DJOSER': dict(settings.DJOSER, **{'URL_NAMESPACE': 'some_namespace'}),
+            'ROOT_URLCONF': [url(r'^auth/', include('djoser.urls.authtoken', namespace='some_namespace'))]
+        }
+
+        # fake_settings['ROOT_URLCONF'] = FakeUrlsWithNamespace
+
+        with override_settings(**fake_settings):
+            from django.core.urlresolvers import reverse
+            # from django.core.urlresolvers import reverse
+            print(reverse('some_namespace:login'))
+
+            # response = view_object.dispatch(request)
+
+
+            # self.assert_status_equal(response, status.HTTP_200_OK)
+            # for key in view_object.get_urls_mapping().keys():
+            #     self.assertIn(key, response.data)
 
 
 class RegistrationViewTest(restframework.APIViewTestCase,

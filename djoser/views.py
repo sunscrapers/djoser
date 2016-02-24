@@ -36,8 +36,11 @@ class RootView(views.APIView):
         return mapping
 
     def get(self, request, format=None):
+        url_template = '{0}'
+        if settings.get('URL_NAMESPACE'):
+            url_template = settings.get('URL_NAMESPACE') + ':' + url_template
         return Response(
-            dict([(key, reverse(url_name, request=request, format=format))
+            dict([(key, reverse(url_template.format(url_name), request=request, format=format))
                   for key, url_name in self.get_urls_mapping().items()])
         )
 
