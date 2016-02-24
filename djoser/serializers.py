@@ -62,8 +62,8 @@ class PasswordResetSerializer(serializers.Serializer):
 
 
 class UidAndTokenSerializer(serializers.Serializer):
-    uid = serializers.CharField()
-    token = serializers.CharField()
+    uid = serializers.RegexField(regex=r'[0-9A-Za-z_\-]+$', required=True)
+    token = serializers.RegexField(regex=r'[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20}$', required=True)
 
     default_error_messages = {
         'invalid_token': constants.INVALID_TOKEN_ERROR,

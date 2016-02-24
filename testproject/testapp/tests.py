@@ -289,6 +289,22 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertFalse(user.check_password(data['new_password']))
 
+    def test_post_should_not_set_new_password_if_invalid_token(self):
+        user = create_user()
+        data = {
+            'uid': djoser.utils.encode_uid(user.pk),
+            'token': default_token_generator.make_token(user).split('-')[0],
+            'new_password': 'new password',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('token', response.data)
+        user = utils.refresh(user)
+        self.assertFalse(user.check_password(data['new_password']))
+
     def test_post_should_not_set_new_password_if_user_does_not_exist(self):
         user = create_user()
         data = {
