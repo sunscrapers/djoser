@@ -1,10 +1,10 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from djoser import views
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-base_urlpatterns = patterns('',
+base_urlpatterns = (
     url(r'^me/$', views.UserView.as_view(), name='user'),
     url(r'^register/$', views.RegistrationView.as_view(), name='register'),
     url(r'^activate/$', views.ActivationView.as_view(), name='activate'),
@@ -14,4 +14,4 @@ base_urlpatterns = patterns('',
     url(r'^password/reset/confirm/$', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 )
 
-urlpatterns = base_urlpatterns + patterns('', url(r'^$', views.RootView.as_view(), name='root'))
+urlpatterns = base_urlpatterns + (url(r'^$', views.RootView.as_view(), name='root'),)

@@ -1,5 +1,9 @@
 import os
 
+from distutils.version import LooseVersion
+import django
+
+
 DEBUG = True
 
 BASE_DIR = os.path.dirname(__file__)
@@ -37,9 +41,13 @@ REST_FRAMEWORK = {
 
 ROOT_URLCONF = 'urls'
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
-)
+if LooseVersion(django.get_version()) >= LooseVersion('1.8'):
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'APP_DIRS': True,
+        },
+    ]
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
