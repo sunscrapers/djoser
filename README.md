@@ -151,6 +151,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'PASSWORD_VALIDATORS': [],
     'SERIALIZERS': {},
+    'URL_NAMESPACE': 'djoser'
 }
 ```
 
@@ -456,6 +457,13 @@ These validators are run on `/register/` and `/password/reset/confirm/`.
 **Default**: `[]`
 
 **Example**: `[my_validator1, my_validator2]`
+
+### URL_NAMESPACE
+
+Url namespace used in including djoser urls. Url namespace used in 
+including djoser urls. Default set to `None` because of backward compatibility. 
+
+**Default**: `None`
 
 ### SERIALIZERS
 
