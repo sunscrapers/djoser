@@ -51,8 +51,8 @@ Supported Django versions:
 Supported Django Rest Framework versions:
 
  * Django Rest Framework 3.x
- 
-For Django Rest Framework 2.4 support check [djoser 0.3.2](https://github.com/sunscrapers/djoser/tree/0.3.2). 
+
+For Django Rest Framework 2.4 support check [djoser 0.3.2](https://github.com/sunscrapers/djoser/tree/0.3.2).
 
 ## Installation
 
@@ -149,6 +149,7 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
+    'PASSWORD_VALIDATORS': []
 }
 ```
 
@@ -445,6 +446,15 @@ If `True`, you need to pass `re_new_password` to `/password/reset/confirm/`
 endpoint in order to validate password equality.
 
 **Default**: `False`
+
+### PASSWORD_VALIDATORS
+
+List containing [REST Framework Validator](http://www.django-rest-framework.org/api-guide/validators/) functions.
+These validators are run on `/register/` and `/password/reset/confirm/`.
+
+**Default**: `[]`
+
+**Example**: `[my_validator1, my_validator2]`
 
 ## Emails
 

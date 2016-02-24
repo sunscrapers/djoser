@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
-from . import constants, utils
+from . import constants, utils, settings
 
 User = get_user_model()
 
@@ -20,7 +20,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    password = serializers.CharField(style={'input_type': 'password'},
+                                     write_only=True,
+                                     validators=settings.get('PASSWORD_VALIDATORS'))
 
     class Meta:
         model = User
@@ -97,7 +99,8 @@ class ActivationSerializer(UidAndTokenSerializer):
 
 
 class PasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField(style={'input_type': 'password'})
+    new_password = serializers.CharField(style={'input_type': 'password'},
+                                         validators=settings.get('PASSWORD_VALIDATORS'))
 
 
 class PasswordRetypeSerializer(PasswordSerializer):
