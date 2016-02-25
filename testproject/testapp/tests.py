@@ -76,6 +76,9 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data['email']])
 
+        user = get_user_model().objects.get(username='john')
+        self.assertFalse(user.is_active)
+
     def test_post_should_not_create_new_user_if_username_exists(self):
         create_user(username='john')
         data = {
