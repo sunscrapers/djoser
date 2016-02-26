@@ -149,7 +149,8 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
-    'PASSWORD_VALIDATORS': []
+    'PASSWORD_VALIDATORS': [],
+    'SERIALIZERS': {},
 }
 ```
 
@@ -456,6 +457,35 @@ These validators are run on `/register/` and `/password/reset/confirm/`.
 
 **Example**: `[my_validator1, my_validator2]`
 
+### SERIALIZERS
+
+This dictionary is used to update the defaults, so by providing, 
+let's say, one key, all the others will still be used.
+
+**Examples**
+```
+{
+    'user': 'myapp.serializers.SpecialUserSerializer',
+}
+```
+
+**Default**: 
+```
+{
+    'activation': 'djoser.serializers.ActivationSerializer',
+    'login': 'djoser.serializers.LoginSerializer',
+    'password_reset': 'djoser.serializers.PasswordResetSerializer',
+    'password_reset_confirm': 'djoser.serializers.PasswordResetConfirmSerializer',
+    'password_reset_confirm_retype': 'djoser.serializers.PasswordResetConfirmRetypeSerializer',
+    'set_password': 'djoser.serializers.SetPasswordSerializer',
+    'set_password_retype': 'djoser.serializers.SetPasswordRetypeSerializer',
+    'set_username': 'djoser.serializers.SetUsernameSerializer',
+    'set_username_retype': 'djoser.serializers.SetUsernameRetypeSerializer',
+    'user_registration': 'djoser.serializers.UserRegistrationSerializer',
+    'user': 'djoser.serializers.UserSerializer',
+}
+```
+
 ## Emails
 
 There are few email templates which you may want to override:
@@ -549,9 +579,12 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
 
 ## Customization
 
-If you need to override some `djoser` behaviour, you could define your custom view/serializer.
+If you need to customize any serializer behavior you can use 
+the DJOSER['SERIALIZERS'] setting to use your own serializer classes in the built-in views. 
+Or if you need to completely change the default djoser behaviour, 
+you can always override djoser views with your own custom ones.
 
-Define custom urls instead of reusing `djoser.urls`:
+Define custom `urls` instead of reusing `djoser.urls`:
 
 ```python
 urlpatterns = patterns('',
