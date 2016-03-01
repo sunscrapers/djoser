@@ -37,7 +37,7 @@ class RootViewTest(restframework.APIViewTestCase,
                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.RootView
 
-    def setUp(self):
+    def tearDown(self):
         # In Django 1.7 and newer when you override ROOT_URLCONF a signal handler
         # clears urls caches. In 1.5 and 1.6, this needs to be done manually.
         # We are testing two different sets of urls and need to make each
