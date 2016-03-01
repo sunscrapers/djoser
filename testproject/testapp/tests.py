@@ -1,14 +1,23 @@
+import django
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.test.utils import override_settings
+from django.test.testcases import SimpleTestCase
 from djet import assertions, utils, restframework
 from rest_framework import status
 import djoser.views
 import djoser.constants
 import djoser.utils
 import djoser.signals
+import djoser.serializers
+from djoser.settings import merge_settings_dicts
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 
 def create_user(**kwargs):
@@ -616,3 +625,58 @@ class UserViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_200_OK)
         user = utils.refresh(user)
         self.assertEqual(data['email'], user.email)
+
+
+class SerializersManagerTest(SimpleTestCase):
+
+    def test_serializer_manager_init(self):
+        serializers_manager = djoser.serializers.SerializersManager({})
+        self.assertFalse(serializers_manager.serializers)
+
+    def test_get_serializer_non_proper_name(self):
+        serializers_manager = djoser.serializers.SerializersManager({
+            'user': djoser.serializers.UserSerializer
+        })
+        self.assertRaises(Exception, serializers_manager.get, 'bad_name')
+
+    def test_get(self):
+        serializers_manager = djoser.serializers.SerializersManager({
+            'user': djoser.serializers.UserSerializer})
+        serializer_class = serializers_manager.get('user')
+        self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
+
+    def test_get_from_cache(self):
+        serializers_manager = djoser.serializers.SerializersManager({
+            'user': djoser.serializers.UserSerializer})
+        serializer_class = serializers_manager.get('user')
+        self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
+
+        with mock.patch.object(
+                djoser.serializers.SerializersManager, 'load_serializer') as load_serializer_mock:
+            serializer_class = serializers_manager.get('user')
+            self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
+            self.assertFalse(load_serializer_mock.called)
+
+
+class TestMergeSettingsDict(SimpleTestCase):
+
+    def test_merge_in_key(self):
+        c = {1: {1: None}}
+        d = {1: {2: None}}
+        expected = {1: {1: None, 2: None}}
+        self.assertEqual(merge_settings_dicts(c, d), expected)
+
+    def test_merge_in_key_overwrite_sub_key(self):
+        c = {1: {1: None}}
+        d = {1: {2: None, 1: 'TEST'}}
+        expected = {1: {1: 'TEST', 2: None}}
+        self.assertEqual(merge_settings_dicts(c, d), expected)
+
+    def test_merge_in_key_overwrite_sub_key_overwrite_conflicts_false(self):
+        c = {1: {1: None}}
+        d = {1: {2: None, 1: 'TEST'}}
+        try:
+            merge_settings_dicts(c, d, overwrite_conflicts=False)
+            self.assertTrue(False)
+        except Exception as error:
+            self.assertEqual(str(error), 'Conflict at 1.1')
