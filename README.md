@@ -151,6 +151,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'PASSWORD_VALIDATORS': [],
     'SERIALIZERS': {},
+    'URL_NAMESPACE': 'djoser'
 }
 ```
 
@@ -457,6 +458,13 @@ These validators are run on `/register/` and `/password/reset/confirm/`.
 
 **Example**: `[my_validator1, my_validator2]`
 
+### URL_NAMESPACE
+
+Add namespace to djoser urls. This guards us from url name clashes. 
+Especially important when url names like `login` or `logout` are used.
+
+**Default**: `None`
+
 ### SERIALIZERS
 
 This dictionary is used to update the defaults, so by providing, 
@@ -580,8 +588,8 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
 ## Customization
 
 If you need to customize any serializer behavior you can use 
-the DJOSER['SERIALIZERS'] setting to use your own serializer classes in the built-in views. 
-Or if you need to completely change the default djoser behaviour, 
+the `DJOSER['SERIALIZERS']` setting to use your own serializer classes in the built-in views. 
+Or if you need to completely change the default `djoser` behaviour, 
 you can always override djoser views with your own custom ones.
 
 Define custom `urls` instead of reusing `djoser.urls`:

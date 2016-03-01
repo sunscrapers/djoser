@@ -1,8 +1,9 @@
-import django
 from django.conf import settings
+from django.conf.urls import url, include
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
+from django.core.urlresolvers import clear_url_caches, set_urlconf
 from django.test.utils import override_settings
 from django.test.testcases import SimpleTestCase
 from djet import assertions, utils, restframework
@@ -36,7 +37,29 @@ class RootViewTest(restframework.APIViewTestCase,
                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.RootView
 
+    def tearDown(self):
+        # In Django 1.7 and newer when you override ROOT_URLCONF a signal handler
+        # clears urls caches. In 1.5 and 1.6, this needs to be done manually.
+        # We are testing two different sets of urls and need to make each
+        # set active after every test.
+        clear_url_caches()
+        set_urlconf(None)
+
     def test_get_should_return_urls_mapping(self):
+        request = self.factory.get()
+        view_object = self.create_view_object(request)
+
+        response = view_object.dispatch(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        for key in view_object.get_urls_mapping().keys():
+            self.assertIn(key, response.data)
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'URL_NAMESPACE': 'some_namespace'}),
+        ROOT_URLCONF=[url(r'^auth/', include('djoser.urls.authtoken', namespace='some_namespace'))]
+    )
+    def test_get_should_return_urls_mappings_whit_namespace_setup(self):
         request = self.factory.get()
         view_object = self.create_view_object(request)
 

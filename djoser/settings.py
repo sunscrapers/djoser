@@ -11,6 +11,7 @@ default_settings = {
     'PASSWORD_RESET_CONFIRM_RETYPE': False,
     'ROOT_VIEW_URLS_MAPPING': {},
     'PASSWORD_VALIDATORS': [],
+    'URL_NAMESPACE': None,
     'SERIALIZERS': {
         'activation': 'djoser.serializers.ActivationSerializer',
         'login': 'djoser.serializers.LoginSerializer',
