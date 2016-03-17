@@ -114,17 +114,21 @@ class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generic
     subject_template_name = 'password_reset_email_subject.txt'
     plain_body_template_name = 'password_reset_email_body.txt'
 
+    _users = None
+
     def action(self, serializer):
         for user in self.get_users(serializer.data['email']):
             self.send_email(**self.get_send_email_kwargs(user))
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_users(self, email):
-        active_users = User._default_manager.filter(
-            email__iexact=email,
-            is_active=True,
-        )
-        return (u for u in active_users if u.has_usable_password())
+        if self._users is None:
+            active_users = User._default_manager.filter(
+                email__iexact=email,
+                is_active=True,
+            )
+            self._users = [u for u in active_users if u.has_usable_password()]
+        return self._users
 
     def get_email_context(self, user):
         context = super(PasswordResetView, self).get_email_context(user)
