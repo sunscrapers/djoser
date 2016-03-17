@@ -73,6 +73,15 @@ class LoginSerializer(serializers.Serializer):
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
+    default_error_messages = {
+        'email_not_found': constants.EMAIL_NOT_FOUND
+    }
+
+    def validate_email(self, value):
+        if not self.context['view'].get_users(value):
+            raise serializers.ValidationError(self.error_messages['email_not_found'])
+        return value
+
 
 class UidAndTokenSerializer(serializers.Serializer):
     uid = serializers.CharField()

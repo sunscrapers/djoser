@@ -274,7 +274,10 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', response.data)
+        self.assertEqual(len(response.data['email']), 1)
+        self.assertEqual(response.data['email'][0], djoser.constants.EMAIL_NOT_FOUND)
         self.assert_emails_in_mailbox(0)
 
 
