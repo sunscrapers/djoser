@@ -1,4 +1,5 @@
 import unittest2
+
 import django
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
@@ -9,7 +10,7 @@ from django.test.testcases import SimpleTestCase
 
 from djet import assertions, utils, restframework
 
-from rest_framework import status
+from rest_framework import status, authtoken
 
 import djoser.views
 import djoser.constants
@@ -582,6 +583,37 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'new_password': ['Woops, 666 is not allowed.']})
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'LOGOUT_ON_PASSWORD_CHANGE': True}))
+    def test_post_should_logout_after_password_change(self):
+        user = create_user()
+        data = {
+            'new_password': 'new password',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+        djoser.utils.login_user(request, user)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        is_logged = authtoken.models.Token.objects.filter(user=user).exists()
+        self.assertFalse(is_logged)
+
+    def test_post_should_not_logout_after_password_change_if_setting_is_false(self):
+        user = create_user()
+        data = {
+            'new_password': 'new password',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+        djoser.utils.login_user(request, user)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        is_logged = authtoken.models.Token.objects.filter(user=user).exists()
+        self.assertTrue(is_logged)
 
 
 class SetUsernameViewTest(restframework.APIViewTestCase,
