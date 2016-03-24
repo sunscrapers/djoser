@@ -24,6 +24,7 @@ default_settings = {
         'user_registration': 'djoser.serializers.UserRegistrationSerializer',
         'user': 'djoser.serializers.UserSerializer',
     },
+    'LOGOUT_ON_PASSWORD_CHANGE': False,
 }
 
 

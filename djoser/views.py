@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model, user_logged_out
+from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, status, response, views
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -92,8 +92,7 @@ class LogoutView(views.APIView):
     )
 
     def post(self, request):
-        Token.objects.filter(user=request.user).delete()
-        user_logged_out.send(sender=request.user.__class__, request=request, user=request.user)
+        utils.logout_user(request)
         return response.Response(status=status.HTTP_200_OK)
 
 
@@ -143,6 +142,10 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
     def action(self, serializer):
         self.request.user.set_password(serializer.data['new_password'])
         self.request.user.save()
+
+        if settings.get('LOGOUT_ON_PASSWORD_CHANGE'):
+            utils.logout_user(self.request)
+
         return response.Response(status=status.HTTP_200_OK)
 
 
