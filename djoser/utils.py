@@ -1,7 +1,8 @@
 from django.conf import settings as django_settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import loader
-from rest_framework import response, status
+from django.contrib.auth import user_logged_in, user_logged_out
+from rest_framework import response, status, authtoken
 
 try:
     from django.contrib.sites.shortcuts import get_current_site
@@ -47,6 +48,17 @@ def send_email(to_email, from_email, context, subject_template_name,
         email_message.content_subtype = 'html'
 
     email_message.send()
+
+
+def login_user(request, user):
+    token, _ = authtoken.models.Token.objects.get_or_create(user=user)
+    user_logged_in.send(sender=user.__class__, request=request, user=user)
+    return token
+
+
+def logout_user(request):
+    authtoken.models.Token.objects.filter(user=request.user).delete()
+    user_logged_out.send(sender=request.user.__class__, request=request, user=request.user)
 
 
 class ActionViewMixin(object):
