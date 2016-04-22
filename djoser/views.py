@@ -3,7 +3,6 @@ from rest_framework import generics, permissions, status, response, views
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from django.contrib.auth.tokens import default_token_generator
 from . import serializers, settings, utils, signals
 
 User = get_user_model()
@@ -50,7 +49,7 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
     permission_classes = (
         permissions.AllowAny,
     )
-    token_generator = default_token_generator
+    token_generator = utils.get_token_generator()
     subject_template_name = 'activation_email_subject.txt'
     plain_body_template_name = 'activation_email_body.txt'
 
@@ -107,7 +106,7 @@ class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generic
     permission_classes = (
         permissions.AllowAny,
     )
-    token_generator = default_token_generator
+    token_generator = utils.get_token_generator()
     subject_template_name = 'password_reset_email_subject.txt'
     plain_body_template_name = 'password_reset_email_body.txt'
 
@@ -155,7 +154,7 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
     permission_classes = (
         permissions.AllowAny,
     )
-    token_generator = default_token_generator
+    token_generator = utils.get_token_generator()
 
     def get_serializer_class(self):
         if settings.get('PASSWORD_RESET_CONFIRM_RETYPE'):
@@ -176,7 +175,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
     permission_classes = (
         permissions.AllowAny,
     )
-    token_generator = default_token_generator
+    token_generator = utils.get_token_generator()
 
     def action(self, serializer):
         serializer.user.is_active = True

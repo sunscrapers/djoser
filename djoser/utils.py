@@ -1,7 +1,14 @@
+import six
 from django.conf import settings as django_settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import loader
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework import response, status
+
+try:
+    from django.utils.module_loading import import_string
+except ImportError:
+    from django.utils.module_loading import import_by_path as import_string
 
 try:
     from django.contrib.sites.shortcuts import get_current_site
@@ -107,3 +114,19 @@ class SendEmailViewMixin(object):
             'token': token,
             'protocol': 'https' if self.request.is_secure() else 'http',
         }
+
+
+def get_token_generator():
+    token_generator_class = django_settings.DJOSER.get('TOKEN_GENERATOR')
+    if not token_generator_class:
+        return PasswordResetTokenGenerator()
+    elif not isinstance(token_generator_class, six.string_types):
+        raise Exception("%s is not valid password reset token generator class" %
+            six.string_types(token_generator_class)
+        )
+    return import_string(token_generator_class)()
+
+
+class TokenGenerator(PasswordResetTokenGenerator):
+    def _make_hash_value(self, user, timestamp):
+        return six.text_type(user.pk) + user.password + six.text_type(timestamp)

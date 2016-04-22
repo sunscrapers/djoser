@@ -441,12 +441,34 @@ validate password equality.
 
 **Default**: `False`
 
+### SET_NEW_USER_ACTIVE
+
+If `True`, newly created user will be able to log-in before validation and account activation.
+
+**Default**: `False`
+
 ### PASSWORD_RESET_CONFIRM_RETYPE
 
 If `True`, you need to pass `re_new_password` to `/password/reset/confirm/`
 endpoint in order to validate password equality.
 
 **Default**: `False`
+
+### TOKEN_GENERATOR
+
+If set, then custom token generator class will be used during user registration, activation and password reset.
+When not set the default Django password reset token generator will be used.
+Djoser provides custom TokenGenerator class in utils module.
+
+**Default**: ``
+
+**Example**
+```
+{
+    'TOKEN_GENERATOR': 'djoser.utils.TokenGenerator',
+}
+```
+
 
 ### PASSWORD_VALIDATORS
 

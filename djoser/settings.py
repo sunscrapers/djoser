@@ -8,7 +8,9 @@ default_settings = {
     'SEND_ACTIVATION_EMAIL': False,
     'SET_PASSWORD_RETYPE': False,
     'SET_USERNAME_RETYPE': False,
+    'SET_NEW_USER_ACTIVE': False,
     'PASSWORD_RESET_CONFIRM_RETYPE': False,
+    'TOKEN_GENERATOR': '',
     'ROOT_VIEW_URLS_MAPPING': {},
     'PASSWORD_VALIDATORS': [],
     'SERIALIZERS': {
