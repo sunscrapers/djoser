@@ -483,6 +483,7 @@ let's say, one key, all the others will still be used.
     'set_username_retype': 'djoser.serializers.SetUsernameRetypeSerializer',
     'user_registration': 'djoser.serializers.UserRegistrationSerializer',
     'user': 'djoser.serializers.UserSerializer',
+    'token': 'djoser.serializers.TokenSerializer',
 }
 ```
 

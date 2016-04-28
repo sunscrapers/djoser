@@ -23,6 +23,7 @@ default_settings = {
         'set_username_retype': 'djoser.serializers.SetUsernameRetypeSerializer',
         'user_registration': 'djoser.serializers.UserRegistrationSerializer',
         'user': 'djoser.serializers.UserSerializer',
+        'token': 'djoser.serializers.TokenSerializer',
     },
 }
 
