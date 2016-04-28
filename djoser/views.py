@@ -79,8 +79,9 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
         user = serializer.user
         token, _ = Token.objects.get_or_create(user=user)
         user_logged_in.send(sender=user.__class__, request=self.request, user=user)
+        token_serializer_class = serializers.serializers_manager.get('token')
         return Response(
-            data=serializers.TokenSerializer(token).data,
+            data=token_serializer_class(token).data,
             status=status.HTTP_200_OK,
         )
 
