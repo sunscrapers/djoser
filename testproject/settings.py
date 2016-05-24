@@ -54,4 +54,5 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'PASSWORD_VALIDATORS': [validators.is_666],
+    'SET_NEW_USER_ACTIVE': False,
 }

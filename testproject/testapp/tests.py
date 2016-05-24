@@ -1,7 +1,7 @@
 import django
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
-from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core import mail
 from django.test.utils import override_settings
 from django.test.testcases import SimpleTestCase
@@ -86,7 +86,7 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assert_email_exists(to=[data['email']])
 
         user = get_user_model().objects.get(username='john')
-        self.assertFalse(user.is_active)
+        self.assertEqual(user.is_active, settings.DJOSER.get('SET_NEW_USER_ACTIVE', False))
 
     def test_post_should_not_create_new_user_if_username_exists(self):
         create_user(username='john')
@@ -286,7 +286,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            'token': djoser.utils.get_token_generator().make_token(user),
             'new_password': 'new password',
         }
 
@@ -302,7 +302,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = create_user()
         data = {
             'uid': 'x',
-            'token': default_token_generator.make_token(user),
+            'token': djoser.utils.get_token_generator().make_token(user),
             'new_password': 'new password',
         }
         request = self.factory.post(data=data)
@@ -326,7 +326,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = create_user()
         data = {
             'uid': b'\xd3\x10\xb4',
-            'token': default_token_generator.make_token(user),
+            'token': djoser.utils.get_token_generator().make_token(user),
             'new_password': 'new password',
         }
         request = self.factory.post(data=data)
@@ -342,7 +342,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk + 1),
-            'token': default_token_generator.make_token(user),
+            'token': djoser.utils.get_token_generator().make_token(user),
             'new_password': 'new password',
         }
         request = self.factory.post(data=data)
@@ -375,7 +375,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            'token': djoser.utils.get_token_generator().make_token(user),
             'new_password': 'new password',
             're_new_password': 'wrong',
         }
@@ -391,7 +391,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            'token': djoser.utils.get_token_generator().make_token(user),
             'new_password': 'new password',
             're_new_password': 'wrong',
         }
@@ -409,7 +409,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            'token': djoser.utils.get_token_generator().make_token(user),
             'new_password': '666',
             're_new_password': 'isokpassword',
         }
@@ -436,7 +436,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
         user.save()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            'token': djoser.utils.get_token_generator().make_token(user),
         }
         request = self.factory.post(data=data)
 
@@ -462,7 +462,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
         djoser.signals.user_activated.connect(self.signal_receiver)
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            'token': djoser.utils.get_token_generator().make_token(user),
         }
         request = self.factory.post(data=data)
 
@@ -680,3 +680,22 @@ class TestMergeSettingsDict(SimpleTestCase):
             self.assertTrue(False)
         except Exception as error:
             self.assertEqual(str(error), 'Conflict at 1.1')
+
+
+class GetTokenGeneratorTest(SimpleTestCase):
+    def test_returns_default_django_generator_when_custom_class_not_set(self):
+        self.assertTrue(isinstance(djoser.utils.get_token_generator(), PasswordResetTokenGenerator))
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'TOKEN_GENERATOR': ''}))
+    def test_returns_default_django_generator_when_custom_class_is_empty(self):
+        self.assertTrue(isinstance(djoser.utils.get_token_generator(), PasswordResetTokenGenerator))
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'TOKEN_GENERATOR': 5}))
+    def test_raises_exception_when_invalid_class_is_set(self):
+        with self.assertRaises(Exception):
+            djoser.utils.get_token_generator()
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{
+        'TOKEN_GENERATOR': 'djoser.utils.TokenGenerator'}))
+    def test_returns_custom_generator_class(self):
+        self.assertTrue(isinstance(djoser.utils.get_token_generator(), djoser.utils.TokenGenerator))
