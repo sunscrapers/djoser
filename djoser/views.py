@@ -42,7 +42,7 @@ class RootView(views.APIView):
         )
 
 
-class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
+class RegistrationView(generics.CreateAPIView, utils.SendEmailViewMixin):
     """
     Use this endpoint to register new user.
     """
@@ -50,13 +50,15 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
     permission_classes = (
         permissions.AllowAny,
     )
-    token_generator = default_token_generator
     subject_template_name = 'activation_email_subject.txt'
     plain_body_template_name = 'activation_email_body.txt'
+    token_generator = default_token_generator
+    send_email = utils.send_email
 
     def perform_create(self, serializer):
         instance = serializer.save()
-        signals.user_registered.send(sender=self.__class__, user=instance, request=self.request)
+        signals.user_registered.send(sender=self.__class__, user=instance,
+                                     request=self.request)
         if settings.get('SEND_ACTIVATION_EMAIL'):
             self.send_email(**self.get_send_email_kwargs(instance))
 
@@ -95,11 +97,13 @@ class LogoutView(views.APIView):
 
     def post(self, request):
         Token.objects.filter(user=request.user).delete()
-        user_logged_out.send(sender=request.user.__class__, request=request, user=request.user)
+        user_logged_out.send(sender=request.user.__class__, request=request,
+                             user=request.user)
         return response.Response(status=status.HTTP_200_OK)
 
 
-class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generics.GenericAPIView):
+class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView,
+                        utils.SendEmailViewMixin):
     """
     Use this endpoint to send email to user with password reset link.
     """
@@ -107,13 +111,14 @@ class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generic
     permission_classes = (
         permissions.AllowAny,
     )
-    token_generator = default_token_generator
     subject_template_name = 'password_reset_email_subject.txt'
     plain_body_template_name = 'password_reset_email_body.txt'
+    token_generator = default_token_generator
+    send_email = utils.send_email
 
     def action(self, serializer):
         for user in self.get_users(serializer.data['email']):
-            self.send_email(**self.get_send_email_kwargs(user))
+            self.send_email(**self.get_send_email_kwargs(user, ))
         return response.Response(status=status.HTTP_200_OK)
 
     def get_users(self, email):
@@ -125,7 +130,8 @@ class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generic
 
     def get_email_context(self, user):
         context = super(PasswordResetView, self).get_email_context(user)
-        context['url'] = settings.get('PASSWORD_RESET_CONFIRM_URL').format(**context)
+        context['url'] = settings.get(
+            'PASSWORD_RESET_CONFIRM_URL').format(**context)
         return context
 
 

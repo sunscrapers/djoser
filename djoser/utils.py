@@ -63,47 +63,32 @@ class ActionViewMixin(object):
 
 
 class SendEmailViewMixin(object):
-    token_generator = None
     subject_template_name = None
     plain_body_template_name = None
     html_body_template_name = None
-
-    def send_email(self, to_email, from_email, context):
-        send_email(to_email, from_email, context, **self.get_send_email_extras())
+    token_generator = None
 
     def get_send_email_kwargs(self, user):
         return {
             'from_email': getattr(django_settings, 'DEFAULT_FROM_EMAIL', None),
             'to_email': user.email,
             'context': self.get_email_context(user),
+            'subject_template_name': self.subject_template_name,
+            'plain_body_template_name': self.plain_body_template_name,
+            'html_body_template_name': self.html_body_template_name,
         }
-
-    def get_send_email_extras(self):
-        return {
-            'subject_template_name': self.get_subject_template_name(),
-            'plain_body_template_name': self.get_plain_body_template_name(),
-            'html_body_template_name': self.get_html_body_template_name(),
-        }
-
-    def get_subject_template_name(self):
-        return self.subject_template_name
-
-    def get_plain_body_template_name(self):
-        return self.plain_body_template_name
-
-    def get_html_body_template_name(self):
-        return self.html_body_template_name
 
     def get_email_context(self, user):
-        token = self.token_generator.make_token(user)
         uid = encode_uid(user.pk)
-        domain = django_settings.DJOSER.get('DOMAIN') or get_current_site(self.request).domain
-        site_name = django_settings.DJOSER.get('SITE_NAME') or get_current_site(self.request).name
+        domain = django_settings.DJOSER.get('DOMAIN') or \
+            get_current_site(self.request).domain
+        site_name = django_settings.DJOSER.get('SITE_NAME') or \
+            get_current_site(self.request).name
         return {
             'user': user,
             'domain': domain,
             'site_name': site_name,
             'uid': uid,
-            'token': token,
+            'token': self.token_generator.make_token(user),
             'protocol': 'https' if self.request.is_secure() else 'http',
         }
