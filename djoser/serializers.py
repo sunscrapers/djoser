@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate, get_user_model
+from django.db import transaction
 from django.utils import six
 from django.utils.module_loading import import_string
+
 from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
 
@@ -37,10 +39,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
         if settings.get('SEND_ACTIVATION_EMAIL'):
-            user.is_active = False
-            user.save(update_fields=['is_active'])
+            with transaction.atomic():
+                user = User.objects.create_user(**validated_data)
+                user.is_active = False
+                user.save(update_fields=['is_active'])
+        else:
+            user = User.objects.create_user(**validated_data)
         return user
 
 
