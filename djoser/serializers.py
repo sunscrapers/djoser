@@ -1,5 +1,11 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.utils import six
+try:
+    from django.db.transaction import atomic
+except ImportError:
+    # The behaviour should be identical for a single level of nesting
+    # http://stackoverflow.com/questions/21861207/is-transaction-atomic-same-as-transaction-commit-on-success
+    from django.db.transaction import commit_on_success as atomic
 from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
 
@@ -40,10 +46,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
         if settings.get('SEND_ACTIVATION_EMAIL'):
-            user.is_active = False
-            user.save(update_fields=['is_active'])
+            with atomic():
+                user = User.objects.create_user(**validated_data)
+                user.is_active = False
+                user.save(update_fields=['is_active'])
+        else:
+            user = User.objects.create_user(**validated_data)
         return user
 
 
