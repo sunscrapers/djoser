@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.utils import six
 from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
+from .utils import sanitize
 
 try:
     from django.utils.module_loading import import_string
@@ -40,6 +41,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
+        validated_data[User.USERNAME_FIELD] = sanitize(validated_data[User.USERNAME_FIELD])
+
         user = User.objects.create_user(**validated_data)
         if settings.get('SEND_ACTIVATION_EMAIL'):
             user.is_active = False
@@ -61,7 +64,7 @@ class LoginSerializer(serializers.Serializer):
         self.fields[User.USERNAME_FIELD] = serializers.CharField(required=False)
 
     def validate(self, attrs):
-        self.user = authenticate(username=attrs.get(User.USERNAME_FIELD), password=attrs.get('password'))
+        self.user = authenticate(username=sanitize(attrs.get(User.USERNAME_FIELD)), password=attrs.get('password'))
         if self.user:
             if not self.user.is_active:
                 raise serializers.ValidationError(self.error_messages['inactive_account'])
@@ -171,6 +174,11 @@ class SetUsernameSerializer(serializers.ModelSerializer, CurrentPasswordSerializ
         super(SetUsernameSerializer, self).__init__(*args, **kwargs)
         self.fields['new_' + User.USERNAME_FIELD] = self.fields[User.USERNAME_FIELD]
         del self.fields[User.USERNAME_FIELD]
+
+    def validate(self, attrs):
+        attrs = super(SetUsernameSerializer, self).validate(attrs)
+        attrs[User.USERNAME_FIELD] = sanitize(attrs[User.USERNAME_FIELD])
+        return attrs
 
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer):
