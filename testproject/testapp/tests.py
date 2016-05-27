@@ -666,6 +666,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertNotEqual(user.username, data['new_username'])
 
+
 class UserViewTest(restframework.APIViewTestCase,
                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.UserView
