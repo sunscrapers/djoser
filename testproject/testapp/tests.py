@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
+from django.db import IntegrityError
 from django.test.utils import override_settings
 from django.test.testcases import SimpleTestCase
 from djet import assertions, utils, restframework
@@ -114,6 +115,26 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'USERNAME_SANITIZERS': ['testapp.sanitizers.uppercase',
+                                                                               'testapp.sanitizers.trim3']}))
+    def test_create_user_unique_fail_with_sanitizers(self):
+        data = {
+            'username': 'jOhn',
+            'password': 'secret',
+            'csrftoken': 'asdf',
+        }
+        request = self.factory.post(data=data)
+        response = self.view(request)
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
+
+        data = {
+            'username': 'joHn',
+            'password': 'secret',
+            'csrftoken': 'asdf',
+        }
+        request = self.factory.post(data=data)
+        self.assertRaises(IntegrityError, self.view, request)
 
     def test_post_should_not_register_if_fails_password_validation(self):
         data = {
