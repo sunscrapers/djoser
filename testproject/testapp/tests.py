@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
+from django.db import IntegrityError
 from django.test.utils import override_settings
 from django.test.testcases import SimpleTestCase
 from djet import assertions, utils, restframework
@@ -88,6 +89,20 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         user = get_user_model().objects.get(username='john')
         self.assertFalse(user.is_active)
 
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'USERNAME_SANITIZERS': ['testapp.sanitizers.uppercase',
+                                                                               'testapp.sanitizers.trim3']}))
+    def test_create_user_with_sanitizers(self):
+        data = {
+            'username': 'john',
+            'email': 'john@beatles.com',
+            'password': 'secret',
+        }
+        request = self.factory.post(data=data)
+        self.view(request)
+
+        self.assert_instance_exists(get_user_model(), username='JOH')
+        self.assertEqual(1, get_user_model().objects.count())
+
     def test_post_should_not_create_new_user_if_username_exists(self):
         create_user(username='john')
         data = {
@@ -100,6 +115,26 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'USERNAME_SANITIZERS': ['testapp.sanitizers.uppercase',
+                                                                               'testapp.sanitizers.trim3']}))
+    def test_create_user_unique_fail_with_sanitizers(self):
+        data = {
+            'username': 'jOhn',
+            'password': 'secret',
+            'csrftoken': 'asdf',
+        }
+        request = self.factory.post(data=data)
+        response = self.view(request)
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
+
+        data = {
+            'username': 'joHn',
+            'password': 'secret',
+            'csrftoken': 'asdf',
+        }
+        request = self.factory.post(data=data)
+        self.assertRaises(IntegrityError, self.view, request)
 
     def test_post_should_not_register_if_fails_password_validation(self):
         data = {
@@ -132,6 +167,24 @@ class LoginViewTest(restframework.APIViewTestCase,
             'username': user.username,
             'password': user.raw_password,
         }
+        user_logged_in.connect(self.signal_receiver)
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assertEqual(response.data['auth_token'], user.auth_token.key)
+        self.assertTrue(self.signal_sent)
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'USERNAME_SANITIZERS': ['testapp.sanitizers.uppercase',
+                                                                               'testapp.sanitizers.trim3']}))
+    def test_post_with_sanitizers(self):
+        user = create_user(**{'username': 'JOH'})
+        data = {
+            'username': 'joHn',
+            'password': user.raw_password,
+        }
+
         user_logged_in.connect(self.signal_receiver)
         request = self.factory.post(data=data)
 
@@ -550,6 +603,22 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user = utils.refresh(user)
         self.assertEqual(data['new_username'], user.username)
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'USERNAME_SANITIZERS': ['testapp.sanitizers.uppercase',
+                                                                               'testapp.sanitizers.trim3']}))
+    def test_post_with_sanitizers(self):
+        user = create_user()
+        data = {
+            'new_username': 'jOhN',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        user = utils.refresh(user)
+        self.assertEqual('JOH', user.username)
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True}))
     def test_post_should_not_set_new_username_if_mismatch(self):

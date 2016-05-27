@@ -150,6 +150,7 @@ DJOSER = {
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'PASSWORD_VALIDATORS': [],
+    'USERNAME_SANITIZERS': [],
     'SERIALIZERS': {},
 }
 ```
@@ -456,6 +457,19 @@ These validators are run on `/register/` and `/password/reset/confirm/`.
 **Default**: `[]`
 
 **Example**: `[my_validator1, my_validator2]`
+
+### USERNAME_SANITIZERS
+
+List of functions - operations on string, that should be applied on username during: registration, login and getting
+new username. Allows to keep usernames in desired format in database without direct interference and despite of users
+habits.
+
+Each sanitizer function must return string. If you provide sanitizers having already not empty database, remember to
+rename usernames in database explicitly.
+
+**Default**: `[]`
+
+**Example**: `['myapp.sanitizers.myfunc1', 'myapp.sanitizers.myfunc2']`
 
 ### SERIALIZERS
 
