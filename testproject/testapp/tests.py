@@ -1,3 +1,4 @@
+import unittest
 import django
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
@@ -141,6 +142,8 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
         self.assertTrue(self.signal_sent)
 
+    @unittest.skipIf(django.VERSION >= (1, 10, 0, 'alpha', 1),
+                     "in this version authenticate() returns None if user is inactive")
     def test_post_should_not_login_if_user_is_not_active(self):
         user = create_user()
         data = {
@@ -156,6 +159,25 @@ class LoginViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INACTIVE_ACCOUNT_ERROR])
+        self.assertFalse(self.signal_sent)
+
+    @unittest.skipIf(django.VERSION < (1, 10, 0, 'alpha', 1),
+                     "in these versions authenticate() succeedes if user is inactive")
+    def test_post_should_not_login_if_user_is_not_active(self):
+        user = create_user()
+        data = {
+            'username': user.username,
+            'password': user.raw_password,
+        }
+        user.is_active = False
+        user.save()
+        user_logged_in.connect(self.signal_receiver)
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
         self.assertFalse(self.signal_sent)
 
     def test_post_should_not_login_if_invalid_credentials(self):
