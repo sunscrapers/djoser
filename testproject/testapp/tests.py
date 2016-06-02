@@ -1,4 +1,4 @@
-import unittest
+import unittest2
 import django
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
@@ -142,7 +142,7 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
         self.assertTrue(self.signal_sent)
 
-    @unittest.skipIf(django.VERSION >= (1, 10, 0, 'alpha', 1),
+    @unittest2.skipIf(django.VERSION >= (1, 10, 0, 'alpha', 1),
                      "in this version authenticate() returns None if user is inactive")
     def test_post_should_not_login_if_user_is_not_active(self):
         user = create_user()
@@ -161,7 +161,7 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INACTIVE_ACCOUNT_ERROR])
         self.assertFalse(self.signal_sent)
 
-    @unittest.skipIf(django.VERSION < (1, 10, 0, 'alpha', 1),
+    @unittest2.skipIf(django.VERSION < (1, 10, 0, 'alpha', 1),
                      "in these versions authenticate() succeedes if user is inactive")
     def test_post_should_not_login_if_user_is_not_active(self):
         user = create_user()
