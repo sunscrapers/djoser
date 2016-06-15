@@ -1,14 +1,11 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.utils import six
+from django.utils.module_loading import import_string
 from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
 
-try:
-    from django.utils.module_loading import import_string
-except ImportError:
-    from django.utils.module_loading import import_by_path as import_string
-
 from . import constants, utils, settings
+
 
 User = get_user_model()
 

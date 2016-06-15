@@ -1,10 +1,12 @@
 from django.contrib.auth import get_user_model, user_logged_in, user_logged_out
+from django.contrib.auth.tokens import default_token_generator
 from rest_framework import generics, permissions, status, response, views
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from django.contrib.auth.tokens import default_token_generator
+
 from . import serializers, settings, utils, signals
+
 
 User = get_user_model()
 

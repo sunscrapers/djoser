@@ -22,7 +22,7 @@ def get_requirements(file_name):
 
 setup(
     name='djoser',
-    version='0.4.3',
+    version='0.5.0',
     packages=get_packages('djoser'),
     license='MIT',
     author='SUNSCRAPERS',

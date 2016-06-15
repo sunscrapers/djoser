@@ -35,15 +35,12 @@ Available endpoints:
 
 Supported Python versions:
 
- * Python 2.6
  * Python 2.7
  * Python 3.4
  * Python 3.5
 
 Supported Django versions:
 
- * Django 1.5
- * Django 1.6
  * Django 1.7
  * Django 1.8
  * Django 1.9

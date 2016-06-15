@@ -1,32 +1,18 @@
 from django.conf import settings as django_settings
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import loader
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_text
 from rest_framework import response, status
-
-try:
-    from django.contrib.sites.shortcuts import get_current_site
-except ImportError:
-    from django.contrib.sites.models import get_current_site
 
 
 def encode_uid(pk):
-    try:
-        from django.utils.http import urlsafe_base64_encode
-        from django.utils.encoding import force_bytes
-        return urlsafe_base64_encode(force_bytes(pk)).decode()
-    except ImportError:
-        from django.utils.http import int_to_base36
-        return int_to_base36(pk)
+    return urlsafe_base64_encode(force_bytes(pk)).decode()
 
 
 def decode_uid(pk):
-    try:
-        from django.utils.http import urlsafe_base64_decode
-        from django.utils.encoding import force_text
-        return force_text(urlsafe_base64_decode(pk))
-    except ImportError:
-        from django.utils.http import base36_to_int
-        return base36_to_int(pk)
+    return force_text(urlsafe_base64_decode(pk))
 
 
 def send_email(to_email, from_email, context, subject_template_name,

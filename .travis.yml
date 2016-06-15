@@ -3,19 +3,9 @@ language: python
 python:
   - "3.5"
 env:
-  - TOX_ENV=py26-dj15-drf32
-  - TOX_ENV=py26-dj16-drf32
-  - TOX_ENV=py27-dj15-drf32
-  - TOX_ENV=py27-dj16-drf32
   - TOX_ENV=py27-dj17-drf33
   - TOX_ENV=py27-dj18-drf33
   - TOX_ENV=py27-dj19-drf33
-  - TOX_ENV=py32-dj15-drf32
-  - TOX_ENV=py32-dj16-drf32
-  - TOX_ENV=py33-dj15-drf32
-  - TOX_ENV=py33-dj16-drf32
-  - TOX_ENV=py34-dj15-drf32
-  - TOX_ENV=py34-dj16-drf32
   - TOX_ENV=py32-dj17-drf33
   - TOX_ENV=py33-dj17-drf33
   - TOX_ENV=py34-dj17-drf33
