@@ -80,7 +80,8 @@ class PasswordResetSerializer(serializers.Serializer):
     }
 
     def validate_email(self, value):
-        if not self.context['view'].get_users(value):
+        if settings.get('PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND') and \
+                not self.context['view'].get_users(value):
             raise serializers.ValidationError(self.error_messages['email_not_found'])
         return value
 

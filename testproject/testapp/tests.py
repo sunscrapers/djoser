@@ -1,3 +1,4 @@
+import unittest2
 import django
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
@@ -5,13 +6,17 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.test.utils import override_settings
 from django.test.testcases import SimpleTestCase
+
 from djet import assertions, utils, restframework
+
 from rest_framework import status
+
 import djoser.views
 import djoser.constants
 import djoser.utils
 import djoser.signals
 import djoser.serializers
+
 from djoser.settings import merge_settings_dicts
 
 try:
@@ -141,6 +146,8 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
         self.assertTrue(self.signal_sent)
 
+    @unittest2.skipIf(django.VERSION >= (1, 10, 0, 'alpha', 1),
+                     "in this version authenticate() returns None if user is inactive")
     def test_post_should_not_login_if_user_is_not_active(self):
         user = create_user()
         data = {
@@ -156,6 +163,25 @@ class LoginViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INACTIVE_ACCOUNT_ERROR])
+        self.assertFalse(self.signal_sent)
+
+    @unittest2.skipIf(django.VERSION < (1, 10, 0, 'alpha', 1),
+                     "in these versions authenticate() succeedes if user is inactive")
+    def test_post_should_not_login_if_user_is_not_active(self):
+        user = create_user()
+        data = {
+            'username': user.username,
+            'password': user.raw_password,
+        }
+        user.is_active = False
+        user.save()
+        user_logged_in.connect(self.signal_receiver)
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
         self.assertFalse(self.signal_sent)
 
     def test_post_should_not_login_if_invalid_credentials(self):
@@ -200,7 +226,7 @@ class LogoutViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assertEqual(response.data, None)
         self.assertTrue(self.signal_sent)
 
@@ -235,7 +261,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[user.email])
         site = djoser.utils.get_current_site(request)
@@ -274,11 +300,33 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('email', response.data)
-        self.assertEqual(len(response.data['email']), 1)
-        self.assertEqual(response.data['email'][0], djoser.constants.EMAIL_NOT_FOUND)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(0)
+
+    def test_post_should_return_no_content_if_user_does_not_exist(self):
+        data = {
+            'email': 'john@beatles.com',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER,
+                    **{'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True}))
+    def test_post_should_return_bad_request_if_user_does_not_exist(self):
+        data = {
+            'email': 'john@beatles.com',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['email'][0],
+                         djoser.constants.EMAIL_NOT_FOUND)
 
 
 class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
@@ -297,7 +345,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user = utils.refresh(user)
         self.assertTrue(user.check_password(data['new_password']))
 
@@ -445,7 +493,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user = utils.refresh(user)
         self.assertTrue(user.is_active)
 
@@ -489,7 +537,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user = utils.refresh(user)
         self.assertTrue(user.check_password(data['new_password']))
 
@@ -550,7 +598,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
 
         response = self.view(request)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user = utils.refresh(user)
         self.assertEqual(data['new_username'], user.username)
 

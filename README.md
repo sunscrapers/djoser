@@ -91,7 +91,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-Run migrations (if you are using Django 1.7+ or South) - this step will create tables for `auth` app:
+Run migrations – this step will create tables for `auth` app:
 
     $ ./manage.py migrate
 
@@ -131,7 +131,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-Run migrations (if you are using Django 1.7+ or South) - this step will create tables for `auth` and `authtoken` apps:
+Run migrations – this step will create tables for `auth` and `authtoken` apps:
 
     $ ./manage.py migrate
 
@@ -271,7 +271,7 @@ URL: `/logout/`
 
 * **response**
 
-    * status: `HTTP_200_OK` (success)
+    * status: `HTTP_204_NO_CONTENT` (success)
 
 ### Activate
 
@@ -294,7 +294,7 @@ URL: `/activate/`
 
 * **response**
 
-    * status: `HTTP_200_OK` (success)
+    * status: `HTTP_204_NO_CONTENT` (success)
 
 ### Set username
 
@@ -316,7 +316,7 @@ URL: `/{{ User.USERNAME_FIELD }}/`
 
 * **response**
 
-    * status: `HTTP_200_OK` (success)
+    * status: `HTTP_204_NO_CONTENT` (success)
 
 ### Set password
 
@@ -338,7 +338,7 @@ URL: `/password/`
 
 * **response**
 
-    * status: `HTTP_200_OK` (success)
+    * status: `HTTP_204_NO_CONTENT` (success)
 
 ### Reset password
 
@@ -357,7 +357,8 @@ URL: `/password/reset/`
 
 * **response**
 
-    * status: `HTTP_200_OK` (success)
+    * status: `HTTP_204_NO_CONTENT` (success), if `PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND` is `False` (default); or
+    * status: `HTTP_400_BAD_REQUEST`, if `PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND` is `True` and `email` does not exists in the database.
 
 ### Reset password confirmation
 
@@ -384,7 +385,7 @@ URL: `/password/reset/confirm/`
 
 * **response**
 
-    * status: `HTTP_200_OK` (success)
+    * status: `HTTP_204_NO_CONTENT` (success)
 
 ## Settings
 
@@ -442,6 +443,20 @@ validate password equality.
 
 If `True`, you need to pass `re_new_password` to `/password/reset/confirm/`
 endpoint in order to validate password equality.
+
+**Default**: `False`
+
+### PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND
+
+If `True`, posting a non-existent `email` to `/password/reset/` will return
+a `HTTP_400_BAD_REQUEST` response with an `EMAIL_NOT_FOUND` error message
+('User with given email does not exist.').
+
+If `False` (default), the `/password/reset/` endpoint will always return
+a `HTTP_204_NO_CONTENT` response.
+
+Please note that setting this to `True` will expose information whether
+an email is registered in the system.
 
 **Default**: `False`
 
