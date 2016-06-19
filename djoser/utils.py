@@ -115,3 +115,8 @@ class UserPasswordResetEmailFactory(UserEmailFactoryBase):
         context = super(UserPasswordResetEmailFactory, self).get_context()
         context['url'] = settings.get('PASSWORD_RESET_CONFIRM_URL').format(**context)
         return context
+
+
+class UserConfirmationEmailFactory(UserEmailFactoryBase):
+    subject_template_name = 'confirmation_email_subject.txt'
+    plain_body_template_name = 'confirmation_email_body.txt'
