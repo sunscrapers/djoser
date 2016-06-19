@@ -417,6 +417,12 @@ If `True`, register endpoint will send activation email to user.
 
 **Default**: `False`
 
+### SEND_CONFIRMATION_EMAIL
+
+If `True`, register or activation endpoint will send confirmation email to user.
+
+**Default**: `False`
+
 ### ACTIVATION_URL
 
 URL to your frontend activation page. It should contain `{uid}` and `{token}`

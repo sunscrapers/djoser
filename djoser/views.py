@@ -54,13 +54,20 @@ class RegistrationView(generics.CreateAPIView):
     )
 
     def perform_create(self, serializer):
-        instance = serializer.save()
-        signals.user_registered.send(sender=self.__class__, user=instance, request=self.request)
+        user = serializer.save()
+        signals.user_registered.send(sender=self.__class__, user=user, request=self.request)
         if settings.get('SEND_ACTIVATION_EMAIL'):
-            self.send_activation_email(instance)
+            self.send_activation_email(user)
+        elif settings.get('SEND_CONFIRMATION_EMAIL'):
+            self.send_confirmation_email(user)
 
     def send_activation_email(self, user):
         email_factory = utils.UserActivationEmailFactory.from_request(self.request, user=user)
+        email = email_factory.create()
+        email.send()
+
+    def send_confirmation_email(self, user):
+        email_factory = utils.UserConfirmationEmailFactory.from_request(self.request, user=user)
         email = email_factory.create()
         email.send()
 
@@ -189,6 +196,11 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
         serializer.user.save()
         signals.user_activated.send(
             sender=self.__class__, user=serializer.user, request=self.request)
+        if settings.get('SEND_CONFIRMATION_EMAIL'):
+            email_factory = utils.UserConfirmationEmailFactory.from_request(
+                self.request, user=serializer.user)
+            email = email_factory.create()
+            email.send()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
