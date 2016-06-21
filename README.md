@@ -446,6 +446,12 @@ endpoint in order to validate password equality.
 
 **Default**: `False`
 
+### LOGOUT_ON_PASSWORD_CHANGE
+
+If `True`, setting new password will logout the user.
+
+**Default**: `False`
+
 ### PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND
 
 If `True`, posting a non-existent `email` to `/password/reset/` will return
