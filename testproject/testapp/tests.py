@@ -720,6 +720,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
 
 
 class UserViewTest(restframework.APIViewTestCase,
+                   assertions.EmailAssertionsMixin,
                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.UserView
 
@@ -746,6 +747,23 @@ class UserViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_200_OK)
         user = utils.refresh(user)
         self.assertEqual(data['email'], user.email)
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True}))
+    def test_put_should_update_user_email_and_send_activation_email(self):
+        user = create_user()
+        data = {
+            'email': 'ringo@beatles.com',
+        }
+        request = self.factory.put(user=user, data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assert_emails_in_mailbox(1)
+        self.assert_email_exists(to=[data['email']])
+
+        user = get_user_model().objects.get(username='john')
+        self.assertFalse(user.is_active)
 
 
 class SerializersManagerTest(SimpleTestCase):
