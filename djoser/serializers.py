@@ -24,6 +24,16 @@ class UserSerializer(serializers.ModelSerializer):
             User.USERNAME_FIELD,
         )
 
+    def update(self, instance, validated_data):
+        email = instance.email
+        with transaction.atomic():
+            instance = super(UserSerializer, self).update(instance, validated_data)
+            if validated_data.get('email') and email != instance.email and settings.get('SEND_ACTIVATION_EMAIL'):
+                instance.is_active = False
+                instance.save(update_fields=['is_active'])
+
+        return instance
+
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style={'input_type': 'password'},
