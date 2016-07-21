@@ -244,8 +244,6 @@ class UserView(generics.RetrieveUpdateAPIView):
         if email != user.email:
             if settings.get('SEND_ACTIVATION_EMAIL'):
                 self.send_activation_email(user)
-            elif settings.get('SEND_CONFIRMATION_EMAIL'):
-                self.send_confirmation_email(user)
 
     def send_activation_email(self, user):
         email_factory = utils.UserActivationEmailFactory.from_request(self.request, user=user)
