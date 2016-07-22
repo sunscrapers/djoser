@@ -249,8 +249,3 @@ class UserView(generics.RetrieveUpdateAPIView):
         email_factory = utils.UserActivationEmailFactory.from_request(self.request, user=user)
         email = email_factory.create()
         email.send()
-
-    def send_confirmation_email(self, user):
-        email_factory = utils.UserConfirmationEmailFactory.from_request(self.request, user=user)
-        email = email_factory.create()
-        email.send()
