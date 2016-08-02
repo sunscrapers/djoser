@@ -58,12 +58,12 @@ class UserEmailFactoryBase(object):
         self.protocol = protocol
 
     @classmethod
-    def from_request(cls, request, user=None, from_email=None):
+    def from_request(cls, request, user=None, from_email=None, frontend_url=None):
         site = get_current_site(request)
         return cls(
             from_email=getattr(django_settings, 'DEFAULT_FROM_EMAIL', from_email),
             user=user or request.user,
-            domain=django_settings.DJOSER.get('DOMAIN') or site.domain,
+            domain=django_settings.DJOSER.get('PASSWORD_RESET_ALLOWED_HOSTS').get(frontend_url) or site.domain,
             site_name=django_settings.DJOSER.get('SITE_NAME') or site.name,
             protocol='https' if request.is_secure() else 'http',
         )

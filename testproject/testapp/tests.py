@@ -10,7 +10,7 @@ from django.test.testcases import SimpleTestCase
 
 from djet import assertions, utils, restframework
 
-from rest_framework import status, authtoken
+from rest_framework import status, authtoken, fields
 
 import djoser.views
 import djoser.constants
@@ -271,11 +271,13 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
                             assertions.StatusCodeAssertionsMixin,
                             assertions.EmailAssertionsMixin):
     view_class = djoser.views.PasswordResetView
+    frontend_url = 'http://localhost:8080/password_reset'
 
     def test_post_should_send_email_to_user_with_password_rest_link(self):
         user = create_user()
         data = {
             'email': user.email,
+            'frontend_url': self.frontend_url,
         }
         request = self.factory.post(data=data)
 
@@ -287,12 +289,16 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         site = djoser.utils.get_current_site(request)
         self.assertIn(site.domain, mail.outbox[0].body)
         self.assertIn(site.name, mail.outbox[0].body)
+        self.assertIn(settings.DJOSER.get('PASSWORD_RESET_ALLOWED_HOSTS').get(self.frontend_url), mail.outbox[0].body)
 
+    @unittest2.skip('This functionality is no longer valid as we want to match frontend_url with settings'
+                    'with PASSWORD_RESET_ALLOWED_HOSTS and set email domain with it')
     @override_settings(DJOSER=dict(settings.DJOSER, **{'DOMAIN': 'custom.com', 'SITE_NAME': 'Custom'}))
     def test_post_should_send_email_to_user_with_custom_domain_and_site_name(self):
         user = create_user()
         data = {
             'email': user.email,
+            'frontend_url': self.frontend_url,
         }
         request = self.factory.post(data=data)
 
@@ -305,6 +311,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         user = create_user()
         data = {
             'email': user.email,
+            'frontend_url': self.frontend_url,
         }
         request = self.factory.post(data=data)
 
@@ -315,6 +322,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
     def test_post_should_not_send_email_to_user_if_user_does_not_exist(self):
         data = {
             'email': 'john@beatles.com',
+            'frontend_url': self.frontend_url,
         }
         request = self.factory.post(data=data)
 
@@ -326,6 +334,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
     def test_post_should_return_no_content_if_user_does_not_exist(self):
         data = {
             'email': 'john@beatles.com',
+            'frontend_url': self.frontend_url,
         }
         request = self.factory.post(data=data)
 
@@ -339,6 +348,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
     def test_post_should_return_bad_request_if_user_does_not_exist(self):
         data = {
             'email': 'john@beatles.com',
+            'frontend_url': self.frontend_url,
         }
         request = self.factory.post(data=data)
 
@@ -347,6 +357,44 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['email'][0],
                          djoser.constants.EMAIL_NOT_FOUND)
+
+    def test_post_should_return_bad_request_if_frontend_url_is_missing(self):
+        data = {
+            'email': 'john@beatles.com',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['frontend_url'][0],
+                         fields.Field.default_error_messages['required'])
+
+    def test_post_should_return_bad_request_if_frontend_url_is_not_matching_settings(self):
+        data = {
+            'email': 'john@beatles.com',
+            'frontend_url': 'http://bad-frontend.com/reset_password',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['frontend_url'][0],
+                         djoser.constants.FRONTEND_URL_NOT_ALLOWED)
+
+    def test_post_should_return_bad_request_if_frontend_url_is_not_valid_url(self):
+        data = {
+            'email': 'john@beatles.com',
+            'frontend_url': 'bad-frontend',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['frontend_url'][0],
+                         fields.URLField.default_error_messages['invalid'])
 
 
 class PasswordResetConfirmViewTest(restframework.APIViewTestCase,

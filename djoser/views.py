@@ -121,7 +121,7 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def action(self, serializer):
         for user in self.get_users(serializer.data['email']):
-            self.send_password_reset_email(user)
+            self.send_password_reset_email(user, serializer.data['frontend_url'])
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_users(self, email):
@@ -133,8 +133,9 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
             self._users = [u for u in active_users if u.has_usable_password()]
         return self._users
 
-    def send_password_reset_email(self, user):
-        email_factory = utils.UserPasswordResetEmailFactory.from_request(self.request, user=user)
+    def send_password_reset_email(self, user, frontend_url):
+        email_factory = utils.UserPasswordResetEmailFactory.from_request(
+            self.request, user=user, frontend_url=frontend_url)
         email = email_factory.create()
         email.send()
 

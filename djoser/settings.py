@@ -28,6 +28,7 @@ default_settings = {
         'token': 'djoser.serializers.TokenSerializer',
     },
     'LOGOUT_ON_PASSWORD_CHANGE': False,
+    'PASSWORD_RESET_ALLOWED_HOSTS': {}
 }
 
 

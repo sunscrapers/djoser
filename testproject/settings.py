@@ -54,4 +54,7 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'PASSWORD_VALIDATORS': [validators.is_666],
+    'PASSWORD_RESET_ALLOWED_HOSTS': {
+        'http://localhost:8080/password_reset': 'localhost:8080',
+    }
 }

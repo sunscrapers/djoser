@@ -74,15 +74,22 @@ class LoginSerializer(serializers.Serializer):
 
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
+    frontend_url = serializers.URLField()
 
     default_error_messages = {
-        'email_not_found': constants.EMAIL_NOT_FOUND
+        'email_not_found': constants.EMAIL_NOT_FOUND,
+        'frontend_url_not_allowed': constants.FRONTEND_URL_NOT_ALLOWED
     }
 
     def validate_email(self, value):
         if settings.get('PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND') and \
                 not self.context['view'].get_users(value):
             raise serializers.ValidationError(self.error_messages['email_not_found'])
+        return value
+
+    def validate_frontend_url(self, value):
+        if value not in settings.get('PASSWORD_RESET_ALLOWED_HOSTS'):
+            raise serializers.ValidationError(self.error_messages['frontend_url_not_allowed'])
         return value
 
 
