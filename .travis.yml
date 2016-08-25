@@ -6,7 +6,7 @@ env:
   - TOX_ENV=py27-dj17-drf33
   - TOX_ENV=py27-dj18-drf33
   - TOX_ENV=py27-dj19-drf33
-  - TOX_ENV=py27-dj110a-drf33
+  - TOX_ENV=py27-dj110-drf33
   - TOX_ENV=py32-dj17-drf33
   - TOX_ENV=py33-dj17-drf33
   - TOX_ENV=py34-dj17-drf33
@@ -16,8 +16,8 @@ env:
   - TOX_ENV=py35-dj18-drf33
   - TOX_ENV=py34-dj19-drf33
   - TOX_ENV=py35-dj19-drf33
-  - TOX_ENV=py34-dj110a-drf33
-  - TOX_ENV=py35-dj110a-drf33
+  - TOX_ENV=py34-dj110-drf33
+  - TOX_ENV=py35-dj110-drf33
 
 install:
   - travis_retry pip install "virtualenv<14.0.0" "tox>=1.9"
