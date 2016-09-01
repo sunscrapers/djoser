@@ -4,18 +4,18 @@ python:
   - "3.5"
 env:
   - TOX_ENV=py27-dj17-drf33
-  - TOX_ENV=py27-dj18-drf33
-  - TOX_ENV=py27-dj19-drf33
-  - TOX_ENV=py27-dj110-drf33
   - TOX_ENV=py33-dj17-drf33
   - TOX_ENV=py34-dj17-drf33
-  - TOX_ENV=py33-dj18-drf33
-  - TOX_ENV=py34-dj18-drf33
-  - TOX_ENV=py35-dj18-drf33
-  - TOX_ENV=py34-dj19-drf33
-  - TOX_ENV=py35-dj19-drf33
-  - TOX_ENV=py34-dj110-drf33
-  - TOX_ENV=py35-dj110-drf33
+  - TOX_ENV=py27-dj18-drf34
+  - TOX_ENV=py27-dj19-drf34
+  - TOX_ENV=py27-dj110-drf34
+  - TOX_ENV=py33-dj18-drf34
+  - TOX_ENV=py34-dj18-drf34
+  - TOX_ENV=py35-dj18-drf34
+  - TOX_ENV=py34-dj19-drf34
+  - TOX_ENV=py34-dj110-drf34
+  - TOX_ENV=py35-dj19-drf34
+  - TOX_ENV=py35-dj110-drf34
 
 install:
   - travis_retry pip install virtualenv tox
