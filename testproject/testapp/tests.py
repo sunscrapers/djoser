@@ -166,8 +166,8 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
         self.assertTrue(self.signal_sent)
 
-    @unittest2.skipIf(django.VERSION >= (1, 10, 0, 'alpha', 1),
-                     "in this version authenticate() returns None if user is inactive")
+    @unittest2.skipIf(django.VERSION >= (1, 10),
+                      "in this version authenticate() returns None if user is inactive")
     def test_post_should_not_login_if_user_is_not_active(self):
         user = create_user()
         data = {
@@ -185,8 +185,8 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INACTIVE_ACCOUNT_ERROR])
         self.assertFalse(self.signal_sent)
 
-    @unittest2.skipIf(django.VERSION < (1, 10, 0, 'alpha', 1),
-                     "in these versions authenticate() succeedes if user is inactive")
+    @unittest2.skipIf(django.VERSION < (1, 10),
+                      "in these versions authenticate() succeedes if user is inactive")
     def test_post_should_not_login_if_user_is_not_active(self):
         user = create_user()
         data = {
