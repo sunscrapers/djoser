@@ -44,6 +44,7 @@ Supported Django versions:
  * Django 1.7
  * Django 1.8
  * Django 1.9
+ * Django 1.10
 
 Supported Django Rest Framework versions:
 
@@ -556,7 +557,7 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
 
     `$ curl -X POST http://127.0.0.1:8088/auth/register/ --data 'username=djoser&password=djoser'`
 
-    `{"email": "", "username": "djoser"}`
+    `{"email": "", "username": "djoser", "id":1}`
 
     So far, so good. We have just created a new user using REST API.
 
@@ -586,7 +587,7 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
 
     `$ curl -X GET http://127.0.0.1:8088/auth/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
 
-    `{"email": "", "username": "djoser"}`
+    `{"email": "", "username": "djoser", "id": 1}`
 
     Yay, it works!
 
