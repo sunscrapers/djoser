@@ -136,6 +136,25 @@ Run migrations – this step will create tables for `auth` and `authtoken` apps:
 
     $ ./manage.py migrate
 
+### JSON Web Token Authentication
+`djoser` does not provide support for JSON web token authentication out of the box but
+can be enabled by using a library like [djangorestframework-jwt](https://github.com/GetBlimp/django-rest-framework-jwt).
+
+You simply need to route correctly in your `settings.ROOT_URLCONF`. An example would be:
+
+```
+import rest_framework_jwt.views
+import djoser.views
+
+urlpatterns = [
+    url(r'^auth/login', rest_framework_jwt.views.obtain_jwt_token),  # using JSON web token
+    url(r'^auth/register', djoser.views.RegistrationView.as_view()),
+    url(r'^auth/password/reset', djoser.views.PasswordResetView.as_view()),
+    url(r'^auth/password/confirm', djoser.views.PasswordResetConfirmView.as_view()),
+    ...
+]
+```
+
 ## Settings
 
 Optionally add `DJOSER` settings:
@@ -484,7 +503,7 @@ These validators are run on `/register/` and `/password/reset/confirm/`.
 
 ### SERIALIZERS
 
-This dictionary is used to update the defaults, so by providing, 
+This dictionary is used to update the defaults, so by providing,
 let's say, one key, all the others will still be used.
 
 **Examples**
@@ -494,7 +513,7 @@ let's say, one key, all the others will still be used.
 }
 ```
 
-**Default**: 
+**Default**:
 ```
 {
     'activation': 'djoser.serializers.ActivationSerializer',
@@ -605,9 +624,9 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
 
 ## Customization
 
-If you need to customize any serializer behavior you can use 
-the DJOSER['SERIALIZERS'] setting to use your own serializer classes in the built-in views. 
-Or if you need to completely change the default djoser behaviour, 
+If you need to customize any serializer behaviour you can use
+the DJOSER['SERIALIZERS'] setting to use your own serializer classes in the built-in views.
+Or if you need to completely change the default djoser behaviour,
 you can always override djoser views with your own custom ones.
 
 Define custom `urls` instead of reusing `djoser.urls`:
