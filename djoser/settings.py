@@ -12,7 +12,8 @@ default_settings = {
     'PASSWORD_RESET_CONFIRM_RETYPE': False,
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': False,
     'ROOT_VIEW_URLS_MAPPING': {},
-    'PASSWORD_VALIDATORS': [],
+    'USE_DJANGO_PASSWORD_VALIDATORS': False,
+    'AUTH_PASSWORD_VALIDATORS': [],
     'SERIALIZERS': {
         'activation': 'djoser.serializers.ActivationSerializer',
         'login': 'djoser.serializers.LoginSerializer',

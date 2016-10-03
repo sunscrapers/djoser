@@ -1,4 +1,5 @@
 from django.conf import settings as django_settings
+from django.contrib.auth import password_validation
 from django.contrib.auth import user_logged_in, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
@@ -29,6 +30,14 @@ def login_user(request, user):
 def logout_user(request):
     authtoken.models.Token.objects.filter(user=request.user).delete()
     user_logged_out.send(sender=request.user.__class__, request=request, user=request.user)
+
+
+def get_password_validators():
+    if settings.get('USE_DJANGO_PASSWORD_VALIDATORS'):
+        validators = [lambda i: i.validate() for i in password_validation.get_default_password_validators()]
+    else:
+        validators = settings.get('AUTH_PASSWORD_VALIDATORS')
+    return validators
 
 
 class ActionViewMixin(object):

@@ -490,6 +490,21 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'new_password': ['Woops, 666 is not allowed.']})
 
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'USE_DJANGO_PASSWORD_VALIDATORS': True}),
+                       AUTH_PASSWORD_VALIDATORS=[{'NAME': 'testapp.validators.DjangoTestValidator'}])
+    def test_django_validation(self):
+        user = create_user()
+        data = {
+            'uid': djoser.utils.encode_uid(user.pk),
+            'token': default_token_generator.make_token(user),
+            'new_password': '666',
+            're_new_password': 'isokpassword',
+        }
+        request = self.factory.post(data=data)
+        response = self.view(request)
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'new_password': ['Woops, 666 is not allowed.']})
+
 
 class ActivationViewTest(restframework.APIViewTestCase,
                          assertions.EmailAssertionsMixin,
