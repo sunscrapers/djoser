@@ -11,6 +11,7 @@ from django.test.testcases import SimpleTestCase
 from djet import assertions, utils, restframework
 
 from rest_framework import status, authtoken
+from rest_framework.request import Request, override_method
 
 import djoser.views
 import djoser.constants
@@ -801,3 +802,19 @@ class TestMergeSettingsDict(SimpleTestCase):
             self.assertTrue(False)
         except Exception as error:
             self.assertEqual(str(error), 'Conflict at 1.1')
+
+
+class TestDjoserViewsSupportActionAttribute(restframework.APIViewTestCase):
+    # any arbitraty view from djoser
+    view_class = djoser.views.UserView
+
+    def test_action_reflect_http_method(self):
+        request = self.factory.get()
+
+        view = self.view_class()
+        view.action_map = {'get': 'retrieve'}
+
+        # reproduce DRF wrapping
+        with override_method(view, Request(request), 'GET') as request:
+            view.dispatch(request)
+            self.assertEqual(view.action, 'retrieve')

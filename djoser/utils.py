@@ -36,7 +36,7 @@ class ActionViewMixin(object):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            return self.action(serializer)
+            return self._action(serializer)
         else:
             return response.Response(
                 data=serializer.errors,
