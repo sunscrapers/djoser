@@ -643,7 +643,7 @@ Define custom view/serializer (inherit from one of `djoser` class) and override 
 ```python
 class CustomRegistrationView(djoser.views.RegistrationView):
 
-    def send_email(self, *args, **kwargs):
+    def send_activation_email(self, *args, **kwargs):
         your_custom_email_sender(*args, **kwargs)
 ```
 
