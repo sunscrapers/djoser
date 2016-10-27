@@ -35,13 +35,8 @@ class ActionViewMixin(object):
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            return self.action(serializer)
-        else:
-            return response.Response(
-                data=serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serializer.is_valid(raise_exception=True)
+        return self._action(serializer)
 
 
 class UserEmailFactoryBase(object):

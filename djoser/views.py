@@ -86,7 +86,7 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
         permissions.AllowAny,
     )
 
-    def action(self, serializer):
+    def _action(self, serializer):
         token = utils.login_user(self.request, serializer.user)
         token_serializer_class = serializers.serializers_manager.get('token')
         return Response(
@@ -119,7 +119,7 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
 
     _users = None
 
-    def action(self, serializer):
+    def _action(self, serializer):
         for user in self.get_users(serializer.data['email']):
             self.send_password_reset_email(user)
         return response.Response(status=status.HTTP_204_NO_CONTENT)
@@ -152,7 +152,7 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
             return serializers.serializers_manager.get('set_password_retype')
         return serializers.serializers_manager.get('set_password')
 
-    def action(self, serializer):
+    def _action(self, serializer):
         self.request.user.set_password(serializer.data['new_password'])
         self.request.user.save()
 
@@ -176,7 +176,7 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
             return serializers.serializers_manager.get('password_reset_confirm_retype')
         return serializers.serializers_manager.get('password_reset_confirm')
 
-    def action(self, serializer):
+    def _action(self, serializer):
         serializer.user.set_password(serializer.data['new_password'])
         serializer.user.save()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
@@ -192,7 +192,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
     )
     token_generator = default_token_generator
 
-    def action(self, serializer):
+    def _action(self, serializer):
         serializer.user.is_active = True
         serializer.user.save()
         signals.user_activated.send(
@@ -218,7 +218,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
             return serializers.serializers_manager.get('set_username_retype')
         return serializers.serializers_manager.get('set_username')
 
-    def action(self, serializer):
+    def _action(self, serializer):
         setattr(self.request.user, User.USERNAME_FIELD, serializer.data['new_' + User.USERNAME_FIELD])
         self.request.user.save()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
