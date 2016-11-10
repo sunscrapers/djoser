@@ -30,6 +30,16 @@ def logout_user(request):
     authtoken.models.Token.objects.filter(user=request.user).delete()
     user_logged_out.send(sender=request.user.__class__, request=request, user=request.user)
 
+def get_password_validators():
+    password_validators = settings.get('PASSWORD_VALIDATORS')
+    new_password_validators = []
+
+    for item in password_validators:
+        if not callable(item):
+            new_password_validators.append(lambda pwd: item.validate(pwd))
+        else:
+            new_password_validators.append(item)
+    return new_password_validators
 
 class ActionViewMixin(object):
 
