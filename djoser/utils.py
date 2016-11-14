@@ -7,7 +7,7 @@ from django.template import loader
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
 
-from rest_framework import response, status, authtoken
+from rest_framework import authtoken
 
 from . import settings
 
@@ -32,7 +32,7 @@ def logout_user(request):
 
 
 def get_password_validators():
-    if settings.get('USE_DJANGO_PASSWORD_VALIDATORS':
+    if settings.get('USE_DJANGO_PASSWORD_VALIDATORS'):
         validators = [lambda value: i.validate(value) for i in password_validation.get_default_password_validators()]
     else:
         validators = settings.get('AUTH_PASSWORD_VALIDATORS')
