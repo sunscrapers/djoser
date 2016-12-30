@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
+import io
 import os
 from setuptools import setup
+
 
 try:
     import pypandoc
     description = pypandoc.convert('README.md', 'rst')
 except (IOError, ImportError):
-    description = open('README.md').read()
+    description = io.open('README.md', encoding='utf-8').read()
 
 
 def get_packages(package):

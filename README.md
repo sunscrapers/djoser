@@ -92,7 +92,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-Run migrations – this step will create tables for `auth` app:
+Run migrations - this step will create tables for `auth` app:
 
     $ ./manage.py migrate
 
@@ -132,7 +132,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-Run migrations – this step will create tables for `auth` and `authtoken` apps:
+Run migrations - this step will create tables for `auth` and `authtoken` apps:
 
     $ ./manage.py migrate
 
