@@ -24,7 +24,7 @@ def get_requirements(file_name):
 
 setup(
     name='djoser',
-    version='0.5.1',
+    version='0.5.2',
     packages=get_packages('djoser'),
     license='MIT',
     author='SUNSCRAPERS',
