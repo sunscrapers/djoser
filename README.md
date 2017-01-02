@@ -150,7 +150,7 @@ urlpatterns = [
     url(r'^auth/login', rest_framework_jwt.views.obtain_jwt_token),  # using JSON web token
     url(r'^auth/register', djoser.views.RegistrationView.as_view()),
     url(r'^auth/password/reset', djoser.views.PasswordResetView.as_view()),
-    url(r'^auth/password/confirm', djoser.views.PasswordResetConfirmView.as_view()),
+    url(r'^auth/password/reset/confirm', djoser.views.PasswordResetConfirmView.as_view()),
     ...
 ]
 ```
