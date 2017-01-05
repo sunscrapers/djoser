@@ -1,4 +1,0 @@
--e .
-djet
-unittest2
-coverage==3.7.1

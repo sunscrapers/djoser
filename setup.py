@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import io
 import os
+from io import open
 from setuptools import setup
 
 
@@ -9,17 +9,13 @@ try:
     import pypandoc
     description = pypandoc.convert('README.md', 'rst')
 except (IOError, ImportError):
-    description = io.open('README.md', encoding='utf-8').read()
+    description = open('README.md', encoding='utf-8').read()
 
 
 def get_packages(package):
     return [dirpath
             for dirpath, dirnames, filenames in os.walk(package)
             if os.path.exists(os.path.join(dirpath, '__init__.py'))]
-
-
-def get_requirements(file_name):
-    return [i.strip() for i in open(file_name).readlines()]
 
 
 setup(
@@ -31,7 +27,7 @@ setup(
     description='REST version of Django authentication system.',
     author_email='info@sunscrapers.com',
     long_description=description,
-    install_requires=get_requirements('requirements.txt'),
+    install_requires=[],
     include_package_data=True,
     url='https://github.com/sunscrapers/djoser',
     classifiers=[
