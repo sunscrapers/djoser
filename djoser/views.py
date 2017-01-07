@@ -228,6 +228,7 @@ class UserView(generics.RetrieveUpdateAPIView):
     permission_classes = (
         permissions.IsAuthenticated,
     )
+    queryset = User.objects.all()
 
     def get_object(self, *args, **kwargs):
         return self.request.user
