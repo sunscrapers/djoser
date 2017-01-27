@@ -20,7 +20,7 @@ def get_packages(package):
 
 setup(
     name='djoser',
-    version='0.5.3',
+    version='0.5.4',
     packages=get_packages('djoser'),
     license='MIT',
     author='SUNSCRAPERS',
