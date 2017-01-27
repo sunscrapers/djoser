@@ -67,7 +67,7 @@ class UserEmailFactoryBase(object):
             domain=django_settings.DJOSER.get('DOMAIN') or site.domain,
             site_name=django_settings.DJOSER.get('SITE_NAME') or site.name,
             protocol='https' if request.is_secure() else 'http',
-            **context,
+            **context
         )
 
     def create(self):
