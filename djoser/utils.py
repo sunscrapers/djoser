@@ -99,14 +99,16 @@ class UserEmailFactoryBase(object):
         return email_message
 
     def get_context(self):
-        return {
+        context = {
             'user': self.user,
             'domain': self.domain,
             'site_name': self.site_name,
             'uid': encode_uid(self.user.pk),
             'token': self.token_generator.make_token(self.user),
             'protocol': self.protocol,
-        }.update(**self.context_data)
+        }
+        context.update(self.context_data)
+        return context
 
 
 class UserActivationEmailFactory(UserEmailFactoryBase):
