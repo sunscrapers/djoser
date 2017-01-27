@@ -747,6 +747,25 @@ class UserViewTest(restframework.APIViewTestCase,
         self.assertEqual(data['email'], user.email)
 
 
+class UserEmailFactoryBaseTest(SimpleTestCase):
+    def test_get_context_returns_data(self):
+        valid_data = {
+            'from_email': 'test@example.net',
+            'user': get_user_model()(),
+            'protocol': 'https',
+            'domain': 'example.net',
+            'site_name': 'example.net',
+            'arbitrary_data': 'lorem ipsum'
+
+        }
+
+        factory = djoser.utils.UserEmailFactoryBase(
+            **valid_data
+        )
+
+        self.assertIsNotNone(factory.get_context())
+
+
 class SerializersManagerTest(SimpleTestCase):
 
     def test_serializer_manager_init(self):
