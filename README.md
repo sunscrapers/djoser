@@ -229,6 +229,8 @@ method and have [USERNAME_FIELD](https://docs.djangoproject.com/en/dev/topics/au
 and [REQUIRED_FIELDS](https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.REQUIRED_FIELDS)
 fields.
 
+If you are using a custom user model, make sure you use django.contrib.auth.get_user_model() instead of referencing User directly from django.contrib.auth.models.
+
 #### `POST`
 
 URL: `/register/`
