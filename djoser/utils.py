@@ -114,7 +114,7 @@ class UserEmailFactoryBase(object):
 class UserActivationEmailFactory(UserEmailFactoryBase):
     subject_template_name = 'activation_email_subject.txt'
     plain_body_template_name = 'activation_email_body.txt'
-    if settings.USE_HTML_EMAIL_TEMPLATES:
+    if settings.get("USE_HTML_EMAIL_TEMPLATES"):
         html_body_template_name = 'activation_email_body.html'
 
     def get_context(self):
@@ -126,7 +126,7 @@ class UserActivationEmailFactory(UserEmailFactoryBase):
 class UserPasswordResetEmailFactory(UserEmailFactoryBase):
     subject_template_name = 'password_reset_email_subject.txt'
     plain_body_template_name = 'password_reset_email_body.txt'
-    if settings.USE_HTML_EMAIL_TEMPLATES:
+    if settings.get("USE_HTML_EMAIL_TEMPLATES"):
         html_body_template_name = 'password_reset_email_body.html'
 
     def get_context(self):
@@ -140,5 +140,5 @@ class UserPasswordResetEmailFactory(UserEmailFactoryBase):
 class UserConfirmationEmailFactory(UserEmailFactoryBase):
     subject_template_name = 'confirmation_email_subject.txt'
     plain_body_template_name = 'confirmation_email_body.txt'
-    if settings.USE_HTML_EMAIL_TEMPLATES:
+    if settings.get("USE_HTML_EMAIL_TEMPLATES"):
         html_body_template_name = 'confirmation_email_body.html'
