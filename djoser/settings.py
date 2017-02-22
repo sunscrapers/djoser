@@ -5,6 +5,7 @@ from django.conf import settings
 
 
 default_settings = {
+    'USE_HTML_EMAIL_TEMPLATES': False,
     'SEND_ACTIVATION_EMAIL': False,
     'SEND_CONFIRMATION_EMAIL': False,
     'SET_PASSWORD_RETYPE': False,

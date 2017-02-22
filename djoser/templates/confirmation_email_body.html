@@ -1,0 +1,12 @@
+{% load i18n %}{% autoescape off %}
+<html>
+<body>
+<p>{% trans "Your account has been created and is ready to use!" %}</p>
+
+<p>{% trans "Thanks for using our site!" %}</p>
+
+<p>{% blocktrans %}The {{ site_name }} team{% endblocktrans %}</p>
+
+{% endautoescape %}
+</body>
+</html>
