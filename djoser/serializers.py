@@ -4,7 +4,6 @@ from django.utils import six
 from django.utils.module_loading import import_string
 
 from rest_framework import exceptions, serializers
-from rest_framework.authtoken.models import Token
 
 from . import constants, utils, settings
 
@@ -206,7 +205,7 @@ class TokenSerializer(serializers.ModelSerializer):
     auth_token = serializers.CharField(source='key')
 
     class Meta:
-        model = Token
+        model = settings.get('TOKEN_MODEL')
         fields = (
             'auth_token',
         )

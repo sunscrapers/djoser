@@ -6,8 +6,7 @@ from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import loader
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
-
-from rest_framework import response, status, authtoken
+from django.utils.module_loading import import_string
 
 from . import settings
 
@@ -21,13 +20,15 @@ def decode_uid(pk):
 
 
 def login_user(request, user):
-    token, _ = authtoken.models.Token.objects.get_or_create(user=user)
+    Token = import_string(settings.get('TOKEN_MODEL'))
+    token, _ = Token.objects.get_or_create(user=user)
     user_logged_in.send(sender=user.__class__, request=request, user=user)
     return token
 
 
 def logout_user(request):
-    authtoken.models.Token.objects.filter(user=request.user).delete()
+    Token = import_string(settings.get('TOKEN_MODEL'))
+    Token.objects.filter(user=request.user).delete()
     user_logged_out.send(
         sender=request.user.__class__, request=request, user=request.user
     )
