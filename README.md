@@ -38,19 +38,20 @@ Supported Python versions:
  * Python 2.7
  * Python 3.4
  * Python 3.5
+ * Python 3.6
 
 Supported Django versions:
 
- * Django 1.7
  * Django 1.8
  * Django 1.9
  * Django 1.10
+ * Django 1.11
 
 Supported Django Rest Framework versions:
 
- * Django Rest Framework 3.x
-
-For Django Rest Framework 2.4 support check [djoser 0.3.2](https://github.com/sunscrapers/djoser/tree/0.3.2).
+ * Django Rest Framework 3.4
+ * Django Rest Framework 3.5
+ * Django Rest Framework 3.6
 
 ## Installation
 
@@ -558,54 +559,45 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
 
 * Clone repository and install **djoser** to your virtualenv:
 
-    `$ git clone git@github.com:sunscrapers/djoser.git`
-
-    `$ cd djoser`
-
+    `$ git clone git@github.com:sunscrapers/djoser.git`  
+    `$ cd djoser`  
     `$ pip install -e .`
 
 * Go to the `testproject` directory, migrate the database and start the development server:
 
-    `$ cd testproject`
-
-    `$ ./manage.py migrate`
-
+    `$ cd testproject`  
+    `$ ./manage.py migrate`  
     `$ ./manage.py runserver 8088`
 
 * Register a new user:
 
-    `$ curl -X POST http://127.0.0.1:8088/auth/register/ --data 'username=djoser&password=djoser'`
-
+    `$ curl -X POST http://127.0.0.1:8088/auth/register/ --data 'username=djoser&password=djoser'`  
     `{"email": "", "username": "djoser", "id":1}`
 
     So far, so good. We have just created a new user using REST API.
 
 * Let's access user's details:
 
-    `$ curl -X GET http://127.0.0.1:8088/auth/me/`
-
+    `$ curl -X GET http://127.0.0.1:8088/auth/me/`  
     `{"detail": "Authentication credentials were not provided."}`
 
     As we can see, we cannot access user profile without logging in. Pretty obvious.
 
 * Let's log in:
 
-    `curl -X POST http://127.0.0.1:8088/auth/login/ --data 'username=djoser&password=djoser'`
-
+    `curl -X POST http://127.0.0.1:8088/auth/login/ --data 'username=djoser&password=djoser'`  
     `{"auth_token": "b704c9fc3655635646356ac2950269f352ea1139"}`
 
     We have just obtained an authorization token that we may use later in order to retrieve specific resources.
 
 * Let's access user's details again:
 
-    `$ curl -X GET http://127.0.0.1:8088/auth/me/`
-
+    `$ curl -X GET http://127.0.0.1:8088/auth/me/`  
     `{"detail": "Authentication credentials were not provided."}`
 
     Access is still forbidden but let's offer the token we obtained:
 
-    `$ curl -X GET http://127.0.0.1:8088/auth/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
-
+    `$ curl -X GET http://127.0.0.1:8088/auth/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`  
     `{"email": "", "username": "djoser", "id": 1}`
 
     Yay, it works!
@@ -616,8 +608,7 @@ In this extremely short tutorial we are going to mimic the simplest flow: regist
 
     And try access user profile again:
 
-    `$ curl -X GET http://127.0.0.1:8088/auth/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`
-
+    `$ curl -X GET http://127.0.0.1:8088/auth/me/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'`  
     `{"detail": "Invalid token"}`
 
     As we can see, user has been logged out successfully and the proper token has been removed.
@@ -659,30 +650,35 @@ To start developing on **djoser**, clone the repository:
 
 `$ git clone git@github.com:sunscrapers/djoser.git`
 
-In order to run the tests create virtualenv, go to repo directory and then:
+If you are a **pipenv** user you can quickly setup testing environment by
+using Make commands:
 
-`$ pip install django djangorestframework`
+`$ make init`  
+`$ make test`
 
+    You do not need to create virtualenv in this case -
+    it's automatically created for you.
+
+Otherwise, if you cannot use Make commands, please create virtualenv and install
+requirements manually:  
+
+`$ pip install django djangorestframework`  
 `$ pip install -r requirements.txt`
 
 If you are running djoser tests on Python 2.7 you also need to install `mock` library.
 
-`$ pip install mock  # only on Python 2.7`
-
-`$ cd testproject`
-
+`$ pip install mock  # only on Python 2.7`  
+`$ cd testproject`  
 `$ ./manage.py test`
 
 If you need to run tests against all supported Python and Django versions then invoke:
 
-`$ pip install tox`
-
+`$ pip install tox`  
 `$ tox`
 
 You can also play with test project by running following commands:
 
-`$ ./manage.py migrate`
-
+`$ ./manage.py migrate`  
 `$ ./manage.py runserver`
 
 ## Similar projects
