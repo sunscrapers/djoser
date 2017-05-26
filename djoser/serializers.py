@@ -1,7 +1,5 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.db import transaction
-from django.utils import six
-from django.utils.module_loading import import_string
 
 from rest_framework import exceptions, serializers
 
@@ -205,7 +203,7 @@ class TokenSerializer(serializers.ModelSerializer):
     auth_token = serializers.CharField(source='key')
 
     class Meta:
-        model = import_string(settings.get('TOKEN_MODEL'))
+        model = settings.get('TOKEN_MODEL', load=True)
         fields = (
             'auth_token',
         )
