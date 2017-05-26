@@ -3,6 +3,6 @@ try:
 except ImportError:
     def lru_cache(*args, **kwargs):
         def decorator(f):
+            f.cache_clear = lambda: None
             return f
-        decorator.cache_clear = lambda: None
         return decorator
