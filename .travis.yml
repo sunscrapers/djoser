@@ -1,38 +1,18 @@
 sudo: false
 language: python
 python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
   - "3.5"
-env:
-  - TOX_ENV=py27-dj17-drf33
-  - TOX_ENV=py33-dj17-drf33
-  - TOX_ENV=py34-dj17-drf33
-  - TOX_ENV=py27-dj18-drf34
-  - TOX_ENV=py27-dj18-drf35
-  - TOX_ENV=py27-dj19-drf34
-  - TOX_ENV=py27-dj19-drf35
-  - TOX_ENV=py27-dj110-drf34
-  - TOX_ENV=py27-dj110-drf35
-  - TOX_ENV=py33-dj18-drf34
-  - TOX_ENV=py33-dj18-drf35
-  - TOX_ENV=py34-dj18-drf34
-  - TOX_ENV=py34-dj18-drf35
-  - TOX_ENV=py35-dj18-drf34
-  - TOX_ENV=py35-dj18-drf35
-  - TOX_ENV=py34-dj19-drf34
-  - TOX_ENV=py34-dj19-drf35
-  - TOX_ENV=py34-dj110-drf34
-  - TOX_ENV=py34-dj110-drf35
-  - TOX_ENV=py35-dj19-drf34
-  - TOX_ENV=py35-dj19-drf35
-  - TOX_ENV=py35-dj110-drf34
-  - TOX_ENV=py35-dj110-drf35
+  - "3.6"
 
 install:
-  - travis_retry pip install virtualenv tox
+  - travis_retry pip install -U tox-travis
 
 script:
-  - tox -e $TOX_ENV
+  - tox
 
 after_success:
-  - pip install coveralls==0.5
+  - pip install coveralls==1.1
   - coveralls

@@ -9,7 +9,12 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 `0.6.0`_ (unreleased)
 ---------------------
 
+* Add basic `pipenv`_ integration
+* Add ``Makefile`` to simplify setup and development
 * Add release notes to `GitHub Releases`_ and ``CHANGELOG.rst``
+* Update ``.travis.yml`` with approximately 3.5x faster CI builds
+* Remove support for Django 1.7
+* Remove support for DRF 3.3 as a consequence of dropping Django 1.7
 
 `0.5.4`_ (2017-01-27)
 ---------------------
@@ -118,6 +123,7 @@ few bugfixes / documentation updates. List of changes:
   `README <https://github.com/sunscrapers/djoser/blob/0.4.0/README.md>`_.
 
 
+.. _pipenv: https://github.com/kennethreitz/pipenv
 .. _GitHub Releases: https://github.com/sunscrapers/djoser/releases
 .. _djangorestframework-jwt: https://github.com/GetBlimp/django-rest-framework-jwt
 .. _0.4.0: https://github.com/sunscrapers/djoser/compare/1cf11e8...0.4.0
