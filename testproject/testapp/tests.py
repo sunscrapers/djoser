@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
+from django.core.exceptions import ImproperlyConfigured
 from django.test.utils import override_settings as django_override_settings
 from django.test.testcases import SimpleTestCase
 
@@ -788,35 +789,55 @@ class UserEmailFactoryBaseTest(SimpleTestCase):
         self.assertIsNotNone(factory.get_context())
 
 
-# class SerializersManagerTest(SimpleTestCase):
+class SerializersSettingsTest(SimpleTestCase):
 
-#     def test_serializer_manager_init(self):
-#         serializers_manager = djoser.serializers.SerializersManager({})
-#         self.assertFalse(serializers_manager.serializers)
+    def test_getting_all_serializers(self):
+        serializers = djoser.settings.get('SERIALIZERS')
+        serializer_names = sorted(serializers.keys())
+        self.assertEqual(
+            serializer_names,
+            [
+                'activation',
+                'login',
+                'password_reset',
+                'password_reset_confirm',
+                'password_reset_confirm_retype',
+                'set_password',
+                'set_password_retype',
+                'set_username',
+                'set_username_retype',
+                'token',
+                'user',
+                'user_registration'
+            ]
 
-#     def test_get_serializer_non_proper_name(self):
-#         serializers_manager = djoser.serializers.SerializersManager({
-#             'user': djoser.serializers.UserSerializer
-#         })
-#         self.assertRaises(Exception, serializers_manager.get, 'bad_name')
+        )
 
-#     def test_get(self):
-#         serializers_manager = djoser.serializers.SerializersManager({
-#             'user': djoser.serializers.UserSerializer})
-#         serializer_class = serializers_manager.get('user')
-#         self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
+    def test_get_serializer_non_proper_name(self):
+        with self.assertRaises(ImproperlyConfigured) as raised:
+            djoser.settings.get('SERIALIZERS.bad_name')
 
-#     def test_get_from_cache(self):
-#         serializers_manager = djoser.serializers.SerializersManager({
-#             'user': djoser.serializers.UserSerializer})
-#         serializer_class = serializers_manager.get('user')
-#         self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
+        self.assertEqual(
+            str(raised.exception),
+            "Missing settings: DJOSER['SERIALIZERS.bad_name']"
+        )
 
-#         with mock.patch.object(
-#                 djoser.serializers.SerializersManager, 'load_serializer') as load_serializer_mock:
-#             serializer_class = serializers_manager.get('user')
-#             self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
-#             self.assertFalse(load_serializer_mock.called)
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'SERIALIZERS': {'user': 'missing_module'}}))  # noqa
+    def test_get_settings_with_unexisting_class(self):
+        with self.assertRaises(ImproperlyConfigured) as raised:
+            djoser.settings.get('SERIALIZERS.user', load=True)
+
+        self.assertEqual(
+            str(raised.exception),
+            "Can not import \"missing_module\" in  DJOSER['SERIALIZERS.user']"
+        )
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'SERIALIZERS': {'user': djoser.serializers.TokenSerializer}}))  # noqa
+    def test_get_serialiser_returns_a_predefined_serializer(self):
+        serializer_class = djoser.settings.get('SERIALIZERS.user')
+        self.assertTrue(issubclass(
+            serializer_class, djoser.serializers.TokenSerializer
+        ))
 
 
 class TestMergeSettingsDict(SimpleTestCase):
@@ -857,3 +878,4 @@ class TestDjoserViewsSupportActionAttribute(InvalidateSettingsCache):
         with override_method(view, Request(request), 'GET') as request:
             view.dispatch(request)
             self.assertEqual(view.action, 'retrieve')
+

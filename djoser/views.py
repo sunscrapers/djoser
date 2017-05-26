@@ -5,7 +5,7 @@ from rest_framework import generics, permissions, status, response, views
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from . import serializers, settings, utils, signals
+from . import settings, utils, signals
 
 
 User = get_user_model()
@@ -48,7 +48,7 @@ class RegistrationView(generics.CreateAPIView):
     """
     Use this endpoint to register new user.
     """
-    serializer_class = serializers.serializers_manager.get('user_registration')
+    serializer_class = settings.get('SERIALIZERS.user_registration', load=True)
     permission_classes = (
         permissions.AllowAny,
     )
@@ -76,14 +76,14 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to obtain user authentication token.
     """
-    serializer_class = serializers.serializers_manager.get('login')
+    serializer_class = settings.get('SERIALIZERS.login', load=True)
     permission_classes = (
         permissions.AllowAny,
     )
 
     def _action(self, serializer):
         token = utils.login_user(self.request, serializer.user)
-        token_serializer_class = serializers.serializers_manager.get('token')
+        token_serializer_class = settings.get('SERIALIZERS.token', load=True)
         return Response(
             data=token_serializer_class(token).data,
             status=status.HTTP_200_OK,
@@ -107,7 +107,7 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to send email to user with password reset link.
     """
-    serializer_class = serializers.serializers_manager.get('password_reset')
+    serializer_class = settings.get('SERIALIZERS.password_reset', load=True)
     permission_classes = (
         permissions.AllowAny,
     )
@@ -144,8 +144,8 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def get_serializer_class(self):
         if settings.get('SET_PASSWORD_RETYPE'):
-            return serializers.serializers_manager.get('set_password_retype')
-        return serializers.serializers_manager.get('set_password')
+            return settings.get('SERIALIZERS.set_password_retype', load=True)
+        return settings.get('SERIALIZERS.set_password', load=True)
 
     def _action(self, serializer):
         self.request.user.set_password(serializer.data['new_password'])
@@ -168,8 +168,8 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def get_serializer_class(self):
         if settings.get('PASSWORD_RESET_CONFIRM_RETYPE'):
-            return serializers.serializers_manager.get('password_reset_confirm_retype')
-        return serializers.serializers_manager.get('password_reset_confirm')
+            return settings.get('SERIALIZERS.password_reset_confirm_retype', load=True)
+        return settings.get('SERIALIZERS.password_reset_confirm', load=True)
 
     def _action(self, serializer):
         serializer.user.set_password(serializer.data['new_password'])
@@ -181,7 +181,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to activate user account.
     """
-    serializer_class = serializers.serializers_manager.get('activation')
+    serializer_class = settings.get('SERIALIZERS.activation', load=True)
     permission_classes = (
         permissions.AllowAny,
     )
@@ -210,8 +210,8 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def get_serializer_class(self):
         if settings.get('SET_USERNAME_RETYPE'):
-            return serializers.serializers_manager.get('set_username_retype')
-        return serializers.serializers_manager.get('set_username')
+            return settings.get('SERIALIZERS.set_username_retype', load=True)
+        return settings.get('SERIALIZERS.set_username', load=True)
 
     def _action(self, serializer):
         setattr(self.request.user, User.USERNAME_FIELD, serializer.data['new_' + User.USERNAME_FIELD])
@@ -224,7 +224,7 @@ class UserView(generics.RetrieveUpdateAPIView):
     Use this endpoint to retrieve/update user.
     """
     model = User
-    serializer_class = serializers.serializers_manager.get('user')
+    serializer_class = settings.get('SERIALIZERS.user', load=True)
     permission_classes = (
         permissions.IsAuthenticated,
     )
