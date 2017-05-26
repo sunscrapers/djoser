@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, get_user_model
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.utils import six
 from django.utils.module_loading import import_string
 
@@ -8,12 +8,10 @@ from rest_framework.authtoken.models import Token
 
 from . import constants, utils, settings
 
-
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
@@ -26,31 +24,45 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(style={'input_type': 'password'},
-                                     write_only=True,
-                                     validators=settings.get('PASSWORD_VALIDATORS'))
+    password = serializers.CharField(
+        style={'input_type': 'password'},
+        write_only=True,
+        validators=settings.get('PASSWORD_VALIDATORS')
+    )
+
+    default_error_messages = {
+        'cannot_create_user': constants.CANNOT_CREATE_USER_ERROR,
+    }
 
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
-            User.USERNAME_FIELD,
-            User._meta.pk.name,
-            'password',
+            User.USERNAME_FIELD, User._meta.pk.name, 'password',
         )
 
     def create(self, validated_data):
-        if settings.get('SEND_ACTIVATION_EMAIL'):
-            with transaction.atomic():
-                user = User.objects.create_user(**validated_data)
+        try:
+            user = self.perform_create(validated_data)
+        except IntegrityError:
+            raise serializers.ValidationError(
+                self.error_messages['cannot_create_user']
+            )
+
+        return user
+
+    def perform_create(self, validated_data):
+        with transaction.atomic():
+            user = User.objects.create_user(**validated_data)
+            if settings.get('SEND_ACTIVATION_EMAIL'):
                 user.is_active = False
                 user.save(update_fields=['is_active'])
-        else:
-            user = User.objects.create_user(**validated_data)
         return user
 
 
 class LoginSerializer(serializers.Serializer):
-    password = serializers.CharField(required=False, style={'input_type': 'password'})
+    password = serializers.CharField(
+        required=False, style={'input_type': 'password'}
+    )
 
     default_error_messages = {
         'inactive_account': constants.INACTIVE_ACCOUNT_ERROR,
@@ -63,13 +75,20 @@ class LoginSerializer(serializers.Serializer):
         self.fields[User.USERNAME_FIELD] = serializers.CharField(required=False)
 
     def validate(self, attrs):
-        self.user = authenticate(username=attrs.get(User.USERNAME_FIELD), password=attrs.get('password'))
+        self.user = authenticate(
+            username=attrs.get(User.USERNAME_FIELD),
+            password=attrs.get('password')
+        )
         if self.user:
             if not self.user.is_active:
-                raise serializers.ValidationError(self.error_messages['inactive_account'])
+                raise serializers.ValidationError(
+                    self.error_messages['inactive_account']
+                )
             return attrs
         else:
-            raise serializers.ValidationError(self.error_messages['invalid_credentials'])
+            raise serializers.ValidationError(
+                self.error_messages['invalid_credentials']
+            )
 
 
 class PasswordResetSerializer(serializers.Serializer):
