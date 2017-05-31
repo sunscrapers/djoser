@@ -1,7 +1,7 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import get_user_model
 
-from rest_framework import generics, permissions, status, response, views
+from rest_framework import generics, permissions, status, views
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
@@ -100,7 +100,7 @@ class LogoutView(views.APIView):
 
     def post(self, request):
         utils.logout_user(request)
-        return response.Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -117,7 +117,7 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
     def _action(self, serializer):
         for user in self.get_users(serializer.data['email']):
             self.send_password_reset_email(user)
-        return response.Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_users(self, email):
         if self._users is None:
@@ -154,7 +154,7 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
         if settings.get('LOGOUT_ON_PASSWORD_CHANGE'):
             utils.logout_user(self.request)
 
-        return response.Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -174,7 +174,7 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
     def _action(self, serializer):
         serializer.user.set_password(serializer.data['new_password'])
         serializer.user.save()
-        return response.Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -216,7 +216,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
     def _action(self, serializer):
         setattr(self.request.user, User.USERNAME_FIELD, serializer.data['new_' + User.USERNAME_FIELD])
         self.request.user.save()
-        return response.Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserView(generics.RetrieveUpdateAPIView):
