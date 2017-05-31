@@ -168,6 +168,7 @@ DJOSER = {
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'PASSWORD_VALIDATORS': [],
+    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
     'SERIALIZERS': {},
 }
 ```
@@ -501,6 +502,14 @@ These validators are run on `/register/` and `/password/reset/confirm/`.
 **Default**: `[]`
 
 **Example**: `[my_validator1, my_validator2]`
+
+### TOKEN_MODEL
+
+Points to which token model should be used for authentication.
+
+**Default**: `'rest_framework.authtoken.models.Token'`
+
+**Example**: `'amazing_app.models.MyToken'`
 
 ### SERIALIZERS
 

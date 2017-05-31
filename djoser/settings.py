@@ -2,6 +2,9 @@ from copy import deepcopy
 
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+from django.utils.module_loading import import_string
+
+from .compat import lru_cache
 
 
 default_settings = {
@@ -13,6 +16,7 @@ default_settings = {
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': False,
     'ROOT_VIEW_URLS_MAPPING': {},
     'PASSWORD_VALIDATORS': [],
+    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
     'SERIALIZERS': {
         'activation': 'djoser.serializers.ActivationSerializer',
         'login': 'djoser.serializers.LoginSerializer',
@@ -31,13 +35,34 @@ default_settings = {
 }
 
 
-def get(key):
+@lru_cache()
+def get(key, load=False):
+    """Return the value of a settings given a `key`.
+
+    You can write the key as "TOKEN_MODEL" or "SERIALIZERS.login", this function
+    will split the key by "." and navigate the settings dictionary in depth.
+
+    If `load=True` the returned value of the key will be imported.
+    """
     user_settings = merge_settings_dicts(
         deepcopy(default_settings), getattr(settings, 'DJOSER', {}))
     try:
-        return user_settings[key]
+        for level in key.split('.'):
+            value = user_settings[level]
+            user_settings = value
+        value = import_string(value) if load else value
     except KeyError:
-        raise ImproperlyConfigured('Missing settings: DJOSER[\'{}\']'.format(key))
+        raise ImproperlyConfigured(
+            'Missing settings: DJOSER[\'{key}\']'.format(key=key)
+        )
+    except ImportError:
+        raise ImproperlyConfigured(
+            'Can not import "{imp}" in  DJOSER[\'{key}\']'.format(
+                imp=value, key=key
+            )
+        )
+    else:
+        return value
 
 
 def merge_settings_dicts(a, b, path=None, overwrite_conflicts=True):

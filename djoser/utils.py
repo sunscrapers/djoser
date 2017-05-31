@@ -7,8 +7,6 @@ from django.template import loader
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
 
-from rest_framework import response, status, authtoken
-
 from . import settings
 
 
@@ -21,13 +19,15 @@ def decode_uid(pk):
 
 
 def login_user(request, user):
-    token, _ = authtoken.models.Token.objects.get_or_create(user=user)
+    Token = settings.get('TOKEN_MODEL', load=True)
+    token, _ = Token.objects.get_or_create(user=user)
     user_logged_in.send(sender=user.__class__, request=request, user=user)
     return token
 
 
 def logout_user(request):
-    authtoken.models.Token.objects.filter(user=request.user).delete()
+    Token = settings.get('TOKEN_MODEL', load=True)
+    Token.objects.filter(user=request.user).delete()
     user_logged_out.send(
         sender=request.user.__class__, request=request, user=request.user
     )

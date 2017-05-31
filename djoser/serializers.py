@@ -1,10 +1,7 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.db import transaction
-from django.utils import six
-from django.utils.module_loading import import_string
 
 from rest_framework import exceptions, serializers
-from rest_framework.authtoken.models import Token
 
 from . import constants, utils, settings
 
@@ -206,29 +203,7 @@ class TokenSerializer(serializers.ModelSerializer):
     auth_token = serializers.CharField(source='key')
 
     class Meta:
-        model = Token
+        model = settings.get('TOKEN_MODEL', load=True)
         fields = (
             'auth_token',
         )
-
-
-class SerializersManager(object):
-    def __init__(self, serializer_confs):
-        self.serializers = serializer_confs.copy()
-
-    def get(self, serializer_name):
-        try:
-            if isinstance(self.serializers[serializer_name], six.string_types):
-                self.serializers[serializer_name] = self.load_serializer(
-                    self.serializers[serializer_name])
-            return self.serializers[serializer_name]
-        except KeyError:
-            raise Exception("Try to use serializer name '%s' that is not one of: %s" % (
-                serializer_name,
-                tuple(settings.get('SERIALIZERS').keys())
-            ))
-
-    def load_serializer(self, serializer_class):
-        return import_string(serializer_class)
-
-serializers_manager = SerializersManager(settings.get('SERIALIZERS'))

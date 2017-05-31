@@ -1,11 +1,13 @@
 from unittest import skipIf
+from functools import wraps
 
 import django
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
-from django.test.utils import override_settings
+from django.core.exceptions import ImproperlyConfigured
+from django.test.utils import override_settings as django_override_settings
 from django.test.testcases import SimpleTestCase
 
 from djet import assertions, utils, restframework
@@ -18,6 +20,7 @@ import djoser.constants
 import djoser.utils
 import djoser.signals
 import djoser.serializers
+import djoser.settings
 
 from djoser.settings import merge_settings_dicts
 
@@ -39,7 +42,27 @@ def create_user(**kwargs):
     return user
 
 
-class RootViewTest(restframework.APIViewTestCase,
+def clear_djoser_cache(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        djoser.settings.get.cache_clear()
+        return f(*args, **kwargs)
+    return wrapper
+
+
+def override_settings(*args, **kwargs):
+    def decorator(f):
+        return django_override_settings(*args, **kwargs)(clear_djoser_cache(f))
+    return decorator
+
+
+class InvalidateSettingsCache(restframework.APIViewTestCase):
+    def setUp(self):
+        super(InvalidateSettingsCache, self).setUp()
+        djoser.settings.get.cache_clear()
+
+
+class RootViewTest(InvalidateSettingsCache,
                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.RootView
 
@@ -54,7 +77,7 @@ class RootViewTest(restframework.APIViewTestCase,
             self.assertIn(key, response.data)
 
 
-class RegistrationViewTest(restframework.APIViewTestCase,
+class RegistrationViewTest(InvalidateSettingsCache,
                            assertions.StatusCodeAssertionsMixin,
                            assertions.EmailAssertionsMixin,
                            assertions.InstanceAssertionsMixin):
@@ -141,7 +164,7 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data, {'password': ['Woops, 666 is not allowed.']})
 
 
-class LoginViewTest(restframework.APIViewTestCase,
+class LoginViewTest(InvalidateSettingsCache,
                     assertions.StatusCodeAssertionsMixin,
                     assertions.InstanceAssertionsMixin):
     view_class = djoser.views.LoginView
@@ -228,7 +251,7 @@ class LoginViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
 
 
-class LogoutViewTest(restframework.APIViewTestCase,
+class LogoutViewTest(InvalidateSettingsCache,
                      assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.LogoutView
 
@@ -266,7 +289,7 @@ class LogoutViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_200_OK)
 
 
-class PasswordResetViewTest(restframework.APIViewTestCase,
+class PasswordResetViewTest(InvalidateSettingsCache,
                             assertions.StatusCodeAssertionsMixin,
                             assertions.EmailAssertionsMixin):
     view_class = djoser.views.PasswordResetView
@@ -348,7 +371,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
                          djoser.constants.EMAIL_NOT_FOUND)
 
 
-class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
+class PasswordResetConfirmViewTest(InvalidateSettingsCache,
                                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.PasswordResetConfirmView
 
@@ -490,7 +513,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         self.assertEqual(response.data, {'new_password': ['Woops, 666 is not allowed.']})
 
 
-class ActivationViewTest(restframework.APIViewTestCase,
+class ActivationViewTest(InvalidateSettingsCache,
                          assertions.EmailAssertionsMixin,
                          assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.ActivationView
@@ -561,7 +584,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
         self.assert_email_exists(to=[user.email])
 
 
-class SetPasswordViewTest(restframework.APIViewTestCase,
+class SetPasswordViewTest(InvalidateSettingsCache,
                           assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.SetPasswordView
 
@@ -653,7 +676,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
         self.assertTrue(is_logged)
 
 
-class SetUsernameViewTest(restframework.APIViewTestCase,
+class SetUsernameViewTest(InvalidateSettingsCache,
                           assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.SetUsernameView
 
@@ -718,7 +741,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         self.assertNotEqual(user.username, data['new_username'])
 
 
-class UserViewTest(restframework.APIViewTestCase,
+class UserViewTest(InvalidateSettingsCache,
                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.UserView
 
@@ -766,35 +789,55 @@ class UserEmailFactoryBaseTest(SimpleTestCase):
         self.assertIsNotNone(factory.get_context())
 
 
-class SerializersManagerTest(SimpleTestCase):
+class SerializersSettingsTest(SimpleTestCase):
 
-    def test_serializer_manager_init(self):
-        serializers_manager = djoser.serializers.SerializersManager({})
-        self.assertFalse(serializers_manager.serializers)
+    def test_getting_all_serializers(self):
+        serializers = djoser.settings.get('SERIALIZERS')
+        serializer_names = sorted(serializers.keys())
+        self.assertEqual(
+            serializer_names,
+            [
+                'activation',
+                'login',
+                'password_reset',
+                'password_reset_confirm',
+                'password_reset_confirm_retype',
+                'set_password',
+                'set_password_retype',
+                'set_username',
+                'set_username_retype',
+                'token',
+                'user',
+                'user_registration'
+            ]
+
+        )
 
     def test_get_serializer_non_proper_name(self):
-        serializers_manager = djoser.serializers.SerializersManager({
-            'user': djoser.serializers.UserSerializer
-        })
-        self.assertRaises(Exception, serializers_manager.get, 'bad_name')
+        with self.assertRaises(ImproperlyConfigured) as raised:
+            djoser.settings.get('SERIALIZERS.bad_name')
 
-    def test_get(self):
-        serializers_manager = djoser.serializers.SerializersManager({
-            'user': djoser.serializers.UserSerializer})
-        serializer_class = serializers_manager.get('user')
-        self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
+        self.assertEqual(
+            str(raised.exception),
+            "Missing settings: DJOSER['SERIALIZERS.bad_name']"
+        )
 
-    def test_get_from_cache(self):
-        serializers_manager = djoser.serializers.SerializersManager({
-            'user': djoser.serializers.UserSerializer})
-        serializer_class = serializers_manager.get('user')
-        self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'SERIALIZERS': {'user': 'missing_module'}}))  # noqa
+    def test_get_settings_with_unexisting_class(self):
+        with self.assertRaises(ImproperlyConfigured) as raised:
+            djoser.settings.get('SERIALIZERS.user', load=True)
 
-        with mock.patch.object(
-                djoser.serializers.SerializersManager, 'load_serializer') as load_serializer_mock:
-            serializer_class = serializers_manager.get('user')
-            self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
-            self.assertFalse(load_serializer_mock.called)
+        self.assertEqual(
+            str(raised.exception),
+            "Can not import \"missing_module\" in  DJOSER['SERIALIZERS.user']"
+        )
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'SERIALIZERS': {'user': djoser.serializers.TokenSerializer}}))  # noqa
+    def test_get_serialiser_returns_a_predefined_serializer(self):
+        serializer_class = djoser.settings.get('SERIALIZERS.user')
+        self.assertTrue(issubclass(
+            serializer_class, djoser.serializers.TokenSerializer
+        ))
 
 
 class TestMergeSettingsDict(SimpleTestCase):
@@ -821,7 +864,7 @@ class TestMergeSettingsDict(SimpleTestCase):
             self.assertEqual(str(error), 'Conflict at 1.1')
 
 
-class TestDjoserViewsSupportActionAttribute(restframework.APIViewTestCase):
+class TestDjoserViewsSupportActionAttribute(InvalidateSettingsCache):
     # any arbitraty view from djoser
     view_class = djoser.views.UserView
 
@@ -835,3 +878,4 @@ class TestDjoserViewsSupportActionAttribute(restframework.APIViewTestCase):
         with override_method(view, Request(request), 'GET') as request:
             view.dispatch(request)
             self.assertEqual(view.action, 'retrieve')
+
