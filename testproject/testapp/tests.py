@@ -140,6 +140,19 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'password': ['Woops, 666 is not allowed.']})
 
+    def test_post_should_not_register_if_fails_password_django_validation(self):
+        data = {
+            'username': 'john',
+            'password': '665',
+            'csrftoken': 'asdf',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'password': ['Password 665 is not allowed.']})
+
 
 class LoginViewTest(restframework.APIViewTestCase,
                     assertions.StatusCodeAssertionsMixin,

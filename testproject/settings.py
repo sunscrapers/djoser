@@ -53,5 +53,5 @@ if LooseVersion(django.get_version()) >= LooseVersion('1.8'):
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'PASSWORD_VALIDATORS': [validators.is_666],
+    'PASSWORD_VALIDATORS': [validators.is_666, validators.Is665()],
 }
