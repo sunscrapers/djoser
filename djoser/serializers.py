@@ -55,6 +55,7 @@ class LoginSerializer(serializers.Serializer):
     default_error_messages = {
         'inactive_account': constants.INACTIVE_ACCOUNT_ERROR,
         'invalid_credentials': constants.INVALID_CREDENTIALS_ERROR,
+        'account_does_not_exist': constants.ACCOUNT_DOES_NOT_EXIST
     }
 
     def __init__(self, *args, **kwargs):
@@ -69,6 +70,8 @@ class LoginSerializer(serializers.Serializer):
                 raise serializers.ValidationError(self.error_messages['inactive_account'])
             return attrs
         else:
+            if User.objects.filter(**{User.USERNAME_FIELD: attrs.get(User.USERNAME_FIELD)}).first() is None:
+                raise serializers.ValidationError(self.error_messages['account_does_not_exist'])
             raise serializers.ValidationError(self.error_messages['invalid_credentials'])
 
 
