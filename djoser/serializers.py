@@ -27,8 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style={'input_type': 'password'},
-                                     write_only=True,
-                                     validators=settings.get('PASSWORD_VALIDATORS'))
+                                     write_only=True)
 
     class Meta:
         model = User
@@ -37,6 +36,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             User._meta.pk.name,
             'password',
         )
+
+    def __init__(self, *args, **kwargs):
+        super(UserRegistrationSerializer, self).__init__(*args, **kwargs)
+        self.fields['password'].validators = utils.get_password_validators()
 
     def create(self, validated_data):
         if settings.get('SEND_ACTIVATION_EMAIL'):
@@ -123,8 +126,11 @@ class ActivationSerializer(UidAndTokenSerializer):
 
 
 class PasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField(style={'input_type': 'password'},
-                                         validators=settings.get('PASSWORD_VALIDATORS'))
+    new_password = serializers.CharField(style={'input_type': 'password'})
+
+    def __init__(self, *args, **kwargs):
+        super(PasswordSerializer, self).__init__(*args, **kwargs)
+        self.fields['new_password'].validators = utils.get_password_validators()
 
 
 class PasswordRetypeSerializer(PasswordSerializer):
