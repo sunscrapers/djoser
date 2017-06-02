@@ -9,12 +9,16 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 `0.6.0`_ (unreleased)
 ---------------------
 
+* Add ReadTheDocs integration
 * Add basic `pipenv`_ integration
 * Add ``Makefile`` to simplify setup and development
 * Add release notes to `GitHub Releases`_ and ``CHANGELOG.rst``
+* Update README with documentation split into Sphinx docs
 * Update ``.travis.yml`` with approximately 3.5x faster CI builds
 * Remove support for Django 1.7
 * Remove support for DRF 3.3 as a consequence of dropping Django 1.7
+* Slightly refactor use of ``Response`` in ``djoser/views.py``
+* Fix #190 - race condition for near-simultaneous sign-ups
 
 `0.5.4`_ (2017-01-27)
 ---------------------
