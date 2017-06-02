@@ -6,7 +6,7 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 
-`0.6.0`_ (unreleased)
+`0.6.0`_ (2017-06-02)
 ---------------------
 
 * Add ReadTheDocs integration
