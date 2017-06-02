@@ -9,3 +9,6 @@ testproject/db.sqlite3
 # Vim swap files
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]
+
+# docs
+docs/build/
