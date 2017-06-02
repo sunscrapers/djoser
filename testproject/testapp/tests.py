@@ -1,6 +1,7 @@
 from unittest import skipIf
 
 import django
+from django.db import IntegrityError
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
@@ -37,6 +38,10 @@ def create_user(**kwargs):
     user = get_user_model().objects.create_user(**data)
     user.raw_password = data['password']
     return user
+
+
+def perform_create_mock(x):
+    raise IntegrityError
 
 
 class RootViewTest(restframework.APIViewTestCase,
@@ -139,6 +144,23 @@ class RegistrationViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'password': ['Woops, 666 is not allowed.']})
+
+    @mock.patch('djoser.serializers.UserRegistrationSerializer.perform_create',
+                side_effect=perform_create_mock)
+    def test_post_should_return_400_for_integrity_error(self, perform_create):
+        data = {
+            'username': 'john',
+            'email': 'john@beatles.com',
+            'password': 'secret',
+        }
+
+        request = self.factory.post(data=data)
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data, [djoser.constants.CANNOT_CREATE_USER_ERROR]
+        )
 
 
 class LoginViewTest(restframework.APIViewTestCase,
