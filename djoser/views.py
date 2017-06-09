@@ -236,3 +236,16 @@ class UserView(generics.RetrieveUpdateAPIView):
 
     def get_object(self, *args, **kwargs):
         return self.request.user
+
+    def perform_update(self, serializer):
+        email = self.get_object().email
+        user = serializer.save()
+        signals.user_registered.send(sender=self.__class__, user=user, request=self.request)
+        if email != user.email:
+            if settings.get('SEND_ACTIVATION_EMAIL'):
+                self.send_activation_email(user)
+
+    def send_activation_email(self, user):
+        email_factory = utils.UserActivationEmailFactory.from_request(self.request, user=user)
+        email = email_factory.create()
+        email.send()
