@@ -151,3 +151,19 @@ let's say, one key, all the others will still be used.
         'user': 'djoser.serializers.UserSerializer',
         'token': 'djoser.serializers.TokenSerializer',
     }
+
+USE_HTML_EMAIL_TEMPLATES
+------------------------
+
+Boolean flag which indicates whether djoser email factories should use plaintext
+or HTML body templates.
+
++-----------------------------------+-----------------------------------+------------------------------------+
+| Factory                           | Plaintext template                | HTML template                      |
++===================================+===================================+====================================+
+| ``UserActivationEmailFactory``    | ``activation_email_body.txt``     | ``activation_email_body.html``     |
++-----------------------------------+-----------------------------------+------------------------------------+
+| ``UserPasswordResetEmailFactory`` | ``password_reset_email_body.txt`` | ``password_reset_email_body.html`` |
++-----------------------------------+-----------------------------------+------------------------------------+
+| ``UserConfirmationEmailFactory``  | ``confirmation_email_body.txt``   | ``confirmation_email_body.html``   |
++-----------------------------------+-----------------------------------+------------------------------------+
