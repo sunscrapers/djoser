@@ -43,7 +43,10 @@ You should pass ``uid`` and ``token`` to reset password confirmation endpoint.
 SEND_ACTIVATION_EMAIL
 ---------------------
 
-If ``True``, register endpoint will send activation email to user.
+If ``True`` user will be required to click activation link sent in email after:
+
+* creating an account via ``RegistrationView``
+* updating his email via ``UserView``
 
 **Default**: ``False``
 
