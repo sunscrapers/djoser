@@ -55,7 +55,7 @@ class UserEmailFactoryBase(object):
         self.context_data = context
 
     @classmethod
-    def from_request(cls, request, user=None, from_email=None, **context):
+    def from_request(cls, request, user=None, from_email=None, protocol=None, **context):
         site = get_current_site(request)
         from_email = from_email or getattr(
             django_settings, 'DEFAULT_FROM_EMAIL', ''
@@ -66,7 +66,7 @@ class UserEmailFactoryBase(object):
             user=user or request.user,
             domain=django_settings.DJOSER.get('DOMAIN') or site.domain,
             site_name=django_settings.DJOSER.get('SITE_NAME') or site.name,
-            protocol='https' if request.is_secure() else 'http',
+            protocol=protocol or ('https' if request.is_secure() else 'http'),
             **context
         )
 
