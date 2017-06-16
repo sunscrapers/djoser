@@ -1,5 +1,5 @@
 {% load i18n %}{% autoescape off %}
-{% blocktrans %}You're receiving this email because you created an account on {{ site_name }}.{% endblocktrans %}
+{% blocktrans %}You're receiving this email because you need to finish activation process on {{ site_name }}.{% endblocktrans %}
 
 {% trans "Please go to the following page to activate account:" %}
 {% block reset_link %}
