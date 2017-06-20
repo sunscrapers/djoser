@@ -244,7 +244,7 @@ class TokenSerializer(serializers.ModelSerializer):
 class SerializersManager(object):
     def __init__(self, serializer_confs):
         self.serializers = {}
-        for serializer_name, serializer in serializer_confs.copy():
+        for serializer_name, serializer in serializer_confs.copy().iteritems():
             if isinstance(serializer, six.string_types):
                 serializer = import_string(serializer)
             self.serializers[serializer_name] = serializer
