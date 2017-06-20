@@ -246,7 +246,7 @@ class SerializersManager(object):
         self.serializers = {}
         for serializer_name, serializer in serializer_confs.copy():
             if isinstance(serializer, six.string_types):
-                serializer = self.load_serializer(serializer)
+                serializer = import_string(serializer)
             self.serializers[serializer_name] = serializer
 
     def get(self, serializer_name):
@@ -258,7 +258,5 @@ class SerializersManager(object):
                 tuple(settings.get('SERIALIZERS').keys())
             ))
 
-    def load_serializer(self, serializer_class):
-        return import_string(serializer_class)
 
 serializers_manager = SerializersManager(settings.get('SERIALIZERS'))
