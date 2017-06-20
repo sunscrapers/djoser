@@ -15,13 +15,13 @@ Use this endpoint to retrieve/update user.
 |          |                                |                                  |
 |          |                                | * ``{{ User.USERNAME_FIELD }}``  |
 |          |                                | * ``{{ User._meta.pk.name }}``   |
-|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
+|          |                                | * ``{{ User.EMAIL_FIELD }}``     |
 +----------+--------------------------------+----------------------------------+
-| ``PUT``  | ``{{ User.REQUIRED_FIELDS }}`` | ``HTTP_200_OK``                  |
+| ``PUT``  | ``{{ User.EMAIL_FIELD }}``     | ``HTTP_200_OK``                  |
 |          |                                |                                  |
 |          |                                | * ``{{ User.USERNAME_FIELD }}``  |
 |          |                                | * ``{{ User._meta.pk.name }}``   |
-|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
+|          |                                | * ``{{ User.EMAIL_FIELD }}``     |
 +----------+--------------------------------+----------------------------------+
 
 Register
@@ -30,7 +30,7 @@ Register
 Use this endpoint to register new user. Your user model manager should
 implement `create_user <https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.UserManager.create_user>`_
 method and have `USERNAME_FIELD <https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.USERNAME_FIELD>`_
-and `REQUIRED_FIELDS <https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.REQUIRED_FIELDS>`_
+and `EMAIL_FIELD <https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.EMAIL_FIELD>`_
 fields.
 
 **Default URL**: ``/register/``
@@ -39,10 +39,10 @@ fields.
 | Method   |  Request                          | Response                         |
 +==========+===================================+==================================+
 | ``POST`` | * ``{{ User.USERNAME_FIELD }}``   | ``HTTP_201_CREATED``             |
-|          | * ``{{ User.REQUIRED_FIELDS }}``  |                                  |
+|          | * ``{{ User.EMAIL_FIELD }}``      |                                  |
 |          | * ``password``                    | * ``{{ User.USERNAME_FIELD }}``  |
 |          |                                   | * ``{{ User._meta.pk.name }}``   |
-|          |                                   | * ``{{ User.REQUIRED_FIELDS }}`` |
+|          |                                   | * ``{{ User.EMAIL_FIELD }}``     |
 +----------+-----------------------------------+----------------------------------+
 
 Login

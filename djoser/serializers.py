@@ -14,9 +14,10 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = tuple(User.REQUIRED_FIELDS) + (
+        fields = (
             User._meta.pk.name,
             User.USERNAME_FIELD,
+            User.EMAIL_FIELD,
         )
         read_only_fields = (
             User.USERNAME_FIELD,
@@ -46,8 +47,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = tuple(User.REQUIRED_FIELDS) + (
-            User.USERNAME_FIELD, User._meta.pk.name, 'password',
+        fields = (
+            User.USERNAME_FIELD,
+            User.EMAIL_FIELD,
+            User._meta.pk.name,
+            'password',
         )
 
     def create(self, validated_data):
