@@ -5,7 +5,8 @@ from rest_framework import generics, permissions, status, views
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from . import serializers, settings, utils, signals
+from . import serializers, utils, signals
+from djoser.settings import config
 
 User = get_user_model()
 
@@ -33,7 +34,7 @@ class RootView(views.APIView):
         mapping.update(kwargs)
         if self.urls_extra_mapping:
             mapping.update(self.urls_extra_mapping)
-        mapping.update(settings.get('ROOT_VIEW_URLS_MAPPING'))
+        mapping.update(config.ROOT_VIEW_URLS_MAPPING)
         return mapping
 
     def get(self, request, format=None):
@@ -57,9 +58,9 @@ class RegistrationView(generics.CreateAPIView):
         signals.user_registered.send(
             sender=self.__class__, user=user, request=self.request
         )
-        if settings.get('SEND_ACTIVATION_EMAIL'):
+        if config.SEND_ACTIVATION_EMAIL:
             self.send_activation_email(user)
-        elif settings.get('SEND_CONFIRMATION_EMAIL'):
+        elif config.SEND_CONFIRMATION_EMAIL:
             self.send_confirmation_email(user)
 
     def send_activation_email(self, user):
@@ -148,7 +149,7 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
     )
 
     def get_serializer_class(self):
-        if settings.get('SET_PASSWORD_RETYPE'):
+        if config.SET_PASSWORD_RETYPE:
             return serializers.serializers_manager.get('set_password_retype')
         return serializers.serializers_manager.get('set_password')
 
@@ -156,7 +157,7 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
         self.request.user.set_password(serializer.data['new_password'])
         self.request.user.save()
 
-        if settings.get('LOGOUT_ON_PASSWORD_CHANGE'):
+        if config.LOGOUT_ON_PASSWORD_CHANGE:
             utils.logout_user(self.request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -172,7 +173,7 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
     token_generator = default_token_generator
 
     def get_serializer_class(self):
-        if settings.get('PASSWORD_RESET_CONFIRM_RETYPE'):
+        if config.PASSWORD_RESET_CONFIRM_RETYPE:
             return serializers.serializers_manager.get('password_reset_confirm_retype')
         return serializers.serializers_manager.get('password_reset_confirm')
 
@@ -197,7 +198,8 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
         serializer.user.save()
         signals.user_activated.send(
             sender=self.__class__, user=serializer.user, request=self.request)
-        if settings.get('SEND_CONFIRMATION_EMAIL'):
+
+        if config.SEND_CONFIRMATION_EMAIL:
             email_factory = utils.UserConfirmationEmailFactory.from_request(
                 self.request, user=serializer.user)
             email = email_factory.create()
@@ -214,7 +216,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
     )
 
     def get_serializer_class(self):
-        if settings.get('SET_USERNAME_RETYPE'):
+        if config.SET_USERNAME_RETYPE:
             return serializers.serializers_manager.get('set_username_retype')
         return serializers.serializers_manager.get('set_username')
 
@@ -241,7 +243,9 @@ class UserView(generics.RetrieveUpdateAPIView):
         email = self.get_object().email
         user = serializer.save()
         signals.user_registered.send(sender=self.__class__, user=user, request=self.request)
-        if settings.get('SEND_ACTIVATION_EMAIL') and email != user.email:
+        import ipdb
+        ipdb.set_trace()
+        if config.SEND_ACTIVATION_EMAIL and email != user.email:
             self.send_activation_email(user)
 
     def send_activation_email(self, user):

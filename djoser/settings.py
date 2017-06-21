@@ -2,6 +2,12 @@ from copy import deepcopy
 
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+from django.utils import six
+from django.utils.functional import LazyObject, empty
+from django.test.signals import setting_changed
+
+
+DJOSER_SETTINGS_NAMESPACE = 'DJOSER'
 
 
 default_settings = {
@@ -34,11 +40,11 @@ default_settings = {
 
 def get(key):
     user_settings = merge_settings_dicts(
-        deepcopy(default_settings), getattr(settings, 'DJOSER', {}))
+        deepcopy(default_settings), getattr(settings, DJOSER_SETTINGS_NAMESPACE, {}))
     try:
         return user_settings[key]
     except KeyError:
-        raise ImproperlyConfigured('Missing settings: DJOSER[\'{}\']'.format(key))
+        raise ImproperlyConfigured('Missing settings: {}[\'{}\']'.format(DJOSER_SETTINGS_NAMESPACE, key))
 
 
 def merge_settings_dicts(a, b, path=None, overwrite_conflicts=True):
@@ -64,3 +70,53 @@ def merge_settings_dicts(a, b, path=None, overwrite_conflicts=True):
             a[key] = b[key]
     # Don't let this fool you that a is not modified in place
     return a
+
+
+class Settings(object):
+    def __init__(self, default_settings, explicit_overriden_settings=None):
+        if explicit_overriden_settings is None:
+            explicit_overriden_settings = {}
+
+        for setting_name, setting_value in six.iteritems(default_settings):
+            if setting_name.isupper():
+                setattr(self, setting_name, setting_value)
+
+        overriden_djoser_settings = getattr(settings, DJOSER_SETTINGS_NAMESPACE, {}) or explicit_overriden_settings
+        for overriden_setting_name, overriden_setting_value in six.iteritems(overriden_djoser_settings):
+            value = overriden_setting_value
+            if isinstance(overriden_setting_value, dict):
+                value = getattr(self, overriden_setting_name, {})
+                value.update(overriden_setting_value)
+            setattr(self, overriden_setting_name, value)
+
+
+class LazySettings(LazyObject):
+    def _setup(self, explicit_overriden_settings=None):
+        self._wrapped = Settings(default_settings, explicit_overriden_settings)
+
+    def __getattr__(self, name):
+        """
+        Return the value of a setting and cache it in self.__dict__.
+        """
+        if self._wrapped is empty:
+            self._setup()
+        val = getattr(self._wrapped, name)
+        # self.__dict__[name] = val
+        return val
+
+
+config = Settings(default_settings)
+
+
+def reload_djoser_settings(*args, **kwargs):
+    import ipdb
+    ipdb.set_trace()
+    global config
+    setting, value = kwargs['setting'], kwargs['value']
+    if setting == DJOSER_SETTINGS_NAMESPACE:
+        config = Settings(default_settings, explicit_overriden_settings=value)
+        # config._setup(explicit_overriden_settings=value)
+
+
+setting_changed.connect(reload_djoser_settings)
+

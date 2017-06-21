@@ -4,12 +4,11 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import loader
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from rest_framework import authtoken
 
-from rest_framework import response, status, authtoken
-
-from . import settings
+from djoser.settings import config
 
 
 def encode_uid(pk):
@@ -114,24 +113,24 @@ class UserEmailFactoryBase(object):
 class UserActivationEmailFactory(UserEmailFactoryBase):
     subject_template_name = 'activation_email_subject.txt'
     plain_body_template_name = 'activation_email_body.txt'
-    if settings.get("USE_HTML_EMAIL_TEMPLATES"):
+    if config.USE_HTML_EMAIL_TEMPLATES:
         html_body_template_name = 'activation_email_body.html'
 
     def get_context(self):
         context = super(UserActivationEmailFactory, self).get_context()
-        context['url'] = settings.get('ACTIVATION_URL').format(**context)
+        context['url'] = config.ACTIVATION_URL.format(**context)
         return context
 
 
 class UserPasswordResetEmailFactory(UserEmailFactoryBase):
     subject_template_name = 'password_reset_email_subject.txt'
     plain_body_template_name = 'password_reset_email_body.txt'
-    if settings.get("USE_HTML_EMAIL_TEMPLATES"):
+    if config.USE_HTML_EMAIL_TEMPLATES:
         html_body_template_name = 'password_reset_email_body.html'
 
     def get_context(self):
         context = super(UserPasswordResetEmailFactory, self).get_context()
-        context['url'] = settings.get('PASSWORD_RESET_CONFIRM_URL').format(
+        context['url'] = config.PASSWORD_RESET_CONFIRM_URL.format(
             **context
         )
         return context
@@ -140,5 +139,5 @@ class UserPasswordResetEmailFactory(UserEmailFactoryBase):
 class UserConfirmationEmailFactory(UserEmailFactoryBase):
     subject_template_name = 'confirmation_email_subject.txt'
     plain_body_template_name = 'confirmation_email_body.txt'
-    if settings.get("USE_HTML_EMAIL_TEMPLATES"):
+    if config.USE_HTML_EMAIL_TEMPLATES:
         html_body_template_name = 'confirmation_email_body.html'
