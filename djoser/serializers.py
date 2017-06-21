@@ -243,13 +243,14 @@ class TokenSerializer(serializers.ModelSerializer):
 
 class SerializersManager(object):
     def __init__(self, serializer_confs):
-        self.serializers = serializer_confs.copy()
+        self.serializers = {}
+        for serializer_name, serializer in six.iteritems(serializer_confs.copy()):
+            if isinstance(serializer, six.string_types):
+                serializer = import_string(serializer)
+            self.serializers[serializer_name] = serializer
 
     def get(self, serializer_name):
         try:
-            if isinstance(self.serializers[serializer_name], six.string_types):
-                self.serializers[serializer_name] = self.load_serializer(
-                    self.serializers[serializer_name])
             return self.serializers[serializer_name]
         except KeyError:
             raise Exception("Try to use serializer name '%s' that is not one of: %s" % (
@@ -257,7 +258,5 @@ class SerializersManager(object):
                 tuple(settings.get('SERIALIZERS').keys())
             ))
 
-    def load_serializer(self, serializer_class):
-        return import_string(serializer_class)
 
 serializers_manager = SerializersManager(settings.get('SERIALIZERS'))

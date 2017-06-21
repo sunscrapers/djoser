@@ -830,11 +830,10 @@ class SerializersManagerTest(SimpleTestCase):
         serializer_class = serializers_manager.get('user')
         self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
 
-        with mock.patch.object(
-                djoser.serializers.SerializersManager, 'load_serializer') as load_serializer_mock:
+        with mock.patch('django.utils.module_loading.import_string') as import_string_mock:
             serializer_class = serializers_manager.get('user')
             self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
-            self.assertFalse(load_serializer_mock.called)
+            self.assertFalse(import_string_mock.called)
 
 
 class TestMergeSettingsDict(SimpleTestCase):
