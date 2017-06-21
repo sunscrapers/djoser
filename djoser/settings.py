@@ -71,17 +71,14 @@ class LazySettings(LazyObject):
         return val
 
 
-config = Settings(default_settings)
+config = LazySettings()
 
 
 def reload_djoser_settings(*args, **kwargs):
-    import ipdb
-    ipdb.set_trace()
     global config
     setting, value = kwargs['setting'], kwargs['value']
     if setting == DJOSER_SETTINGS_NAMESPACE:
-        config = Settings(default_settings, explicit_overriden_settings=value)
-        # config._setup(explicit_overriden_settings=value)
+        config._setup(explicit_overriden_settings=value)
 
 
 setting_changed.connect(reload_djoser_settings)

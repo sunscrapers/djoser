@@ -243,8 +243,6 @@ class UserView(generics.RetrieveUpdateAPIView):
         email = self.get_object().email
         user = serializer.save()
         signals.user_registered.send(sender=self.__class__, user=user, request=self.request)
-        import ipdb
-        ipdb.set_trace()
         if config.SEND_ACTIVATION_EMAIL and email != user.email:
             self.send_activation_email(user)
 
