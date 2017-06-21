@@ -60,16 +60,6 @@ class LazySettings(LazyObject):
     def _setup(self, explicit_overriden_settings=None):
         self._wrapped = Settings(default_settings, explicit_overriden_settings)
 
-    def __getattr__(self, name):
-        """
-        Return the value of a setting and cache it in self.__dict__.
-        """
-        if self._wrapped is empty:
-            self._setup()
-        val = getattr(self._wrapped, name)
-        # self.__dict__[name] = val
-        return val
-
 
 config = LazySettings()
 

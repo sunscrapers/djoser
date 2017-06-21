@@ -20,8 +20,6 @@ import djoser.utils
 import djoser.signals
 import djoser.serializers
 
-from djoser.settings import merge_settings_dicts
-
 try:
     from unittest import mock
 except ImportError:
