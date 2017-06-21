@@ -38,40 +38,6 @@ default_settings = {
 }
 
 
-def get(key):
-    user_settings = merge_settings_dicts(
-        deepcopy(default_settings), getattr(settings, DJOSER_SETTINGS_NAMESPACE, {}))
-    try:
-        return user_settings[key]
-    except KeyError:
-        raise ImproperlyConfigured('Missing settings: {}[\'{}\']'.format(DJOSER_SETTINGS_NAMESPACE, key))
-
-
-def merge_settings_dicts(a, b, path=None, overwrite_conflicts=True):
-    """merges b into a, modify a in place
-
-    Found at http://stackoverflow.com/a/7205107/1472229
-    """
-    if path is None:
-        path = []
-    for key in b:
-        if key in a:
-            if isinstance(a[key], dict) and isinstance(b[key], dict):
-                merge_settings_dicts(a[key], b[key], path + [str(key)], overwrite_conflicts=overwrite_conflicts)
-            elif a[key] == b[key]:
-                pass  # same leaf value
-            else:
-                if overwrite_conflicts:
-                    a[key] = b[key]
-                else:
-                    conflict_path = '.'.join(path + [str(key)])
-                    raise Exception('Conflict at %s' % conflict_path)
-        else:
-            a[key] = b[key]
-    # Don't let this fool you that a is not modified in place
-    return a
-
-
 class Settings(object):
     def __init__(self, default_settings, explicit_overriden_settings=None):
         if explicit_overriden_settings is None:

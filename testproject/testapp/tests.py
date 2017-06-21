@@ -837,30 +837,6 @@ class SerializersManagerTest(SimpleTestCase):
             self.assertFalse(load_serializer_mock.called)
 
 
-class TestMergeSettingsDict(SimpleTestCase):
-
-    def test_merge_in_key(self):
-        c = {1: {1: None}}
-        d = {1: {2: None}}
-        expected = {1: {1: None, 2: None}}
-        self.assertEqual(merge_settings_dicts(c, d), expected)
-
-    def test_merge_in_key_overwrite_sub_key(self):
-        c = {1: {1: None}}
-        d = {1: {2: None, 1: 'TEST'}}
-        expected = {1: {1: 'TEST', 2: None}}
-        self.assertEqual(merge_settings_dicts(c, d), expected)
-
-    def test_merge_in_key_overwrite_sub_key_overwrite_conflicts_false(self):
-        c = {1: {1: None}}
-        d = {1: {2: None, 1: 'TEST'}}
-        try:
-            merge_settings_dicts(c, d, overwrite_conflicts=False)
-            self.assertTrue(False)
-        except Exception as error:
-            self.assertEqual(str(error), 'Conflict at 1.1')
-
-
 class TestDjoserViewsSupportActionAttribute(restframework.APIViewTestCase):
     # any arbitraty view from djoser
     view_class = djoser.views.UserView
