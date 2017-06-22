@@ -64,6 +64,17 @@ class LazySettings(LazyObject):
 config = LazySettings()
 
 
+def get(key):
+    """
+    This function is here only to provide backwards compatibility in case anyone uses old settings interface.
+    It is strongly encouraged to use dot notation.
+    """
+    try:
+        return getattr(config, key)
+    except ArithmeticError:
+        raise ImproperlyConfigured('Missing settings: {}[\'{}\']'.format(DJOSER_SETTINGS_NAMESPACE, key))
+
+
 def reload_djoser_settings(*args, **kwargs):
     global config
     setting, value = kwargs['setting'], kwargs['value']
