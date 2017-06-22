@@ -10,6 +10,8 @@ from . import constants, utils, settings
 
 User = get_user_model()
 
+USER_EMAIL_FIELD = getattr(User, 'EMAIL_FIELD', 'email')
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             User._meta.pk.name,
             User.USERNAME_FIELD,
-            User.EMAIL_FIELD,
+            USER_EMAIL_FIELD,
         )
         read_only_fields = (
             User.USERNAME_FIELD,
@@ -49,7 +51,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             User.USERNAME_FIELD,
-            User.EMAIL_FIELD,
+            USER_EMAIL_FIELD,
             User._meta.pk.name,
             'password',
         )
