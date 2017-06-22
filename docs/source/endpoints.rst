@@ -15,13 +15,13 @@ Use this endpoint to retrieve/update user.
 |          |                                |                                  |
 |          |                                | * ``{{ User.USERNAME_FIELD }}``  |
 |          |                                | * ``{{ User._meta.pk.name }}``   |
-|          |                                | * ``{{ User.EMAIL_FIELD }}``     |
+|          |                                | * ``{{ EMAIL_FIELD }}``          |
 +----------+--------------------------------+----------------------------------+
-| ``PUT``  | ``{{ User.EMAIL_FIELD }}``     | ``HTTP_200_OK``                  |
+| ``PUT``  | ``{{ EMAIL_FIELD }}``          | ``HTTP_200_OK``                  |
 |          |                                |                                  |
 |          |                                | * ``{{ User.USERNAME_FIELD }}``  |
 |          |                                | * ``{{ User._meta.pk.name }}``   |
-|          |                                | * ``{{ User.EMAIL_FIELD }}``     |
+|          |                                | * ``{{ EMAIL_FIELD }}``          |
 +----------+--------------------------------+----------------------------------+
 
 Register
@@ -29,9 +29,10 @@ Register
 
 Use this endpoint to register new user. Your user model manager should
 implement `create_user <https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.UserManager.create_user>`_
-method and have `USERNAME_FIELD <https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.USERNAME_FIELD>`_
-and `EMAIL_FIELD <https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.EMAIL_FIELD>`_
-fields.
+method. Your user model should have fields:
+
+    * `USERNAME_FIELD <https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.USERNAME_FIELD>`_
+    * `email <https://docs.djangoproject.com/en/1.10/ref/contrib/auth/#django.contrib.auth.models.User.email>`_ for Django 1.10 and older or `EMAIL_FIELD <https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.EMAIL_FIELD>`_ for Django 1.11 and newer
 
 **Default URL**: ``/register/``
 
@@ -39,10 +40,10 @@ fields.
 | Method   |  Request                          | Response                         |
 +==========+===================================+==================================+
 | ``POST`` | * ``{{ User.USERNAME_FIELD }}``   | ``HTTP_201_CREATED``             |
-|          | * ``{{ User.EMAIL_FIELD }}``      |                                  |
+|          | * ``{{ EMAIL_FIELD }}``           |                                  |
 |          | * ``password``                    | * ``{{ User.USERNAME_FIELD }}``  |
 |          |                                   | * ``{{ User._meta.pk.name }}``   |
-|          |                                   | * ``{{ User.EMAIL_FIELD }}``     |
+|          |                                   | * ``{{ EMAIL_FIELD }}``          |
 +----------+-----------------------------------+----------------------------------+
 
 Login
