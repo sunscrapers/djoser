@@ -1,4 +1,4 @@
-from copy import deepcopy
+import warnings
 
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
@@ -69,6 +69,7 @@ def get(key):
     This function is here only to provide backwards compatibility in case anyone uses old settings interface.
     It is strongly encouraged to use dot notation.
     """
+    warnings.warn('The settings.get(key) is superseded by the dot attribute access.')
     try:
         return getattr(config, key)
     except ArithmeticError:
