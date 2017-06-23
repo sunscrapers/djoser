@@ -1,5 +1,6 @@
+from __future__ import absolute_import
+from django.utils.module_loading import import_string
 import os
-from testapp import validators
 
 from distutils.version import LooseVersion
 import django
@@ -15,6 +16,8 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+AUTH_PASSWORD_VALIDATORS = [{'NAME': 'testapp.validators.Is666'}]
 
 SECRET_KEY = '_'
 
@@ -53,5 +56,4 @@ if LooseVersion(django.get_version()) >= LooseVersion('1.8'):
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'PASSWORD_VALIDATORS': [validators.is_666],
 }
