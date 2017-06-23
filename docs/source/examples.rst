@@ -10,7 +10,12 @@ to approach the problem like so:
 
 .. code-block:: python
 
+    from django.contrib.auth.tokens import default_token_generator
+    from rest_framework import generics, permissions, status
+    from rest_framework.response import Response
+
     from djoser import serializers
+
 
     class PasswordTokenCheckView(generics.CreateAPIView):
         permission_classes = (
