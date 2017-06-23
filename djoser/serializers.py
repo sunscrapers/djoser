@@ -6,7 +6,8 @@ from django.utils.module_loading import import_string
 from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
 
-from . import constants, utils, settings
+from djoser import constants, utils, settings
+from djoser.compat import validate_password
 
 User = get_user_model()
 
@@ -18,9 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
             User._meta.pk.name,
             User.USERNAME_FIELD,
         )
-        read_only_fields = (
-            User.USERNAME_FIELD,
-        )
+        read_only_fields = (User.USERNAME_FIELD,)
 
     def update(self, instance, validated_data):
         email = instance.email
@@ -37,7 +36,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         style={'input_type': 'password'},
         write_only=True,
-        validators=settings.get('PASSWORD_VALIDATORS')
     )
 
     default_error_messages = {
@@ -49,6 +47,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = tuple(User.REQUIRED_FIELDS) + (
             User.USERNAME_FIELD, User._meta.pk.name, 'password',
         )
+
+    def validate_password(self, value):
+        validate_password(value)
+        return value
 
     def create(self, validated_data):
         try:
@@ -152,8 +154,11 @@ class ActivationSerializer(UidAndTokenSerializer):
 
 
 class PasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField(style={'input_type': 'password'},
-                                         validators=settings.get('PASSWORD_VALIDATORS'))
+    new_password = serializers.CharField(style={'input_type': 'password'})
+
+    def validate_new_password(self, value):
+        validate_password(value)
+        return value
 
 
 class PasswordRetypeSerializer(PasswordSerializer):
