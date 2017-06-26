@@ -69,7 +69,7 @@ def get(key):
     This function is here only to provide backwards compatibility in case anyone uses old settings interface.
     It is strongly encouraged to use dot notation.
     """
-    warnings.warn('The settings.get(key) is superseded by the dot attribute access.')
+    warnings.warn('The settings.get(key) is superseded by the dot attribute access.', PendingDeprecationWarning)
     try:
         return getattr(config, key)
     except AttributeError:
