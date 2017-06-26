@@ -72,7 +72,7 @@ def get(key):
     warnings.warn('The settings.get(key) is superseded by the dot attribute access.')
     try:
         return getattr(config, key)
-    except ArithmeticError:
+    except AttributeError:
         raise ImproperlyConfigured('Missing settings: {}[\'{}\']'.format(DJOSER_SETTINGS_NAMESPACE, key))
 
 
