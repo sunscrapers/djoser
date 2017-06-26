@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from . import serializers, utils, signals
-from djoser.config import settings
+from djoser.conf import settings
 
 User = get_user_model()
 

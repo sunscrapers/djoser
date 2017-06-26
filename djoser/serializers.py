@@ -7,7 +7,7 @@ from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
 
 from . import constants, utils
-from djoser.config import settings
+from djoser.conf import settings
 
 User = get_user_model()
 
