@@ -61,7 +61,7 @@ class RequiredUserFieldsMixin(object):
         # creating needs to inherit from the parent's inner meta.
         meta_parent = (object,)
         if hasattr(serializer_class, 'Meta'):
-            meta_parent = (object, serializer_class.Meta)
+            meta_parent = (serializer_class.Meta, object)
 
         Meta = type('Meta', meta_parent, meta_attrs)
 
