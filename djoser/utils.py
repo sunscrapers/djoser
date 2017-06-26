@@ -8,7 +8,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import authtoken
 
-from djoser.settings import config
+from djoser.config import settings
 
 
 def encode_uid(pk):
@@ -113,24 +113,24 @@ class UserEmailFactoryBase(object):
 class UserActivationEmailFactory(UserEmailFactoryBase):
     subject_template_name = 'activation_email_subject.txt'
     plain_body_template_name = 'activation_email_body.txt'
-    if config.USE_HTML_EMAIL_TEMPLATES:
+    if settings.USE_HTML_EMAIL_TEMPLATES:
         html_body_template_name = 'activation_email_body.html'
 
     def get_context(self):
         context = super(UserActivationEmailFactory, self).get_context()
-        context['url'] = config.ACTIVATION_URL.format(**context)
+        context['url'] = settings.ACTIVATION_URL.format(**context)
         return context
 
 
 class UserPasswordResetEmailFactory(UserEmailFactoryBase):
     subject_template_name = 'password_reset_email_subject.txt'
     plain_body_template_name = 'password_reset_email_body.txt'
-    if config.USE_HTML_EMAIL_TEMPLATES:
+    if settings.USE_HTML_EMAIL_TEMPLATES:
         html_body_template_name = 'password_reset_email_body.html'
 
     def get_context(self):
         context = super(UserPasswordResetEmailFactory, self).get_context()
-        context['url'] = config.PASSWORD_RESET_CONFIRM_URL.format(
+        context['url'] = settings.PASSWORD_RESET_CONFIRM_URL.format(
             **context
         )
         return context
@@ -139,5 +139,5 @@ class UserPasswordResetEmailFactory(UserEmailFactoryBase):
 class UserConfirmationEmailFactory(UserEmailFactoryBase):
     subject_template_name = 'confirmation_email_subject.txt'
     plain_body_template_name = 'confirmation_email_body.txt'
-    if config.USE_HTML_EMAIL_TEMPLATES:
+    if settings.USE_HTML_EMAIL_TEMPLATES:
         html_body_template_name = 'confirmation_email_body.html'

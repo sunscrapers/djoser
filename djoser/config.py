@@ -3,7 +3,7 @@ import warnings
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.utils import six
-from django.utils.functional import LazyObject, empty
+from django.utils.functional import LazyObject
 from django.test.signals import setting_changed
 
 
@@ -60,27 +60,26 @@ class LazySettings(LazyObject):
     def _setup(self, explicit_overriden_settings=None):
         self._wrapped = Settings(default_settings, explicit_overriden_settings)
 
+    def get(self, key):
+        """
+        This function is here only to provide backwards compatibility in case anyone uses old settings interface.
+        It is strongly encouraged to use dot notation.
+        """
+        warnings.warn('The settings.get(key) is superseded by the dot attribute access.', PendingDeprecationWarning)
+        try:
+            return getattr(self, key)
+        except AttributeError:
+            raise ImproperlyConfigured('Missing settings: {}[\'{}\']'.format(DJOSER_SETTINGS_NAMESPACE, key))
 
-config = LazySettings()
 
-
-def get(key):
-    """
-    This function is here only to provide backwards compatibility in case anyone uses old settings interface.
-    It is strongly encouraged to use dot notation.
-    """
-    warnings.warn('The settings.get(key) is superseded by the dot attribute access.', PendingDeprecationWarning)
-    try:
-        return getattr(config, key)
-    except AttributeError:
-        raise ImproperlyConfigured('Missing settings: {}[\'{}\']'.format(DJOSER_SETTINGS_NAMESPACE, key))
+settings = LazySettings()
 
 
 def reload_djoser_settings(*args, **kwargs):
-    global config
+    global settings
     setting, value = kwargs['setting'], kwargs['value']
     if setting == DJOSER_SETTINGS_NAMESPACE:
-        config._setup(explicit_overriden_settings=value)
+        settings._setup(explicit_overriden_settings=value)
 
 
 setting_changed.connect(reload_djoser_settings)
