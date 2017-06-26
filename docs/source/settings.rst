@@ -13,6 +13,7 @@ You may optionally provide ``DJOSER`` settings:
         'SEND_ACTIVATION_EMAIL': True,
         'PASSWORD_VALIDATORS': [],
         'SERIALIZERS': {},
+        'USER_REQUIRED_FIELDS': [],
     }
 
 DOMAIN
@@ -154,6 +155,36 @@ let's say, one key, all the others will still be used.
         'user': 'djoser.serializers.UserSerializer',
         'token': 'djoser.serializers.TokenSerializer',
     }
+
+
+
+USER_REQUIRED_FIELDS
+--------------------
+
+Additional field names to be added to `Meta.fields` of `UserRegistrationSerializer` and `UserSerializer`.
+
+**Example**
+
+Given djoser settings:
+
+.. code-block:: python
+
+    DJOSER = {
+        ...
+        'USER_REQUIRED_FIELDS': ['first_name'],
+        ...
+    }
+
+is equivalent to
+
+.. code-block:: python
+
+    class CustomUserRegistrationSerializer(UserRegistrationSerializer):
+        first_name = serializers.CharField(required=True)
+
+        class Meta(UserRegistrationSerializer.Meta):
+            fields = UserRegistrationSerializer.Meta.fields + ['first_name']
+
 
 USE_HTML_EMAIL_TEMPLATES
 ------------------------

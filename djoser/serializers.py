@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             User._meta.pk.name,
             User.USERNAME_FIELD,
-            USER_EMAIL_FIELD,
+            USER_EMAIL_FIELD
         )
         read_only_fields = (
             User.USERNAME_FIELD,

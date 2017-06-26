@@ -19,6 +19,7 @@ import djoser.constants
 import djoser.utils
 import djoser.signals
 import djoser.serializers
+import djoser.settings
 
 from djoser.settings import merge_settings_dicts
 
@@ -161,6 +162,18 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assertEqual(
             response.data, [djoser.constants.CANNOT_CREATE_USER_ERROR]
         )
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'USER_REQUIRED_FIELDS': ['first_name']}))
+    def test_post_should_return_http_400_when_USER_REQUIRED_FIELD_not_supplied(self):
+        data = {
+            'username': 'john',
+            'email': 'john@beatles.com',
+            'password': 'secret',
+        }
+
+        request = self.factory.post(data=data)
+        response = self.view(request)
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
 
 class LoginViewTest(restframework.APIViewTestCase,
@@ -753,7 +766,7 @@ class UserViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_200_OK)
         self.assertEqual(set(response.data.keys()), set(
-            [get_user_model().USERNAME_FIELD, get_user_model()._meta.pk.name] + get_user_model().REQUIRED_FIELDS
+            [get_user_model().USERNAME_FIELD, get_user_model()._meta.pk.name, djoser.serializers.USER_EMAIL_FIELD] + djoser.settings.get('USER_REQUIRED_FIELDS')
         ))
 
     def test_put_should_update_user(self):

@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.conf import settings as django_settings
 from django.contrib.auth import user_logged_in, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
@@ -38,6 +40,31 @@ class ActionViewMixin(object):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return self._action(serializer)
+
+
+class RequiredUserFieldsMixin(object):
+    def get_serializer(self, *args, **kwargs):
+        self.serializer_class = self.required_fields_serializer_factory(self.serializer_class)
+        return super(RequiredUserFieldsMixin, self).get_serializer(*args, **kwargs)
+
+    def required_fields_serializer_factory(self, serializer_class, extra_meta_attrs=None):
+        user_required_fields = settings.get('USER_REQUIRED_FIELDS')
+        meta_attrs = {
+            'fields': [field for field in chain(serializer_class.Meta.fields, user_required_fields)],
+            'extra_kwargs': {field_name: {'required': True} for field_name in user_required_fields}
+        }
+
+        if extra_meta_attrs and isinstance(extra_meta_attrs, dict):
+            meta_attrs.update(extra_meta_attrs)
+
+        Meta = type('Meta', (serializer_class.Meta,), meta_attrs)
+
+        new_serializer_class_attrs = {
+            'Meta': Meta
+        }
+
+        # Instantiate type(serializer_class) in order to use the same metaclass as serializer_class.
+        return type(serializer_class)(serializer_class.__name__, (serializer_class,), new_serializer_class_attrs)
 
 
 class UserEmailFactoryBase(object):

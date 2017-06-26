@@ -43,7 +43,7 @@ class RootView(views.APIView):
         )
 
 
-class RegistrationView(generics.CreateAPIView):
+class RegistrationView(utils.RequiredUserFieldsMixin, generics.CreateAPIView):
     """
     Use this endpoint to register new user.
     """
@@ -224,7 +224,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserView(generics.RetrieveUpdateAPIView):
+class UserView(utils.RequiredUserFieldsMixin, generics.RetrieveUpdateAPIView):
     """
     Use this endpoint to retrieve/update user.
     """

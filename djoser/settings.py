@@ -2,6 +2,7 @@ from copy import deepcopy
 
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+from django.test.utils import setting_changed
 
 
 default_settings = {
@@ -29,6 +30,7 @@ default_settings = {
         'token': 'djoser.serializers.TokenSerializer',
     },
     'LOGOUT_ON_PASSWORD_CHANGE': False,
+    'USER_REQUIRED_FIELDS': []
 }
 
 
@@ -64,3 +66,11 @@ def merge_settings_dicts(a, b, path=None, overwrite_conflicts=True):
             a[key] = b[key]
     # Don't let this fool you that a is not modified in place
     return a
+
+
+def reload_djoser_settings(*args, **kwargs):
+    setting, value = kwargs['setting'], kwargs['value']
+    if 'DJOSER' == setting:
+        settings.DJOSER.update(value)
+
+setting_changed.connect(reload_djoser_settings)
