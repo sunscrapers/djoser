@@ -8,6 +8,12 @@ Installation
 
     $ pip install -U djoser
 
+.. warning::
+
+    If you are Django 1.8.x user you will need to install
+    `django-password-validation <https://github.com/orcasgit/django-password-validation/>`_
+    with ``pip install django-password-validation``.
+
 Configuration
 -------------
 
