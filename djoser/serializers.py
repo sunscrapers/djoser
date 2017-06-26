@@ -6,7 +6,7 @@ from django.utils.module_loading import import_string
 from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
 
-from djoser import constants, utils, settings
+from djoser import constants, utils
 from djoser.compat import validate_password
 from djoser.conf import settings
 
