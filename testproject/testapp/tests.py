@@ -79,7 +79,9 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         user = get_user_model().objects.get(username=data['username'])
         self.assertTrue(user.check_password(data['password']))
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True}))
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
+    )
     def test_post_should_create_user_with_login_and_send_activation_email(self):
         data = {
             'username': 'john',
@@ -98,7 +100,9 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         user = get_user_model().objects.get(username='john')
         self.assertFalse(user.is_active)
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{'SEND_CONFIRMATION_EMAIL': True}))
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_CONFIRMATION_EMAIL': True})
+    )
     def test_post_should_create_user_with_login_and_send_confirmation_email(self):
         data = {
             'username': 'john',
@@ -136,12 +140,15 @@ class RegistrationViewTest(restframework.APIViewTestCase,
             'password': '666',
             'csrftoken': 'asdf',
         }
-        request = self.factory.post(data=data)
 
+        request = self.factory.post(data=data)
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'password': ['Woops, 666 is not allowed.']})
+        self.assertEqual(
+            response.data,
+            {'password': ['Password 666 is not allowed.']}
+        )
 
     @mock.patch('djoser.serializers.UserRegistrationSerializer.perform_create',
                 side_effect=perform_create_mock)
@@ -220,7 +227,10 @@ class LoginViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
+        self.assertEqual(
+            response.data['non_field_errors'],
+            [djoser.constants.INVALID_CREDENTIALS_ERROR]
+        )
         self.assertFalse(self.signal_sent)
 
     def test_post_should_not_login_if_invalid_credentials(self):
@@ -235,7 +245,10 @@ class LoginViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
+        self.assertEqual(
+            response.data['non_field_errors'],
+            [djoser.constants.INVALID_CREDENTIALS_ERROR]
+        )
         self.assertTrue(self.signal_sent)
 
     def test_post_should_not_login_if_empty_request(self):
@@ -245,7 +258,10 @@ class LoginViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_CREDENTIALS_ERROR])
+        self.assertEqual(
+            response.data['non_field_errors'],
+            [djoser.constants.INVALID_CREDENTIALS_ERROR]
+        )
 
 
 class LogoutViewTest(restframework.APIViewTestCase,
@@ -426,7 +442,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('uid', response.data)
         self.assertEqual(len(response.data['uid']), 1)
-        self.assertEqual(response.data['uid'][0], djoser.constants.INVALID_UID_ERROR)
+        self.assertEqual(
+            response.data['uid'][0], djoser.constants.INVALID_UID_ERROR
+        )
 
     def test_post_should_not_set_new_password_if_user_does_not_exist(self):
         user = create_user()
@@ -456,11 +474,16 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['non_field_errors'], [djoser.constants.INVALID_TOKEN_ERROR])
+        self.assertEqual(
+            response.data['non_field_errors'],
+            [djoser.constants.INVALID_TOKEN_ERROR]
+        )
         user = utils.refresh(user)
         self.assertFalse(user.check_password(data['new_password']))
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True}))
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True})
+    )
     def test_post_should_not_set_new_password_if_password_mismatch(self):
         user = create_user()
         data = {
@@ -474,7 +497,10 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['non_field_errors'], [djoser.constants.PASSWORD_MISMATCH_ERROR])
+        self.assertEqual(
+            response.data['non_field_errors'],
+            [djoser.constants.PASSWORD_MISMATCH_ERROR]
+        )
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True}))
     def test_post_should_not_set_new_password_if_mismatch(self):
@@ -494,7 +520,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertFalse(user.check_password(data['new_password']))
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True}))
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True})
+    )
     def test_post_should_not_reset_if_fails_password_validation(self):
         user = create_user()
         data = {
@@ -507,7 +535,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         request = self.factory.post(data=data)
         response = self.view(request)
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'new_password': ['Woops, 666 is not allowed.']})
+        self.assertEqual(
+            response.data, {'new_password': ['Password 666 is not allowed.']}
+        )
 
 
 class ActivationViewTest(restframework.APIViewTestCase,
@@ -627,7 +657,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertTrue(user.check_password(data['current_password']))
 
-    def test_post_should_not_set_new_password_if_fails_password_validation(self):
+    def test_post_should_not_set_new_password_if_fails_validation(self):
         user = create_user()
         data = {
             'new_password': '666',
@@ -639,7 +669,9 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'new_password': ['Woops, 666 is not allowed.']})
+        self.assertEqual(
+            response.data, {'new_password': ['Password 666 is not allowed.']}
+        )
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{'LOGOUT_ON_PASSWORD_CHANGE': True}))
     def test_post_should_logout_after_password_change(self):
@@ -828,11 +860,10 @@ class SerializersManagerTest(SimpleTestCase):
         serializer_class = serializers_manager.get('user')
         self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
 
-        with mock.patch.object(
-                djoser.serializers.SerializersManager, 'load_serializer') as load_serializer_mock:
+        with mock.patch('django.utils.module_loading.import_string') as import_string_mock:
             serializer_class = serializers_manager.get('user')
             self.assertTrue(issubclass(serializer_class, djoser.serializers.UserSerializer))
-            self.assertFalse(load_serializer_mock.called)
+            self.assertFalse(import_string_mock.called)
 
 
 class TestDjoserViewsSupportActionAttribute(restframework.APIViewTestCase):

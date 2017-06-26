@@ -18,6 +18,7 @@ Welcome to djoser's documentation!
    endpoints
    emails
    adjustment
+   examples
 
 Indices and tables
 ==================
