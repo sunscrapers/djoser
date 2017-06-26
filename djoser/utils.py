@@ -57,7 +57,13 @@ class RequiredUserFieldsMixin(object):
         if extra_meta_attrs and isinstance(extra_meta_attrs, dict):
             meta_attrs.update(extra_meta_attrs)
 
-        Meta = type('Meta', (serializer_class.Meta,), meta_attrs)
+        # If parent serializer class already has an inner Meta, the Meta we're
+        # creating needs to inherit from the parent's inner meta.
+        meta_parent = (object,)
+        if hasattr(serializer_class, 'Meta'):
+            meta_parent = (object, serializer_class.Meta)
+
+        Meta = type('Meta', meta_parent, meta_attrs)
 
         new_serializer_class_attrs = {
             'Meta': Meta
