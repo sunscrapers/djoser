@@ -1,7 +1,7 @@
 import warnings
 
 from django.core.exceptions import ImproperlyConfigured
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.utils import six
 from django.utils.functional import LazyObject
 from django.test.signals import setting_changed
@@ -47,7 +47,7 @@ class Settings(object):
             if setting_name.isupper():
                 setattr(self, setting_name, setting_value)
 
-        overriden_djoser_settings = getattr(settings, DJOSER_SETTINGS_NAMESPACE, {}) or explicit_overriden_settings
+        overriden_djoser_settings = getattr(django_settings, DJOSER_SETTINGS_NAMESPACE, {}) or explicit_overriden_settings
         for overriden_setting_name, overriden_setting_value in six.iteritems(overriden_djoser_settings):
             value = overriden_setting_value
             if isinstance(overriden_setting_value, dict):
