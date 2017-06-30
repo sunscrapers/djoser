@@ -23,13 +23,13 @@ def decode_uid(pk):
 
 
 def login_user(request, user):
-    token, _ = authtoken.models.Token.objects.get_or_create(user=user)
+    token, _ = settings.TOKEN_MODEL.objects.get_or_create(user=user)
     user_logged_in.send(sender=user.__class__, request=request, user=user)
     return token
 
 
 def logout_user(request):
-    authtoken.models.Token.objects.filter(user=request.user).delete()
+    settings.TOKEN_MODEL.objects.filter(user=request.user).delete()
     user_logged_out.send(
         sender=request.user.__class__, request=request, user=request.user
     )

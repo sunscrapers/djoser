@@ -121,6 +121,14 @@ an email is registered in the system.
 
 **Default**: ``False``
 
+TOKEN_MODEL
+-----------
+
+Points to which token model should be used for authentication.
+
+**Example**: ``'knox.models.AuthToken'``
+**Default**: ``'rest_framework.authtoken.models.Token'``
+
 SERIALIZERS
 -----------
 
