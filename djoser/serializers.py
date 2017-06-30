@@ -6,8 +6,10 @@ from django.utils.module_loading import import_string
 from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
 
-from djoser import constants, utils, settings
+from djoser import constants, utils
 from djoser.compat import validate_password
+from djoser.conf import settings
+
 
 User = get_user_model()
 
@@ -25,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
         email = instance.email
         with transaction.atomic():
             instance = super(UserSerializer, self).update(instance, validated_data)
-            if settings.get('SEND_ACTIVATION_EMAIL') and validated_data.get('email') and email != instance.email:
+            if settings.SEND_ACTIVATION_EMAIL and validated_data.get('email') and email != instance.email:
                 instance.is_active = False
                 instance.save(update_fields=['is_active'])
 
@@ -35,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         style={'input_type': 'password'},
-        write_only=True,
+        write_only=True
     )
 
     default_error_messages = {
@@ -65,10 +67,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def perform_create(self, validated_data):
         with transaction.atomic():
             user = User.objects.create_user(**validated_data)
-            if settings.get('SEND_ACTIVATION_EMAIL'):
+            if settings.SEND_ACTIVATION_EMAIL:
                 user.is_active = False
                 user.save(update_fields=['is_active'])
         return user
+
 
 
 class LoginSerializer(serializers.Serializer):
@@ -111,8 +114,7 @@ class PasswordResetSerializer(serializers.Serializer):
     }
 
     def validate_email(self, value):
-        if settings.get('PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND') and \
-                not self.context['view'].get_users(value):
+        if settings.PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND and not self.context['view'].get_users(value):
             raise serializers.ValidationError(self.error_messages['email_not_found'])
         return value
 
@@ -260,8 +262,8 @@ class SerializersManager(object):
         except KeyError:
             raise Exception("Try to use serializer name '%s' that is not one of: %s" % (
                 serializer_name,
-                tuple(settings.get('SERIALIZERS').keys())
+                tuple(settings.SERIALIZERS.keys())
             ))
 
 
-serializers_manager = SerializersManager(settings.get('SERIALIZERS'))
+serializers_manager = SerializersManager(settings.SERIALIZERS)

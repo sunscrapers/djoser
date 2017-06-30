@@ -1,26 +1,23 @@
 from unittest import skipIf
 
 import django
-from django.db import IntegrityError
 from django.conf import settings
 from django.contrib.auth import get_user_model, user_logged_in, user_login_failed, user_logged_out
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
-from django.test.utils import override_settings
+from django.db import IntegrityError
 from django.test.testcases import SimpleTestCase
-
+from django.test.utils import override_settings
+from django.utils import six
 from djet import assertions, utils, restframework
-
 from rest_framework import status, authtoken
 from rest_framework.request import Request, override_method
 
-import djoser.views
 import djoser.constants
-import djoser.utils
-import djoser.signals
 import djoser.serializers
-
-from djoser.settings import merge_settings_dicts
+import djoser.signals
+import djoser.utils
+import djoser.views
 
 try:
     from unittest import mock
@@ -868,28 +865,33 @@ class SerializersManagerTest(SimpleTestCase):
             self.assertFalse(import_string_mock.called)
 
 
-class TestMergeSettingsDict(SimpleTestCase):
+class SettingsTestCase(SimpleTestCase):
 
-    def test_merge_in_key(self):
-        c = {1: {1: None}}
-        d = {1: {2: None}}
-        expected = {1: {1: None, 2: None}}
-        self.assertEqual(merge_settings_dicts(c, d), expected)
+    @override_settings()
+    def test_settings_should_be_default_if_no_djoser_attrib_in_django_settings(self):
+        from django.conf import settings as django_settings
+        from djoser.conf import settings as djoser_settings
+        from djoser.conf import default_settings
 
-    def test_merge_in_key_overwrite_sub_key(self):
-        c = {1: {1: None}}
-        d = {1: {2: None, 1: 'TEST'}}
-        expected = {1: {1: 'TEST', 2: None}}
-        self.assertEqual(merge_settings_dicts(c, d), expected)
+        del django_settings.DJOSER
 
-    def test_merge_in_key_overwrite_sub_key_overwrite_conflicts_false(self):
-        c = {1: {1: None}}
-        d = {1: {2: None, 1: 'TEST'}}
-        try:
-            merge_settings_dicts(c, d, overwrite_conflicts=False)
-            self.assertTrue(False)
-        except Exception as error:
-            self.assertEqual(str(error), 'Conflict at 1.1')
+        for setting_name, setting_value in six.iteritems(default_settings):
+            self.assertEqual(setting_value, getattr(djoser_settings, setting_name))
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'USE_HTML_EMAIL_TEMPLATES': True}))
+    def test_djoser_simple_setting_overriden(self):
+        from djoser.conf import settings as djoser_settings
+        self.assertTrue(djoser_settings.USE_HTML_EMAIL_TEMPLATES)
+
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{'SERIALIZERS': {'user': 'some.serializer'}}))
+    def test_djoser_dict_setting_overriden(self):
+        from djoser.conf import settings as djoser_settings
+        self.assertEqual(djoser_settings.SERIALIZERS['user'], 'some.serializer')
+
+    def test_djoser_settings_compat_method(self):
+        from djoser.conf import settings as djoser_settings
+        self.assertFalse(djoser_settings.get('USE_HTML_EMAIL_TEMPLATES'))
 
 
 class TestDjoserViewsSupportActionAttribute(restframework.APIViewTestCase):
