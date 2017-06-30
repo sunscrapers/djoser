@@ -7,7 +7,7 @@ from rest_framework import exceptions, serializers
 from rest_framework.authtoken.models import Token
 
 from djoser import constants, utils
-from djoser.compat import validate_password
+from djoser.compat import validate_password, get_user_email
 from djoser.conf import settings
 
 
@@ -24,10 +24,10 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = (User.USERNAME_FIELD,)
 
     def update(self, instance, validated_data):
-        email = instance.email
+        email = get_user_email(instance)
         with transaction.atomic():
             instance = super(UserSerializer, self).update(instance, validated_data)
-            if settings.SEND_ACTIVATION_EMAIL and validated_data.get('email') and email != instance.email:
+            if settings.SEND_ACTIVATION_EMAIL and validated_data.get(settings.USER_EMAIL_FIELD_NAME) and email != get_user_email(instance):
                 instance.is_active = False
                 instance.save(update_fields=['is_active'])
 
