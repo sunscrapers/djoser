@@ -889,6 +889,10 @@ class SettingsTestCase(SimpleTestCase):
         from djoser.conf import settings as djoser_settings
         self.assertEqual(djoser_settings.SERIALIZERS['user'], 'some.serializer')
 
+    def test_djoser_settings_compat_method(self):
+        from djoser.conf import settings as djoser_settings
+        self.assertFalse(djoser_settings.get('USE_HTML_EMAIL_TEMPLATES'))
+
 
 class TestDjoserViewsSupportActionAttribute(restframework.APIViewTestCase):
     # any arbitraty view from djoser
