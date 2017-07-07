@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from djoser.conf import settings
-from djoser.compat import get_user_email
+from djoser.compat import get_user_email, get_user_email_field_name
 
 from . import serializers, utils, signals
 
@@ -129,15 +129,18 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def get_users(self, email):
         if self._users is None:
-            active_users = User._default_manager.filter(
-                email__iexact=email,
-                is_active=True,
-            )
+            email_field_name = get_user_email_field_name(User)
+            active_users_kwargs = {
+                email_field_name + '__iexact': email, 'is_active': True
+            }
+            active_users = User._default_manager.filter(**active_users_kwargs)
             self._users = [u for u in active_users if u.has_usable_password()]
         return self._users
 
     def send_password_reset_email(self, user):
-        email_factory = utils.UserPasswordResetEmailFactory.from_request(self.request, user=user)
+        email_factory = utils.UserPasswordResetEmailFactory.from_request(
+            self.request, user=user
+        )
         email = email_factory.create()
         email.send()
 
