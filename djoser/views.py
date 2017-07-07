@@ -1,11 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
+
 from rest_framework import generics, permissions, status, views
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from djoser.conf import settings
 from djoser.compat import get_user_email
+
 from . import serializers, utils, signals
 
 User = get_user_model()

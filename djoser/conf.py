@@ -1,10 +1,10 @@
 import warnings
 
-from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings as django_settings
+from django.core.exceptions import ImproperlyConfigured
+from django.test.signals import setting_changed
 from django.utils import six
 from django.utils.functional import LazyObject
-from django.test.signals import setting_changed
 
 
 DJOSER_SETTINGS_NAMESPACE = 'DJOSER'
