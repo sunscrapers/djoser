@@ -35,6 +35,7 @@ default_settings = {
         'token': 'djoser.serializers.TokenSerializer',
     },
     'LOGOUT_ON_PASSWORD_CHANGE': False,
+    'USER_EMAIL_FIELD_NAME': 'email',
 }
 
 
