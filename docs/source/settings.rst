@@ -96,6 +96,16 @@ If ``True``, setting new password will logout the user.
 
 **Default**: ``False``
 
+USER_EMAIL_FIELD_NAME
+---------------------
+
+Determines which field in ``User`` model is used for email in versions of Django
+before 1.11. In Django 1.11 and greater value of this setting is ignored and
+value provided by `User.get_email_field_name` is used.
+This setting will be dropped when Django 1.8 LTS goes EOL.
+
+**Default**: ``'email'``
+
 PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND
 -----------------------------------
 
