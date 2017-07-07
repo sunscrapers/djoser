@@ -9,6 +9,7 @@ from django.db import IntegrityError
 from django.test.testcases import SimpleTestCase
 from django.test.utils import override_settings
 from django.utils import six
+from django.utils.module_loading import import_string
 from djet import assertions, utils, restframework
 from rest_framework import status, authtoken
 from rest_framework.request import Request, override_method
@@ -876,7 +877,12 @@ class SettingsTestCase(SimpleTestCase):
         del django_settings.DJOSER
 
         for setting_name, setting_value in six.iteritems(default_settings):
-            self.assertEqual(setting_value, getattr(djoser_settings, setting_name))
+            overridden_value = getattr(djoser_settings, setting_name)
+            try:
+                self.assertEqual(setting_value, overridden_value)
+            except AssertionError:
+                setting_value = import_string(setting_value)
+                self.assertEqual(setting_value, overridden_value)
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{'USE_HTML_EMAIL_TEMPLATES': True}))
     def test_djoser_simple_setting_overriden(self):

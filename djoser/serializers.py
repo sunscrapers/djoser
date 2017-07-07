@@ -242,7 +242,7 @@ class TokenSerializer(serializers.ModelSerializer):
     auth_token = serializers.CharField(source='key')
 
     class Meta:
-        model = Token
+        model = settings.TOKEN_MODEL
         fields = (
             'auth_token',
         )
