@@ -9,6 +9,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from rest_framework import authtoken
 
+from djoser import constants
+from djoser.compat import get_user_email
 from djoser.conf import settings
 
 
@@ -76,12 +78,16 @@ class UserEmailFactoryBase(object):
         subject = loader.render_to_string(self.subject_template_name, context)
         subject = ''.join(subject.splitlines())
 
+        user_email = get_user_email(self.user)
+        if user_email is None:
+            raise ValueError(constants.USER_WITHOUT_EMAIL_FIELD_ERROR)
+
         if self.plain_body_template_name:
             plain_body = loader.render_to_string(
                 self.plain_body_template_name, context
             )
             email_message = EmailMultiAlternatives(
-                subject, plain_body, self.from_email, [self.user.email]
+                subject, plain_body, self.from_email, [user_email]
             )
             if self.html_body_template_name:
                 html_body = loader.render_to_string(
@@ -93,7 +99,7 @@ class UserEmailFactoryBase(object):
                 self.html_body_template_name, context
             )
             email_message = EmailMessage(
-                subject, html_body, self.from_email, [self.user.email]
+                subject, html_body, self.from_email, [user_email]
             )
             email_message.content_subtype = 'html'
         return email_message
