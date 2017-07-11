@@ -17,8 +17,8 @@ Available endpoints
 Supported authentication backends
 ---------------------------------
 
-* `HTTP Basic Auth <http://www.django-rest-framework.org/api-guide/authentication/#basicauthentication>`_ (Default)
 * `Token based authentication from DRF <http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication>`_
+* `JWT Token based authentication from DRF <http://getblimp.github.io/django-rest-framework-jwt/>`_
 
 Supported Python versions
 -------------------------
