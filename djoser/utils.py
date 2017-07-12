@@ -143,6 +143,20 @@ class UserPasswordResetEmailFactory(UserEmailFactoryBase):
         return context
 
 
+class UserReregistrationEmailFactory(UserEmailFactoryBase):
+    subject_template_name = 'reregistration_email_subject.txt'
+    plain_body_template_name = 'reregistration_email_body.txt'
+    if settings.USE_HTML_EMAIL_TEMPLATES:
+        html_body_template_name = 'reregistration_email_body.html'
+
+    def get_context(self):
+        context = super(UserReregistrationEmailFactory, self).get_context()
+        context['url'] = settings.PASSWORD_RESET_CONFIRM_URL.format(
+            **context
+        )
+        return context
+
+
 class UserConfirmationEmailFactory(UserEmailFactoryBase):
     subject_template_name = 'confirmation_email_subject.txt'
     plain_body_template_name = 'confirmation_email_body.txt'

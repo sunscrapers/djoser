@@ -55,6 +55,21 @@ class RegistrationView(generics.CreateAPIView):
         permissions.AllowAny,
     )
 
+    def create(self, request, *args, **kwargs):
+        if not settings.REREGISTRATION_SHOW_RESPONSE:
+            try:
+                username_input = {User.USERNAME_FIELD: request.POST.get(User.USERNAME_FIELD)}
+                existing_user = User.objects.get(**username_input)
+                serializer = self.get_serializer(instance=existing_user)
+                if settings.SEND_REREGISTRATION_EMAIL:
+                    self.send_reregistration_email(existing_user)
+                headers = self.get_success_headers(serializer.data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            except User.DoesNotExist:
+                pass
+        response = super(RegistrationView, self).create(request, *args, **kwargs)
+        return response
+
     def perform_create(self, serializer):
         user = serializer.save()
         signals.user_registered.send(
@@ -74,6 +89,13 @@ class RegistrationView(generics.CreateAPIView):
 
     def send_confirmation_email(self, user):
         email_factory = utils.UserConfirmationEmailFactory.from_request(
+            self.request, user=user
+        )
+        email = email_factory.create()
+        email.send()
+
+    def send_reregistration_email(self, user):
+        email_factory = utils.UserReregistrationEmailFactory.from_request(
             self.request, user=user
         )
         email = email_factory.create()

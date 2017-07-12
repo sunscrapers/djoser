@@ -72,7 +72,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
-
 class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(
         required=False, style={'input_type': 'password'}

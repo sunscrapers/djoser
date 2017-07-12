@@ -15,6 +15,7 @@ default_settings = {
     'USE_HTML_EMAIL_TEMPLATES': False,
     'SEND_ACTIVATION_EMAIL': False,
     'SEND_CONFIRMATION_EMAIL': False,
+    'SEND_REREGISTRATION_EMAIL': False,
     'SET_PASSWORD_RETYPE': False,
     'SET_USERNAME_RETYPE': False,
     'PASSWORD_RESET_CONFIRM_RETYPE': False,
@@ -38,6 +39,7 @@ default_settings = {
     },
     'LOGOUT_ON_PASSWORD_CHANGE': False,
     'USER_EMAIL_FIELD_NAME': 'email',
+    'REREGISTRATION_SHOW_RESPONSE': True,
 }
 
 SETTINGS_TO_IMPORT = ['TOKEN_MODEL']
