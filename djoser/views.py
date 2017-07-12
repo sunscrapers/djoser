@@ -58,7 +58,7 @@ class RegistrationView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         try:
-            email_users = self.get_email_users(request.POST.get('email'))
+            email_users = self.get_email_users(request.data.get('email'))
             for user in email_users:
                 serializer = self.get_serializer(instance=user)
                 if settings.SEND_REREGISTRATION_EMAIL:
