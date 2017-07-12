@@ -1,0 +1,14 @@
+{% load i18n %}{% autoescape off %}
+<html>
+<body>
+<p>
+{% blocktrans %}You're receiving this email because someone tried to reregister your user account at {{ site_name }}.{% endblocktrans %}</p>
+{% blocktrans %}Please find the previously sent activation email, or request a new one to properly set this account up{% endblocktrans %}
+
+<p>{% trans "Your username, in case you've forgotten:" %} <b>{{ user.get_username }}</b></p>
+
+<p>{% trans "Thanks for using our site!" %}</p>
+
+<p>{% blocktrans %}The {{ site_name }} team{% endblocktrans %}</p>
+</body></html>
+{% endautoescape %}

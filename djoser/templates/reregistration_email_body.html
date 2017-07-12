@@ -2,9 +2,9 @@
 <html>
 <body>
 <p>
-{% blocktrans %}You're receiving this email because someone tried to reregister your user account at {{ site_name }}.{% endblocktrans %}</p>
+{% blocktrans %}You're receiving this email because someone tried to reregister a user account with this email at {{ site_name }}.{% endblocktrans %}</p>
 
-<p>{% trans "Please go to the following page and choose a new password:" %}</p>
+<p>{% trans "If this wasn't you, please go to the following page and choose a new password:" %}</p>
 <p>{% block reset_link %}
 <a href="{{ protocol }}://{{ domain }}/{{ url }}">{{ protocol }}://{{ domain }}/{{ url }}</a>
 {% endblock %}</p>

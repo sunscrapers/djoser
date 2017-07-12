@@ -56,6 +56,26 @@ If ``True``, register or activation endpoint will send confirmation email to use
 
 **Default**: ``False``
 
+SEND_REREGISTRATION_EMAIL
+-------------------------
+
+If ``True``, register endpoint will send warning and reminder email to user. 
+Only active users are able to reset their passwords (User.is_active is True).
+The email will ask the User to reset their password since someone is trying to
+re-register their account.
+If User.is_active is False, will send a warning
+
+**Default**: ``False``
+
+REREGISTRATION_SHOW_RESPONSE
+----------------------------
+
+If ``False`` (default), the ``/register/`` endpoint will always return
+a ``HTTP_201_CREATED`` response, as well as the UserSerializer serializer.data response 
+of one of those users, so that it makes it difficult to distinguish if a User has this email
+
+**Default**: ``True``
+
 ACTIVATION_URL
 --------------
 
