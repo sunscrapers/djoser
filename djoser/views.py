@@ -54,19 +54,20 @@ class RegistrationView(generics.CreateAPIView):
     permission_classes = (
         permissions.AllowAny,
     )
+    _users = None
 
     def create(self, request, *args, **kwargs):
-        if not settings.REREGISTRATION_SHOW_RESPONSE:
-            try:
-                username_input = {User.USERNAME_FIELD: request.POST.get(User.USERNAME_FIELD)}
-                existing_user = User.objects.get(**username_input)
-                serializer = self.get_serializer(instance=existing_user)
+        try:
+            email_users = self.get_email_users(request.POST.get('email'))
+            for user in email_users:
+                serializer = self.get_serializer(instance=user)
                 if settings.SEND_REREGISTRATION_EMAIL:
-                    self.send_reregistration_email(existing_user)
+                    self.send_reregistration_email(user)
                 headers = self.get_success_headers(serializer.data)
+            if not settings.REREGISTRATION_SHOW_RESPONSE and email_users:
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-            except User.DoesNotExist:
-                pass
+        except User.DoesNotExist:
+            pass
         response = super(RegistrationView, self).create(request, *args, **kwargs)
         return response
 
@@ -95,11 +96,26 @@ class RegistrationView(generics.CreateAPIView):
         email.send()
 
     def send_reregistration_email(self, user):
-        email_factory = utils.UserReregistrationEmailFactory.from_request(
-            self.request, user=user
-        )
+        if user.is_active:
+            email_factory = utils.UserReregistrationEmailFactory.from_request(
+                self.request, user=user
+            )
+        else:
+            email_factory = utils.UserReregistrationInactiveEmailFactory.from_request(
+                self.request, user=user
+            )
         email = email_factory.create()
         email.send()
+
+    def get_email_users(self, email):
+        if self._users is None:
+            email_field_name = get_user_email_field_name(User)
+            email_users_kwargs = {
+                email_field_name + '__iexact': email,
+            }
+            email_users = User._default_manager.filter(**email_users_kwargs)
+            self._users = [u for u in email_users if u.has_usable_password()]
+        return self._users
 
 
 class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
