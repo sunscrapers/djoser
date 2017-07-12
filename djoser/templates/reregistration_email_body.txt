@@ -1,5 +1,5 @@
 {% load i18n %}{% autoescape off %}
-{% blocktrans %}You're receiving this email because someone tried to reregister a user account with this email at {{ site_name }}.{% endblocktrans %}</p>
+{% blocktrans %}You're receiving this email because someone tried to reregister a user account with this email at {{ site_name }}.{% endblocktrans %}
 
 {% trans "If this wasn't you, please go to the following page and choose a new password:" %}
 {% block reset_link %}
