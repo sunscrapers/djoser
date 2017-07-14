@@ -216,9 +216,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to change user username.
     """
-    permission_classes = (
-        permissions.IsAuthenticated,
-    )
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_serializer_class(self):
         if settings.SET_USERNAME_RETYPE:
@@ -226,9 +224,23 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
         return settings.SERIALIZERS.set_username
 
     def _action(self, serializer):
-        setattr(self.request.user, User.USERNAME_FIELD, serializer.data['new_' + User.USERNAME_FIELD])
-        self.request.user.save()
+        user = self.request.user
+        new_username = serializer.data['new_' + User.USERNAME_FIELD]
+
+        setattr(user, User.USERNAME_FIELD, new_username)
+        if settings.SEND_ACTIVATION_EMAIL:
+            user.is_active = False
+            self.send_activation_email(user)
+        user.save()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def send_activation_email(self, user):
+        email_factory = utils.UserActivationEmailFactory.from_request(
+            self.request, user=user
+        )
+        email = email_factory.create()
+        email.send()
 
 
 class UserView(generics.RetrieveUpdateAPIView):
@@ -237,21 +249,7 @@ class UserView(generics.RetrieveUpdateAPIView):
     """
     model = User
     serializer_class = settings.SERIALIZERS.user
-    permission_classes = (
-        permissions.IsAuthenticated,
-    )
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self, *args, **kwargs):
         return self.request.user
-
-    def perform_update(self, serializer):
-        email = get_user_email(self.get_object())
-        user = serializer.save()
-        signals.user_registered.send(sender=self.__class__, user=user, request=self.request)
-        if settings.SEND_ACTIVATION_EMAIL and email != get_user_email(user):
-            self.send_activation_email(user)
-
-    def send_activation_email(self, user):
-        email_factory = utils.UserActivationEmailFactory.from_request(self.request, user=user)
-        email = email_factory.create()
-        email.send()
