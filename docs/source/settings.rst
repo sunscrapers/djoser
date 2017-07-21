@@ -56,7 +56,7 @@ If ``True``, register or activation endpoint will send confirmation email to use
 
 **Default**: ``False``
 
-SEND_REREGISTRATION_EMAIL
+RESEND_REGISTRATION_EMAIL
 -------------------------
 
 If ``True``, register endpoint will send warning and reminder email to user. 
@@ -67,10 +67,10 @@ If User.is_active is False, will send a warning
 
 **Default**: ``False``
 
-REREGISTRATION_SHOW_RESPONSE
+REGISTRATION_SHOW_EMAIL_FOUND
 ----------------------------
 
-If ``False`` (default), the ``/register/`` endpoint will always return
+If ``True`` (default), the ``/register/`` endpoint will always return
 a ``HTTP_201_CREATED`` response, as well as the UserSerializer serializer.data response 
 of one of those users, so that it makes it difficult to distinguish if a User has this email
 
