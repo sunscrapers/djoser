@@ -3,7 +3,7 @@ init:
 	pipenv run pip install -e .
 
 test:
-	pipenv run coverage run --source=djoser testproject/manage.py test testapp
+	pipenv run py.test --capture=no --cov-report term-missing --cov-report html --cov=djoser testproject/
 
 migrate:
 	pipenv run python testproject/manage.py migrate

@@ -12,3 +12,7 @@ testproject/db.sqlite3
 
 # docs
 docs/build/
+
+# Tests
+.cache/
+htmlcov/
