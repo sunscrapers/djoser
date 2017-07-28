@@ -50,7 +50,7 @@ class RegistrationView(generics.CreateAPIView):
     """
     Use this endpoint to register new user.
     """
-    serializer_class = serializers.serializers_manager.get('user_registration')
+    serializer_class = settings.SERIALIZERS.user_registration
     permission_classes = (
         permissions.AllowAny,
     )
@@ -84,14 +84,14 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to obtain user authentication token.
     """
-    serializer_class = serializers.serializers_manager.get('login')
+    serializer_class = settings.SERIALIZERS.login
     permission_classes = (
         permissions.AllowAny,
     )
 
     def _action(self, serializer):
         token = utils.login_user(self.request, serializer.user)
-        token_serializer_class = serializers.serializers_manager.get('token')
+        token_serializer_class = settings.SERIALIZERS.token
         return Response(
             data=token_serializer_class(token).data,
             status=status.HTTP_200_OK,
@@ -115,7 +115,7 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to send email to user with password reset link.
     """
-    serializer_class = serializers.serializers_manager.get('password_reset')
+    serializer_class = settings.SERIALIZERS.password_reset
     permission_classes = (
         permissions.AllowAny,
     )
@@ -155,8 +155,8 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def get_serializer_class(self):
         if settings.SET_PASSWORD_RETYPE:
-            return serializers.serializers_manager.get('set_password_retype')
-        return serializers.serializers_manager.get('set_password')
+            return settings.SERIALIZERS.set_password_retype
+        return settings.SERIALIZERS.set_password
 
     def _action(self, serializer):
         self.request.user.set_password(serializer.data['new_password'])
@@ -179,8 +179,8 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def get_serializer_class(self):
         if settings.PASSWORD_RESET_CONFIRM_RETYPE:
-            return serializers.serializers_manager.get('password_reset_confirm_retype')
-        return serializers.serializers_manager.get('password_reset_confirm')
+            return settings.SERIALIZERS.password_reset_confirm_retype
+        return settings.SERIALIZERS.password_reset_confirm
 
     def _action(self, serializer):
         serializer.user.set_password(serializer.data['new_password'])
@@ -192,7 +192,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to activate user account.
     """
-    serializer_class = serializers.serializers_manager.get('activation')
+    serializer_class = settings.SERIALIZERS.activation
     permission_classes = (
         permissions.AllowAny,
     )
@@ -222,8 +222,8 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def get_serializer_class(self):
         if settings.SET_USERNAME_RETYPE:
-            return serializers.serializers_manager.get('set_username_retype')
-        return serializers.serializers_manager.get('set_username')
+            return settings.SERIALIZERS.set_username_retype
+        return settings.SERIALIZERS.set_username
 
     def _action(self, serializer):
         setattr(self.request.user, User.USERNAME_FIELD, serializer.data['new_' + User.USERNAME_FIELD])
@@ -236,7 +236,7 @@ class UserView(generics.RetrieveUpdateAPIView):
     Use this endpoint to retrieve/update user.
     """
     model = User
-    serializer_class = serializers.serializers_manager.get('user')
+    serializer_class = settings.SERIALIZERS.user
     permission_classes = (
         permissions.IsAuthenticated,
     )

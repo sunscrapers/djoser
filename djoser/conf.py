@@ -11,6 +11,18 @@ from django.utils.module_loading import import_string
 DJOSER_SETTINGS_NAMESPACE = 'DJOSER'
 
 
+class ObjDict(dict):
+    def __getattribute__(self, item):
+        try:
+            if isinstance(self[item], str):
+                self[item] = import_string(self[item])
+            value = self[item]
+        except KeyError:
+            value = super(ObjDict, self).__getattribute__(item)
+        finally:
+            return value
+
+
 default_settings = {
     'USE_HTML_EMAIL_TEMPLATES': False,
     'SEND_ACTIVATION_EMAIL': False,
@@ -22,7 +34,7 @@ default_settings = {
     'ROOT_VIEW_URLS_MAPPING': {},
     'PASSWORD_VALIDATORS': [],
     'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
-    'SERIALIZERS': {
+    'SERIALIZERS': ObjDict({
         'activation': 'djoser.serializers.ActivationSerializer',
         'login': 'djoser.serializers.LoginSerializer',
         'password_reset': 'djoser.serializers.PasswordResetSerializer',
@@ -35,7 +47,7 @@ default_settings = {
         'user_registration': 'djoser.serializers.UserRegistrationSerializer',
         'user': 'djoser.serializers.UserSerializer',
         'token': 'djoser.serializers.TokenSerializer',
-    },
+    }),
     'LOGOUT_ON_PASSWORD_CHANGE': False,
     'USER_EMAIL_FIELD_NAME': 'email',
 }
@@ -48,29 +60,32 @@ class Settings(object):
         if explicit_overriden_settings is None:
             explicit_overriden_settings = {}
 
+        overriden_settings = getattr(
+            django_settings, DJOSER_SETTINGS_NAMESPACE, {}
+        ) or explicit_overriden_settings
+
+        self._load_default_settings()
+        self._override_settings(overriden_settings)
+        self._init_settings_to_import()
+
+    def _load_default_settings(self):
         for setting_name, setting_value in six.iteritems(default_settings):
             if setting_name.isupper():
                 setattr(self, setting_name, setting_value)
 
-        overriden_djoser_settings = getattr(
-            django_settings, DJOSER_SETTINGS_NAMESPACE, {}
-        ) or explicit_overriden_settings
-
-        for overriden_setting_name, overriden_setting_value in six.iteritems(
-                overriden_djoser_settings
-        ):
-            value = overriden_setting_value
-            if isinstance(overriden_setting_value, dict):
-                value = getattr(self, overriden_setting_name, {})
-                value.update(overriden_setting_value)
-            setattr(self, overriden_setting_name, value)
-
-        self._init_settings_to_import()
+    def _override_settings(self, overriden_settings):
+        for setting_name, setting_value in six.iteritems(overriden_settings):
+            value = setting_value
+            if isinstance(setting_value, dict):
+                value = getattr(self, setting_name, {})
+                value.update(ObjDict(setting_value))
+            setattr(self, setting_name, value)
 
     def _init_settings_to_import(self):
         for setting_name in SETTINGS_TO_IMPORT:
             value = getattr(self, setting_name)
-            setattr(self, setting_name, import_string(value))
+            if isinstance(value, str):
+                setattr(self, setting_name, import_string(value))
 
 
 class LazySettings(LazyObject):
