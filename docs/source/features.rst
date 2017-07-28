@@ -18,6 +18,7 @@ Supported authentication backends
 ---------------------------------
 
 * `Token based authentication from DRF <http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication>`_
+* `JWT Token based authentication from DRF <http://getblimp.github.io/django-rest-framework-jwt/>`_
 
 Supported Python versions
 -------------------------
