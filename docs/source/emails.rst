@@ -1,6 +1,10 @@
 Emails
 ======
 
+``UserEmailFactoryBase`` which is used to send emails in djoser respects
+``DEFAULT_FROM_EMAIL`` Django setting, so you can use it to customize
+the default sender value.
+
 There are few email templates which you may want to override:
 
 * ``activation_email_body.txt``
