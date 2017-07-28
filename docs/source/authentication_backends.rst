@@ -1,3 +1,5 @@
+.. _authentication-backends:
+
 Authentication Backends
 =======================
 

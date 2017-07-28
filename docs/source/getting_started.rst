@@ -39,15 +39,9 @@ Configure ``urls.py``:
     )
 
 HTTP Basic Auth strategy is assumed by default as Django Rest Framework does it.
-However you may want to set it explicitly:
-
-.. code-block:: python
-
-    REST_FRAMEWORK = {
-        'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework.authentication.BasicAuthentication',
-        ),
-    }
+We strongly discourage and do not provide any explicit support for basic auth.
+You should customize your authentication backend as described in
+:ref:`authentication-backends`.
 
 Run migrations - this step will create tables for ``auth`` app:
 
