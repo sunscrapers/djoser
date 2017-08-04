@@ -1,7 +1,5 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.db import IntegrityError, transaction
-from django.utils import six
-from django.utils.module_loading import import_string
 
 from rest_framework import exceptions, serializers
 
@@ -70,7 +68,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
                 user.is_active = False
                 user.save(update_fields=['is_active'])
         return user
-
 
 
 class LoginSerializer(serializers.Serializer):
@@ -245,24 +242,3 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = (
             'auth_token',
         )
-
-
-class SerializersManager(object):
-    def __init__(self, serializer_confs):
-        self.serializers = {}
-        for serializer_name, serializer in six.iteritems(serializer_confs.copy()):
-            if isinstance(serializer, six.string_types):
-                serializer = import_string(serializer)
-            self.serializers[serializer_name] = serializer
-
-    def get(self, serializer_name):
-        try:
-            return self.serializers[serializer_name]
-        except KeyError:
-            raise Exception("Try to use serializer name '%s' that is not one of: %s" % (
-                serializer_name,
-                tuple(settings.SERIALIZERS.keys())
-            ))
-
-
-serializers_manager = SerializersManager(settings.SERIALIZERS)
