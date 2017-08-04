@@ -20,16 +20,6 @@ class UserSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (User.USERNAME_FIELD,)
 
-    def update(self, instance, validated_data):
-        email = get_user_email(instance)
-        with transaction.atomic():
-            instance = super(UserSerializer, self).update(instance, validated_data)
-            if settings.SEND_ACTIVATION_EMAIL and validated_data.get(settings.USER_EMAIL_FIELD_NAME) and email != get_user_email(instance):
-                instance.is_active = False
-                instance.save(update_fields=['is_active'])
-
-        return instance
-
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -212,14 +202,22 @@ class SetUsernameSerializer(serializers.ModelSerializer, CurrentPasswordSerializ
         )
 
     def __init__(self, *args, **kwargs):
+        """
+        This method should probably be replaced by a better solution.
+        Its purpose is to replace USERNAME_FIELD with 'new_' + USERNAME_FIELD
+        so that the new field is being assigned a field for USERNAME_FIELD
+        """
         super(SetUsernameSerializer, self).__init__(*args, **kwargs)
-        self.fields['new_' + User.USERNAME_FIELD] = self.fields[User.USERNAME_FIELD]
-        del self.fields[User.USERNAME_FIELD]
+        username_field = User.USERNAME_FIELD
+        self.fields['new_' + username_field] = self.fields[username_field]
+        del self.fields[username_field]
 
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer):
     default_error_messages = {
-        'username_mismatch': constants.USERNAME_MISMATCH_ERROR.format(User.USERNAME_FIELD),
+        'username_mismatch': constants.USERNAME_MISMATCH_ERROR.format(
+            User.USERNAME_FIELD
+        ),
     }
 
     def __init__(self, *args, **kwargs):
@@ -230,7 +228,11 @@ class SetUsernameRetypeSerializer(SetUsernameSerializer):
         attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
         new_username = attrs[User.USERNAME_FIELD]
         if new_username != attrs['re_new_' + User.USERNAME_FIELD]:
-            raise serializers.ValidationError(self.error_messages['username_mismatch'].format(User.USERNAME_FIELD))
+            raise serializers.ValidationError(
+                self.error_messages['username_mismatch'].format(
+                    User.USERNAME_FIELD
+                )
+            )
         return attrs
 
 
