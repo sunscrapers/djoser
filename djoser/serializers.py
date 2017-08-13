@@ -209,8 +209,7 @@ class SetUsernameSerializer(serializers.ModelSerializer, CurrentPasswordSerializ
         """
         super(SetUsernameSerializer, self).__init__(*args, **kwargs)
         username_field = User.USERNAME_FIELD
-        self.fields['new_' + username_field] = self.fields[username_field]
-        del self.fields[username_field]
+        self.fields['new_' + username_field] = self.fields.pop(username_field)
 
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer):
