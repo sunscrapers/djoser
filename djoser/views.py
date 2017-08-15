@@ -6,9 +6,9 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from djoser.conf import settings
-from djoser.compat import get_user_email, get_user_email_field_name
+from djoser.compat import get_user_email_field_name
 
-from . import serializers, utils, signals
+from . import utils, signals
 
 User = get_user_model()
 
