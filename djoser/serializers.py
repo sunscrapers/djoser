@@ -4,7 +4,7 @@ from django.db import IntegrityError, transaction
 from rest_framework import exceptions, serializers
 
 from djoser import constants, utils
-from djoser.compat import get_user_email, validate_password
+from djoser.compat import validate_password
 from djoser.conf import settings
 
 
