@@ -80,15 +80,21 @@ class LoginSerializer(serializers.Serializer):
             username=attrs.get(User.USERNAME_FIELD),
             password=attrs.get('password')
         )
-        if self.user:
-            if not self.user.is_active:
-                raise serializers.ValidationError(
-                    self.error_messages['inactive_account']
-                )
-            return attrs
-        else:
+
+        self._validate_user_exists(self.user)
+        self._validate_user_is_active(self.user)
+        return attrs
+
+    def _validate_user_exists(self, user):
+        if not user:
             raise serializers.ValidationError(
                 self.error_messages['invalid_credentials']
+            )
+
+    def _validate_user_is_active(self, user):
+        if not user.is_active:
+            raise serializers.ValidationError(
+                self.error_messages['inactive_account']
             )
 
 
