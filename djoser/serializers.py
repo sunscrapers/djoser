@@ -124,7 +124,7 @@ class UidAndTokenSerializer(serializers.Serializer):
         try:
             uid = utils.decode_uid(value)
             self.user = User.objects.get(pk=uid)
-        except (User.DoesNotExist, ValueError, TypeError, OverflowError) as error:
+        except (User.DoesNotExist, ValueError, TypeError, OverflowError):
             raise serializers.ValidationError(self.error_messages['invalid_uid'])
         return value
 
