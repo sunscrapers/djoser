@@ -73,7 +73,9 @@ class LoginSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         super(LoginSerializer, self).__init__(*args, **kwargs)
         self.user = None
-        self.fields[User.USERNAME_FIELD] = serializers.CharField(required=False)
+        self.fields[User.USERNAME_FIELD] = serializers.CharField(
+            required=False
+        )
 
     def validate(self, attrs):
         self.user = authenticate(
@@ -106,8 +108,11 @@ class PasswordResetSerializer(serializers.Serializer):
     }
 
     def validate_email(self, value):
-        if settings.PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND and not self.context['view'].get_users(value):
-            raise serializers.ValidationError(self.error_messages['email_not_found'])
+        users = self.context['view'].get_users(value)
+        if settings.PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND and not users:
+            raise serializers.ValidationError(
+                self.error_messages['email_not_found']
+            )
         return value
 
 
@@ -125,14 +130,19 @@ class UidAndTokenSerializer(serializers.Serializer):
             uid = utils.decode_uid(value)
             self.user = User.objects.get(pk=uid)
         except (User.DoesNotExist, ValueError, TypeError, OverflowError):
-            raise serializers.ValidationError(self.error_messages['invalid_uid'])
+            raise serializers.ValidationError(
+                self.error_messages['invalid_uid']
+            )
         return value
 
     def validate(self, attrs):
         attrs = super(UidAndTokenSerializer, self).validate(attrs)
-        if not self.context['view'].token_generator.check_token(self.user, attrs['token']):
-            raise serializers.ValidationError(self.error_messages['invalid_token'])
-        return attrs
+        is_token_valid = self.context['view'].token_generator.check_token(
+            self.user, attrs['token']
+        )
+        if is_token_valid:
+            return attrs
+        raise serializers.ValidationError(self.error_messages['invalid_token'])
 
 
 class ActivationSerializer(UidAndTokenSerializer):
@@ -142,9 +152,9 @@ class ActivationSerializer(UidAndTokenSerializer):
 
     def validate(self, attrs):
         attrs = super(ActivationSerializer, self).validate(attrs)
-        if self.user.is_active:
-            raise exceptions.PermissionDenied(self.error_messages['stale_token'])
-        return attrs
+        if not self.user.is_active:
+            return attrs
+        raise exceptions.PermissionDenied(self.error_messages['stale_token'])
 
 
 class PasswordSerializer(serializers.Serializer):
@@ -164,9 +174,11 @@ class PasswordRetypeSerializer(PasswordSerializer):
 
     def validate(self, attrs):
         attrs = super(PasswordRetypeSerializer, self).validate(attrs)
-        if attrs['new_password'] != attrs['re_new_password']:
-            raise serializers.ValidationError(self.error_messages['password_mismatch'])
-        return attrs
+        if attrs['new_password'] == attrs['re_new_password']:
+            return attrs
+        raise serializers.ValidationError(
+            self.error_messages['password_mismatch']
+        )
 
 
 class CurrentPasswordSerializer(serializers.Serializer):
@@ -177,28 +189,35 @@ class CurrentPasswordSerializer(serializers.Serializer):
     }
 
     def validate_current_password(self, value):
-        if not self.context['request'].user.check_password(value):
-            raise serializers.ValidationError(self.error_messages['invalid_password'])
-        return value
+        is_password_valid = self.context['request'].user.check_password(value)
+        if is_password_valid:
+            return value
+        raise serializers.ValidationError(
+            self.error_messages['invalid_password']
+        )
 
 
 class SetPasswordSerializer(PasswordSerializer, CurrentPasswordSerializer):
     pass
 
 
-class SetPasswordRetypeSerializer(PasswordRetypeSerializer, CurrentPasswordSerializer):
+class SetPasswordRetypeSerializer(PasswordRetypeSerializer,
+                                  CurrentPasswordSerializer):
     pass
 
 
-class PasswordResetConfirmSerializer(UidAndTokenSerializer, PasswordSerializer):
+class PasswordResetConfirmSerializer(UidAndTokenSerializer,
+                                     PasswordSerializer):
     pass
 
 
-class PasswordResetConfirmRetypeSerializer(UidAndTokenSerializer, PasswordRetypeSerializer):
+class PasswordResetConfirmRetypeSerializer(UidAndTokenSerializer,
+                                           PasswordRetypeSerializer):
     pass
 
 
-class SetUsernameSerializer(serializers.ModelSerializer, CurrentPasswordSerializer):
+class SetUsernameSerializer(serializers.ModelSerializer,
+                            CurrentPasswordSerializer):
 
     class Meta(object):
         model = User
