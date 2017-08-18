@@ -5,12 +5,14 @@ import djoser.views
 
 from .common import create_user
 
+User = get_user_model()
+
 
 class UserViewTest(restframework.APIViewTestCase,
                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.UserView
 
-    def test_get_should_return_user(self):
+    def test_get_return_user(self):
         user = create_user()
         request = self.factory.get(user=user)
 
@@ -18,10 +20,10 @@ class UserViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_200_OK)
         self.assertEqual(set(response.data.keys()), set(
-            [get_user_model().USERNAME_FIELD, get_user_model()._meta.pk.name] + get_user_model().REQUIRED_FIELDS
+            [User.USERNAME_FIELD, User._meta.pk.name] + User.REQUIRED_FIELDS
         ))
 
-    def test_put_should_update_user(self):
+    def test_put_update_user(self):
         user = create_user()
         data = {
             'email': 'ringo@beatles.com',

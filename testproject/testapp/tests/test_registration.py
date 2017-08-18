@@ -9,6 +9,8 @@ import djoser.views
 
 from .common import create_user, mock, perform_create_mock
 
+User = get_user_model()
+
 
 class RegistrationViewTest(restframework.APIViewTestCase,
                            assertions.StatusCodeAssertionsMixin,
@@ -16,7 +18,7 @@ class RegistrationViewTest(restframework.APIViewTestCase,
                            assertions.InstanceAssertionsMixin):
     view_class = djoser.views.RegistrationView
 
-    def test_post_should_create_user_without_login(self):
+    def test_post_create_user_without_login(self):
         data = {
             'username': 'john',
             'password': 'secret',
@@ -28,14 +30,14 @@ class RegistrationViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
         self.assertTrue('password' not in response.data)
-        self.assert_instance_exists(get_user_model(), username=data['username'])
-        user = get_user_model().objects.get(username=data['username'])
+        self.assert_instance_exists(User, username=data['username'])
+        user = User.objects.get(username=data['username'])
         self.assertTrue(user.check_password(data['password']))
 
     @override_settings(
         DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
     )
-    def test_post_should_create_user_with_login_and_send_activation_email(self):
+    def test_post_create_user_with_login_and_send_activation_email(self):
         data = {
             'username': 'john',
             'email': 'john@beatles.com',
@@ -46,17 +48,17 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assert_instance_exists(get_user_model(), username=data['username'])
+        self.assert_instance_exists(User, username=data['username'])
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data['email']])
 
-        user = get_user_model().objects.get(username='john')
+        user = User.objects.get(username='john')
         self.assertFalse(user.is_active)
 
     @override_settings(
         DJOSER=dict(settings.DJOSER, **{'SEND_CONFIRMATION_EMAIL': True})
     )
-    def test_post_should_create_user_with_login_and_send_confirmation_email(self):
+    def test_post_create_user_with_login_and_send_confirmation_email(self):
         data = {
             'username': 'john',
             'email': 'john@beatles.com',
@@ -67,14 +69,14 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assert_instance_exists(get_user_model(), username=data['username'])
+        self.assert_instance_exists(User, username=data['username'])
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data['email']])
 
-        user = get_user_model().objects.get(username='john')
+        user = User.objects.get(username='john')
         self.assertTrue(user.is_active)
 
-    def test_post_should_not_create_new_user_if_username_exists(self):
+    def test_post_not_create_new_user_if_username_exists(self):
         create_user(username='john')
         data = {
             'username': 'john',
@@ -87,7 +89,7 @@ class RegistrationViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
-    def test_post_should_not_register_if_fails_password_validation(self):
+    def test_post_not_register_if_fails_password_validation(self):
         data = {
             'username': 'john',
             'password': '666',
@@ -105,7 +107,7 @@ class RegistrationViewTest(restframework.APIViewTestCase,
 
     @mock.patch('djoser.serializers.UserRegistrationSerializer.perform_create',
                 side_effect=perform_create_mock)
-    def test_post_should_return_400_for_integrity_error(self, perform_create):
+    def test_post_return_400_for_integrity_error(self, perform_create):
         data = {
             'username': 'john',
             'email': 'john@beatles.com',

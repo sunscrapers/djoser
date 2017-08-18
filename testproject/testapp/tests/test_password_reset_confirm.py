@@ -14,7 +14,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
                                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.PasswordResetConfirmView
 
-    def test_post_should_set_new_password(self):
+    def test_post_set_new_password(self):
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
@@ -30,7 +30,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertTrue(user.check_password(data['new_password']))
 
-    def test_post_should_not_set_new_password_if_broken_uid(self):
+    def test_post_not_set_new_password_if_broken_uid(self):
         user = create_user()
         data = {
             'uid': 'x',
@@ -47,13 +47,11 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         self.assertFalse(user.check_password(data['new_password']))
 
     def test_post_readable_error_message_when_uid_is_broken(self):
-        """ Regression test for https://github.com/sunscrapers/djoser/issues/122
+        """
+        Regression test for https://github.com/sunscrapers/djoser/issues/122
 
-        When uid is not correct unicode string, error message was looked like:
-        'utf-8' codec can't decode byte 0xd3 in position 0: invalid continuation byte.
-        You passed in b'\xd3\x10\xb4' (<class 'bytes'>)
-
-        Now we provide human readable message
+        When uid was not correct unicode string, error message was a
+        standard Python error messsage. Now we provide human readable message.
         """
         user = create_user()
         data = {
@@ -72,7 +70,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             response.data['uid'][0], djoser.constants.INVALID_UID_ERROR
         )
 
-    def test_post_should_not_set_new_password_if_user_does_not_exist(self):
+    def test_post_not_set_new_password_if_user_does_not_exist(self):
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk + 1),
@@ -88,7 +86,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertFalse(user.check_password(data['new_password']))
 
-    def test_post_should_not_set_new_password_if_wrong_token(self):
+    def test_post_not_set_new_password_if_wrong_token(self):
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
@@ -110,7 +108,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
     @override_settings(
         DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True})
     )
-    def test_post_should_not_set_new_password_if_password_mismatch(self):
+    def test_post_not_set_new_password_if_password_mismatch(self):
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
@@ -128,8 +126,10 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             [djoser.constants.PASSWORD_MISMATCH_ERROR]
         )
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True}))
-    def test_post_should_not_set_new_password_if_mismatch(self):
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True})
+    )
+    def test_post_not_set_new_password_if_mismatch(self):
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),
@@ -149,7 +149,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
     @override_settings(
         DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True})
     )
-    def test_post_should_not_reset_if_fails_password_validation(self):
+    def test_post_not_reset_if_fails_password_validation(self):
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),

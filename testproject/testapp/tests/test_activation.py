@@ -22,7 +22,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
     def signal_receiver(self, *args, **kwargs):
         self.signal_sent = True
 
-    def test_post_should_activate_user_and_not_login(self):
+    def test_post_activate_user_and_not_login(self):
         user = create_user()
         user.is_active = False
         user.save()
@@ -38,7 +38,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertTrue(user.is_active)
 
-    def test_post_should_respond_with_bad_request_when_wrong_uid(self):
+    def test_post_respond_with_bad_request_when_wrong_uid(self):
         data = {
             'uid': djoser.utils.encode_uid(1),
         }
@@ -49,7 +49,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
-    def test_post_should_respond_with_bad_request_when_stale_token(self):
+    def test_post_respond_with_bad_request_when_stale_token(self):
         user = create_user()
         djoser.signals.user_activated.connect(self.signal_receiver)
         data = {
@@ -63,8 +63,10 @@ class ActivationViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_403_FORBIDDEN)
         self.assertFalse(self.signal_sent)
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{'SEND_CONFIRMATION_EMAIL': True}))
-    def test_post_should_sent_confirmation_email(self):
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_CONFIRMATION_EMAIL': True})
+    )
+    def test_post_sent_confirmation_email(self):
         user = create_user()
         user.is_active = False
         user.save()

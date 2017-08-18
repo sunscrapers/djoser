@@ -31,8 +31,12 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         self.assertIn(site.domain, mail.outbox[0].body)
         self.assertIn(site.name, mail.outbox[0].body)
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{'DOMAIN': 'custom.com', 'SITE_NAME': 'Custom'}))
-    def test_post_should_send_email_to_user_with_custom_domain_and_site_name(self):
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{
+            'DOMAIN': 'custom.com', 'SITE_NAME': 'Custom'
+        })
+    )
+    def test_post_send_email_to_user_with_custom_domain_and_site_name(self):
         user = create_user()
         data = {
             'email': user.email,
@@ -44,7 +48,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         self.assertIn(settings.DJOSER['DOMAIN'], mail.outbox[0].body)
         self.assertIn(settings.DJOSER['SITE_NAME'], mail.outbox[0].body)
 
-    def test_post_should_send_email_to_user_with_domain_and_site_name_from_request(self):
+    def test_post_send_email_to_user_with_request_domain_and_site_name(self):
         user = create_user()
         data = {
             'email': user.email,

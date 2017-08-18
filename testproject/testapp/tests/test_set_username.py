@@ -13,7 +13,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
                           assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.SetUsernameView
 
-    def test_post_should_set_new_username(self):
+    def test_post_set_new_username(self):
         user = create_user()
         data = {
             'new_username': 'ringo',
@@ -27,8 +27,10 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertEqual(data['new_username'], user.username)
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True}))
-    def test_post_should_not_set_new_username_if_mismatch(self):
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True})
+    )
+    def test_post_not_set_new_username_if_mismatch(self):
         user = create_user()
         data = {
             'new_username': 'ringo',
@@ -43,7 +45,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertNotEqual(data['new_username'], user.username)
 
-    def test_post_should_not_set_new_username_if_exists(self):
+    def test_post_not_set_new_username_if_exists(self):
         username = 'tom'
         create_user(username=username)
         user = create_user(username='john')
@@ -59,7 +61,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         user = utils.refresh(user)
         self.assertNotEqual(user.username, username)
 
-    def test_post_should_not_set_new_username_if_invalid(self):
+    def test_post_not_set_new_username_if_invalid(self):
         user = create_user()
         data = {
             'new_username': '$ wrong username #',
@@ -76,7 +78,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
     @override_settings(
         DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
     )
-    def test_post_should_update_username_and_send_activation_email(self):
+    def test_post_update_username_and_send_activation_email(self):
         user = create_user()
         data = {
             'new_username': 'dango',
@@ -93,7 +95,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         user = get_user_model().objects.get(username='dango')
         self.assertFalse(user.is_active)
 
-    def test_post_should_not_set_new_username_if_same(self):
+    def test_post_not_set_new_username_if_same(self):
         user = create_user()
         data = {
             'new_username': 'john',

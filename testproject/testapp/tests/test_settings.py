@@ -31,12 +31,14 @@ class SettingsTestCase(SimpleTestCase):
 
     @override_settings(
         DJOSER=dict(settings.DJOSER, **{
-            'SERIALIZERS': {'user': 'some.serializer'}
+            'SERIALIZERS': {'user': 'djoser.serializers.TokenSerializer'}
         })
     )
-    def test_djoser_dict_setting_overriden(self):
+    def test_djoser_serializer_setting_overriden(self):
         from djoser.conf import settings as djoser_settings
-        self.assertEqual(djoser_settings.SERIALIZERS['user'], 'some.serializer')
+        self.assertEqual(
+            djoser_settings.SERIALIZERS.user.__name__, 'TokenSerializer'
+        )
 
     def test_djoser_settings_compat_method(self):
         from djoser.conf import settings as djoser_settings
