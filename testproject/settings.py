@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from django.utils.module_loading import import_string
 import os
 
 from distutils.version import LooseVersion
