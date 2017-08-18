@@ -35,18 +35,30 @@ default_settings = {
     'PASSWORD_VALIDATORS': [],
     'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
     'SERIALIZERS': ObjDict({
-        'activation': 'djoser.serializers.ActivationSerializer',
-        'login': 'djoser.serializers.LoginSerializer',
-        'password_reset': 'djoser.serializers.PasswordResetSerializer',
-        'password_reset_confirm': 'djoser.serializers.PasswordResetConfirmSerializer',
-        'password_reset_confirm_retype': 'djoser.serializers.PasswordResetConfirmRetypeSerializer',
-        'set_password': 'djoser.serializers.SetPasswordSerializer',
-        'set_password_retype': 'djoser.serializers.SetPasswordRetypeSerializer',
-        'set_username': 'djoser.serializers.SetUsernameSerializer',
-        'set_username_retype': 'djoser.serializers.SetUsernameRetypeSerializer',
-        'user_registration': 'djoser.serializers.UserRegistrationSerializer',
-        'user': 'djoser.serializers.UserSerializer',
-        'token': 'djoser.serializers.TokenSerializer',
+        'activation':
+            'djoser.serializers.ActivationSerializer',
+        'login':
+            'djoser.serializers.LoginSerializer',
+        'password_reset':
+            'djoser.serializers.PasswordResetSerializer',
+        'password_reset_confirm':
+            'djoser.serializers.PasswordResetConfirmSerializer',
+        'password_reset_confirm_retype':
+            'djoser.serializers.PasswordResetConfirmRetypeSerializer',
+        'set_password':
+            'djoser.serializers.SetPasswordSerializer',
+        'set_password_retype':
+            'djoser.serializers.SetPasswordRetypeSerializer',
+        'set_username':
+            'djoser.serializers.SetUsernameSerializer',
+        'set_username_retype':
+            'djoser.serializers.SetUsernameRetypeSerializer',
+        'user_registration':
+            'djoser.serializers.UserRegistrationSerializer',
+        'user':
+            'djoser.serializers.UserSerializer',
+        'token':
+            'djoser.serializers.TokenSerializer',
     }),
     'LOGOUT_ON_PASSWORD_CHANGE': False,
     'USER_EMAIL_FIELD_NAME': 'email',
@@ -121,4 +133,3 @@ def reload_djoser_settings(*args, **kwargs):
 
 
 setting_changed.connect(reload_djoser_settings)
-
