@@ -6,6 +6,8 @@ try:
 except ImportError:
     import mock
 
+__all__ = ['get_user_model', 'IntegrityError', 'mock']
+
 
 def create_user(**kwargs):
     data = {
