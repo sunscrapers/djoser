@@ -130,12 +130,12 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
     def get_users(self, email):
         if self._users is None:
             email_field_name = get_user_email_field_name(User)
-            filter_users_kwargs = {
+            users = User._default_manager.filter(**{
                 email_field_name + '__iexact': email
-            }
-            _users = User._default_manager.filter(**filter_users_kwargs)
-            self._users = [u for u in _users
-                           if u.is_active and u.has_usable_password()]
+            })
+            self._users = [
+                u for u in users if u.is_active and u.has_usable_password()
+            ]
         return self._users
 
     def send_password_reset_email(self, user):
