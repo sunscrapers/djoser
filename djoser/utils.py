@@ -46,16 +46,18 @@ class UserEmailFactoryBase(object):
     plain_body_template_name = None
     html_body_template_name = None
 
-    def __init__(self, from_email, user, protocol, domain, site_name, **context):
+    def __init__(self, from_email, user, protocol, domain, site_name,
+                 **context_data):
         self.from_email = from_email
         self.user = user
         self.domain = domain
         self.site_name = site_name
         self.protocol = protocol
-        self.context_data = context
+        self.context_data = context_data
 
     @classmethod
-    def from_request(cls, request, user=None, from_email=None, protocol=None, **context):
+    def from_request(cls, request, user=None, from_email=None, protocol=None,
+                     **context_data):
         site = get_current_site(request)
         from_email = from_email or getattr(
             django_settings, 'DEFAULT_FROM_EMAIL', ''
@@ -67,7 +69,7 @@ class UserEmailFactoryBase(object):
             domain=django_settings.DJOSER.get('DOMAIN') or site.domain,
             site_name=django_settings.DJOSER.get('SITE_NAME') or site.name,
             protocol=protocol or ('https' if request.is_secure() else 'http'),
-            **context
+            **context_data
         )
 
     def create(self):
