@@ -1,7 +1,9 @@
 # djoser
 
-[![Build Status](https://travis-ci.org/sunscrapers/djoser.svg?branch=master)](https://travis-ci.org/sunscrapers/djoser)
-[![Coverage Status](https://coveralls.io/repos/sunscrapers/djoser/badge.png?branch=master)](https://coveralls.io/r/sunscrapers/djoser?branch=master)
+[![Version](https://img.shields.io/pypi/v/djoser.svg)](https://pypi.org/project/djoser/)
+[![Build Status](https://img.shields.io/travis/sunscrapers/djoser.svg)](https://travis-ci.org/sunscrapers/djoser)
+[![Coverage Status](https://img.shields.io/coveralls/sunscrapers/djoser.svg)](https://coveralls.io/r/sunscrapers/djoser?branch=master)
+[![Scrutinizer Status](https://img.shields.io/scrutinizer/g/sunscrapers/djoser.svg)](https://scrutinizer-ci.com/g/sunscrapers/djoser)
 
 REST implementation of [Django](https://www.djangoproject.com/) authentication
 system. **Djoser** library provides a set of [Django Rest Framework](http://www.django-rest-framework.org/)
