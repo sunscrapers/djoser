@@ -38,35 +38,41 @@ Contributing and development
 
 To start developing on **djoser**, clone the repository:
 
-``$ git clone git@github.com:sunscrapers/djoser.git``
+.. code-block:: bash
+    $ git clone git@github.com:sunscrapers/djoser.git
 
 If you are a **pipenv** user you can quickly setup testing environment by
 using Make commands:
 
-``$ make init``
-``$ make test``
+.. code-block:: bash
+    $ make init
+    $ make test
 
 Otherwise, if you cannot use Make commands, please create virtualenv and install
 requirements manually:
 
-``$ pip install django djangorestframework``
-``$ pip install -r requirements.txt``
+.. code-block:: bash
+    $ pip install django djangorestframework
+    $ pip install -r requirements.txt
 
 If you are running djoser tests on Python 2.7 you also need to install **mock** library.
 
-``$ pip install mock  # only on Python 2.7``
-``$ cd testproject``
-``$ ./manage.py test``
+.. code-block:: bash
+    $ pip install mock  # only on Python 2.7
+    $ cd testproject
+    $ ./manage.py test
 
 If you need to run tests against all supported Python and Django versions then invoke:
 
-``$ pip install tox``
-``$ tox``
+.. code-block:: bash
+    $ pip install tox
+    $ tox
 
 You can also play with test project by running following commands:
 
-``$ ./manage.py migrate``
-``$ ./manage.py runserver``
+.. code-block:: bash
+    $ ./manage.py migrate
+    $ ./manage.py runserver
 
 Similar projects
 ================
