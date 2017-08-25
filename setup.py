@@ -1,21 +1,18 @@
 #!/usr/bin/env python
 
 import os
-from io import open
 from setuptools import setup
 
 
-try:
-    import pypandoc
-    description = pypandoc.convert('README.md', 'rst')
-except (IOError, ImportError):
-    description = open('README.md', encoding='utf-8').read()
+with open('README.rst', 'r') as f:
+    readme = f.read()
 
 
 def get_packages(package):
-    return [dirpath
-            for dirpath, dirnames, filenames in os.walk(package)
-            if os.path.exists(os.path.join(dirpath, '__init__.py'))]
+    return [
+        dirpath for dirpath, dirnames, filenames in os.walk(package)
+        if os.path.exists(os.path.join(dirpath, '__init__.py'))
+    ]
 
 
 setup(
@@ -26,7 +23,7 @@ setup(
     author='SUNSCRAPERS',
     description='REST version of Django authentication system.',
     author_email='info@sunscrapers.com',
-    long_description=description,
+    long_description=readme,
     install_requires=[],
     include_package_data=True,
     url='https://github.com/sunscrapers/djoser',
