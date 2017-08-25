@@ -19,8 +19,8 @@ class ObjDict(dict):
             value = self[item]
         except KeyError:
             value = super(ObjDict, self).__getattribute__(item)
-        finally:
-            return value
+
+        return value
 
 
 default_settings = {
