@@ -8,8 +8,8 @@ djoser
 .. image:: https://img.shields.io/travis/sunscrapers/djoser.svg
   :target: https://travis-ci.org/sunscrapers/djoser
 
-.. image:: https://img.shields.io/coveralls/sunscrapers/djoser.svg
-  :target: https://coveralls.io/r/sunscrapers/djoser?branch=master
+.. image:: https://img.shields.io/codecov/c/github/sunscrapers/djoser.svg
+  :target: https://codecov.io/gh/sunscrapers/djoser
 
 .. image:: https://img.shields.io/scrutinizer/g/sunscrapers/djoser.svg
   :target: https://scrutinizer-ci.com/g/sunscrapers/djoser
