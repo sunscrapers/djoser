@@ -39,12 +39,14 @@ Contributing and development
 To start developing on **djoser**, clone the repository:
 
 .. code-block:: bash
+
     $ git clone git@github.com:sunscrapers/djoser.git
 
 If you are a **pipenv** user you can quickly setup testing environment by
 using Make commands:
 
 .. code-block:: bash
+
     $ make init
     $ make test
 
@@ -52,12 +54,14 @@ Otherwise, if you cannot use Make commands, please create virtualenv and install
 requirements manually:
 
 .. code-block:: bash
+
     $ pip install django djangorestframework
     $ pip install -r requirements.txt
 
 If you are running djoser tests on Python 2.7 you also need to install **mock** library.
 
 .. code-block:: bash
+
     $ pip install mock  # only on Python 2.7
     $ cd testproject
     $ ./manage.py test
@@ -65,12 +69,14 @@ If you are running djoser tests on Python 2.7 you also need to install **mock** 
 If you need to run tests against all supported Python and Django versions then invoke:
 
 .. code-block:: bash
+
     $ pip install tox
     $ tox
 
 You can also play with test project by running following commands:
 
 .. code-block:: bash
+
     $ ./manage.py migrate
     $ ./manage.py runserver
 
