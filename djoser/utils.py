@@ -33,6 +33,12 @@ def logout_user(request):
     )
 
 
+def send_email(request, factory, user):
+    email_factory = factory.from_request(request, user)
+    email = email_factory.create()
+    email.send()
+
+
 class ActionViewMixin(object):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)

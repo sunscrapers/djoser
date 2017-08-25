@@ -60,24 +60,14 @@ class RegistrationView(generics.CreateAPIView):
         signals.user_registered.send(
             sender=self.__class__, user=user, request=self.request
         )
+        email_factory_cls = None
         if settings.SEND_ACTIVATION_EMAIL:
-            self.send_activation_email(user)
+            email_factory_cls = utils.UserActivationEmailFactory
         elif settings.SEND_CONFIRMATION_EMAIL:
-            self.send_confirmation_email(user)
+            email_factory_cls = utils.UserConfirmationEmailFactory
 
-    def send_activation_email(self, user):
-        email_factory = utils.UserActivationEmailFactory.from_request(
-            self.request, user=user
-        )
-        email = email_factory.create()
-        email.send()
-
-    def send_confirmation_email(self, user):
-        email_factory = utils.UserConfirmationEmailFactory.from_request(
-            self.request, user=user
-        )
-        email = email_factory.create()
-        email.send()
+        if email_factory_cls is not None:
+            utils.send_email(self.request, email_factory_cls, user)
 
 
 class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -231,17 +221,11 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
         setattr(user, User.USERNAME_FIELD, new_username)
         if settings.SEND_ACTIVATION_EMAIL:
             user.is_active = False
-            self.send_activation_email(user)
+            email_factory_cls = utils.UserActivationEmailFactory
+            utils.send_email(self.request, email_factory_cls, user)
         user.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def send_activation_email(self, user):
-        email_factory = utils.UserActivationEmailFactory.from_request(
-            self.request, user=user
-        )
-        email = email_factory.create()
-        email.send()
 
 
 class UserView(generics.RetrieveUpdateAPIView):
@@ -254,3 +238,10 @@ class UserView(generics.RetrieveUpdateAPIView):
 
     def get_object(self, *args, **kwargs):
         return self.request.user
+
+    def perform_update(self, serializer):
+        super(UserView, self).perform_update(serializer)
+        user = serializer.instance
+        if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
+            email_factory_cls = utils.UserActivationEmailFactory
+            utils.send_email(self.request, email_factory_cls, user)
