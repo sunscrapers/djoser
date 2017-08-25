@@ -2,7 +2,7 @@ from djoser.conf import settings
 
 try:
     from django.contrib.auth.password_validation import validate_password
-except ImportError:  # pragma: no cover
+except ImportError:
     from password_validation import validate_password
 
 __all__ = ['settings', 'validate_password']
