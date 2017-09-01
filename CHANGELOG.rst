@@ -6,6 +6,30 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 
+`0.7.0`_ (2017-09-01)
+---------------------
+
+* Add ``TOKEN_MODEL`` setting to allow third party apps to specify a custom token model
+* Add ``USER_EMAIL_FIELD_NAME`` setting as a compatibility solution in Django < 1.11
+* Add support for Django Password Validators
+* Add HTML templates for djoser emails
+* Add `flake8`_ integration to CI
+* Add `py.test`_ integration
+* Add Python 3.7 to CI
+* Update from coveralls to codecov
+* Update ``README`` to rST with uniform badges
+* Update ``djoser.views.PasswordResetView`` to allow non-database ``User.is_active``
+* Update docs on topics which have been added/modified since last release
+* Remove serializers manager, so the serializers in djoser are now accessed via dot notation
+* Remove support for DRF 3.4
+* Remove support for basic auth as authentication backend
+* Refactor djoser settings module for cleaner and more pythonic/djangonic solution
+* Refactor tests into multiple files and fix some minor issues
+* Refactor some parts of codebase for better readability
+* Slightly refactor/simplify parts of ``djoser.utils``
+* Fix all style issues reported by `flake8`_ in codebase
+* Fix security bug in ``djoser.views.UserView``
+
 `0.6.0`_ (2017-06-02)
 ---------------------
 
@@ -128,6 +152,8 @@ few bugfixes / documentation updates. List of changes:
 
 
 .. _pipenv: https://github.com/kennethreitz/pipenv
+.. _flake8: http://flake8.pycqa.org
+.. _py.test: https://pytest.org/
 .. _GitHub Releases: https://github.com/sunscrapers/djoser/releases
 .. _djangorestframework-jwt: https://github.com/GetBlimp/django-rest-framework-jwt
 .. _0.4.0: https://github.com/sunscrapers/djoser/compare/1cf11e8...0.4.0
@@ -139,4 +165,5 @@ few bugfixes / documentation updates. List of changes:
 .. _0.5.2: https://github.com/sunscrapers/djoser/compare/0.5.1...0.5.2
 .. _0.5.3: https://github.com/sunscrapers/djoser/compare/0.5.2...0.5.3
 .. _0.5.4: https://github.com/sunscrapers/djoser/compare/0.5.3...0.5.4
-.. _0.6.0: https://github.com/sunscrapers/djoser/compare/0.5.4...master
+.. _0.6.0: https://github.com/sunscrapers/djoser/compare/0.5.4...0.6.0
+.. _0.7.0: https://github.com/sunscrapers/djoser/compare/0.6.0...master
