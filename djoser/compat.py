@@ -10,7 +10,7 @@ try:
 except ImportError:
     from django.urls.exceptions import NoReverseMatch
 
-__all__ = ['settings', 'validate_password']
+__all__ = ['settings', 'validate_password', 'NoReverseMatch']
 
 
 def get_user_email(user):
