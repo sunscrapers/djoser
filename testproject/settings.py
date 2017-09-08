@@ -1,9 +1,6 @@
 from __future__ import absolute_import
 import os
 
-from distutils.version import LooseVersion
-import django
-
 
 DEBUG = True
 
