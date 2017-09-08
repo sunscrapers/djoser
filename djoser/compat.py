@@ -5,6 +5,11 @@ try:
 except ImportError:
     from password_validation import validate_password
 
+try:
+    from django.core.urlresolvers import NoReverseMatch
+except ImportError:
+    from django.urls.exceptions import NoReverseMatch
+
 __all__ = ['settings', 'validate_password']
 
 

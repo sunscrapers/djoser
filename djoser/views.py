@@ -7,9 +7,9 @@ from rest_framework.reverse import reverse
 
 from djoser.conf import settings
 from djoser.compat import get_user_email_field_name
-from django.urls.exceptions import NoReverseMatch
 
 from djoser import utils, signals
+from djoser.compat import NoReverseMatch
 
 User = get_user_model()
 
