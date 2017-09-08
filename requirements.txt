@@ -1,4 +1,5 @@
 -e .
+djangorestframework-jwt==1.11.0
 djet==0.2.1
 coverage==4.3.1
 
