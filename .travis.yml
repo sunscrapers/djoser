@@ -3,11 +3,8 @@ sudo: false
 language: python
 python:
   - "2.7"
-  - "3.3"
   - "3.4"
   - "3.5"
-  - "3.6"
-  - "3.7-dev"
 
 env:
   - DJANGO=1.8
@@ -16,9 +13,24 @@ env:
   - DJANGO=master
 
 matrix:
-   allow_failures:
-   - python: "3.7-dev"
-   - env: DJANGO=master
+  fast_finish: true
+  include:
+    - python: "3.3"
+      env: DJANGO=1.8
+    - python: "3.6"
+      env: DJANGO=1.11
+    - python: "3.6"
+      env: DJANGO=master
+    - python: "3.7-dev"
+      env: DJANGO=1.11
+    - python: "3.7-dev"
+      env: DJANGO=master
+  exclude:
+    - python: "2.7"
+      env: DJANGO=master
+  allow_failures:
+    - python: "3.7-dev"
+    - env: DJANGO=master
 
 install:
   - travis_retry pip install -U tox-travis
