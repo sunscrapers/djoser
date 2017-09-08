@@ -1,18 +1,39 @@
-*.pyc
-*.egg-info/
+# database files
+*.sqlite3
+
+# pycharm files
 .idea/
+
+# Distribution
+build/
+dist/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Translations
+*.mo
+*.pot
+
+# Test files
+.cache/
 .tox/
 .coverage
-dist/
-testproject/db.sqlite3
-
-# Vim swap files
-[._]*.s[a-w][a-z]
-[._]s[a-w][a-z]
-
-# docs
-docs/build/
-
-# Tests
-.cache/
 htmlcov/
+
+# dotenv
+.env
+
+# virtualenv
+env/
+.venv/
+venv/
+ENV/
+
+# osx
+*.DS_Store
+
+# logs
+*.log
