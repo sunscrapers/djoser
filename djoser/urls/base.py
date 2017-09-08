@@ -4,7 +4,8 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-base_urlpatterns = (
+
+urlpatterns = [
     url(r'^me/$', views.UserView.as_view(), name='user'),
     url(r'^register/$', views.RegistrationView.as_view(), name='register'),
     url(r'^activate/$', views.ActivationView.as_view(), name='activate'),
@@ -24,8 +25,5 @@ base_urlpatterns = (
         views.PasswordResetConfirmView.as_view(),
         name='password_reset_confirm'
     ),
-)
-
-urlpatterns = base_urlpatterns + (
     url(r'^$', views.RootView.as_view(), name='root'),
-)
+]

@@ -7,8 +7,9 @@ from rest_framework.reverse import reverse
 
 from djoser.conf import settings
 from djoser.compat import get_user_email_field_name
+from django.urls.exceptions import NoReverseMatch
 
-from . import utils, signals
+from djoser import utils, signals
 
 User = get_user_model()
 
@@ -17,33 +18,29 @@ class RootView(views.APIView):
     """
     Root endpoint - use one of sub endpoints.
     """
-    permission_classes = (
-        permissions.AllowAny,
-    )
-    urls_mapping = {
-        'me': 'user',
-        'register': 'register',
-        'activate': 'activate',
-        'change-' + User.USERNAME_FIELD: 'set_username',
-        'change-password': 'set_password',
-        'password-reset': 'password_reset',
-        'password-reset-confirm': 'password_reset_confirm',
-    }
-    urls_extra_mapping = None
+    permission_classes = [permissions.AllowAny]
 
-    def get_urls_mapping(self, **kwargs):
-        mapping = self.urls_mapping.copy()
-        mapping.update(kwargs)
-        if self.urls_extra_mapping:
-            mapping.update(self.urls_extra_mapping)
-        mapping.update(settings.ROOT_VIEW_URLS_MAPPING)
-        return mapping
+    def aggregate_djoser_urlpattern_names(self):
+        from djoser.urls import base, authtoken, jwt
+        urlpattern_names = [pattern.name for pattern in base.urlpatterns]
+        urlpattern_names += [pattern.name for pattern in authtoken.urlpatterns]
+        urlpattern_names += [pattern.name for pattern in jwt.urlpatterns]
+        return urlpattern_names
 
-    def get(self, request, format=None):
-        return Response(
-            dict([(key, reverse(url_name, request=request, format=format))
-                  for key, url_name in self.get_urls_mapping().items()])
-        )
+    def get_urls_map(self, request, urlpattern_names, fmt):
+        urls_map = {}
+        for urlpattern_name in urlpattern_names:
+            try:
+                url = reverse(urlpattern_name, request=request, format=fmt)
+            except NoReverseMatch:
+                url = ''
+            urls_map[urlpattern_name] = url
+        return urls_map
+
+    def get(self, request, fmt=None):
+        urlpattern_names = self.aggregate_djoser_urlpattern_names()
+        urls_map = self.get_urls_map(request, urlpattern_names, fmt)
+        return Response(urls_map)
 
 
 class RegistrationView(generics.CreateAPIView):

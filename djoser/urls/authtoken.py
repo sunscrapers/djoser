@@ -1,13 +1,9 @@
 from django.conf.urls import url
-from djoser import views
-from . import base
 
-urlpatterns = base.base_urlpatterns + (
-    url(r'^login/$', views.LoginView.as_view(), name='login'),
-    url(r'^logout/$', views.LogoutView.as_view(), name='logout'),
-    url(
-        r'^$', views.RootView.as_view(urls_extra_mapping={
-            'login': 'login', 'logout': 'logout'
-        }), name='root'
-    ),
-)
+from djoser import views
+
+
+urlpatterns = [
+    url(r'^token/create$', views.LoginView.as_view(), name='login'),
+    url(r'^token/destroy$', views.LogoutView.as_view(), name='logout'),
+]
