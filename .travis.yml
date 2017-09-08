@@ -8,9 +8,18 @@ python:
   - "3.5"
   - "3.6"
   - "3.7-dev"
+
+env:
+  - DJANGO=1.8
+  - DJANGO=1.9
+  - DJANGO=1.10
+  - DJANGO=1.11
+  - DJANGO=master
+
 matrix:
    allow_failures:
    - python: "3.7-dev"
+   - env: DJANGO=master
 
 install:
   - travis_retry pip install -U tox-travis
