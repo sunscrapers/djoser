@@ -51,6 +51,23 @@ class RegistrationView(generics.CreateAPIView):
     permission_classes = (
         permissions.AllowAny,
     )
+    _users = None
+
+    def create(self, request, *args, **kwargs):
+        try:
+            email_field_name = get_user_email_field_name(User)
+            users = self.get_email_users(request.data.get(email_field_name))
+            for user in users:
+                serializer = self.get_serializer(instance=user)
+                if settings.RESEND_REGISTRATION_EMAIL:
+                    self.resend_registration_email(user)
+                headers = self.get_success_headers(serializer.data)
+            if not settings.REGISTRATION_SHOW_EMAIL_FOUND and users:
+                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except User.DoesNotExist:
+            pass
+        response = super(RegistrationView, self).create(request, *args, **kwargs)
+        return response
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -65,6 +82,28 @@ class RegistrationView(generics.CreateAPIView):
 
         if email_factory_cls is not None:
             utils.send_email(self.request, email_factory_cls, user)
+
+    def resend_registration_email(self, user):
+        if user.is_active:
+            email_factory = utils.UserReregistrationEmailFactory.from_request(
+                self.request, user=user
+            )
+        else:
+            email_factory = utils.UserReregistrationInactiveEmailFactory.from_request(
+                self.request, user=user
+            )
+        email = email_factory.create()
+        email.send()
+
+    def get_email_users(self, email):
+        if self._users is None:
+            email_field_name = get_user_email_field_name(User)
+            email_users_kwargs = {
+                email_field_name + '__iexact': email,
+            }
+            email_users = User._default_manager.filter(**email_users_kwargs)
+            self._users = [u for u in email_users if u.has_usable_password()]
+        return self._users
 
 
 class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
