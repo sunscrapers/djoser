@@ -44,7 +44,6 @@ class RegistrationViewTest(restframework.APIViewTestCase,
             'password': 'secret',
         }
         request = self.factory.post(data=data)
-
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
@@ -56,7 +55,9 @@ class RegistrationViewTest(restframework.APIViewTestCase,
         self.assertFalse(user.is_active)
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'SEND_CONFIRMATION_EMAIL': True})
+        DJOSER=dict(settings.DJOSER, **{
+            'SEND_ACTIVATION_EMAIL': False, 'SEND_CONFIRMATION_EMAIL': True
+        })
     )
     def test_post_create_user_with_login_and_send_confirmation_email(self):
         data = {
@@ -65,7 +66,6 @@ class RegistrationViewTest(restframework.APIViewTestCase,
             'password': 'secret',
         }
         request = self.factory.post(data=data)
-
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
