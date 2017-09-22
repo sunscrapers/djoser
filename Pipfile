@@ -3,13 +3,21 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 
 [dev-packages]
-djangorestframework = "*"
-Django = "*"
+
 djet = "*"
 coverage = "*"
 pytest = "*"
 pytest-cov = "*"
 pytest-django = "*"
-Sphinx = "*"
-sphinx_rtd_theme = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
 flake8 = "*"
+twine = "*"
+wheel = "*"
+
+[packages]
+
+djangorestframework = "*"
+django = "*"
+djangorestframework-jwt = "*"
+django-templated-mail = "*"
