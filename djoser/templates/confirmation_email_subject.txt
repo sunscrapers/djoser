@@ -1,3 +1,0 @@
-{% load i18n %}{% autoescape off %}
-{% blocktrans %}{{ site_name }} - Your account has been successfully created and activated!{% endblocktrans %}
-{% endautoescape %}

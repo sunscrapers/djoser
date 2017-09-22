@@ -6,9 +6,9 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from djoser.conf import settings
-from djoser.compat import get_user_email_field_name
+from djoser.compat import get_user_email, get_user_email_field_name
 
-from djoser import utils, signals
+from djoser import email, utils, signals
 from djoser.compat import NoReverseMatch
 
 User = get_user_model()
@@ -57,14 +57,13 @@ class RegistrationView(generics.CreateAPIView):
         signals.user_registered.send(
             sender=self.__class__, user=user, request=self.request
         )
-        email_factory_cls = None
-        if settings.SEND_ACTIVATION_EMAIL:
-            email_factory_cls = utils.UserActivationEmailFactory
-        elif settings.SEND_CONFIRMATION_EMAIL:
-            email_factory_cls = utils.UserConfirmationEmailFactory
 
-        if email_factory_cls is not None:
-            utils.send_email(self.request, email_factory_cls, user)
+        context = {'user': user}
+        to = [get_user_email(user)]
+        if settings.SEND_ACTIVATION_EMAIL:
+            email.ActivationEmail(self.request, context).send(to)
+        elif settings.SEND_CONFIRMATION_EMAIL:
+            email.ConfirmationEmail(self.request, context).send(to)
 
 
 class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -126,11 +125,9 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
         return self._users
 
     def send_password_reset_email(self, user):
-        email_factory = utils.UserPasswordResetEmailFactory.from_request(
-            self.request, user=user
-        )
-        email = email_factory.create()
-        email.send()
+        context = {'user': user}
+        to = [get_user_email(user)]
+        email.PasswordResetEmail(self.request, context).send(to)
 
 
 class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -187,16 +184,19 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
     token_generator = default_token_generator
 
     def _action(self, serializer):
-        serializer.user.is_active = True
-        serializer.user.save()
+        user = serializer.user
+        user.is_active = True
+        user.save()
+
         signals.user_activated.send(
-            sender=self.__class__, user=serializer.user, request=self.request)
+            sender=self.__class__, user=user, request=self.request
+        )
 
         if settings.SEND_CONFIRMATION_EMAIL:
-            email_factory = utils.UserConfirmationEmailFactory.from_request(
-                self.request, user=serializer.user)
-            email = email_factory.create()
-            email.send()
+            context = {'user': user}
+            to = [get_user_email(user)]
+            email.ConfirmationEmail(self.request, context).send(to)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -218,8 +218,9 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
         setattr(user, User.USERNAME_FIELD, new_username)
         if settings.SEND_ACTIVATION_EMAIL:
             user.is_active = False
-            email_factory_cls = utils.UserActivationEmailFactory
-            utils.send_email(self.request, email_factory_cls, user)
+            context = {'user': user}
+            to = [get_user_email(user)]
+            email.ActivationEmail(self.request, context).send(to)
         user.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -240,5 +241,6 @@ class UserView(generics.RetrieveUpdateAPIView):
         super(UserView, self).perform_update(serializer)
         user = serializer.instance
         if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
-            email_factory_cls = utils.UserActivationEmailFactory
-            utils.send_email(self.request, email_factory_cls, user)
+            context = {'user': user}
+            to = [get_user_email(user)]
+            email.ActivationEmail(self.request, context).send(to)

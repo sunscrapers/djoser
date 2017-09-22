@@ -6,13 +6,10 @@ from django.utils.module_loading import import_string
 
 
 class SettingsTestCase(SimpleTestCase):
-    @override_settings()
+    @override_settings(DJOSER=dict())
     def test_settings_should_be_default_if_djoser_not_in_django_settings(self):
-        from django.conf import settings as django_settings
         from djoser.conf import settings as djoser_settings
         from djoser.conf import default_settings
-
-        del django_settings.DJOSER
 
         for setting_name, setting_value in six.iteritems(default_settings):
             overridden_value = getattr(djoser_settings, setting_name)

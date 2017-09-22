@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
+
 from djet import assertions, restframework, utils
 from rest_framework import status
 import djoser.views
@@ -26,6 +27,9 @@ class UserViewTest(restframework.APIViewTestCase,
             [User.USERNAME_FIELD, User._meta.pk.name] + User.REQUIRED_FIELDS
         ))
 
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': False})
+    )
     def test_email_change_with_send_activation_email_false(self):
         user = create_user()
         data = {'email': 'ringo@beatles.com'}

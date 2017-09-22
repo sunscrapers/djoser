@@ -6,29 +6,11 @@ You may optionally provide ``DJOSER`` settings:
 .. code-block:: python
 
     DJOSER = {
-        'DOMAIN': 'frontend.com',
-        'SITE_NAME': 'Frontend',
         'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
         'ACTIVATION_URL': '#/activate/{uid}/{token}',
         'SEND_ACTIVATION_EMAIL': True,
         'SERIALIZERS': {},
     }
-
-DOMAIN
-------
-
-Domain of your frontend app. If not provided, domain of current site will be
-used.
-
-**Required**: ``False``
-
-SITE_NAME
----------
-
-Name of your frontend app. If not provided, name of current site will be
-used.
-
-**Required**: ``False``
 
 PASSWORD_RESET_CONFIRM_URL
 --------------------------
@@ -101,7 +83,7 @@ USER_EMAIL_FIELD_NAME
 
 Determines which field in ``User`` model is used for email in versions of Django
 before 1.11. In Django 1.11 and greater value of this setting is ignored and
-value provided by `User.get_email_field_name` is used.
+value provided by ``User.get_email_field_name`` is used.
 This setting will be dropped when Django 1.8 LTS goes EOL.
 
 **Default**: ``'email'``

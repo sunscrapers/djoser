@@ -13,6 +13,8 @@ DATABASES = {
     }
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 AUTH_PASSWORD_VALIDATORS = [{'NAME': 'testapp.validators.Is666'}]
 
 SECRET_KEY = '_'
@@ -24,6 +26,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
 
+    'templated_mail',
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
@@ -53,6 +56,7 @@ TEMPLATES = [
 ]
 
 DJOSER = {
+    'SEND_ACTIVATION_EMAIL': True,
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
 }
