@@ -17,7 +17,8 @@ djoser
 REST implementation of `Django <https://www.djangoproject.com/>`_ authentication
 system. **djoser** library provides a set of `Django Rest Framework <http://www.django-rest-framework.org/>`_
 views to handle basic actions such as registration, login, logout, password
-reset and account activation. It works with `custom user model <https://docs.djangoproject.com/en/dev/topics/auth/customizing/>`_.
+reset and account activation. It works with
+`custom user model <https://docs.djangoproject.com/en/dev/topics/auth/customizing/>`_.
 
 Instead of reusing Django code (e.g. ``PasswordResetForm``), we reimplemented
 few things to fit better into `Single Page App <http://en.wikipedia.org/wiki/Single-page_application)>`_
@@ -25,13 +26,35 @@ architecture.
 
 Developed by `SUNSCRAPERS <http://sunscrapers.com/>`_ with passion & patience.
 
+Requirements
+============
+
+To be able to run **djoser** you have to meet following requirements:
+
+- Python (2.7, 3.3, 3.4, 3.5, 3.6)
+- Django (1.8, 1.10, 1.11)
+- Django REST Framework (3.6)
+
+Installation
+============
+
+
+Simply install using ``pip``:
+
+.. code-block:: bash
+
+    $ pip install djoser
+
+And continue with the steps described at
+`configuration <http://djoser.readthedocs.io/en/latest/getting_started.html#configuration>`_
+guide.
 
 Documentation
 =============
 
 Documentation is available to study at
-`http://djoser.readthedocs.io <http://djoser.readthedocs.io>`_ and in
-``docs`` directory.
+`http://djoser.readthedocs.io <http://djoser.readthedocs.io>`_
+and in ``docs`` directory.
 
 Contributing and development
 ============================
@@ -85,10 +108,8 @@ Similar projects
 
 List of projects related to Django, REST and authentication:
 
-- `django-rest-auth <https://github.com/Tivix/django-rest-auth>`_
-- `django-rest-framework-digestauth <https://github.com/juanriaza/django-rest-framework-digestauth>`_
-- `django-oauth-toolkit <https://github.com/evonove/django-oauth-toolkit>`_
-- `doac <https://github.com/Rediker-Software/doac>`_
 - `django-rest-framework-jwt <https://github.com/GetBlimp/django-rest-framework-jwt>`_
-- `django-rest-framework-httpsignature <https://github.com/etoccalino/django-rest-framework-httpsignature>`_
-- `hawkrest <https://github.com/kumar303/hawkrest>`_
+- `django-oauth-toolkit <https://github.com/evonove/django-oauth-toolkit>`_
+- `django-rest-auth <https://github.com/Tivix/django-rest-auth>`_
+- `django-rest-framework-digestauth <https://github.com/juanriaza/django-rest-framework-digestauth>`_ (not maintained)
+- `doac <https://github.com/Rediker-Software/doac>`_ (not maintained)
