@@ -55,9 +55,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         try:
             user = self.perform_create(validated_data)
         except IntegrityError:
-            raise serializers.ValidationError(
-                self.error_messages['cannot_create_user']
-            )
+            self.fail('cannot_create_user')
 
         return user
 
@@ -76,8 +74,8 @@ class LoginSerializer(serializers.Serializer):
     )
 
     default_error_messages = {
-        'inactive_account': constants.INACTIVE_ACCOUNT_ERROR,
         'invalid_credentials': constants.INVALID_CREDENTIALS_ERROR,
+        'inactive_account': constants.INACTIVE_ACCOUNT_ERROR,
     }
 
     def __init__(self, *args, **kwargs):
@@ -99,15 +97,11 @@ class LoginSerializer(serializers.Serializer):
 
     def _validate_user_exists(self, user):
         if not user:
-            raise serializers.ValidationError(
-                self.error_messages['invalid_credentials']
-            )
+            self.fail('invalid_credentials')
 
     def _validate_user_is_active(self, user):
         if not user.is_active:
-            raise serializers.ValidationError(
-                self.error_messages['inactive_account']
-            )
+            self.fail('inactive_account')
 
 
 class PasswordResetSerializer(serializers.Serializer):
@@ -120,10 +114,9 @@ class PasswordResetSerializer(serializers.Serializer):
     def validate_email(self, value):
         users = self.context['view'].get_users(value)
         if settings.PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND and not users:
-            raise serializers.ValidationError(
-                self.error_messages['email_not_found']
-            )
-        return value
+            self.fail('email_not_found')
+        else:
+            return value
 
 
 class UidAndTokenSerializer(serializers.Serializer):
@@ -140,9 +133,8 @@ class UidAndTokenSerializer(serializers.Serializer):
             uid = utils.decode_uid(value)
             self.user = User.objects.get(pk=uid)
         except (User.DoesNotExist, ValueError, TypeError, OverflowError):
-            raise serializers.ValidationError(
-                self.error_messages['invalid_uid']
-            )
+            self.fail('invalid_uid')
+
         return value
 
     def validate(self, attrs):
@@ -152,7 +144,8 @@ class UidAndTokenSerializer(serializers.Serializer):
         )
         if is_token_valid:
             return attrs
-        raise serializers.ValidationError(self.error_messages['invalid_token'])
+        else:
+            self.fail('invalid_token')
 
 
 class ActivationSerializer(UidAndTokenSerializer):
@@ -186,9 +179,8 @@ class PasswordRetypeSerializer(PasswordSerializer):
         attrs = super(PasswordRetypeSerializer, self).validate(attrs)
         if attrs['new_password'] == attrs['re_new_password']:
             return attrs
-        raise serializers.ValidationError(
-            self.error_messages['password_mismatch']
-        )
+        else:
+            self.fail('password_mismatch')
 
 
 class CurrentPasswordSerializer(serializers.Serializer):
@@ -202,9 +194,8 @@ class CurrentPasswordSerializer(serializers.Serializer):
         is_password_valid = self.context['request'].user.check_password(value)
         if is_password_valid:
             return value
-        raise serializers.ValidationError(
-            self.error_messages['invalid_password']
-        )
+        else:
+            self.fail('invalid_password')
 
 
 class SetPasswordSerializer(PasswordSerializer, CurrentPasswordSerializer):
@@ -262,12 +253,9 @@ class SetUsernameRetypeSerializer(SetUsernameSerializer):
         attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
         new_username = attrs[User.USERNAME_FIELD]
         if new_username != attrs['re_new_' + User.USERNAME_FIELD]:
-            raise serializers.ValidationError(
-                self.error_messages['username_mismatch'].format(
-                    User.USERNAME_FIELD
-                )
-            )
-        return attrs
+            self.fail('username_mismatch')
+        else:
+            return attrs
 
 
 class TokenSerializer(serializers.ModelSerializer):
