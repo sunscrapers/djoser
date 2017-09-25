@@ -12,11 +12,11 @@ from .common import create_user, mock, perform_create_mock
 User = get_user_model()
 
 
-class RegistrationViewTest(restframework.APIViewTestCase,
-                           assertions.StatusCodeAssertionsMixin,
-                           assertions.EmailAssertionsMixin,
-                           assertions.InstanceAssertionsMixin):
-    view_class = djoser.views.RegistrationView
+class UserCreateViewTest(restframework.APIViewTestCase,
+                         assertions.StatusCodeAssertionsMixin,
+                         assertions.EmailAssertionsMixin,
+                         assertions.InstanceAssertionsMixin):
+    view_class = djoser.views.UserCreateView
 
     def test_post_create_user_without_login(self):
         data = {

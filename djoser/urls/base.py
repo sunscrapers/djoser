@@ -1,14 +1,23 @@
 from django.conf.urls import url
-from djoser import views
 from django.contrib.auth import get_user_model
+
+from djoser import views
 
 User = get_user_model()
 
 
 urlpatterns = [
     url(r'^me/$', views.UserView.as_view(), name='user'),
-    url(r'^register/$', views.RegistrationView.as_view(), name='register'),
-    url(r'^activate/$', views.ActivationView.as_view(), name='activate'),
+    url(
+        r'^users/create/$',
+        views.UserCreateView.as_view(),
+        name='user-create'
+    ),
+    url(
+        r'^users/activate/$',
+        views.ActivationView.as_view(),
+        name='user-activate'
+    ),
     url(
         r'^{0}/$'.format(User.USERNAME_FIELD),
         views.SetUsernameView.as_view(),

@@ -21,10 +21,11 @@ class RootView(views.APIView):
     permission_classes = [permissions.AllowAny]
 
     def aggregate_djoser_urlpattern_names(self):
-        from djoser.urls import base, authtoken, jwt
+        from djoser.urls import base, authtoken
         urlpattern_names = [pattern.name for pattern in base.urlpatterns]
         urlpattern_names += [pattern.name for pattern in authtoken.urlpatterns]
-        urlpattern_names += [pattern.name for pattern in jwt.urlpatterns]
+        urlpattern_names += self._get_jwt_urlpatterns()
+
         return urlpattern_names
 
     def get_urls_map(self, request, urlpattern_names, fmt):
@@ -42,8 +43,15 @@ class RootView(views.APIView):
         urls_map = self.get_urls_map(request, urlpattern_names, fmt)
         return Response(urls_map)
 
+    def _get_jwt_urlpatterns(self):
+        try:
+            from djoser.urls import jwt
+            return [pattern.name for pattern in jwt.urlpatterns]
+        except ModuleNotFoundError:
+            return []
 
-class RegistrationView(generics.CreateAPIView):
+
+class UserCreateView(generics.CreateAPIView):
     """
     Use this endpoint to register new user.
     """
@@ -66,7 +74,7 @@ class RegistrationView(generics.CreateAPIView):
             email.ConfirmationEmail(self.request, context).send(to)
 
 
-class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
+class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to obtain user authentication token.
     """
@@ -84,7 +92,7 @@ class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
         )
 
 
-class LogoutView(views.APIView):
+class TokenDestroyView(views.APIView):
     """
     Use this endpoint to logout user (remove user authentication token).
     """

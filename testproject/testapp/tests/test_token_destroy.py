@@ -8,9 +8,9 @@ import djoser.views
 from .common import create_user
 
 
-class LogoutViewTest(restframework.APIViewTestCase,
-                     assertions.StatusCodeAssertionsMixin):
-    view_class = djoser.views.LogoutView
+class TokenDestroyViewTest(restframework.APIViewTestCase,
+                           assertions.StatusCodeAssertionsMixin):
+    view_class = djoser.views.TokenDestroyView
 
     def setUp(self):
         self.signal_sent = False

@@ -9,10 +9,10 @@ import djoser.views
 from .common import create_user
 
 
-class LoginViewTest(restframework.APIViewTestCase,
-                    assertions.StatusCodeAssertionsMixin,
-                    assertions.InstanceAssertionsMixin):
-    view_class = djoser.views.LoginView
+class TokenCreateViewTest(restframework.APIViewTestCase,
+                          assertions.StatusCodeAssertionsMixin,
+                          assertions.InstanceAssertionsMixin):
+    view_class = djoser.views.TokenCreateView
 
     def setUp(self):
         self.signal_sent = False
