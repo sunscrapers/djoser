@@ -47,7 +47,7 @@ class RootView(views.APIView):
         try:
             from djoser.urls import jwt
             return [pattern.name for pattern in jwt.urlpatterns]
-        except ModuleNotFoundError:
+        except ImportError:
             return []
 
 
