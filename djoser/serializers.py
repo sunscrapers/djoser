@@ -107,9 +107,7 @@ class LoginSerializer(serializers.Serializer):
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
-    default_error_messages = {
-        'email_not_found': constants.EMAIL_NOT_FOUND
-    }
+    default_error_messages = {'email_not_found': constants.EMAIL_NOT_FOUND}
 
     def validate_email(self, value):
         users = self.context['view'].get_users(value)
@@ -149,9 +147,7 @@ class UidAndTokenSerializer(serializers.Serializer):
 
 
 class ActivationSerializer(UidAndTokenSerializer):
-    default_error_messages = {
-        'stale_token': constants.STALE_TOKEN_ERROR,
-    }
+    default_error_messages = {'stale_token': constants.STALE_TOKEN_ERROR}
 
     def validate(self, attrs):
         attrs = super(ActivationSerializer, self).validate(attrs)
@@ -222,10 +218,7 @@ class SetUsernameSerializer(serializers.ModelSerializer,
 
     class Meta(object):
         model = User
-        fields = (
-            User.USERNAME_FIELD,
-            'current_password',
-        )
+        fields = (User.USERNAME_FIELD, 'current_password')
 
     def __init__(self, *args, **kwargs):
         """
@@ -263,6 +256,4 @@ class TokenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = settings.TOKEN_MODEL
-        fields = (
-            'auth_token',
-        )
+        fields = ('auth_token',)
