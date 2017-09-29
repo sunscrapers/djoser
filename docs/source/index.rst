@@ -10,12 +10,13 @@ Welcome to djoser's documentation!
    :maxdepth: 2
 
    introduction
-   features
    getting_started
    sample_usage
    authentication_backends
    settings
-   endpoints
+   base_endpoints
+   token_endpoints
+   jwt_endpoints
    emails
    adjustment
    examples

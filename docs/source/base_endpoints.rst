@@ -1,5 +1,5 @@
-Endpoints
-=========
+Base Endpoints
+==============
 
 User
 ----
@@ -24,8 +24,8 @@ Use this endpoint to retrieve/update user.
 |          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
 +----------+--------------------------------+----------------------------------+
 
-Register
---------
+User Create
+-----------
 
 Use this endpoint to register new user. Your user model manager should
 implement `create_user <https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.UserManager.create_user>`_
@@ -33,7 +33,7 @@ method and have `USERNAME_FIELD <https://docs.djangoproject.com/en/dev/topics/au
 and `REQUIRED_FIELDS <https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.REQUIRED_FIELDS>`_
 fields.
 
-**Default URL**: ``/register/``
+**Default URL**: ``/users/create/``
 
 +----------+-----------------------------------+----------------------------------+
 | Method   |  Request                          | Response                         |
@@ -45,46 +45,16 @@ fields.
 |          |                                   | * ``{{ User.REQUIRED_FIELDS }}`` |
 +----------+-----------------------------------+----------------------------------+
 
-Login
------
 
-Use this endpoint to obtain user
-`authentication token <http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication>`_.
-This endpoint is available only if you are using token based authentication.
-
-**Default URL**: ``/login/``
-
-+----------+----------------------------------+----------------------------------+
-| Method   | Request                          | Response                         |
-+==========+==================================+==================================+
-| ``POST`` | * ``{{ User.USERNAME_FIELD }}``  | ``HTTP_200_OK``                  |
-|          | * ``password``                   |                                  |
-|          |                                  | * ``auth_token``                 |
-+----------+----------------------------------+----------------------------------+
-
-Logout
-------
-
-Use this endpoint to logout user (remove user authentication token).
-This endpoint is available only if you are using token based authentication.
-
-**Default URL**: ``/logout/``
-
-+----------+----------------+----------------------------------+
-| Method   |  Request       | Response                         |
-+==========+================+==================================+
-| ``POST`` | --             | ``HTTP_204_NO_CONTENT``          |
-+----------+----------------+----------------------------------+
-
-Activate
---------
+User Activate
+-------------
 
 Use this endpoint to activate user account. This endpoint is not a URL which
 will be directly exposed to your users - you should provide site in your
 frontend application (configured by ``ACTIVATION_URL``) which will send ``POST``
 request to activate endpoint.
 
-**Default URL**: ``/activate/``
+**Default URL**: ``/users/activate/``
 
 +----------+----------------+----------------------------------+
 | Method   | Request        | Response                         |
@@ -93,7 +63,7 @@ request to activate endpoint.
 |          | * ``token``    |                                  |
 +----------+----------------+----------------------------------+
 
-Set username
+Set Username
 ------------
 
 Use this endpoint to change user username (``USERNAME_FIELD``).
@@ -112,7 +82,7 @@ Use this endpoint to change user username (``USERNAME_FIELD``).
 |          | * ``current_password``                 |                                      |
 +----------+----------------------------------------+--------------------------------------+
 
-Set password
+Set Password
 ------------
 
 Use this endpoint to change user password.
@@ -131,7 +101,7 @@ Use this endpoint to change user password.
 |          | * ``current_password`` |                                      |
 +----------+------------------------+--------------------------------------+
 
-Reset password
+Reset Password
 --------------
 
 Use this endpoint to send email to user with password reset link. You have to
@@ -152,7 +122,7 @@ setup ``PASSWORD_RESET_CONFIRM_URL``.
 |          |             | * ``HTTP_400_BAD_REQUEST``                      |
 +----------+-------------+-------------------------------------------------+
 
-Reset password confirmation
+Reset Password Confirmation
 ---------------------------
 
 Use this endpoint to finish reset password process. This endpoint is not a URL
