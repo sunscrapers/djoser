@@ -20,11 +20,11 @@ class SettingsTestCase(SimpleTestCase):
                 self.assertEqual(setting_value, overridden_value)
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'USE_HTML_EMAIL_TEMPLATES': True})
+        DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True})
     )
     def test_djoser_simple_setting_overriden(self):
         from djoser.conf import settings as djoser_settings
-        self.assertTrue(djoser_settings.USE_HTML_EMAIL_TEMPLATES)
+        self.assertTrue(djoser_settings.SET_USERNAME_RETYPE)
 
     @override_settings(
         DJOSER=dict(settings.DJOSER, **{
@@ -39,4 +39,4 @@ class SettingsTestCase(SimpleTestCase):
 
     def test_djoser_settings_compat_method(self):
         from djoser.conf import settings as djoser_settings
-        self.assertFalse(djoser_settings.get('USE_HTML_EMAIL_TEMPLATES'))
+        self.assertFalse(djoser_settings.get('SET_USERNAME_RETYPE'))
