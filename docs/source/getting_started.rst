@@ -1,12 +1,63 @@
 Getting started
 ===============
 
+Available endpoints
+-------------------
+
+* ``/me/``
+* ``/users/create/``
+* ``/users/activate/``
+* ``/{{ User.USERNAME_FIELD }}/``
+* ``/password/``
+* ``/password/reset/``
+* ``/password/reset/confirm/``
+* ``/token/create/`` (Token Based Authentication)
+* ``/token/destroy/`` (Token Based Authentication)
+* ``/jwt/create/`` (JSON Web Token Authentication)
+* ``/jwt/refresh/`` (JSON Web Token Authentication)
+* ``/jwt/verify/`` (JSON Web Token Authentication)
+
+Supported authentication backends
+---------------------------------
+
+* Token based authentication from `DRF <http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication>`_
+* JSON Web Token authentication from `django-rest-framework-jwt <https://github.com/GetBlimp/django-rest-framework-jwt>`_
+
+Supported Python versions
+-------------------------
+
+* Python 2.7
+* Python 3.3
+* Python 3.4
+* Python 3.5
+* Python 3.6
+
+Supported Django versions
+-------------------------
+
+* Django 1.8
+* Django 1.10
+* Django 1.11
+
+Supported Django Rest Framework versions
+----------------------------------------
+
+* Django Rest Framework 3.6
+
 Installation
 ------------
 
-.. code-block:: text
+.. code-block:: bash
 
     $ pip install -U djoser
+
+If you are going to use JWT authentication, you will also need to install
+`django-rest-framework-jwt <https://github.com/GetBlimp/django-rest-framework-jwt>`_
+with:
+
+.. code-block:: bash
+
+    $ pip install -U djangorestframework-jwt
 
 .. warning::
 
@@ -42,9 +93,3 @@ HTTP Basic Auth strategy is assumed by default as Django Rest Framework does it.
 We strongly discourage and do not provide any explicit support for basic auth.
 You should customize your authentication backend as described in
 :ref:`authentication-backends`.
-
-Run migrations - this step will create tables for ``auth`` app:
-
-.. code-block:: text
-
-    $ ./manage.py migrate
