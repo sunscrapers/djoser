@@ -56,9 +56,7 @@ class UserCreateView(generics.CreateAPIView):
     Use this endpoint to register new user.
     """
     serializer_class = settings.SERIALIZERS.user_registration
-    permission_classes = (
-        permissions.AllowAny,
-    )
+    permission_classes = (permissions.AllowAny,)
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -72,6 +70,27 @@ class UserCreateView(generics.CreateAPIView):
             email.ActivationEmail(self.request, context).send(to)
         elif settings.SEND_CONFIRMATION_EMAIL:
             email.ConfirmationEmail(self.request, context).send(to)
+
+
+class UserDeleteView(generics.DestroyAPIView):
+    """
+    Use this endpoint to remove actually authenticated user
+    """
+    serializer_class = settings.SERIALIZERS.user_delete
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        utils.logout_user(self.request)
+        instance.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):

@@ -53,6 +53,8 @@ default_settings = {
             'djoser.serializers.SetUsernameRetypeSerializer',
         'user_registration':
             'djoser.serializers.UserRegistrationSerializer',
+        'user_delete':
+            'djoser.serializers.UserDeleteSerializer',
         'user':
             'djoser.serializers.UserSerializer',
         'token':

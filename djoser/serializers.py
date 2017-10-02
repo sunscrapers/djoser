@@ -213,6 +213,10 @@ class PasswordResetConfirmRetypeSerializer(UidAndTokenSerializer,
     pass
 
 
+class UserDeleteSerializer(CurrentPasswordSerializer):
+    pass
+
+
 class SetUsernameSerializer(serializers.ModelSerializer,
                             CurrentPasswordSerializer):
 
