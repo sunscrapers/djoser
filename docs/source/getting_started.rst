@@ -6,6 +6,7 @@ Available endpoints
 
 * ``/me/``
 * ``/users/create/``
+* ``/users/delete/``
 * ``/users/activate/``
 * ``/{{ User.USERNAME_FIELD }}/``
 * ``/password/``

@@ -45,6 +45,26 @@ fields.
 |          |                                   | * ``{{ User.REQUIRED_FIELDS }}`` |
 +----------+-----------------------------------+----------------------------------+
 
+User Delete
+-----------
+
+Use this endpoint to delete authenticated user. By default it will simply verify
+password provided in ``current_password``, delete the auth token if token
+based authentication is used and invoke delete for a given ``User`` instance.
+One of ways to customize the delete behavior is to override ``User.delete``.
+
+**Default URL**: ``/users/delete/``
+
++------------+-----------------------------------+----------------------------------+
+| Method     |  Request                          | Response                         |
++============+===================================+==================================+
+| ``DELETE`` | * ``current_password``            | ``HTTP_204_NO_CONTENT``          |
+|            |                                   |                                  |
+|            |                                   | ``HTTP_400_BAD_REQUEST``         |
+|            |                                   |                                  |
+|            |                                   | * ``current_password``           |
++------------+-----------------------------------+----------------------------------+
+
 
 User Activate
 -------------
