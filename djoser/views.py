@@ -72,7 +72,7 @@ class UserCreateView(generics.CreateAPIView):
             email.ConfirmationEmail(self.request, context).send(to)
 
 
-class UserDeleteView(generics.DestroyAPIView):
+class UserDeleteView(generics.CreateAPIView):
     """
     Use this endpoint to remove actually authenticated user
     """
@@ -82,7 +82,7 @@ class UserDeleteView(generics.DestroyAPIView):
     def get_object(self):
         return self.request.user
 
-    def destroy(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)

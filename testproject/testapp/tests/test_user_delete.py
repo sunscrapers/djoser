@@ -23,7 +23,7 @@ class UserDeleteViewTest(restframework.APIViewTestCase,
         data = {
             'current_password': 'secret',
         }
-        request = self.factory.delete(user=user, data=data)
+        request = self.factory.post(user=user, data=data)
 
         response = self.view(request)
 
@@ -37,7 +37,7 @@ class UserDeleteViewTest(restframework.APIViewTestCase,
             'current_password': 'incorrect',
         }
 
-        request = self.factory.delete(user=user, data=data)
+        request = self.factory.post(user=user, data=data)
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
