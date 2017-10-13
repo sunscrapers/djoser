@@ -9,13 +9,14 @@ from djoser.conf import settings
 class ActivationEmail(BaseEmailMessage):
     template_name = 'email/activation.html'
 
-    def set_context_data(self):
-        super(ActivationEmail, self).set_context_data()
+    def get_context_data(self):
+        context = super(ActivationEmail, self).get_context_data()
 
-        user = self.context.get('user')
-        self.context['uid'] = utils.encode_uid(user.pk)
-        self.context['token'] = default_token_generator.make_token(user)
-        self.context['url'] = settings.ACTIVATION_URL.format(**self.context)
+        user = context.get('user')
+        context['uid'] = utils.encode_uid(user.pk)
+        context['token'] = default_token_generator.make_token(user)
+        context['url'] = settings.ACTIVATION_URL.format(**context)
+        return context
 
 
 class ConfirmationEmail(BaseEmailMessage):
@@ -25,10 +26,11 @@ class ConfirmationEmail(BaseEmailMessage):
 class PasswordResetEmail(BaseEmailMessage):
     template_name = 'email/password_reset.html'
 
-    def set_context_data(self):
-        super(PasswordResetEmail, self).set_context_data()
+    def get_context_data(self):
+        context = super(PasswordResetEmail, self).get_context_data()
 
-        user = self.context.get('user')
-        self.context['uid'] = utils.encode_uid(user.pk)
-        self.context['token'] = default_token_generator.make_token(user)
-        self.context['url'] = settings.ACTIVATION_URL.format(**self.context)
+        user = context.get('user')
+        context['uid'] = utils.encode_uid(user.pk)
+        context['token'] = default_token_generator.make_token(user)
+        context['url'] = settings.ACTIVATION_URL.format(**context)
+        return context
