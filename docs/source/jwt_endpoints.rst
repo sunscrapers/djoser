@@ -6,7 +6,7 @@ JWT Create
 
 Use this endpoint to obtain JWT.
 
-**Default URL**: ``/jwt-token/create/``
+**Default URL**: ``/jwt/create/``
 
 +----------+---------------------------------+----------------------------------+
 | Method   |           Request               |           Response               |
@@ -25,7 +25,7 @@ JWT Refresh
 
 Use this endpoint to refresh JWT.
 
-**Default URL**: ``/jwt-token/refresh/``
+**Default URL**: ``/jwt/refresh/``
 
 +----------+---------------------------------+----------------------------------+
 | Method   |           Request               |           Response               |
@@ -44,7 +44,7 @@ JWT Verify
 
 Use this endpoint to verify JWT.
 
-**Default URL**: ``/jwt-token/verify/``
+**Default URL**: ``/jwt/verify/``
 
 +----------+---------------------------------+----------------------------------+
 | Method   |           Request               |           Response               |
