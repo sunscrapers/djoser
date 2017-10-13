@@ -1,16 +1,6 @@
 from djoser.conf import settings
 
-try:
-    from django.contrib.auth.password_validation import validate_password
-except ImportError:
-    from password_validation import validate_password
-
-try:
-    from django.urls.exceptions import NoReverseMatch
-except ImportError:
-    from django.core.urlresolvers import NoReverseMatch
-
-__all__ = ['settings', 'validate_password', 'NoReverseMatch']
+__all__ = ['settings']
 
 
 def get_user_email(user):

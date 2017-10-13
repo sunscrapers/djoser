@@ -1,12 +1,11 @@
 from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.password_validation import validate_password
 from django.db import IntegrityError, transaction
 
 from rest_framework import exceptions, serializers
 
 from djoser import constants, utils
-from djoser.compat import (
-    get_user_email, get_user_email_field_name, validate_password
-)
+from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
 
 User = get_user_model()
@@ -31,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
         return super(UserSerializer, self).update(instance, validated_data)
 
 
-class UserRegistrationSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         style={'input_type': 'password'},
         write_only=True
@@ -68,7 +67,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
-class LoginSerializer(serializers.Serializer):
+class TokenCreateSerializer(serializers.Serializer):
     password = serializers.CharField(
         required=False, style={'input_type': 'password'}
     )
@@ -79,7 +78,7 @@ class LoginSerializer(serializers.Serializer):
     }
 
     def __init__(self, *args, **kwargs):
-        super(LoginSerializer, self).__init__(*args, **kwargs)
+        super(TokenCreateSerializer, self).__init__(*args, **kwargs)
         self.user = None
         self.fields[User.USERNAME_FIELD] = serializers.CharField(
             required=False

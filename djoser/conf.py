@@ -35,8 +35,6 @@ default_settings = {
     'SERIALIZERS': ObjDict({
         'activation':
             'djoser.serializers.ActivationSerializer',
-        'login':
-            'djoser.serializers.LoginSerializer',
         'password_reset':
             'djoser.serializers.PasswordResetSerializer',
         'password_reset_confirm':
@@ -51,14 +49,16 @@ default_settings = {
             'djoser.serializers.SetUsernameSerializer',
         'set_username_retype':
             'djoser.serializers.SetUsernameRetypeSerializer',
-        'user_registration':
-            'djoser.serializers.UserRegistrationSerializer',
+        'user_create':
+            'djoser.serializers.UserCreateSerializer',
         'user_delete':
             'djoser.serializers.UserDeleteSerializer',
         'user':
             'djoser.serializers.UserSerializer',
         'token':
             'djoser.serializers.TokenSerializer',
+        'token_create':
+            'djoser.serializers.TokenCreateSerializer',
     }),
     'LOGOUT_ON_PASSWORD_CHANGE': False,
     'USER_EMAIL_FIELD_NAME': 'email',

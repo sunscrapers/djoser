@@ -105,8 +105,10 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             {'password': ['Password 666 is not allowed.']}
         )
 
-    @mock.patch('djoser.serializers.UserRegistrationSerializer.perform_create',
-                side_effect=perform_create_mock)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.perform_create',
+        side_effect=perform_create_mock
+    )
     def test_post_return_400_for_integrity_error(self, perform_create):
         data = {
             'username': 'john',
