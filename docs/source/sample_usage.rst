@@ -28,7 +28,7 @@ Register a new user:
 
 .. code-block:: text
 
-    $ curl -X POST http://127.0.0.1:8088/auth/register/ --data 'username=djoser&password=djoser'
+    $ curl -X POST http://127.0.0.1:8088/auth/users/create/ --data 'username=djoser&password=djoser'
     {"email": "", "username": "djoser", "id":1}
 
 So far, so good. We have just created a new user using REST API.
@@ -46,7 +46,7 @@ Let's log in:
 
 .. code-block:: text
 
-    curl -X POST http://127.0.0.1:8088/auth/login/ --data 'username=djoser&password=djoser'
+    curl -X POST http://127.0.0.1:8088/auth/token/create/ --data 'username=djoser&password=djoser'
     {"auth_token": "b704c9fc3655635646356ac2950269f352ea1139"}
 
 We have just obtained an authorization token that we may use later in order to retrieve specific resources.
@@ -71,7 +71,7 @@ Now let's log out:
 
 .. code-block:: text
 
-    curl -X POST http://127.0.0.1:8088/auth/logout/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'
+    curl -X POST http://127.0.0.1:8088/auth/token/destroy/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'
 
     And try access user profile again:
 

@@ -15,14 +15,14 @@ Add ``'rest_framework.authtoken'`` to ``INSTALLED_APPS``:
 
 .. code-block:: python
 
-    INSTALLED_APPS = (
+    INSTALLED_APPS = [
         'django.contrib.auth',
         (...),
         'rest_framework',
         'rest_framework.authtoken',
         'djoser',
         (...),
-    )
+    ]
 
 Configure ``urls.py``. Pay attention to ``djoser.url.authtoken`` module path:
 

@@ -35,14 +35,13 @@ Supported Python versions
 Supported Django versions
 -------------------------
 
-* Django 1.8
 * Django 1.10
 * Django 1.11
 
 Supported Django Rest Framework versions
 ----------------------------------------
 
-* Django Rest Framework 3.6
+* Django Rest Framework 3.7
 
 Installation
 ------------
@@ -58,12 +57,6 @@ with:
 .. code-block:: bash
 
     $ pip install -U djangorestframework-jwt
-
-.. warning::
-
-    If you are Django 1.8.x user you will need to install
-    `django-password-validation <https://github.com/orcasgit/django-password-validation/>`_
-    with ``pip install django-password-validation``.
 
 Configuration
 -------------
@@ -84,10 +77,10 @@ Configure ``urls.py``:
 
 .. code-block:: python
 
-    urlpatterns = patterns('',
+    urlpatterns = [
         (...),
         url(r'^auth/', include('djoser.urls')),
-    )
+    ]
 
 HTTP Basic Auth strategy is assumed by default as Django Rest Framework does it.
 We strongly discourage and do not provide any explicit support for basic auth.
