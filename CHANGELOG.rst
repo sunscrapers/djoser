@@ -5,7 +5,25 @@ Change Log
 This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
+---------------------
+`1.0.0`_ (2017-10-14)
+---------------------
 
+* Add JWT authentication support
+* Add/Update documentation about JWT
+* Add/Update/Fix tests where necessary
+* Add support for Django REST Framework 3.7
+* Drop support for Django REST Framework 3.6
+* Replace built-in email support with django-templated-mail
+* Refactor test configuration for better performance and organization
+* Refactor RootView to have better support for modular URLs
+* Update URLs to be slightly more RESTful.
+* Update codebase with small syntax/formatting fixes
+* Update README/documentation to reflect on codebase changes
+* Move ``DOMAIN`` and ``SITE_NAME`` settings to django-templated-mail
+* Remove ``USE_HTML_EMAIL_TEMPLATES`` and ``ROOT_VIEW_URLS_MAPPING`` settings
+
+---------------------
 `0.7.0`_ (2017-09-01)
 ---------------------
 
@@ -30,6 +48,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 * Fix all style issues reported by `flake8`_ in codebase
 * Fix security bug in ``djoser.views.UserView``
 
+---------------------
 `0.6.0`_ (2017-06-02)
 ---------------------
 
@@ -44,6 +63,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 * Slightly refactor use of ``Response`` in ``djoser/views.py``
 * Fix #190 - race condition for near-simultaneous sign-ups
 
+---------------------
 `0.5.4`_ (2017-01-27)
 ---------------------
 
@@ -53,7 +73,7 @@ List of changes:
 * Add ``djoser.utils.UserEmailFactoryBase`` test case
 * Fix dictionary syntax error
 
-
+---------------------
 `0.5.3`_ (2017-01-27)
 ---------------------
 
@@ -68,7 +88,7 @@ Besides that it's mostly codebase cleanup. List of changes:
   `#141 <https://github.com/sunscrapers/djoser/pull/141>`_
 * Cleanup ``setup.py`` and ``testproject/testapp/tests.py``
 
-
+---------------------
 `0.5.2`_ (2017-01-02)
 ---------------------
 
@@ -80,7 +100,7 @@ support for DRF 3.5. There are also some changes in documentation. List of chang
 * Update required Django version to >= 1.7
 * Update docs with tweaks on encoding and names
 
-
+---------------------
 `0.5.1`_ (2016-09-01)
 ---------------------
 
@@ -97,7 +117,7 @@ refactor, and other various contributions. List of changes:
 * Update ``.gitignore``
 * Update tests
 
-
+---------------------
 `0.5.0`_ (2016-06-15)
 ---------------------
 
@@ -110,7 +130,7 @@ Python / Django / DRF versions. List of changes:
 * Update ``HTTP_200_OK`` to ``HTTP_204_NO_CONTENT`` where appropriate
 * Remove compatibility for Python < 2.7, Django < 1.7, and DRF < 3.3
 
-
+---------------------
 `0.4.3`_ (2016-03-01)
 ---------------------
 
@@ -119,7 +139,7 @@ This release provides few bugfixes / UX improvements. List of changes:
 * Add human readable error message when incorrect uid is provided
 * Fix user being active, before activating his account via email
 
-
+---------------------
 `0.4.2`_ (2016-02-24)
 ---------------------
 
@@ -128,7 +148,7 @@ This release adds a new feature - custom password validators. List of changes:
 * Add support for ``/register/`` and ``/password/reset/confirm/`` arbitrary
   password validators, with PASSWORD_VALIDATORS djoser setting field
 
-
+---------------------
 `0.4.1`_ (2016-02-24)
 ---------------------
 
@@ -141,7 +161,7 @@ few bugfixes / documentation updates. List of changes:
 * Fix `#92 <https://github.com/sunscrapers/djoser/issues/92>`_
 * Fix `#100 <https://github.com/sunscrapers/djoser/pull/100>`_
 
-
+---------------------
 `0.4.0`_ (2015-09-29)
 ---------------------
 
@@ -166,4 +186,5 @@ few bugfixes / documentation updates. List of changes:
 .. _0.5.3: https://github.com/sunscrapers/djoser/compare/0.5.2...0.5.3
 .. _0.5.4: https://github.com/sunscrapers/djoser/compare/0.5.3...0.5.4
 .. _0.6.0: https://github.com/sunscrapers/djoser/compare/0.5.4...0.6.0
-.. _0.7.0: https://github.com/sunscrapers/djoser/compare/0.6.0...master
+.. _0.7.0: https://github.com/sunscrapers/djoser/compare/0.6.0...0.7.0
+.. _1.0.0: https://github.com/sunscrapers/djoser/compare/0.6.0...1.0.0
