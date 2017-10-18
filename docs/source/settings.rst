@@ -130,8 +130,7 @@ let's say, one key, all the others will still be used.
 .. code-block:: python
 
     {
-        'activation': 'djoser.serializers.ActivationSerializer',
-        'login': 'djoser.serializers.LoginSerializer',
+       'activation': 'djoser.serializers.ActivationSerializer',
         'password_reset': 'djoser.serializers.PasswordResetSerializer',
         'password_reset_confirm': 'djoser.serializers.PasswordResetConfirmSerializer',
         'password_reset_confirm_retype': 'djoser.serializers.PasswordResetConfirmRetypeSerializer',
@@ -139,7 +138,9 @@ let's say, one key, all the others will still be used.
         'set_password_retype': 'djoser.serializers.SetPasswordRetypeSerializer',
         'set_username': 'djoser.serializers.SetUsernameSerializer',
         'set_username_retype': 'djoser.serializers.SetUsernameRetypeSerializer',
-        'user_registration': 'djoser.serializers.UserRegistrationSerializer',
+        'user_create': 'djoser.serializers.UserCreateSerializer',
+        'user_delete': 'djoser.serializers.UserDeleteSerializer',
         'user': 'djoser.serializers.UserSerializer',
         'token': 'djoser.serializers.TokenSerializer',
+        'token_create': 'djoser.serializers.TokenCreateSerializer',
     }
