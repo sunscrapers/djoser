@@ -32,5 +32,5 @@ class PasswordResetEmail(BaseEmailMessage):
         user = context.get('user')
         context['uid'] = utils.encode_uid(user.pk)
         context['token'] = default_token_generator.make_token(user)
-        context['url'] = settings.ACTIVATION_URL.format(**context)
+        context['url'] = settings.PASSWORD_RESET_CONFIRM_URL.format(**context)
         return context
