@@ -6,6 +6,13 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`1.0.1`_ (2017-10-20)
+---------------------
+
+* Fix: Invalid URL for PasswordResetEmail context
+* Fix: Invalid serializer examples in docs
+
+---------------------
 `1.0.0`_ (2017-10-14)
 ---------------------
 
