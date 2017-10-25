@@ -16,6 +16,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 `1.0.0`_ (2017-10-14)
 ---------------------
 
+* **Breaking**: For Token-based and JWT authentication ``djoser.urls`` should be included in the URLconf as well as either ``djoser.urls.authtoken`` or ``djoser.urls.jwt``
 * Add JWT authentication support
 * Add/Update documentation about JWT
 * Add/Update/Fix tests where necessary
@@ -24,7 +25,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 * Replace built-in email support with django-templated-mail
 * Refactor test configuration for better performance and organization
 * Refactor RootView to have better support for modular URLs
-* Update URLs to be slightly more RESTful. **NOTE**: For Token-based and JWT authentication, this means that 'djoser.urls' should be included in the URLconf as well as either 'djoser.urls.authtoken' or 'djoser.urls.jwt'
+* Update URLs to be slightly more RESTful. 
 * Update codebase with small syntax/formatting fixes
 * Update README/documentation to reflect on codebase changes
 * Move ``DOMAIN`` and ``SITE_NAME`` settings to django-templated-mail
