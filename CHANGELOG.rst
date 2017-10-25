@@ -25,7 +25,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 * Replace built-in email support with django-templated-mail
 * Refactor test configuration for better performance and organization
 * Refactor RootView to have better support for modular URLs
-* Update URLs to be slightly more RESTful. 
+* Update URLs to be slightly more RESTful
 * Update codebase with small syntax/formatting fixes
 * Update README/documentation to reflect on codebase changes
 * Move ``DOMAIN`` and ``SITE_NAME`` settings to django-templated-mail
@@ -196,3 +196,4 @@ few bugfixes / documentation updates. List of changes:
 .. _0.6.0: https://github.com/sunscrapers/djoser/compare/0.5.4...0.6.0
 .. _0.7.0: https://github.com/sunscrapers/djoser/compare/0.6.0...0.7.0
 .. _1.0.0: https://github.com/sunscrapers/djoser/compare/0.6.0...1.0.0
+.. _1.0.1: https://github.com/sunscrapers/djoser/compare/1.0.0...1.0.1
