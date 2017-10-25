@@ -30,6 +30,7 @@ Configure ``urls.py``. Pay attention to ``djoser.url.authtoken`` module path:
 
     urlpatterns = [
         (...),
+        url(r'^auth/', include('djoser.urls')),
         url(r'^auth/', include('djoser.urls.authtoken')),
     ]
 
@@ -60,6 +61,7 @@ Configure ``urls.py`` with ``djoser.url.jwt`` module path:
 
     urlpatterns = [
         (...),
+        url(r'^auth/', include('djoser.urls')),
         url(r'^auth/', include('djoser.urls.jwt')),
     ]
 
