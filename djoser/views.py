@@ -6,7 +6,7 @@ from rest_framework import generics, permissions, status, views
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from djoser import utils, signals
+from djoser import mixins, utils, signals
 from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
 
@@ -50,7 +50,7 @@ class RootView(views.APIView):
             return []
 
 
-class UserCreateView(generics.CreateAPIView, utils.EmailMixin):
+class UserCreateView(generics.CreateAPIView, mixins.EmailMixin):
     """
     Use this endpoint to register new user.
     """
@@ -92,7 +92,7 @@ class UserDeleteView(generics.CreateAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
+class TokenCreateView(mixins.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to obtain user authentication token.
     """
@@ -119,7 +119,7 @@ class TokenDestroyView(views.APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView, utils.EmailMixin):
+class PasswordResetView(mixins.ActionViewMixin, generics.GenericAPIView, mixins.EmailMixin):
     """
     Use this endpoint to send email to user with password reset link.
     """
@@ -150,7 +150,7 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView, utils.Em
         self.get_email().PasswordResetEmail(self.request, context).send(to)
 
 
-class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
+class SetPasswordView(mixins.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to change user password.
     """
@@ -171,7 +171,7 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
+class PasswordResetConfirmView(mixins.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to finish reset password process.
     """
@@ -189,7 +189,7 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ActivationView(utils.ActionViewMixin, generics.GenericAPIView, utils.EmailMixin):
+class ActivationView(mixins.ActionViewMixin, generics.GenericAPIView, mixins.EmailMixin):
     """
     Use this endpoint to activate user account.
     """
@@ -214,7 +214,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView, utils.Email
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView, utils.EmailMixin):
+class SetUsernameView(mixins.ActionViewMixin, generics.GenericAPIView, mixins.EmailMixin):
     """
     Use this endpoint to change user username.
     """
@@ -240,7 +240,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView, utils.Emai
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserView(generics.RetrieveUpdateAPIView, utils.EmailMixin):
+class UserView(generics.RetrieveUpdateAPIView, mixins.EmailMixin):
     """
     Use this endpoint to retrieve/update user.
     """
