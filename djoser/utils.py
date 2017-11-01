@@ -3,6 +3,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from djoser.conf import settings
+from djoser import email
 
 
 def encode_uid(pk):
@@ -31,3 +32,8 @@ class ActionViewMixin(object):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return self._action(serializer)
+
+
+class EmailMixin(object):
+    def get_email(self):
+        return email
