@@ -6,7 +6,7 @@ from rest_framework import generics, permissions, status, views
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from djoser import email, utils, signals
+from djoser import mixins, utils, signals
 from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
 
@@ -50,7 +50,7 @@ class RootView(views.APIView):
             return []
 
 
-class UserCreateView(generics.CreateAPIView):
+class UserCreateView(generics.CreateAPIView, mixins.EmailMixin):
     """
     Use this endpoint to register new user.
     """
@@ -66,9 +66,9 @@ class UserCreateView(generics.CreateAPIView):
         context = {'user': user}
         to = [get_user_email(user)]
         if settings.SEND_ACTIVATION_EMAIL:
-            email.ActivationEmail(self.request, context).send(to)
+            self.get_email().ActivationEmail(self.request, context).send(to)
         elif settings.SEND_CONFIRMATION_EMAIL:
-            email.ConfirmationEmail(self.request, context).send(to)
+            self.get_email().ConfirmationEmail(self.request, context).send(to)
 
 
 class UserDeleteView(generics.CreateAPIView):
@@ -92,7 +92,7 @@ class UserDeleteView(generics.CreateAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
+class TokenCreateView(mixins.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to obtain user authentication token.
     """
@@ -119,7 +119,7 @@ class TokenDestroyView(views.APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
+class PasswordResetView(mixins.ActionViewMixin, generics.GenericAPIView, mixins.EmailMixin):
     """
     Use this endpoint to send email to user with password reset link.
     """
@@ -147,10 +147,10 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
     def send_password_reset_email(self, user):
         context = {'user': user}
         to = [get_user_email(user)]
-        email.PasswordResetEmail(self.request, context).send(to)
+        self.get_email().PasswordResetEmail(self.request, context).send(to)
 
 
-class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
+class SetPasswordView(mixins.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to change user password.
     """
@@ -171,7 +171,7 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
+class PasswordResetConfirmView(mixins.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to finish reset password process.
     """
@@ -189,7 +189,7 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
+class ActivationView(mixins.ActionViewMixin, generics.GenericAPIView, mixins.EmailMixin):
     """
     Use this endpoint to activate user account.
     """
@@ -209,12 +209,12 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
         if settings.SEND_CONFIRMATION_EMAIL:
             context = {'user': user}
             to = [get_user_email(user)]
-            email.ConfirmationEmail(self.request, context).send(to)
+            self.get_email().ConfirmationEmail(self.request, context).send(to)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
+class SetUsernameView(mixins.ActionViewMixin, generics.GenericAPIView, mixins.EmailMixin):
     """
     Use this endpoint to change user username.
     """
@@ -234,13 +234,13 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
             user.is_active = False
             context = {'user': user}
             to = [get_user_email(user)]
-            email.ActivationEmail(self.request, context).send(to)
+            self.get_email().ActivationEmail(self.request, context).send(to)
         user.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserView(generics.RetrieveUpdateAPIView):
+class UserView(generics.RetrieveUpdateAPIView, mixins.EmailMixin):
     """
     Use this endpoint to retrieve/update user.
     """
@@ -257,4 +257,4 @@ class UserView(generics.RetrieveUpdateAPIView):
         if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
             context = {'user': user}
             to = [get_user_email(user)]
-            email.ActivationEmail(self.request, context).send(to)
+            self.get_email().ActivationEmail(self.request, context).send(to)

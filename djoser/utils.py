@@ -24,10 +24,3 @@ def logout_user(request):
     user_logged_out.send(
         sender=request.user.__class__, request=request, user=request.user
     )
-
-
-class ActionViewMixin(object):
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return self._action(serializer)
