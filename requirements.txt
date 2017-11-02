@@ -2,6 +2,7 @@
 django-templated-mail==1.0.0
 djangorestframework-jwt==1.11.0
 djet==0.2.1
+social-auth-app-django==2.0.0
 coverage==4.3.1
 
 pytest==3.1.3
