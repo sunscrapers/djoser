@@ -19,17 +19,21 @@ AUTH_PASSWORD_VALIDATORS = [{'NAME': 'testapp.validators.Is666'}]
 
 SECRET_KEY = '_'
 
-MIDDLEWARE_CLASSES = ()
+MIDDLEWARE = [
+    'django.contrib.sessions.middleware.SessionMiddleware',
+]
 
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sessions',
     'django.contrib.staticfiles',
 
     'templated_mail',
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'social_django',
 
     'testapp',
 )
@@ -54,6 +58,19 @@ TEMPLATES = [
         'APP_DIRS': True,
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'djoser.social.backends.facebook.FacebookOAuth2Override',
+    'social_core.backends.google.GoogleOAuth2',
+)
+
+SOCIAL_AUTH_FACEBOOK_KEY = 'XXXXXXXXXXXX'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'XXXXXXXXXXXXXXX'
+
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id, name, email'
+}
 
 DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
