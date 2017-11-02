@@ -67,9 +67,10 @@ default_settings = {
     }),
     'LOGOUT_ON_PASSWORD_CHANGE': False,
     'USER_EMAIL_FIELD_NAME': 'email',
+    'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy'
 }
 
-SETTINGS_TO_IMPORT = ['TOKEN_MODEL']
+SETTINGS_TO_IMPORT = ['TOKEN_MODEL', 'SOCIAL_AUTH_TOKEN_STRATEGY']
 
 
 class Settings(object):
