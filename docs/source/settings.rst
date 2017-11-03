@@ -114,8 +114,9 @@ Points to which token model should be used for authentication.
 SERIALIZERS
 -----------
 
-This dictionary is used to update the defaults, so by providing,
-let's say, one key, all the others will still be used.
+Dictionary which maps djoser serializer names to paths to serializer classes.
+This setting provides a way to easily override given serializer(s) - it's is used
+to update the defaults, so by providing, e.g. one key, all the others will stay default.
 
 **Examples**
 
@@ -130,7 +131,7 @@ let's say, one key, all the others will still be used.
 .. code-block:: python
 
     {
-       'activation': 'djoser.serializers.ActivationSerializer',
+        'activation': 'djoser.serializers.ActivationSerializer',
         'password_reset': 'djoser.serializers.PasswordResetSerializer',
         'password_reset_confirm': 'djoser.serializers.PasswordResetConfirmSerializer',
         'password_reset_confirm_retype': 'djoser.serializers.PasswordResetConfirmRetypeSerializer',
@@ -143,4 +144,28 @@ let's say, one key, all the others will still be used.
         'user': 'djoser.serializers.UserSerializer',
         'token': 'djoser.serializers.TokenSerializer',
         'token_create': 'djoser.serializers.TokenCreateSerializer',
+    }
+
+EMAIL
+-----
+
+Dictionary which maps djoser email names to paths to email classes.
+Same as in case of ``SERIALIZERS`` it allows partial override.
+
+**Examples**
+
+.. code-block:: python
+
+    {
+        'activation': 'myapp.email.AwesomeActivationEmail',
+    }
+
+**Default**:
+
+.. code-block:: python
+
+    {
+        'activation': 'djoser.email.ActivationEmail',
+        'confirmation': 'djoser.email.ConfirmationEmail',
+        'password_reset': 'djoser.email.PasswordResetEmail',
     }
