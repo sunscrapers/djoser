@@ -16,7 +16,7 @@ As mentioned in `Emails page <http://djoser.readthedocs.io/en/latest/emails.html
 since 1.0 email support has been removed from Djoser and it is advised to
 use `django-templated-mail <https://github.com/sunscrapers/django-templated-mail>`_
 for use cases which were previously handled by djoser email support.
-You can find out more about it at the
+You can find out more about it in the
 `project documentation <http://django-templated-mail.readthedocs.io/en/latest/>`_.
 Keep in mind that ``DOMAIN`` and ``SITE_NAME`` settings have also been moved to
 django-templated-mail as described in
@@ -50,24 +50,24 @@ are very helpful in the process.
 Some View class names and URLs has been updated
 -----------------------------------------------
 
-Also please note that in sake of consistence all URLs now end with trailing slash.
+Also please note that for sake of consistency all URLs now end with a trailing slash.
 
 View class names:
 
-* ``RegistrationView`` has been updated to ``UserCreateView``
-* ``LoginView`` has been updated to ``TokenCreateView``
-* ``LogoutView`` has been updated to ``TokenDestroyView``
+* ``RegistrationView`` has been renamed to ``UserCreateView``
+* ``LoginView`` has been renamed to ``TokenCreateView``
+* ``LogoutView`` has been renamed to ``TokenDestroyView``
 
 Base URLs:
 
-* ``register/`` has been updated to ``users/create/``
-* ``register`` URL name has been updated to ``user-create``
-* ``activate/`` has been updated to ``users/activate/``
-* ``activate`` URL name has been updated to ``user-activate``
+* ``register/`` has been renamed to ``users/create/``
+* ``register`` URL name has been renamed to ``user-create``
+* ``activate/`` has been renamed to ``users/activate/``
+* ``activate`` URL name has been renamed to ``user-activate``
 
 Token Based Authentication URLs:
 
-* ``login/`` has been updated to ``token/create/``
-* ``login`` URL name has been updated to ``token-create``
-* ``logout/`` has been updated to ``token/destroy/``
-* ``logout`` URL name has been updated to ``token-destroy``
+* ``login/`` has been renamed to ``token/create/``
+* ``login`` URL name has been renamed to ``token-create``
+* ``logout/`` has been renamed to ``token/destroy/``
+* ``logout`` URL name has been renamed to ``token-destroy``
