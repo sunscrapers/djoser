@@ -59,10 +59,11 @@ TEMPLATES = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
     'djoser.social.backends.facebook.FacebookOAuth2Override',
     'social_core.backends.google.GoogleOAuth2',
-)
+]
 
 SOCIAL_AUTH_FACEBOOK_KEY = 'XXXXXXXXXXXX'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'XXXXXXXXXXXXXXX'
