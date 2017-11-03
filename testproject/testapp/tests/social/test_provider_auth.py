@@ -13,8 +13,20 @@ class ProviderAuthViewTestCase(restframework.APIViewTestCase,
     view_class = djoser.social.views.ProviderAuthView
     middleware = [SessionMiddleware]
 
-    def test_get_facebook_provider_provides_valid_authorization_url(self):
+    def test_get_facebook_provider_fails_if_no_redirect_uri(self):
         request = self.factory.get()
+        response = self.view(request, provider='facebook')
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_facebook_provider_fails_if_wrong_redirect_uri(self):
+        request = self.factory.get(data={'redirect_uri': 'http://yolo.com/'})
+        response = self.view(request, provider='facebook')
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_facebook_provider_provides_valid_authorization_url(self):
+        request = self.factory.get(data={'redirect_uri': 'http://localhost/'})
         response = self.view(request, provider='facebook')
 
         self.assert_status_equal(response, status.HTTP_200_OK)
