@@ -6,7 +6,7 @@ from rest_framework import generics, permissions, status, views
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from djoser import email, utils, signals
+from djoser import utils, signals
 from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
 
@@ -66,9 +66,9 @@ class UserCreateView(generics.CreateAPIView):
         context = {'user': user}
         to = [get_user_email(user)]
         if settings.SEND_ACTIVATION_EMAIL:
-            email.ActivationEmail(self.request, context).send(to)
+            settings.EMAIL.activation(self.request, context).send(to)
         elif settings.SEND_CONFIRMATION_EMAIL:
-            email.ConfirmationEmail(self.request, context).send(to)
+            settings.EMAIL.confirmation(self.request, context).send(to)
 
 
 class UserDeleteView(generics.CreateAPIView):
@@ -147,7 +147,7 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
     def send_password_reset_email(self, user):
         context = {'user': user}
         to = [get_user_email(user)]
-        email.PasswordResetEmail(self.request, context).send(to)
+        settings.EMAIL.password_reset(self.request, context).send(to)
 
 
 class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -209,7 +209,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
         if settings.SEND_CONFIRMATION_EMAIL:
             context = {'user': user}
             to = [get_user_email(user)]
-            email.ConfirmationEmail(self.request, context).send(to)
+            settings.EMAIL.confirmation(self.request, context).send(to)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -234,7 +234,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
             user.is_active = False
             context = {'user': user}
             to = [get_user_email(user)]
-            email.ActivationEmail(self.request, context).send(to)
+            settings.EMAIL.activation(self.request, context).send(to)
         user.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -257,4 +257,4 @@ class UserView(generics.RetrieveUpdateAPIView):
         if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
             context = {'user': user}
             to = [get_user_email(user)]
-            email.ActivationEmail(self.request, context).send(to)
+            settings.EMAIL.activation(self.request, context).send(to)

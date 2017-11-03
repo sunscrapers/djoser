@@ -60,6 +60,11 @@ default_settings = {
         'token_create':
             'djoser.serializers.TokenCreateSerializer',
     }),
+    'EMAIL': ObjDict({
+        'activation': 'djoser.email.ActivationEmail',
+        'confirmation': 'djoser.email.ConfirmationEmail',
+        'password_reset': 'djoser.email.PasswordResetEmail',
+    }),
     'LOGOUT_ON_PASSWORD_CHANGE': False,
     'USER_EMAIL_FIELD_NAME': 'email',
 }
