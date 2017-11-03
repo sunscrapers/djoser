@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.core import exceptions as django_exceptions
 from django.db import IntegrityError, transaction
 
 from rest_framework import exceptions, serializers
@@ -46,9 +47,16 @@ class UserCreateSerializer(serializers.ModelSerializer):
             User.USERNAME_FIELD, User._meta.pk.name, 'password',
         )
 
-    def validate_password(self, value):
-        validate_password(value)
-        return value
+    def validate(self, attrs):
+        user = User(**attrs)
+        password = attrs.get('password')
+
+        try:
+            validate_password(password, user)
+        except django_exceptions.ValidationError as e:
+            raise serializers.ValidationError({'password': list(e.messages)})
+
+        return attrs
 
     def create(self, validated_data):
         try:
@@ -158,9 +166,17 @@ class ActivationSerializer(UidAndTokenSerializer):
 class PasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(style={'input_type': 'password'})
 
-    def validate_new_password(self, value):
-        validate_password(value)
-        return value
+    def validate(self, attrs):
+        user = self.context['request'].user or self.user
+        assert user is not None
+
+        try:
+            validate_password(attrs['new_password'], user)
+        except django_exceptions.ValidationError as e:
+            raise serializers.ValidationError({
+                'new_password': list(e.messages)
+            })
+        return super(PasswordSerializer, self).validate(attrs)
 
 
 class PasswordRetypeSerializer(PasswordSerializer):
