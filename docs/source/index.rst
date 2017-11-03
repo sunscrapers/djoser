@@ -17,6 +17,7 @@ Welcome to djoser's documentation!
    base_endpoints
    token_endpoints
    jwt_endpoints
+   migration_guide
    emails
    adjustment
    examples
