@@ -109,6 +109,12 @@ class TokenCreateSerializer(serializers.Serializer):
     def _validate_user_is_active(self, user):
         if not user.is_active:
             self.fail('inactive_account')
+    
+    def fail(self, key, **kwargs):
+        try:
+            super(TokenCreateSerializer, self).fail(key, **kwargs)
+        except exceptions.ValidationError as error:
+            raise exceptions.AuthenticationFailed(error.detail)
 
 
 class PasswordResetSerializer(serializers.Serializer):
