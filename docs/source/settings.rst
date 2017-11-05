@@ -169,3 +169,19 @@ Same as in case of ``SERIALIZERS`` it allows partial override.
         'confirmation': 'djoser.email.ConfirmationEmail',
         'password_reset': 'djoser.email.PasswordResetEmail',
     }
+
+SOCIAL_AUTH_TOKEN_STRATEGY
+--------------------------
+
+String path to class responsible for token strategy used by social authentication.
+
+**Example**: ``'myapp.token.MyStrategy'``
+**Default**: ``'djoser.social.token.jwt.TokenStrategy'``
+
+SOCIAL_AUTH_ALLOWED_REDIRECT_URIS
+---------------------------------
+
+List of allowed redirect URIs for social authentication.
+
+**Example**: ``['https://auth.example.com']``
+**Default**: ``[]``
