@@ -51,12 +51,20 @@ Installation
     $ pip install -U djoser
 
 If you are going to use JWT authentication, you will also need to install
-`django-rest-framework-jwt <https://github.com/GetBlimp/django-rest-framework-jwt>`_
+`djangorestframework-jwt <https://github.com/GetBlimp/django-rest-framework-jwt>`_
 with:
 
 .. code-block:: bash
 
     $ pip install -U djangorestframework-jwt
+
+Finally if you are going to use third party based authentication e.g. facebook,
+you will need to install `social-auth-app-django <https://github.com/python-social-auth/social-app-django>`_
+with:
+
+.. code-block:: bash
+
+    $ pip install -U social-auth-app-django
 
 Configuration
 -------------
@@ -86,3 +94,7 @@ HTTP Basic Auth strategy is assumed by default as Django Rest Framework does it.
 We strongly discourage and do not provide any explicit support for basic auth.
 You should customize your authentication backend as described in
 :ref:`authentication-backends`.
+
+In case of third party based authentication
+`PSA backend docs <https://python-social-auth.readthedocs.io/en/latest/backends/index.html#social-backends>`_
+will be a great reference to configure given provider.

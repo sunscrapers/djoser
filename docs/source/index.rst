@@ -7,20 +7,32 @@ Welcome to djoser's documentation!
 ==================================
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
+    :caption: Basics
 
-   introduction
-   getting_started
-   sample_usage
-   authentication_backends
-   settings
-   base_endpoints
-   token_endpoints
-   jwt_endpoints
-   migration_guide
-   emails
-   adjustment
-   examples
+    introduction
+    getting_started
+    sample_usage
+    authentication_backends
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Settings & API
+
+    settings
+    base_endpoints
+    token_endpoints
+    jwt_endpoints
+    social_endpoints
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Usage
+
+    migration_guide
+    emails
+    adjustment
+    examples
 
 Indices and tables
 ==================
