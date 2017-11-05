@@ -6,6 +6,12 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`1.1.1`_ (2017-11-05)
+---------------------
+
+* Fix: Token Strategy breaks in all cases if djangorestframework-jwt not installed
+
+---------------------
 `1.1.0`_ (2017-11-05)
 ---------------------
 
