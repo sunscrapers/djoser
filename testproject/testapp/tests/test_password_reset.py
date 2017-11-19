@@ -32,6 +32,19 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         site = get_current_site(request)
         self.assertIn(site.domain, mail.outbox[0].body)
         self.assertIn(site.name, mail.outbox[0].body)
+    
+    def test_post_should_send_email_to_user_with_origin_domain(self):
+        domain = 'example.com'
+        user = create_user()
+        data = {'email': user.email}
+        request = self.factory.post(data=data, HTTP_ORIGIN=domain)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        self.assert_emails_in_mailbox(1)
+        self.assert_email_exists(to=[user.email])
+        self.assertIn(domain, mail.outbox[0].body)
 
     def test_post_send_email_to_user_with_request_domain_and_site_name(self):
         user = create_user()
