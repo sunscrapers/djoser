@@ -34,6 +34,10 @@ class ProviderAuthSerializer(serializers.Serializer):
             raise serializers.ValidationError('State could not be verified.')
 
     def validate(self, attrs):
+        # Dirty hack because PSA does not respect request.data
+        request = self.context['request']
+        request.GET = request.data
+
         strategy = load_strategy(self.context['request'])
         redirect_uri = strategy.session_get('redirect_uri')
 
