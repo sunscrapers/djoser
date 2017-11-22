@@ -38,7 +38,7 @@ class ProviderAuthSerializer(serializers.Serializer):
         request = self.context['request']
         request.GET = request.data
 
-        strategy = load_strategy(self.context['request'])
+        strategy = load_strategy(request)
         redirect_uri = strategy.session_get('redirect_uri')
 
         backend_name = self.context['view'].kwargs['provider']
