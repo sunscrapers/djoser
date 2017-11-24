@@ -26,6 +26,9 @@ architecture.
 
 Developed by `SUNSCRAPERS <http://sunscrapers.com/>`_ with passion & patience.
 
+.. image:: https://asciinema.org/a/FBTYjfDPUr99jxZqbLOZhh9Pd.png
+  :target: https://asciinema.org/a/FBTYjfDPUr99jxZqbLOZhh9Pd?autoplay=1&speed=2
+
 Requirements
 ============
 
@@ -37,7 +40,6 @@ To be able to run **djoser** you have to meet following requirements:
 
 Installation
 ============
-
 
 Simply install using ``pip``:
 
