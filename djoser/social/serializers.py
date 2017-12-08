@@ -11,19 +11,31 @@ class ProviderAuthSerializer(serializers.Serializer):
     token = serializers.CharField(read_only=True)
     user = serializers.CharField(read_only=True)
 
-    # POST OAuth/OpenID values
-    code = serializers.CharField(write_only=True)
-    state = serializers.CharField(required=False, write_only=True)
-
     def create(self, validated_data):
         user = validated_data['user']
         return settings.SOCIAL_AUTH_TOKEN_STRATEGY.obtain(user)
 
-    def validate_state(self, value):
-        # Dirty hack because PSA does not respect request.data
+    def validate(self, attrs):
         request = self.context['request']
-        request.GET = request.data
+        if 'state' in request.GET:
+            self._validate_state(request.GET['state'])
 
+        strategy = load_strategy(request)
+        redirect_uri = strategy.session_get('redirect_uri')
+
+        backend_name = self.context['view'].kwargs['provider']
+        backend = load_backend(
+            strategy, backend_name, redirect_uri=redirect_uri
+        )
+
+        try:
+            user = backend.auth_complete()
+        except exceptions.AuthException as e:
+            raise serializers.ValidationError(str(e))
+        return {'user': user}
+
+    def _validate_state(self, value):
+        request = self.context['request']
         strategy = load_strategy(request)
         redirect_uri = strategy.session_get('redirect_uri')
 
@@ -48,24 +60,3 @@ class ProviderAuthSerializer(serializers.Serializer):
             )
 
         return value
-
-    def validate(self, attrs):
-        # Dirty hack because PSA does not respect request.data
-        request = self.context['request']
-        request.GET = request.data
-
-        strategy = load_strategy(request)
-        redirect_uri = strategy.session_get('redirect_uri')
-
-        backend_name = self.context['view'].kwargs['provider']
-        backend = load_backend(
-            strategy, backend_name, redirect_uri=redirect_uri
-        )
-
-        try:
-            user = backend.auth_complete()
-        except exceptions.AuthException:
-            raise serializers.ValidationError(
-                'Failed to finish authentication.'
-            )
-        return {'user': user}
