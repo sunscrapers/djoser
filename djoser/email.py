@@ -5,6 +5,15 @@ from templated_mail.mail import BaseEmailMessage
 from djoser import utils
 from djoser.conf import settings
 
+from urlparse import urlparse
+
+def get_origin_domain(request):
+    domain = request.META.get('HTTP_ORIGIN')
+    if domain:
+        domain = urlparse(domain)
+        if domain.path in settings.FRONTEND_DOMAINS:
+            return domain
+    return None
 
 class ActivationEmail(BaseEmailMessage):
     template_name = 'email/activation.html'
@@ -16,6 +25,7 @@ class ActivationEmail(BaseEmailMessage):
         context['uid'] = utils.encode_uid(user.pk)
         context['token'] = default_token_generator.make_token(user)
         context['url'] = settings.ACTIVATION_URL.format(**context)
+        context['domain'] = get_origin_domain(self.request)
         return context
 
 
@@ -33,4 +43,6 @@ class PasswordResetEmail(BaseEmailMessage):
         context['uid'] = utils.encode_uid(user.pk)
         context['token'] = default_token_generator.make_token(user)
         context['url'] = settings.PASSWORD_RESET_CONFIRM_URL.format(**context)
+        context['domain'] = get_origin_domain(self.request)
+
         return context

@@ -1,4 +1,3 @@
-from urlparse import urlparse
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
@@ -13,6 +12,7 @@ from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
 
 User = get_user_model()
+
 
 
 class RootView(views.APIView):
@@ -134,14 +134,6 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
         for user in self.get_users(serializer.data['email']):
             self.send_password_reset_email(user)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def get_origin_domain(self):
-        domain = self.request.META.get('HTTP_ORIGIN')
-        if domain:
-            domain = urlparse(domain)
-            if domain in settings.PASSWORD_RESET_DOMAINS:
-                return domain
-        return None
         
     def get_users(self, email):
         if self._users is None:
@@ -156,7 +148,6 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def send_password_reset_email(self, user):
         context = {
-            'domain': self.get_origin_domain(),
             'user': user,
         }
         to = [get_user_email(user)]
@@ -220,7 +211,8 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
         )
 
         if settings.SEND_CONFIRMATION_EMAIL:
-            context = {'user': user}
+            context = {
+                'user': user}
             to = [get_user_email(user)]
             settings.EMAIL.confirmation(self.request, context).send(to)
 

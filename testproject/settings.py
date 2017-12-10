@@ -77,6 +77,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'FRONTEND_DOMAINS': ['example.com'],
     'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://localhost/']
 }
 
