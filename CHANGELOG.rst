@@ -6,6 +6,34 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`1.1.5`_ (2017-12-08)
+---------------------
+
+* Add Steam config to testproject
+* Add python egg data to .gitignore
+* Update social auth serializer to use GET parameters instead of JSON data
+* Update python-social-auth integration tests to use GET parameters
+* Update social auth credentials in testproject to use environment variables by default
+
+---------------------
+`1.1.4`_ (2017-11-22)
+---------------------
+
+* Add proper validation errors for OAuth state validation
+
+---------------------
+`1.1.3`_ (2017-11-22)
+---------------------
+
+* Update python-social-auth load strategy invoke to use proper requests
+
+---------------------
+`1.1.2`_ (2017-11-22)
+---------------------
+
+* Fix: Request data is not available in python-social-auth backends
+
+---------------------
 `1.1.1`_ (2017-11-05)
 ---------------------
 
@@ -217,3 +245,8 @@ few bugfixes / documentation updates. List of changes:
 .. _1.0.0: https://github.com/sunscrapers/djoser/compare/0.6.0...1.0.0
 .. _1.0.1: https://github.com/sunscrapers/djoser/compare/1.0.0...1.0.1
 .. _1.1.0: https://github.com/sunscrapers/djoser/compare/1.0.1...1.1.0
+.. _1.1.1: https://github.com/sunscrapers/djoser/compare/1.1.0...1.1.1
+.. _1.1.2: https://github.com/sunscrapers/djoser/compare/1.1.1...1.1.2
+.. _1.1.3: https://github.com/sunscrapers/djoser/compare/1.1.2...1.1.3
+.. _1.1.4: https://github.com/sunscrapers/djoser/compare/1.1.3...1.1.4
+.. _1.1.5: https://github.com/sunscrapers/djoser/compare/1.1.4...1.1.5

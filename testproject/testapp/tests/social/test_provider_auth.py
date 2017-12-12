@@ -1,4 +1,5 @@
 from django.contrib.sessions.middleware import SessionMiddleware
+from django.utils import six
 from rest_framework import status
 
 from djet import assertions, restframework
@@ -26,7 +27,9 @@ class ProviderAuthViewTestCase(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
     def test_get_facebook_provider_provides_valid_authorization_url(self):
-        request = self.factory.get(data={'redirect_uri': 'http://localhost/'})
+        request = self.factory.get(data={
+            'redirect_uri': 'http://test.localhost/'
+        })
         response = self.view(request, provider='facebook')
 
         self.assert_status_equal(response, status.HTTP_200_OK)
@@ -44,7 +47,8 @@ class ProviderAuthViewTestCase(restframework.APIViewTestCase,
             return_value=data['state']
         ).start()
 
-        request = self.factory.post(data=data)
+        request = self.factory.post()
+        request.GET = {k: v for k, v in six.iteritems(data)}
         response = self.view(request, provider='facebook')
         self.assert_status_equal(response, status.HTTP_201_CREATED)
         self.assertEqual(set(response.data.keys()), {'token', 'user'})
@@ -61,7 +65,8 @@ class ProviderAuthViewTestCase(restframework.APIViewTestCase,
             return_value=data['state']
         ).start()
 
-        request = self.factory.post(data=data)
+        request = self.factory.post()
+        request.GET = {k: v for k, v in six.iteritems(data)}
         response = self.view(request, provider='facebook')
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
@@ -73,6 +78,7 @@ class ProviderAuthViewTestCase(restframework.APIViewTestCase,
             return_value=data['state'][::-1]
         ).start()
 
-        request = self.factory.post(data=data)
+        request = self.factory.post()
+        request.GET = {k: v for k, v in six.iteritems(data)}
         response = self.view(request, provider='facebook')
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
