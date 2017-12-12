@@ -20,7 +20,11 @@ class ProviderAuthSerializer(serializers.Serializer):
         return settings.SOCIAL_AUTH_TOKEN_STRATEGY.obtain(user)
 
     def validate_state(self, value):
-        strategy = load_strategy(self.context['request'])
+        # Dirty hack because PSA does not respect request.data
+        request = self.context['request']
+        request.GET = request.data
+
+        strategy = load_strategy(request)
         redirect_uri = strategy.session_get('redirect_uri')
 
         backend_name = self.context['view'].kwargs['provider']
@@ -30,11 +34,27 @@ class ProviderAuthSerializer(serializers.Serializer):
 
         try:
             backend.validate_state()
-        except exceptions.AuthException:
-            raise serializers.ValidationError('State could not be verified.')
+        except exceptions.AuthMissingParameter:
+            raise serializers.ValidationError(
+                'State could not be found in request data.'
+            )
+        except exceptions.AuthStateMissing:
+            raise serializers.ValidationError(
+                'State could not be found in server-side session data.'
+            )
+        except exceptions.AuthStateForbidden:
+            raise serializers.ValidationError(
+                'Invalid state has been provided.'
+            )
+
+        return value
 
     def validate(self, attrs):
-        strategy = load_strategy(self.context['request'])
+        # Dirty hack because PSA does not respect request.data
+        request = self.context['request']
+        request.GET = request.data
+
+        strategy = load_strategy(request)
         redirect_uri = strategy.session_get('redirect_uri')
 
         backend_name = self.context['view'].kwargs['provider']
