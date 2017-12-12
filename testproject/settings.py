@@ -63,22 +63,26 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'djoser.social.backends.facebook.FacebookOAuth2Override',
     'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.steam.SteamOpenId',
 ]
 
-SOCIAL_AUTH_FACEBOOK_KEY = 'XXXXXXXXXXXX'
-SOCIAL_AUTH_FACEBOOK_SECRET = 'XXXXXXXXXXXXXXX'
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('FACEBOOK_KEY', '')
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('FACEBOOK_SECRET', '')
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
     'fields': 'id, name, email'
 }
 
+SOCIAL_AUTH_STEAM_API_KEY = os.environ.get('STEAM_API_KEY', '')
+SOCIAL_AUTH_OPENID_TRUST_ROOT = 'http://test.localhost/'
+
 DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'FRONTEND_DOMAINS': ['example.com'],
-    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://localhost/']
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://test.localhost/']
 }
 
 JWT_AUTH = {
