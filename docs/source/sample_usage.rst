@@ -73,7 +73,7 @@ Now let's log out:
 
     curl -X POST http://127.0.0.1:8088/auth/token/destroy/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'
 
-    And try access user profile again:
+And try access user profile again:
 
 .. code-block:: text
 
