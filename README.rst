@@ -5,7 +5,7 @@ djoser
 .. image:: https://img.shields.io/pypi/v/djoser.svg
   :target: https://pypi.org/project/djoser
 
-.. image:: https://img.shields.io/travis/sunscrapers/djoser.svg
+.. image:: https://img.shields.io/travis/sunscrapers/djoser/master.svg
   :target: https://travis-ci.org/sunscrapers/djoser
 
 .. image:: https://img.shields.io/codecov/c/github/sunscrapers/djoser.svg
