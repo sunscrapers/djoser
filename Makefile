@@ -3,7 +3,7 @@ init:
 	pipenv run pip install -e .
 
 test:
-	pipenv run py.test --capture=no --cov-report term-missing --cov-report html --cov=djoser testproject/
+	pipenv run py.test --capture=no --cov-report term-missing --cov-report html --cov=djoser tests/
 	pipenv run flake8 .
 
 migrate:
