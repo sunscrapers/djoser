@@ -3,24 +3,24 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 
-from djoser import exceptions, pipelines, signals, utils
+from djoser import constants, exceptions, pipelines, signals, utils
 from tests.common import catch_signal, mock
 
 User = get_user_model()
 
 
 @pytest.mark.django_db(transaction=False)
-def test_valid_serialize_request(test_inactive_user):
+def test_valid_serialize_request(inactive_test_user):
     request = mock.MagicMock()
     request.data = {
-        'uid': utils.encode_uid(test_inactive_user.pk),
-        'token': default_token_generator.make_token(test_inactive_user)
+        'uid': utils.encode_uid(inactive_test_user.pk),
+        'token': default_token_generator.make_token(inactive_test_user)
     }
     result = pipelines.user_activate.serialize_request(request, {})
 
     assert 'serializer' in result
     assert 'user' in result['serializer'].validated_data
-    assert result['serializer'].validated_data['user'] == test_inactive_user
+    assert result['serializer'].validated_data['user'] == inactive_test_user
 
 
 @pytest.mark.django_db(transaction=False)
@@ -34,7 +34,7 @@ def test_invalid_serialize_request_wrong_uid():
         pipelines.user_activate.serialize_request(request, {})
 
     assert e.value.errors == {
-        'non_field_errors': ["Invalid user id or user doesn't exist."]
+        'non_field_errors': [constants.INVALID_UID_ERROR]
     }
 
 
@@ -53,15 +53,15 @@ def test_invalid_serialize_request_stale_token(test_user):
 
 
 @pytest.mark.django_db(transaction=False)
-def test_valid_perform(test_inactive_user):
+def test_valid_perform(inactive_test_user):
     serializer = mock.MagicMock()
-    serializer.validated_data = {'user': test_inactive_user}
+    serializer.validated_data = {'user': inactive_test_user}
     context = {'serializer': serializer}
 
-    assert test_inactive_user.is_active is False
+    assert inactive_test_user.is_active is False
     result = pipelines.user_activate.perform(None, context)
-    assert test_inactive_user.is_active is True
-    assert result['user'] == test_inactive_user
+    assert inactive_test_user.is_active is True
+    assert result['user'] == inactive_test_user
 
 
 def test_valid_signal(test_user):
@@ -80,11 +80,11 @@ def test_valid_signal(test_user):
 
 
 @pytest.mark.django_db(transaction=False)
-def test_valid_pipeline(test_inactive_user):
+def test_valid_pipeline(inactive_test_user):
     request = mock.MagicMock()
     request.data = {
-        'uid': utils.encode_uid(test_inactive_user.pk),
-        'token': default_token_generator.make_token(test_inactive_user)
+        'uid': utils.encode_uid(inactive_test_user.pk),
+        'token': default_token_generator.make_token(inactive_test_user)
     }
 
     pipeline = pipelines.user_activate.Pipeline(request)
@@ -98,6 +98,6 @@ def test_valid_pipeline(test_inactive_user):
         request=request
     )
 
-    assert test_inactive_user.is_active is False
-    test_inactive_user.refresh_from_db()
-    assert test_inactive_user.is_active is True
+    assert inactive_test_user.is_active is False
+    inactive_test_user.refresh_from_db()
+    assert inactive_test_user.is_active is True

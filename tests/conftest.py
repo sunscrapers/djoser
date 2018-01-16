@@ -14,7 +14,7 @@ def test_user(db):
 
 
 @pytest.fixture
-def test_inactive_user(db):
+def inactive_test_user(db):
     from django.contrib.auth import get_user_model
     User = get_user_model()
     user_kwargs = {
