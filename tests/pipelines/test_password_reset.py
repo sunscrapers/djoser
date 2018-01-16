@@ -66,7 +66,7 @@ def test_valid_perform(test_user, mailoutbox):
 
 
 @pytest.mark.django_db(transaction=False)
-def test_valid_perform_email_does_not_exist(test_user, mailoutbox):
+def test_valid_perform_email_does_not_exist(mailoutbox):
     serializer = mock.MagicMock()
     serializer.validated_data = {
         'email': 'lolwut_email@nopeland.com',
