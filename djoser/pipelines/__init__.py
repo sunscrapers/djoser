@@ -7,4 +7,6 @@ from djoser.pipelines import (
     user_activate,
     username_update,
     password_update,
+    password_reset,
+    password_reset_confirm,
 )
