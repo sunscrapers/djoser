@@ -4,6 +4,9 @@ from django.dispatch import Signal
 # User has updated password
 password_updated = Signal(providing_args=['user', 'request'])
 
+# User has reset password
+password_reset_completed = Signal(providing_args=['user', 'request'])
+
 # New user has registered
 user_created = Signal(providing_args=['user', 'request'])
 
