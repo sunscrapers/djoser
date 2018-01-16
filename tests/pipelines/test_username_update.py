@@ -64,7 +64,7 @@ def test_invalid_serialize_request_invalid_username(test_user):
 
 @pytest.mark.django_db(transaction=False)
 @override_settings(
-    DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True})
+    DJOSER=dict(settings.DJOSER, **{'USERNAME_UPDATE_REQUIRE_RETYPE': True})
 )
 def test_invalid_serialize_request_username_retype_mismatch(test_user):
     request = mock.MagicMock()

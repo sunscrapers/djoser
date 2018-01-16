@@ -1,7 +1,7 @@
 import pytest
 
 from django.conf import settings
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 
 from djoser import exceptions, pipelines, signals
@@ -43,7 +43,7 @@ def test_invalid_serialize_request_wrong_current_password(test_user):
 
 @pytest.mark.django_db(transaction=False)
 @override_settings(
-    DJOSER=dict(settings.DJOSER, **{'SET_PASSWORD_RETYPE': True})
+    DJOSER=dict(settings.DJOSER, **{'PASSWORD_UPDATE_REQUIRE_RETYPE': True})
 )
 def test_invalid_serialize_request_password_retype_mismatch(test_user):
     request = mock.MagicMock()
@@ -74,10 +74,7 @@ def test_valid_perform(test_user):
     context = {'serializer': serializer}
     pipelines.password_update.perform(request, context)
 
-    assert authenticate(**{
-        User.USERNAME_FIELD: 'test',
-        'password': 'newpass123',
-    }) == test_user
+    assert test_user.check_password(serializer.validated_data['new_password'])
 
 
 def test_valid_signal(test_user):
@@ -104,11 +101,7 @@ def test_valid_pipeline(test_user):
     }
     request.user = test_user
 
-    assert authenticate(**{
-        User.USERNAME_FIELD: 'test',
-        'password': 'testing123',
-    }) == test_user
-
+    assert test_user.check_password(request.data['current_password'])
     pipeline = pipelines.password_update.Pipeline(request)
     with catch_signal(signals.password_updated) as handler:
         result = pipeline.run()
@@ -120,7 +113,4 @@ def test_valid_pipeline(test_user):
         request=request
     )
 
-    assert authenticate(**{
-        User.USERNAME_FIELD: 'test',
-        'password': 'newpass123',
-    }) == test_user
+    assert test_user.check_password(request.data['new_password'])
