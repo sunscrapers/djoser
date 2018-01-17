@@ -7,7 +7,7 @@ from djoser.pipelines.base import BasePipeline
 User = get_user_model()
 
 
-def serialize_request(request, context):
+def serialize_request(request, **kwargs):
     serializer_class = settings.SERIALIZERS.user_create
     serializer = serializer_class(data=request.data)
     if not serializer.is_valid(raise_exception=False):
@@ -15,33 +15,24 @@ def serialize_request(request, context):
     return {'serializer': serializer}
 
 
-def perform(request, context):
-    assert 'serializer' in context
-
+def perform(serializer, **kwargs):
     try:
         username_field = User.USERNAME_FIELD
-        username = context['serializer'].data[username_field]
+        username = serializer.data[username_field]
         user = User.objects.get(**{username_field: username})
     except User.DoesNotExist:
-        user = User.objects.create_user(
-            **context['serializer'].validated_data
-        )
+        user = User.objects.create_user(**serializer.validated_data)
 
     return {'user': user}
 
 
-def signal(request, context):
-    assert context['user']
-    user = context['user']
-
+def signal(request, user, **kwargs):
     signals.user_created.send(sender=None, user=user, request=request)
 
 
-def serialize_instance(request, context):
-    assert context['user']
-
+def serialize_instance(user, **kwargs):
     serializer_class = settings.SERIALIZERS.user_create
-    serializer = serializer_class(context['user'])
+    serializer = serializer_class(user)
     return {'response_data': serializer.data}
 
 

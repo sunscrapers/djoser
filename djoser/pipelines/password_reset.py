@@ -7,7 +7,7 @@ from djoser.pipelines.base import BasePipeline
 User = get_user_model()
 
 
-def serialize_request(request, context):
+def serialize_request(request, **kwargs):
     serializer_class = settings.SERIALIZERS.password_reset
     serializer = serializer_class(data=request.data)
     if not serializer.is_valid(raise_exception=False):
@@ -15,10 +15,8 @@ def serialize_request(request, context):
     return {'serializer': serializer}
 
 
-def perform(request, context):
-    assert 'serializer' in context
-
-    email = context['serializer'].validated_data['email']
+def perform(request, serializer, **kwargs):
+    email = serializer.validated_data['email']
     users = utils.get_users_for_email(email)
 
     for user in users:

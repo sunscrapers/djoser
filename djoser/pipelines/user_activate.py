@@ -7,7 +7,7 @@ from djoser.pipelines.base import BasePipeline
 User = get_user_model()
 
 
-def serialize_request(request, context):
+def serialize_request(request, **kwargs):
     serializer_class = settings.SERIALIZERS.user_activate
     serializer = serializer_class(data=request.data)
     if not serializer.is_valid(raise_exception=False):
@@ -15,21 +15,15 @@ def serialize_request(request, context):
     return {'serializer': serializer}
 
 
-def perform(request, context):
-    assert 'serializer' in context
-    assert 'user' in context['serializer'].validated_data
-
-    user = context['serializer'].validated_data['user']
+def perform(serializer, **kwargs):
+    user = serializer.validated_data['user']
     user.is_active = True
     user.save(update_fields=['is_active'])
 
     return {'user': user}
 
 
-def signal(request, context):
-    assert context['user']
-    user = context['user']
-
+def signal(request, user, **kwargs):
     signals.user_activated.send(sender=None, user=user, request=request)
 
 
