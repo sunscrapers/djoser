@@ -8,7 +8,7 @@ from djoser.pipelines.base import BasePipeline
 User = get_user_model()
 
 
-def serialize_request(request, context):
+def serialize_request(request, **kwargs):
     serializer_class = settings.SERIALIZERS.user
     serializer = serializer_class(data=request.data)
     if not serializer.is_valid(raise_exception=False):
@@ -16,13 +16,12 @@ def serialize_request(request, context):
     return {'serializer': serializer}
 
 
-def perform(request, context):
-    assert 'serializer' in context
+def perform(request, serializer, **kwargs):
     assert hasattr(request, 'user')
 
     # From rest_framework/serializers.py L946
     info = model_meta.get_field_info(request.user)
-    for attr, value in context['serializer'].validated_data.items():
+    for attr, value in serializer.validated_data.items():
         if attr in info.relations and info.relations[attr].to_many:
             field = getattr(request.user, attr)
             field.set(value)
@@ -33,16 +32,13 @@ def perform(request, context):
     return {'user': request.user}
 
 
-def signal(request, context):
-    assert context['user']
-    user = context['user']
-
+def signal(request, user, **kwargs):
     signals.user_updated.send(sender=None, user=user, request=request)
 
 
-def serialize_instance(request, context):
+def serialize_instance(user, **kwargs):
     serializer_class = settings.SERIALIZERS.user
-    serializer = serializer_class(context['user'])
+    serializer = serializer_class(user)
     return {'response_data': serializer.data}
 
 

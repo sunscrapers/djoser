@@ -6,16 +6,16 @@ from djoser.pipelines.base import BasePipeline
 User = get_user_model()
 
 
-def perform(request, context):
+def perform(request, **kwargs):
     assert hasattr(request, 'user')
 
     user = request.user
     return {'user': user}
 
 
-def serialize_instance(request, context):
+def serialize_instance(user, **kwargs):
     serializer_class = settings.SERIALIZERS.user
-    serializer = serializer_class(context['user'])
+    serializer = serializer_class(user)
     return {'response_data': serializer.data}
 
 

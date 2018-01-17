@@ -14,7 +14,7 @@ class BasePipeline(object):
 
         context = {'request': self._request}
         for step_func in self.steps:
-            step_context = step_func(self._request, context) or {}
+            step_context = step_func(**context) or {}
             context.update(step_context)
 
         return context
