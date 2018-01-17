@@ -7,6 +7,12 @@ password_updated = Signal(providing_args=['user', 'request'])
 # User has reset password
 password_reset_completed = Signal(providing_args=['user', 'request'])
 
+# User has created token
+token_created = Signal(providing_args=['user', 'request'])
+
+# User has destroyed token
+token_destroyed = Signal(providing_args=['user', 'request'])
+
 # New user has registered
 user_created = Signal(providing_args=['user', 'request'])
 
