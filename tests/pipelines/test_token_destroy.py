@@ -1,8 +1,6 @@
 import pytest
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test.utils import override_settings
 
 from djoser import constants, exceptions, pipelines, signals
 from tests.common import catch_signal, mock
@@ -10,12 +8,13 @@ from tests.common import catch_signal, mock
 User = get_user_model()
 
 
-@override_settings(DJOSER=dict(
-    settings.DJOSER,
-    **{'TOKEN_MODEL': 'rest_framework.authtoken.models.Token'}
-))
-def test_valid_perform(test_user):
+def test_valid_perform(test_user, settings):
     from djoser.conf import settings as djoser_settings
+
+    settings.DJOSER = dict(
+        settings.DJOSER,
+        **{'TOKEN_MODEL': 'rest_framework.authtoken.models.Token'}
+    )
 
     request = mock.MagicMock()
     request.user = test_user
@@ -38,7 +37,7 @@ def test_invalid_perform_none_token_model(test_user):
     with pytest.raises(exceptions.ValidationError) as e:
         pipelines.token_destroy.perform(**context)
 
-    assert str(e.value) == constants.TOKEN_MODEL_NONE_ERROR
+    assert e.value.errors == constants.TOKEN_MODEL_NONE_ERROR
 
 
 def test_valid_signal(test_user):
@@ -57,12 +56,13 @@ def test_valid_signal(test_user):
 
 
 @pytest.mark.django_db(transaction=False)
-@override_settings(DJOSER=dict(
-    settings.DJOSER,
-    **{'TOKEN_MODEL': 'rest_framework.authtoken.models.Token'}
-))
-def test_valid_pipeline(test_user):
+def test_valid_pipeline(test_user, settings):
     from djoser.conf import settings as djoser_settings
+
+    settings.DJOSER = dict(
+        settings.DJOSER,
+        **{'TOKEN_MODEL': 'rest_framework.authtoken.models.Token'}
+    )
 
     request = mock.MagicMock()
     request.user = test_user

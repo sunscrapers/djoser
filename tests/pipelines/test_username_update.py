@@ -1,8 +1,6 @@
 import pytest
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test.utils import override_settings
 
 from djoser import exceptions, pipelines, signals
 from tests.common import catch_signal, mock
@@ -63,10 +61,10 @@ def test_invalid_serialize_request_invalid_username(test_user):
 
 
 @pytest.mark.django_db(transaction=False)
-@override_settings(
-    DJOSER=dict(settings.DJOSER, **{'USERNAME_UPDATE_REQUIRE_RETYPE': True})
-)
-def test_invalid_serialize_request_username_retype_mismatch(test_user):
+def test_invalid_serialize_request_retype_mismatch(test_user, settings):
+    settings.DJOSER = dict(
+        settings.DJOSER, **{'USERNAME_UPDATE_REQUIRE_RETYPE': True}
+    )
     request = mock.MagicMock()
     request.user = test_user
     request.data = {

@@ -18,7 +18,7 @@ def serialize_request(request, **kwargs):
 def perform(serializer, **kwargs):
     try:
         username_field = User.USERNAME_FIELD
-        username = serializer.data[username_field]
+        username = serializer.validated_data[username_field]
         user = User.objects.get(**{username_field: username})
     except User.DoesNotExist:
         user = User.objects.create_user(**serializer.validated_data)
