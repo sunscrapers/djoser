@@ -1,9 +1,7 @@
 import pytest
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
-from django.test.utils import override_settings
 
 from djoser import constants, exceptions, pipelines, signals, utils
 from tests.common import catch_signal, mock
@@ -82,10 +80,10 @@ def test_invalid_serialize_request_invalid_token(test_user):
 
 
 @pytest.mark.django_db(transaction=False)
-@override_settings(DJOSER=dict(
-    settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_REQUIRE_RETYPE': True}
-))
-def test_invalid_serialize_request_password_retype_mismatch(test_user):
+def test_invalid_serialize_request_retype_mismatch(test_user, settings):
+    settings.DJOSER = dict(
+        settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_REQUIRE_RETYPE': True}
+    )
     request = mock.MagicMock()
     request.data = {
         'uid': utils.encode_uid(test_user.pk),

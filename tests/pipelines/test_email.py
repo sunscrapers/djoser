@@ -24,18 +24,14 @@ def test_failed_activation_email_user_without_email(test_user, mailoutbox):
 
 def test_failed_activation_email_context_missing_user():
     context = {'request': None}
-    with pytest.raises(TypeError) as e:
+    with pytest.raises(TypeError):
         pipelines.email.activation_email(**context)
-
-    assert "missing 1 required positional argument: 'user'" in str(e.value)
 
 
 def test_failed_activation_email_context_missing_request():
     context = {'user': None}
-    with pytest.raises(TypeError) as e:
+    with pytest.raises(TypeError):
         pipelines.email.activation_email(**context)
-
-    assert "missing 1 required positional argument: 'request'" in str(e.value)
 
 
 def test_valid_confirmation_email_without_request(test_user, mailoutbox):
@@ -59,15 +55,11 @@ def test_failed_confirmation_email_user_without_email(test_user, mailoutbox):
 
 def test_failed_confirmation_email_context_missing_user():
     context = {'request': None}
-    with pytest.raises(TypeError) as e:
+    with pytest.raises(TypeError):
         pipelines.email.confirmation_email(**context)
-
-    assert "missing 1 required positional argument: 'user'" in str(e.value)
 
 
 def test_failed_confirmation_email_context_missing_request():
     context = {'user': None}
-    with pytest.raises(TypeError) as e:
+    with pytest.raises(TypeError):
         pipelines.email.confirmation_email(**context)
-
-    assert "missing 1 required positional argument: 'request'" in str(e.value)
