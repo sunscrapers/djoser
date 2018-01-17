@@ -12,7 +12,8 @@ User = get_user_model()
 def test_valid_perform(test_user):
     request = mock.MagicMock()
     request.user = test_user
-    result = pipelines.user_detail.perform(request, {})
+    context = {'request': request}
+    result = pipelines.user_detail.perform(**context)
 
     assert result['user'] == test_user
 
@@ -20,7 +21,7 @@ def test_valid_perform(test_user):
 @pytest.mark.django_db(transaction=False)
 def test_valid_serialize_instance(test_user):
     context = {'user': test_user}
-    result = pipelines.user_detail.serialize_instance(None, context)
+    result = pipelines.user_detail.serialize_instance(**context)
     username = getattr(test_user, User.USERNAME_FIELD)
 
     assert 'response_data' in result

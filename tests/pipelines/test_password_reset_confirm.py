@@ -20,9 +20,7 @@ def test_valid_serialize_request(test_user):
         'new_password': 'cool-new-password123',
     }
     context = {'request': request}
-    result = pipelines.password_reset_confirm.serialize_request(
-        request, context
-    )
+    result = pipelines.password_reset_confirm.serialize_request(**context)
     validated_data = result['serializer'].validated_data
 
     assert 'serializer' in result
@@ -42,7 +40,7 @@ def test_invalid_serialize_request_wrong_uid():
     }
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.password_reset_confirm.serialize_request(request, context)
+        pipelines.password_reset_confirm.serialize_request(**context)
 
     assert e.value.errors == {
         'non_field_errors': [constants.INVALID_UID_ERROR]
@@ -59,7 +57,7 @@ def test_invalid_serialize_request_not_existent_user(test_user):
     }
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.password_reset_confirm.serialize_request(request, context)
+        pipelines.password_reset_confirm.serialize_request(**context)
 
     assert e.value.errors == {
         'non_field_errors': [constants.INVALID_UID_ERROR]
@@ -76,7 +74,7 @@ def test_invalid_serialize_request_invalid_token(test_user):
     }
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.password_reset_confirm.serialize_request(request, context)
+        pipelines.password_reset_confirm.serialize_request(**context)
 
     assert e.value.errors == {
         'non_field_errors': [constants.INVALID_TOKEN_ERROR]
@@ -97,7 +95,7 @@ def test_invalid_serialize_request_password_retype_mismatch(test_user):
     }
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.password_reset_confirm.serialize_request(request, context)
+        pipelines.password_reset_confirm.serialize_request(**context)
 
     assert e.value.errors == {
         'non_field_errors': [constants.PASSWORD_MISMATCH_ERROR]
@@ -114,7 +112,7 @@ def test_invalid_serialize_request_password_validation_fail(test_user):
     }
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.password_reset_confirm.serialize_request(request, context)
+        pipelines.password_reset_confirm.serialize_request(**context)
 
     assert e.value.errors == {
         'new_password': ['Password 666 is not allowed.']
@@ -129,7 +127,7 @@ def test_valid_perform(test_user):
         'new_password': 'cool-new-password123',
     }
     context = {'serializer': serializer}
-    result = pipelines.password_reset_confirm.perform(None, context)
+    result = pipelines.password_reset_confirm.perform(**context)
 
     assert result['user'] == test_user
     assert test_user.check_password(serializer.validated_data['new_password'])
@@ -137,10 +135,10 @@ def test_valid_perform(test_user):
 
 def test_valid_signal(test_user):
     request = mock.MagicMock()
-    context = {'user': test_user}
+    context = {'request': request, 'user': test_user}
 
     with catch_signal(signals.password_reset_completed) as handler:
-        pipelines.password_reset_confirm.signal(request, context)
+        pipelines.password_reset_confirm.signal(**context)
 
     handler.assert_called_once_with(
         sender=mock.ANY,
@@ -148,3 +146,20 @@ def test_valid_signal(test_user):
         user=test_user,
         request=request
     )
+
+
+@pytest.mark.django_db(transaction=False)
+def test_valid_pipeline(test_user):
+    request = mock.MagicMock()
+    request.data = {
+        'uid': utils.encode_uid(test_user.pk),
+        'token': default_token_generator.make_token(test_user),
+        'new_password': 'cool-new-password123',
+    }
+
+    pipeline = pipelines.password_reset_confirm.Pipeline(request)
+    result = pipeline.run()
+
+    test_user.refresh_from_db()
+    assert result['user'] == test_user
+    assert test_user.check_password(request.data['new_password'])

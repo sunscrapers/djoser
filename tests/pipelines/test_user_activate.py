@@ -16,7 +16,8 @@ def test_valid_serialize_request(inactive_test_user):
         'uid': utils.encode_uid(inactive_test_user.pk),
         'token': default_token_generator.make_token(inactive_test_user)
     }
-    result = pipelines.user_activate.serialize_request(request, {})
+    context = {'request': request}
+    result = pipelines.user_activate.serialize_request(**context)
 
     assert 'serializer' in result
     assert 'user' in result['serializer'].validated_data
@@ -30,8 +31,9 @@ def test_invalid_serialize_request_wrong_uid():
         'uid': utils.encode_uid(1),
         'token': 'whatever',
     }
+    context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.user_activate.serialize_request(request, {})
+        pipelines.user_activate.serialize_request(**context)
 
     assert e.value.errors == {
         'non_field_errors': [constants.INVALID_UID_ERROR]
@@ -44,8 +46,9 @@ def test_invalid_serialize_request_stale_token(test_user):
         'uid': utils.encode_uid(test_user.pk),
         'token': default_token_generator.make_token(test_user),
     }
+    context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.user_activate.serialize_request(request, {})
+        pipelines.user_activate.serialize_request(**context)
 
     assert e.value.errors == {
         'non_field_errors': ['Stale token for given user.']
@@ -59,17 +62,17 @@ def test_valid_perform(inactive_test_user):
     context = {'serializer': serializer}
 
     assert inactive_test_user.is_active is False
-    result = pipelines.user_activate.perform(None, context)
+    result = pipelines.user_activate.perform(**context)
     assert inactive_test_user.is_active is True
     assert result['user'] == inactive_test_user
 
 
 def test_valid_signal(test_user):
     request = mock.MagicMock()
-    context = {'user': test_user}
+    context = {'request': request, 'user': test_user}
 
     with catch_signal(signals.user_activated) as handler:
-        pipelines.user_activate.signal(request, context)
+        pipelines.user_activate.signal(**context)
 
     handler.assert_called_once_with(
         sender=mock.ANY,

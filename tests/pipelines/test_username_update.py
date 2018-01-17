@@ -19,7 +19,7 @@ def test_valid_serialize_request(test_user):
         'current_password': 'testing123',
     }
     context = {'request': request}
-    result = pipelines.username_update.serialize_request(request, context)
+    result = pipelines.username_update.serialize_request(**context)
 
     assert 'serializer' in result
     assert result['serializer'].validated_data == {
@@ -38,7 +38,7 @@ def test_invalid_serialize_request_same_username(test_user):
     }
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.username_update.serialize_request(request, context)
+        pipelines.username_update.serialize_request(**context)
 
     assert e.value.errors == {
         'username': ['A user with that username already exists.']
@@ -55,7 +55,7 @@ def test_invalid_serialize_request_invalid_username(test_user):
     }
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.username_update.serialize_request(request, context)
+        pipelines.username_update.serialize_request(**context)
 
     assert 'username' in e.value.errors
     assert len(e.value.errors['username']) == 1
@@ -76,7 +76,7 @@ def test_invalid_serialize_request_username_retype_mismatch(test_user):
     }
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.username_update.serialize_request(request, context)
+        pipelines.username_update.serialize_request(**context)
 
     assert e.value.errors == {
         'non_field_errors': ["The two username fields didn't match."]
@@ -92,8 +92,8 @@ def test_valid_perform(test_user):
         User.USERNAME_FIELD: 'new_username',
         'current_password': 'testing123',
     }
-    context = {'serializer': serializer}
-    result = pipelines.username_update.perform(request, context)
+    context = {'request': request, 'serializer': serializer}
+    result = pipelines.username_update.perform(**context)
 
     assert 'user' in result
     test_user.refresh_from_db()
@@ -103,10 +103,10 @@ def test_valid_perform(test_user):
 
 def test_valid_signal(test_user):
     request = mock.MagicMock()
-    context = {'user': test_user}
+    context = {'request': request, 'user': test_user}
 
     with catch_signal(signals.username_updated) as handler:
-        pipelines.username_update.signal(request, context)
+        pipelines.username_update.signal(**context)
 
     handler.assert_called_once_with(
         sender=mock.ANY,

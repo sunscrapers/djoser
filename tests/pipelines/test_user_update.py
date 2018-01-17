@@ -13,7 +13,8 @@ def test_valid_serialize_request(test_user):
     request = mock.MagicMock()
     request.user = test_user
     request.data = {'email': 'new@localhost'}
-    result = pipelines.user_update.serialize_request(request, {})
+    context = {'request': request}
+    result = pipelines.user_update.serialize_request(**context)
 
     assert 'serializer' in result
     assert result['serializer'].validated_data == request.data
@@ -27,8 +28,8 @@ def test_valid_perform(test_user):
 
     serializer = mock.MagicMock()
     serializer.validated_data = {'email': 'new@localhost'}
-    context = {'serializer': serializer}
-    result = pipelines.user_update.perform(request, context)
+    context = {'request': request, 'serializer': serializer}
+    result = pipelines.user_update.perform(**context)
 
     assert 'user' in result
     assert result['user'].username == test_user.username
@@ -39,10 +40,10 @@ def test_valid_perform(test_user):
 
 def test_valid_signal(test_user):
     request = mock.MagicMock()
-    context = {'user': test_user}
+    context = {'request': request, 'user': test_user}
 
     with catch_signal(signals.user_updated) as handler:
-        pipelines.user_update.signal(request, context)
+        pipelines.user_update.signal(**context)
 
     handler.assert_called_once_with(
         sender=mock.ANY,
@@ -55,7 +56,7 @@ def test_valid_signal(test_user):
 @pytest.mark.django_db(transaction=False)
 def test_valid_serialize_instance(test_user):
     context = {'user': test_user}
-    result = pipelines.user_update.serialize_instance(None, context)
+    result = pipelines.user_update.serialize_instance(**context)
     username = getattr(test_user, User.USERNAME_FIELD)
 
     assert 'response_data' in result

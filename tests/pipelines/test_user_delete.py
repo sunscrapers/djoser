@@ -14,7 +14,7 @@ def test_valid_serialize_request(test_user):
     request.data = {'current_password': 'testing123'}
     request.user = test_user
     context = {'request': request}
-    result = pipelines.user_delete.serialize_request(request, context)
+    result = pipelines.user_delete.serialize_request(**context)
 
     assert User.objects.count() == 1
     assert result['serializer'].context['request'].user == test_user
@@ -28,7 +28,7 @@ def test_invalid_serialize_request_wrong_password(test_user):
     context = {'request': request}
 
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.user_delete.serialize_request(request, context)
+        pipelines.user_delete.serialize_request(**context)
 
     assert e.value.errors == {'current_password': ['Invalid password.']}
 
@@ -37,7 +37,8 @@ def test_invalid_serialize_request_wrong_password(test_user):
 def test_valid_perform(test_user):
     request = mock.MagicMock()
     request.user = test_user
-    result = pipelines.user_delete.perform(request, {})
+    context = {'request': request}
+    result = pipelines.user_delete.perform(**context)
 
     assert User.objects.count() == 0
     assert 'user' in result
@@ -47,10 +48,10 @@ def test_valid_perform(test_user):
 
 def test_valid_signal(test_user):
     request = mock.MagicMock()
-    context = {'user': test_user}
+    context = {'request': request, 'user': test_user}
 
     with catch_signal(signals.user_deleted) as handler:
-        pipelines.user_delete.signal(request, context)
+        pipelines.user_delete.signal(**context)
 
     handler.assert_called_once_with(
         sender=mock.ANY,
