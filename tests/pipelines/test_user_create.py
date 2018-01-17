@@ -12,7 +12,8 @@ User = get_user_model()
 def test_valid_serialize_request():
     request = mock.MagicMock()
     request.data = {User.USERNAME_FIELD: 'test', 'password': 'testing123'}
-    result = pipelines.user_create.serialize_request(request, {})
+    context = {'request': request}
+    result = pipelines.user_create.serialize_request(**context)
 
     expected_data = {
         User.USERNAME_FIELD: request.data[User.USERNAME_FIELD],
@@ -27,9 +28,10 @@ def test_valid_serialize_request():
 def test_failed_serialize_request_password_validation():
     request = mock.MagicMock()
     request.data = {User.USERNAME_FIELD: 'test', 'password': '666'}
+    context = {'request': request}
 
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.user_create.serialize_request(request, {})
+        pipelines.user_create.serialize_request(**context)
 
     assert e.value.errors == {'password': ['Password 666 is not allowed.']}
 
@@ -38,9 +40,10 @@ def test_failed_serialize_request_password_validation():
 def test_failed_serialize_request_duplicate_username(test_user):
     request = mock.MagicMock()
     request.data = {User.USERNAME_FIELD: 'test', 'password': 'testing123'}
+    context = {'request': request}
 
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.user_create.serialize_request(request, {})
+        pipelines.user_create.serialize_request(**context)
 
     assert e.value.errors == {
         'username': ['A user with that username already exists.']
@@ -55,7 +58,7 @@ def test_valid_perform():
         'password': 'testing123'
     }
     context = {'serializer': serializer}
-    result = pipelines.user_create.perform(None, context)
+    result = pipelines.user_create.perform(**context)
 
     assert User.objects.count() == 1
     assert 'user' in result
@@ -71,10 +74,10 @@ def test_valid_perform():
 
 def test_valid_signal(test_user):
     request = mock.MagicMock()
-    context = {'user': test_user}
+    context = {'request': request, 'user': test_user}
 
     with catch_signal(signals.user_created) as handler:
-        pipelines.user_create.signal(request, context)
+        pipelines.user_create.signal(**context)
 
     handler.assert_called_once_with(
         sender=mock.ANY,
@@ -86,7 +89,7 @@ def test_valid_signal(test_user):
 
 def test_valid_serialize_instance(test_user):
     context = {'user': test_user}
-    result = pipelines.user_create.serialize_instance(None, context)
+    result = pipelines.user_create.serialize_instance(**context)
     username = getattr(test_user, User.USERNAME_FIELD)
 
     assert 'response_data' in result

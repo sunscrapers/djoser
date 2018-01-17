@@ -19,7 +19,7 @@ def test_valid_serialize_request(test_user):
     }
     request.user = test_user
     context = {'request': request}
-    result = pipelines.password_update.serialize_request(request, context)
+    result = pipelines.password_update.serialize_request(**context)
 
     assert 'serializer' in result
 
@@ -34,7 +34,7 @@ def test_invalid_serialize_request_wrong_current_password(test_user):
     request.user = test_user
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.password_update.serialize_request(request, context)
+        pipelines.password_update.serialize_request(**context)
 
     assert e.value.errors == {
         'current_password': ['Invalid password.']
@@ -55,7 +55,7 @@ def test_invalid_serialize_request_password_retype_mismatch(test_user):
     request.user = test_user
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.password_update.serialize_request(request, context)
+        pipelines.password_update.serialize_request(**context)
 
     assert e.value.errors == {
         'non_field_errors': ["The two password fields didn't match."]
@@ -71,18 +71,18 @@ def test_valid_perform(test_user):
         'current_password': 'testing123',
         'new_password': 'newpass123'
     }
-    context = {'serializer': serializer}
-    pipelines.password_update.perform(request, context)
+    context = {'request': request, 'serializer': serializer}
+    pipelines.password_update.perform(**context)
 
     assert test_user.check_password(serializer.validated_data['new_password'])
 
 
 def test_valid_signal(test_user):
     request = mock.MagicMock()
-    context = {'user': test_user}
+    context = {'request': request, 'user': test_user}
 
     with catch_signal(signals.password_updated) as handler:
-        pipelines.password_update.signal(request, context)
+        pipelines.password_update.signal(**context)
 
     handler.assert_called_once_with(
         sender=mock.ANY,
