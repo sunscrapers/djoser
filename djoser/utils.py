@@ -1,8 +1,10 @@
-from django.contrib.auth import user_logged_in, user_logged_out, login, logout
+from django.contrib.auth import get_user_model
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
-from djoser.conf import settings
+from djoser import constants
+
+User = get_user_model()
 
 
 def encode_uid(pk):
@@ -13,26 +15,15 @@ def decode_uid(pk):
     return force_text(urlsafe_base64_decode(pk))
 
 
-def login_user(request, user):
-    token, _ = settings.TOKEN_MODEL.objects.get_or_create(user=user)
-    if settings.CREATE_SESSION_ON_LOGIN:
-        login(request, user)
-    user_logged_in.send(sender=user.__class__, request=request, user=user)
-    return token
+def get_user_email(user):
+    user_has_email_field = hasattr(User, 'get_email_field_name')
+    assert user_has_email_field, constants.ASSERT_USER_EMAIL_FIELD_EXISTS
+    return getattr(user, user.get_email_field_name(), None)
 
 
-def logout_user(request):
-    if settings.CREATE_SESSION_ON_LOGIN:
-        logout(request)
-    if settings.TOKEN_MODEL:
-        settings.TOKEN_MODEL.objects.filter(user=request.user).delete()
-        user_logged_out.send(
-            sender=request.user.__class__, request=request, user=request.user
-        )
-
-
-class ActionViewMixin(object):
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return self._action(serializer)
+def get_users_for_email(email):
+    email_field_name = User.get_email_field_name()
+    users = User._default_manager.filter(**{
+        email_field_name + '__iexact': email
+    })
+    return [u for u in users if u.is_active]
