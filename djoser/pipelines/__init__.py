@@ -9,4 +9,6 @@ from djoser.pipelines import (
     password_update,
     password_reset,
     password_reset_confirm,
+    token_create,
+    token_destroy,
 )
