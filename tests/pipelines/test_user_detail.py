@@ -1,9 +1,9 @@
 import pytest
 
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import get_user_model
 
-from djoser import exceptions, pipelines, signals
-from tests.common import catch_signal, mock
+from djoser import pipelines
+from tests.common import mock
 
 User = get_user_model()
 
