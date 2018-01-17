@@ -1,5 +1,10 @@
 from django.utils.translation import ugettext_lazy as _
 
+ASSERT_USER_EMAIL_FIELD_EXISTS = _(
+    'User model has to implement a `get_email_field_name` method. '
+    'https://docs.djangoproject.com/en/2.0/topics/auth/customizing/'
+    '#django.contrib.auth.models.AbstractBaseUser.get_email_field_name'
+)
 
 INVALID_CREDENTIALS_ERROR = _('Unable to login with provided credentials.')
 INACTIVE_ACCOUNT_ERROR = _('User account is disabled.')
@@ -15,4 +20,9 @@ USER_WITHOUT_EMAIL_FIELD_ERROR = _(
     'User model does not contain specified email field. '
     'Please see http://djoser.readthedocs.io/en/latest/settings.html#'
     'USER_EMAIL_FIELD_NAME for more details.'
+)
+TOKEN_MODEL_NONE_ERROR = _(
+    'Token model has not been configured in settings. Visit '
+    'https://djoser.readthedocs.io/en/latest/settings.html#token-model '
+    'for reference.'
 )
