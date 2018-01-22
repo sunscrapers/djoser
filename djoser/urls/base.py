@@ -26,32 +26,37 @@ router.routes.append(Route(
     initkwargs={'suffix': 'Instance'}
 ))
 router.register(
-    r'user/{}'.format(User.USERNAME_FIELD),
+    r'^user/{}'.format(User.USERNAME_FIELD),
     views.UsernameUpdateViewSet,
     base_name='username-update',
 )
 router.register(
-    r'user/password',
+    r'^user/password',
     views.PasswordUpdateViewSet,
+    base_name='password-update',
+)
+router.register(
+    r'^password/reset',
+    views.PasswordResetViewSet,
     base_name='password-reset',
 )
 router.register(
-    r'password/reset',
+    r'^password/reset/confirm',
     views.PasswordResetConfirmViewSet,
     base_name='password-reset-confirm',
 )
 router.register(
-    r'user',
+    r'^user',
     views.UserViewSet,
     base_name='user',
 )
 router.register(
-    r'users',
+    r'^users',
     views.UsersViewSet,
-    base_name='users',
+    base_name='users'
 )
 router.register(
-    r'users/activate',
+    r'^users/activate',
     views.UserActivateViewSet,
     base_name='user-activate',
 )
