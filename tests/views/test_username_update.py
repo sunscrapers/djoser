@@ -29,3 +29,15 @@ def test_valid_username_update_without_trailing_slash(test_user):
     )
 
     assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+@pytest.mark.django_db(transaction=False)
+def test_invalid_username_update_wrong_password(test_user):
+    client = APIClient()
+    client.force_login(test_user)
+    response = client.post(
+        '/user/{}'.format(User.USERNAME_FIELD),
+        {User.USERNAME_FIELD: 'test-new', 'current_password': 'invalid'}
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
