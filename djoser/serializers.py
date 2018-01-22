@@ -46,10 +46,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
-    default_error_messages = {
-        'cannot_create_user': constants.CANNOT_CREATE_USER_ERROR,
-    }
-
     class Meta:
         model = User
         fields = [User.USERNAME_FIELD, User._meta.pk.name, 'password']
