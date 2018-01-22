@@ -1,3 +1,17 @@
+from rest_framework import serializers
+
+from djoser import exceptions
+
+
+def default_view_pipeline_adapter(pipeline, request):
+    try:
+        result = pipeline(request).run()
+    except exceptions.ValidationError as e:
+        raise serializers.ValidationError(e.errors)
+
+    return result.get('response_data')
+
+
 class BasePipeline(object):
     steps = None
 
