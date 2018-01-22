@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 
-from djoser import exceptions, signals
+from djoser import constants, exceptions, signals
 from djoser.conf import settings
 from djoser.pipelines.base import BasePipeline
 
@@ -19,7 +19,8 @@ def perform(serializer, **kwargs):
     try:
         username_field = User.USERNAME_FIELD
         username = serializer.validated_data[username_field]
-        user = User.objects.get(**{username_field: username})
+        User.objects.get(**{username_field: username})
+        raise exceptions.ValidationError(constants.CANNOT_CREATE_USER_ERROR)
     except User.DoesNotExist:
         user = User.objects.create_user(**serializer.validated_data)
 
