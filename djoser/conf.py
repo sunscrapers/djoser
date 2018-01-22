@@ -1,7 +1,4 @@
-import warnings
-
 from django.conf import settings as django_settings
-from django.core.exceptions import ImproperlyConfigured
 from django.test.signals import setting_changed
 from django.utils import six
 from django.utils.functional import LazyObject
@@ -40,6 +37,8 @@ default_settings = {
     'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',
     'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': [],
     'TOKEN_MODEL': None,
+    'VIEW_PIPELINE_ADAPTER':
+        'djoser.pipelines.base.default_view_pipeline_adapter',
 
     'PIPELINES': ObjDict({
         'user_activate': [
@@ -134,7 +133,9 @@ default_settings = {
     }),
 }
 
-SETTINGS_TO_IMPORT = ['TOKEN_MODEL', 'SOCIAL_AUTH_TOKEN_STRATEGY']
+SETTINGS_TO_IMPORT = [
+    'TOKEN_MODEL', 'SOCIAL_AUTH_TOKEN_STRATEGY', 'VIEW_PIPELINE_ADAPTER'
+]
 
 
 class Settings(object):
