@@ -38,6 +38,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+ROOT_URLCONF = 'tests.urls'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
