@@ -2,7 +2,7 @@ import pytest
 
 from django.contrib.auth import authenticate, get_user_model
 
-from djoser import exceptions, pipelines, signals
+from djoser import constants, exceptions, pipelines, signals
 from tests.common import catch_signal, mock
 
 User = get_user_model()
@@ -70,6 +70,19 @@ def test_valid_perform():
         User.USERNAME_FIELD: serializer.validated_data[User.USERNAME_FIELD],
         'password': serializer.validated_data['password'],
     }) == result['user']
+
+
+def test_failed_perform_user_already_exists(test_user):
+    serializer = mock.MagicMock()
+    serializer.validated_data = {
+        User.USERNAME_FIELD: 'test',
+        'password': 'testing123'
+    }
+    context = {'serializer': serializer}
+    with pytest.raises(exceptions.ValidationError) as e:
+        pipelines.user_create.perform(**context)
+
+    assert e.value.errors == constants.CANNOT_CREATE_USER_ERROR
 
 
 def test_valid_signal(test_user):
