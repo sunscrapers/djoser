@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model, user_logged_in
 
 from djoser import constants, exceptions, signals
 from djoser.conf import settings
-from djoser.pipelines.base import BasePipeline
 
 User = get_user_model()
 
@@ -27,7 +26,3 @@ def perform(serializer, **kwargs):
 def signal(request, user, **kwargs):
     signals.token_created.send(sender=None, user=user, request=request)
     user_logged_in.send(sender=None, user=user, request=request)
-
-
-class Pipeline(BasePipeline):
-    steps = settings.PIPELINES.token_create
