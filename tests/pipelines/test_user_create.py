@@ -3,6 +3,7 @@ import pytest
 from django.contrib.auth import authenticate, get_user_model
 
 from djoser import constants, exceptions, pipelines, signals
+from djoser.conf import settings
 from tests.common import catch_signal, mock
 
 User = get_user_model()
@@ -114,7 +115,8 @@ def test_valid_pipeline():
     request = mock.MagicMock()
     request.data = {User.USERNAME_FIELD: 'test', 'password': 'testing123'}
 
-    pipeline = pipelines.user_create.Pipeline(request)
+    steps = settings.PIPELINES.user_create
+    pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.user_created) as handler:
         result = pipeline.run()
 

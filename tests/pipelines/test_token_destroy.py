@@ -70,7 +70,8 @@ def test_valid_pipeline(test_user, settings):
     djoser_settings.TOKEN_MODEL.objects.get_or_create(user=test_user)
     assert djoser_settings.TOKEN_MODEL.objects.count() == 1
 
-    pipeline = pipelines.token_destroy.Pipeline(request)
+    steps = djoser_settings.PIPELINES.token_destroy
+    pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.token_destroyed) as handler:
         result = pipeline.run()
 

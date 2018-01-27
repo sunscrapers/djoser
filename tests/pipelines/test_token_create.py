@@ -130,7 +130,8 @@ def test_valid_pipeline(test_user, settings):
         'password': 'testing123',
     }
 
-    pipeline = pipelines.token_create.Pipeline(request)
+    steps = djoser_settings.PIPELINES.token_create
+    pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.token_created) as handler:
         result = pipeline.run()
 

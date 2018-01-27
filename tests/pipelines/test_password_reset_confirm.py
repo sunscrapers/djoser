@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 
 from djoser import constants, exceptions, pipelines, signals, utils
+from djoser.conf import settings
 from tests.common import catch_signal, mock
 
 User = get_user_model()
@@ -155,8 +156,17 @@ def test_valid_pipeline(test_user):
         'new_password': 'cool-new-password123',
     }
 
-    pipeline = pipelines.password_reset_confirm.Pipeline(request)
-    result = pipeline.run()
+    steps = settings.PIPELINES.password_reset_confirm
+    pipeline = pipelines.base.Pipeline(request, steps)
+    with catch_signal(signals.password_reset_completed) as handler:
+        result = pipeline.run()
+
+    handler.assert_called_once_with(
+        sender=mock.ANY,
+        signal=signals.password_reset_completed,
+        user=result['user'],
+        request=request
+    )
 
     test_user.refresh_from_db()
     assert result['user'] == test_user

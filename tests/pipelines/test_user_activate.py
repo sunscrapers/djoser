@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 
 from djoser import constants, exceptions, pipelines, signals, utils
+from djoser.conf import settings
 from tests.common import catch_signal, mock
 
 User = get_user_model()
@@ -90,7 +91,8 @@ def test_valid_pipeline(inactive_test_user):
         'token': default_token_generator.make_token(inactive_test_user)
     }
 
-    pipeline = pipelines.user_activate.Pipeline(request)
+    steps = settings.PIPELINES.user_activate
+    pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.user_activated) as handler:
         result = pipeline.run()
 
