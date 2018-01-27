@@ -3,6 +3,7 @@ import pytest
 from django.contrib.auth import get_user_model
 
 from djoser import email, exceptions, pipelines
+from djoser.conf import settings
 from tests.common import mock
 
 User = get_user_model()
@@ -87,7 +88,8 @@ def test_valid_pipeline(test_user, mailoutbox):
         'email': test_user.email,
     }
 
-    pipeline = pipelines.password_reset.Pipeline(request)
+    steps = settings.PIPELINES.password_reset
+    pipeline = pipelines.base.Pipeline(request, steps)
     result = pipeline.run()
 
     assert 'users' in result

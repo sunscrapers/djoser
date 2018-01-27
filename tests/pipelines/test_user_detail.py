@@ -3,6 +3,7 @@ import pytest
 from django.contrib.auth import get_user_model
 
 from djoser import pipelines
+from djoser.conf import settings
 from tests.common import mock
 
 User = get_user_model()
@@ -38,7 +39,8 @@ def test_valid_pipeline(test_user):
     request.user = test_user
     username = getattr(test_user, User.USERNAME_FIELD)
 
-    pipeline = pipelines.user_detail.Pipeline(request)
+    steps = settings.PIPELINES.user_detail
+    pipeline = pipelines.base.Pipeline(request, steps)
     result = pipeline.run()
 
     assert 'response_data' in result

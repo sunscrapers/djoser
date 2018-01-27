@@ -1,6 +1,7 @@
 import pytest
 
 from django.contrib.auth import get_user_model
+from djoser.conf import settings
 
 from djoser import exceptions, pipelines, signals
 from tests.common import catch_signal, mock
@@ -123,7 +124,8 @@ def test_valid_pipeline(test_user):
         'current_password': 'testing123',
     }
 
-    pipeline = pipelines.username_update.Pipeline(request)
+    steps = settings.PIPELINES.username_update
+    pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.username_updated) as handler:
         result = pipeline.run()
 
