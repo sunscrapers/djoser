@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 
 from djoser import exceptions, signals
 from djoser.conf import settings
-from djoser.pipelines.base import BasePipeline
 
 User = get_user_model()
 
@@ -30,7 +29,3 @@ def perform(request, serializer, **kwargs):
 
 def signal(request, user, **kwargs):
     signals.username_updated.send(sender=None, user=user, request=request)
-
-
-class Pipeline(BasePipeline):
-    steps = settings.PIPELINES.username_update

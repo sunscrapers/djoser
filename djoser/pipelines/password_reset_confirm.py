@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 
 from djoser import exceptions, signals
 from djoser.conf import settings
-from djoser.pipelines.base import BasePipeline
 
 User = get_user_model()
 
@@ -33,7 +32,3 @@ def signal(request, user, **kwargs):
     signals.password_reset_completed.send(
         sender=None, user=user, request=request
     )
-
-
-class Pipeline(BasePipeline):
-    steps = settings.PIPELINES.password_reset_confirm

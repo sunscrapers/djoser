@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 
 from djoser import exceptions, utils
 from djoser.conf import settings
-from djoser.pipelines.base import BasePipeline
 
 User = get_user_model()
 
@@ -26,7 +25,3 @@ def perform(request, serializer, **kwargs):
         settings.EMAIL.password_reset(request, {'user': user}).send(to)
 
     return {'users': users}
-
-
-class Pipeline(BasePipeline):
-    steps = settings.PIPELINES.password_reset

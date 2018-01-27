@@ -3,7 +3,6 @@ from rest_framework.utils import model_meta
 
 from djoser import exceptions, signals
 from djoser.conf import settings
-from djoser.pipelines.base import BasePipeline
 
 User = get_user_model()
 
@@ -40,7 +39,3 @@ def serialize_instance(user, **kwargs):
     serializer_class = settings.SERIALIZERS.user
     serializer = serializer_class(user)
     return {'response_data': serializer.data}
-
-
-class Pipeline(BasePipeline):
-    steps = settings.PIPELINES.user_update
