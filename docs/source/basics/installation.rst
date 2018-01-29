@@ -1,3 +1,5 @@
+.. _installation:
+
 ============
 Installation
 ============
@@ -85,13 +87,42 @@ Add ``'djoser.urls.base'`` patterns include to your ``urlpatterns``:
 
     urlpatterns = [
         ...,
-        url(r'^auth/', include('djoser.urls.base')),
+        url(r'^', include('djoser.urls.base')),
     ]
 
-HTTP Basic Auth strategy is assumed by default as Django Rest Framework does it.
+If you are using Django 2.0 you can also use the new routing:
+
+.. code-block:: python
+
+    urlpatterns = [
+        ...,
+        path('', include('djoser.urls.base')),
+    ]
+
+HTTP Basic Auth strategy is assumed by default as Django REST Framework does it.
 We strongly encourage you to consider other authentication method described in
 :ref:`authentication-backends`.
 
 In case of third party based authentication
 `PSA backend docs <https://python-social-auth.readthedocs.io/en/latest/backends/index.html#social-backends>`_
 will be a great reference to configure given provider.
+
+------
+Verify
+------
+
+To verify that you have installed djoser properly you can try a simple test
+using your **django** shell. Start it with ``./manage.py shell`` and inside
+the prompt try the following code:
+
+.. code-block:: python
+
+    from django.urls import resolvers
+    urls = resolvers.get_resolver()
+    print(urls.url_patterns)
+
+You are ready to move on if your result contains something similar to this:
+
+.. code-block:: python
+
+    <URLResolver <module 'djoser.urls.base' ...> (None:None) ''>]
