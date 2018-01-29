@@ -48,11 +48,15 @@ Django REST Framework (3.7).
     :maxdepth: 2
     :caption: Basics
 
-    license
-    installation
-    getting_started
-    sample_usage
-    authentication_backends
+    basics/license
+    basics/installation
+    basics/authentication_backends
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Getting Started
+
+    gettings_started/first_request
 
 .. toctree::
     :maxdepth: 2
