@@ -11,6 +11,8 @@ Welcome to djoser's documentation!
     :caption: Basics
 
     introduction
+    license
+    installation
     getting_started
     sample_usage
     authentication_backends
