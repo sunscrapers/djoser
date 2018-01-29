@@ -43,3 +43,55 @@ respectively. You can easily install all of them with one command using:
 .. code-block:: bash
 
     $ pip install djoser djangorestframework-jwt social-auth-app-django
+
+-----------
+Source Code
+-----------
+
+Full source code of djoser is always available on GitHub in
+`its repository <https://github.com/sunscrapers/djoser>`_.
+
+You can always fetch the latest version from the master branch:
+
+.. code-block:: bash
+
+    $ git clone git://github.com/sunscrapers/djoser.git
+
+Or the latest tarball:
+
+.. code-block:: bash
+
+    $ curl -OL https://github.com/sunscrapers/djoser/tarball/master
+
+-------------
+Configuration
+-------------
+
+Add ``'djoser'`` to ``INSTALLED_APPS``:
+
+.. code-block:: python
+
+    INSTALLED_APPS = (
+        'django.contrib.auth',
+        ...,
+        'rest_framework',
+        'djoser',
+        ...,
+    )
+
+Add ``'djoser.urls.base'`` patterns include to your ``urlpatterns``:
+
+.. code-block:: python
+
+    urlpatterns = [
+        ...,
+        url(r'^auth/', include('djoser.urls.base')),
+    ]
+
+HTTP Basic Auth strategy is assumed by default as Django Rest Framework does it.
+We strongly encourage you to consider other authentication method described in
+:ref:`authentication-backends`.
+
+In case of third party based authentication
+`PSA backend docs <https://python-social-auth.readthedocs.io/en/latest/backends/index.html#social-backends>`_
+will be a great reference to configure given provider.
