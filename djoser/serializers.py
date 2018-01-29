@@ -174,11 +174,11 @@ class CurrentPasswordSerializer(serializers.Serializer):
             self.fail('invalid_password')
 
 
-class SetPasswordSerializer(PasswordSerializer, CurrentPasswordSerializer):
+class PasswordUpdateSerializer(PasswordSerializer, CurrentPasswordSerializer):
     pass
 
 
-class SetPasswordRetypeSerializer(PasswordRetypeSerializer,
+class PasswordUpdateRetypeSerializer(PasswordRetypeSerializer,
                                   CurrentPasswordSerializer):
     pass
 
@@ -197,7 +197,7 @@ class UserDeleteSerializer(CurrentPasswordSerializer):
     pass
 
 
-class SetUsernameSerializer(serializers.ModelSerializer,
+class UsernameUpdateSerializer(serializers.ModelSerializer,
                             CurrentPasswordSerializer):
 
     class Meta(object):
@@ -205,7 +205,7 @@ class SetUsernameSerializer(serializers.ModelSerializer,
         fields = (User.USERNAME_FIELD, 'current_password')
 
 
-class SetUsernameRetypeSerializer(SetUsernameSerializer):
+class UsernameUpdateRetypeSerializer(UsernameUpdateSerializer):
     default_error_messages = {
         'username_mismatch': constants.USERNAME_MISMATCH_ERROR.format(
             User.USERNAME_FIELD
@@ -213,11 +213,11 @@ class SetUsernameRetypeSerializer(SetUsernameSerializer):
     }
 
     def __init__(self, *args, **kwargs):
-        super(SetUsernameRetypeSerializer, self).__init__(*args, **kwargs)
+        super(UsernameUpdateRetypeSerializer, self).__init__(*args, **kwargs)
         self.fields['re_' + User.USERNAME_FIELD] = serializers.CharField()
 
     def validate(self, attrs):
-        attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
+        attrs = super(UsernameUpdateRetypeSerializer, self).validate(attrs)
         new_username = attrs[User.USERNAME_FIELD]
         if new_username != attrs['re_' + User.USERNAME_FIELD]:
             self.fail('username_mismatch')

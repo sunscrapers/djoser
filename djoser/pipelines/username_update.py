@@ -7,10 +7,7 @@ User = get_user_model()
 
 
 def serialize_request(request, **kwargs):
-    if settings.USERNAME_UPDATE_REQUIRE_RETYPE:
-        serializer_class = settings.SERIALIZERS.set_username_retype
-    else:
-        serializer_class = settings.SERIALIZERS.set_username
+    serializer_class = settings.SERIALIZERS.username_update
     context = {'request': request}
     serializer = serializer_class(data=request.data, **{'context': context})
     if not serializer.is_valid(raise_exception=False):
