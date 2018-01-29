@@ -48,7 +48,7 @@ default_settings = {
             'djoser.pipelines.user_create.perform',
             'djoser.pipelines.user_create.serialize_instance',
             'djoser.pipelines.user_create.signal',
-            'djoser.pipelines.email.activation_email',
+            'djoser.pipelines.email.confirmation_email',
         ],
         'user_detail': [
             'djoser.pipelines.user_detail.perform',
