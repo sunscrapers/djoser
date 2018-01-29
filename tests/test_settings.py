@@ -31,4 +31,4 @@ def test_djoser_simple_setting_overriden():
 }))
 def test_djoser_serializer_setting_overriden():
     from djoser.conf import settings as djoser_settings
-    assert djoser_settings.SERIALIZERS.user.__name__, 'TokenSerializer'
+    assert djoser_settings.SERIALIZERS.fake.__name__ == 'TokenSerializer'

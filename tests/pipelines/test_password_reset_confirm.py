@@ -1,10 +1,12 @@
 import pytest
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
+from django.test.utils import override_settings
 
 from djoser import constants, exceptions, pipelines, signals, utils
-from djoser.conf import settings
+from djoser.conf import settings as djoser_settings
 from tests.common import catch_signal, mock
 
 User = get_user_model()
@@ -81,10 +83,13 @@ def test_invalid_serialize_request_invalid_token(test_user):
 
 
 @pytest.mark.django_db(transaction=False)
-def test_invalid_serialize_request_retype_mismatch(test_user, settings):
-    settings.DJOSER = dict(
-        settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_REQUIRE_RETYPE': True}
-    )
+@override_settings(DJOSER=dict(settings.DJOSER, **{
+    'SERIALIZERS': {
+        'password_reset_confirm':
+            'djoser.serializers.PasswordResetConfirmRetypeSerializer'
+    }
+}))
+def test_invalid_serialize_request_retype_mismatch(test_user):
     request = mock.MagicMock()
     request.data = {
         'uid': utils.encode_uid(test_user.pk),
@@ -95,13 +100,18 @@ def test_invalid_serialize_request_retype_mismatch(test_user, settings):
     context = {'request': request}
     with pytest.raises(exceptions.ValidationError) as e:
         pipelines.password_reset_confirm.serialize_request(**context)
-
     assert e.value.errors == {
         'non_field_errors': [constants.PASSWORD_MISMATCH_ERROR]
     }
 
 
 @pytest.mark.django_db(transaction=False)
+@override_settings(DJOSER=dict(settings.DJOSER, **{
+    'SERIALIZERS': {
+        'password_reset_confirm':
+            'djoser.serializers.PasswordResetConfirmSerializer'
+    }
+}))
 def test_invalid_serialize_request_password_validation_fail(test_user):
     request = mock.MagicMock()
     request.data = {
@@ -156,7 +166,7 @@ def test_valid_pipeline(test_user):
         'new_password': 'cool-new-password123',
     }
 
-    steps = settings.PIPELINES.password_reset_confirm
+    steps = djoser_settings.PIPELINES.password_reset_confirm
     pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.password_reset_completed) as handler:
         result = pipeline.run()
