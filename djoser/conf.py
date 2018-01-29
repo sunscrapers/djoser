@@ -27,16 +27,12 @@ class ObjDict(dict):
 
 
 default_settings = {
-    'PASSWORD_UPDATE_REQUIRE_RETYPE': False,
-    'USERNAME_UPDATE_REQUIRE_RETYPE': False,
-    'PASSWORD_RESET_CONFIRM_REQUIRE_RETYPE': False,
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': False,
     'PASSWORD_VALIDATORS': [],
-    'LOGOUT_ON_PASSWORD_CHANGE': False,
     'CREATE_SESSION_ON_LOGIN': False,
+    'TOKEN_MODEL': None,
     'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',
     'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': [],
-    'TOKEN_MODEL': None,
     'VIEW_PIPELINE_ADAPTER':
         'djoser.pipelines.base.default_view_pipeline_adapter',
 
@@ -54,6 +50,10 @@ default_settings = {
             'djoser.pipelines.user_create.signal',
             'djoser.pipelines.email.activation_email',
         ],
+        'user_detail': [
+            'djoser.pipelines.user_detail.perform',
+            'djoser.pipelines.user_detail.serialize_instance',
+        ],
         'user_update': [
             'djoser.pipelines.user_update.serialize_request',
             'djoser.pipelines.user_update.perform',
@@ -64,10 +64,6 @@ default_settings = {
             'djoser.pipelines.user_delete.serialize_request',
             'djoser.pipelines.user_delete.perform',
             'djoser.pipelines.user_delete.signal',
-        ],
-        'user_detail': [
-            'djoser.pipelines.user_detail.perform',
-            'djoser.pipelines.user_detail.serialize_instance',
         ],
         'username_update': [
             'djoser.pipelines.username_update.serialize_request',
@@ -101,28 +97,22 @@ default_settings = {
     'SERIALIZERS': ObjDict({
         'user_activate':
             'djoser.serializers.UserActivateSerializer',
-        'password_reset':
-            'djoser.serializers.PasswordResetSerializer',
-        'password_reset_confirm':
-            'djoser.serializers.PasswordResetConfirmSerializer',
-        'password_reset_confirm_retype':
-            'djoser.serializers.PasswordResetConfirmRetypeSerializer',
-        'set_password':
-            'djoser.serializers.SetPasswordSerializer',
-        'set_password_retype':
-            'djoser.serializers.SetPasswordRetypeSerializer',
-        'set_username':
-            'djoser.serializers.SetUsernameSerializer',
-        'set_username_retype':
-            'djoser.serializers.SetUsernameRetypeSerializer',
         'user_create':
             'djoser.serializers.UserCreateSerializer',
-        'user_delete':
-            'djoser.serializers.UserDeleteSerializer',
         'user':
             'djoser.serializers.UserSerializer',
         'current_user':
             'djoser.serializers.CurrentUserSerializer',
+        'user_delete':
+            'djoser.serializers.UserDeleteSerializer',
+        'username_update':
+            'djoser.serializers.UsernameUpdateSerializer',
+        'password_update':
+            'djoser.serializers.PasswordUpdateSerializer',
+        'password_reset':
+            'djoser.serializers.PasswordResetSerializer',
+        'password_reset_confirm':
+            'djoser.serializers.PasswordResetConfirmSerializer',
         'token':
             'djoser.serializers.TokenSerializer',
         'token_create':

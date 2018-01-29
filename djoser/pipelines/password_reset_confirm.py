@@ -7,10 +7,7 @@ User = get_user_model()
 
 
 def serialize_request(request, **kwargs):
-    if settings.PASSWORD_RESET_CONFIRM_REQUIRE_RETYPE:
-        serializer_class = settings.SERIALIZERS.password_reset_confirm_retype
-    else:
-        serializer_class = settings.SERIALIZERS.password_reset_confirm
+    serializer_class = settings.SERIALIZERS.password_reset_confirm
     context = {'request': request}
     serializer = serializer_class(data=request.data, **{'context': context})
     if not serializer.is_valid(raise_exception=False):
