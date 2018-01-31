@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 def serialize_request(request, **kwargs):
-    serializer_class = settings.SERIALIZERS.password_reset
+    serializer_class = settings.SERIALIZERS['password_reset']
     serializer = serializer_class(data=request.data)
     if not serializer.is_valid(raise_exception=False):
         raise exceptions.ValidationError(serializer.errors)
@@ -22,6 +22,6 @@ def perform(request, serializer, **kwargs):
         user_email = utils.get_user_email(user)
         assert user_email is not None
         to = [user_email]
-        settings.EMAIL.password_reset(request, {'user': user}).send(to)
+        settings.EMAIL['password_reset'](request, {'user': user}).send(to)
 
     return {'users': users}

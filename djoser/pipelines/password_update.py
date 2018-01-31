@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 def serialize_request(request, **kwargs):
-    serializer_class = settings.SERIALIZERS.password_update
+    serializer_class = settings.SERIALIZERS['password_update']
     context = {'request': request}
     serializer = serializer_class(data=request.data, **{'context': context})
     if not serializer.is_valid(raise_exception=False):

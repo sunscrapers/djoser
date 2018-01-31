@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 def serialize_request(request, **kwargs):
-    serializer_class = settings.SERIALIZERS.token_create
+    serializer_class = settings.SERIALIZERS['token_create']
     serializer = serializer_class(data=request.data)
     if not serializer.is_valid(raise_exception=False):
         raise exceptions.ValidationError(serializer.errors)
