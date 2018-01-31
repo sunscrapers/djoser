@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 def serialize_request(request, **kwargs):
-    serializer_class = settings.SERIALIZERS.user
+    serializer_class = settings.SERIALIZERS['user']
     serializer = serializer_class(data=request.data)
     if not serializer.is_valid(raise_exception=False):
         raise exceptions.ValidationError(serializer.errors)
@@ -36,6 +36,6 @@ def signal(request, user, **kwargs):
 
 
 def serialize_instance(user, **kwargs):
-    serializer_class = settings.SERIALIZERS.user
+    serializer_class = settings.SERIALIZERS['user']
     serializer = serializer_class(user)
     return {'response_data': serializer.data}

@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 def serialize_request(request, **kwargs):
-    serializer_class = settings.SERIALIZERS.user_activate
+    serializer_class = settings.SERIALIZERS['user_activate']
     serializer = serializer_class(data=request.data)
     if not serializer.is_valid(raise_exception=False):
         raise exceptions.ValidationError(serializer.errors)

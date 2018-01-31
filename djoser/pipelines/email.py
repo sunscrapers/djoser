@@ -11,7 +11,7 @@ def activation_email(request, user, **kwargs):
     to = [user_email]
     context = {'user': user}
     context.update(kwargs)
-    settings.EMAIL.activation(request, context).send(to)
+    settings.EMAIL['activation'](request, context).send(to)
 
     user.is_active = False
     user.save(update_fields=['is_active'])
@@ -23,4 +23,4 @@ def confirmation_email(request, user, **kwargs):
     to = [user_email]
     context = {'user': user}
     context.update(kwargs)
-    settings.EMAIL.confirmation(request, context).send(to)
+    settings.EMAIL['confirmation'](request, context).send(to)
