@@ -166,7 +166,7 @@ def test_valid_pipeline(test_user):
         'new_password': 'cool-new-password123',
     }
 
-    steps = djoser_settings.PIPELINES.password_reset_confirm
+    steps = djoser_settings.PIPELINES['password_reset_confirm']
     pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.password_reset_completed) as handler:
         result = pipeline.run()

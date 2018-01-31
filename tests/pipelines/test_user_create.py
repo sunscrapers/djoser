@@ -115,7 +115,7 @@ def test_valid_pipeline():
     request = mock.MagicMock()
     request.data = {User.USERNAME_FIELD: 'test', 'password': 'testing123'}
 
-    steps = settings.PIPELINES.user_create
+    steps = settings.PIPELINES['user_create']
     pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.user_created) as handler:
         result = pipeline.run()

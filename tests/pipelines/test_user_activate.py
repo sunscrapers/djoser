@@ -91,7 +91,7 @@ def test_valid_pipeline(inactive_test_user):
         'token': default_token_generator.make_token(inactive_test_user)
     }
 
-    steps = settings.PIPELINES.user_activate
+    steps = settings.PIPELINES['user_activate']
     pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.user_activated) as handler:
         result = pipeline.run()

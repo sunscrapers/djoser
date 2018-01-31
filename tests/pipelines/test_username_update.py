@@ -135,7 +135,7 @@ def test_valid_pipeline(test_user):
         'current_password': 'testing123',
     }
 
-    steps = djoser_settings.PIPELINES.username_update
+    steps = djoser_settings.PIPELINES['username_update']
     pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.username_updated) as handler:
         result = pipeline.run()
