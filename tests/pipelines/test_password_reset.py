@@ -88,7 +88,7 @@ def test_valid_pipeline(test_user, mailoutbox):
         'email': test_user.email,
     }
 
-    steps = settings.PIPELINES.password_reset
+    steps = settings.PIPELINES['password_reset']
     pipeline = pipelines.base.Pipeline(request, steps)
     result = pipeline.run()
 

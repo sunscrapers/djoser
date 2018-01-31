@@ -75,7 +75,7 @@ def test_valid_pipeline(test_user):
     request.data = {'email': 'new@localhost'}
     username = getattr(test_user, User.USERNAME_FIELD)
 
-    steps = settings.PIPELINES.user_update
+    steps = settings.PIPELINES['user_update']
     pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.user_updated) as handler:
         result = pipeline.run()

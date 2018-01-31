@@ -112,7 +112,7 @@ def test_valid_pipeline(test_user):
     request.user = test_user
 
     assert test_user.check_password(request.data['current_password'])
-    steps = djoser_settings.PIPELINES.password_update
+    steps = djoser_settings.PIPELINES['password_update']
     pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.password_updated) as handler:
         result = pipeline.run()

@@ -68,7 +68,7 @@ def test_valid_pipeline(test_user):
     request.data = {'current_password': 'testing123'}
     request.user = test_user
 
-    steps = settings.PIPELINES.user_delete
+    steps = settings.PIPELINES['user_delete']
     pipeline = pipelines.base.Pipeline(request, steps)
     with catch_signal(signals.user_deleted) as handler:
         result = pipeline.run()

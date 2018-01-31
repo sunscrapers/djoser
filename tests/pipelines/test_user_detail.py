@@ -39,7 +39,7 @@ def test_valid_pipeline(test_user):
     request.user = test_user
     username = getattr(test_user, User.USERNAME_FIELD)
 
-    steps = settings.PIPELINES.user_detail
+    steps = settings.PIPELINES['user_detail']
     pipeline = pipelines.base.Pipeline(request, steps)
     result = pipeline.run()
 
