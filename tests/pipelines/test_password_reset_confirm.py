@@ -1,9 +1,7 @@
 import pytest
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
-from django.test.utils import override_settings
 
 from djoser import constants, exceptions, pipelines, signals, utils
 from djoser.conf import settings as djoser_settings
@@ -83,13 +81,14 @@ def test_invalid_serialize_request_invalid_token(test_user):
 
 
 @pytest.mark.django_db(transaction=False)
-@override_settings(DJOSER=dict(settings.DJOSER, **{
-    'SERIALIZERS': {
-        'password_reset_confirm':
-            'djoser.serializers.PasswordResetConfirmRetypeSerializer'
-    }
-}))
-def test_invalid_serialize_request_retype_mismatch(test_user):
+def test_invalid_serialize_request_retype_mismatch(settings, test_user):
+    settings.DJOSER = dict(settings.DJOSER, **{
+        'SERIALIZERS': {
+            'password_reset_confirm':
+                'djoser.serializers.PasswordResetConfirmRetypeSerializer'
+        }
+    })
+
     request = mock.MagicMock()
     request.data = {
         'uid': utils.encode_uid(test_user.pk),
@@ -106,12 +105,6 @@ def test_invalid_serialize_request_retype_mismatch(test_user):
 
 
 @pytest.mark.django_db(transaction=False)
-@override_settings(DJOSER=dict(settings.DJOSER, **{
-    'SERIALIZERS': {
-        'password_reset_confirm':
-            'djoser.serializers.PasswordResetConfirmSerializer'
-    }
-}))
 def test_invalid_serialize_request_password_validation_fail(test_user):
     request = mock.MagicMock()
     request.data = {
