@@ -115,6 +115,25 @@ def test_valid_signal(test_user):
     )
 
 
+def test_valid_serialize_instance(test_user, settings):
+    from djoser.conf import settings as djoser_settings
+
+    settings.DJOSER = dict(
+        settings.DJOSER,
+        **{'TOKEN_MODEL': 'rest_framework.authtoken.models.Token'}
+    )
+    token_model = djoser_settings.TOKEN_MODEL
+    djoser_settings.SERIALIZERS['token'].Meta.model = token_model
+
+    token, _ = djoser_settings.TOKEN_MODEL.objects.get_or_create(
+        user=test_user
+    )
+    context = {'token': token}
+    result = pipelines.token_create.serialize_instance(**context)
+    assert 'response_data' in result
+    assert result['response_data'] == {'token': token.key}
+
+
 @pytest.mark.django_db(transaction=False)
 def test_valid_pipeline(test_user, settings):
     from djoser.conf import settings as djoser_settings
@@ -123,6 +142,8 @@ def test_valid_pipeline(test_user, settings):
         settings.DJOSER,
         **{'TOKEN_MODEL': 'rest_framework.authtoken.models.Token'}
     )
+    token_model = djoser_settings.TOKEN_MODEL
+    djoser_settings.SERIALIZERS['token'].Meta.model = token_model
 
     request = mock.MagicMock()
     request.data = {
