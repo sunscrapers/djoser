@@ -11,8 +11,6 @@ default_settings = {
     'PASSWORD_VALIDATORS': [],
     'CREATE_SESSION_ON_LOGIN': False,
     'TOKEN_MODEL': None,
-    'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',
-    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': [],
     'VIEW_PIPELINE_ADAPTER':
         'djoser.pipelines.base.default_view_pipeline_adapter',
 
@@ -107,8 +105,8 @@ default_settings = {
 }
 
 SETTINGS_TO_IMPORT = [
-    'TOKEN_MODEL', 'SOCIAL_AUTH_TOKEN_STRATEGY', 'VIEW_PIPELINE_ADAPTER',
-    'PIPELINES', 'SERIALIZERS', 'EMAIL'
+    'TOKEN_MODEL', 'VIEW_PIPELINE_ADAPTER', 'PIPELINES', 'SERIALIZERS',
+    'EMAIL'
 ]
 
 
