@@ -33,7 +33,7 @@ class UserViewSet(viewsets.ViewSet):
         response_data = run_pipeline(request, steps)
         return Response(response_data, status=status.HTTP_200_OK)
 
-    def remove(self, request, *args, **kwargs):
+    def remove_user(self, request, *args, **kwargs):
         steps = settings.PIPELINES['user_delete']
         run_pipeline(request, steps)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -80,5 +80,23 @@ class PasswordResetConfirmViewSet(viewsets.ViewSet):
 
     def create(self, request, *args, **kwargs):
         steps = settings.PIPELINES['password_reset_confirm']
+        run_pipeline(request, steps)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TokenViewSet(viewsets.ViewSet):
+    def get_permissions(self):
+        if self.action == 'create':
+            return [permissions.AllowAny()]
+        else:
+            return [permissions.IsAuthenticated()]
+
+    def create(self, request, *args, **kwargs):
+        steps = settings.PIPELINES['token_create']
+        response_data = run_pipeline(request, steps)
+        return Response(response_data, status=status.HTTP_201_CREATED)
+
+    def remove_token(self, request, *args, **kwargs):
+        steps = settings.PIPELINES['token_delete']
         run_pipeline(request, steps)
         return Response(status=status.HTTP_204_NO_CONTENT)
