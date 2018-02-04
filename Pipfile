@@ -5,7 +5,6 @@ verify_ssl = true
 
 
 [dev-packages]
-djet = "*"
 coverage = "*"
 pytest = "*"
 pytest-cov = "*"
