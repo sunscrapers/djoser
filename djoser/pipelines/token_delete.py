@@ -17,5 +17,5 @@ def perform(request, **kwargs):
 
 
 def signal(request, user, **kwargs):
-    signals.token_destroyed.send(sender=None, user=user, request=request)
+    signals.token_deleted.send(sender=None, user=user, request=request)
     user_logged_out.send(sender=None, user=user, request=request)
