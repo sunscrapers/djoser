@@ -22,6 +22,7 @@ __pycache__/
 .cache/
 .tox/
 .coverage
+.pytest_cache/
 htmlcov/
 
 # dotenv
