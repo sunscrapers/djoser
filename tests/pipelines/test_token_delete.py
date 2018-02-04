@@ -23,7 +23,7 @@ def test_valid_perform(test_user, settings):
     djoser_settings.TOKEN_MODEL.objects.get_or_create(user=test_user)
     assert djoser_settings.TOKEN_MODEL.objects.count() == 1
 
-    result = pipelines.token_destroy.perform(**context)
+    result = pipelines.token_delete.perform(**context)
     assert result['user'] == test_user
     assert djoser_settings.TOKEN_MODEL.objects.count() == 0
 
@@ -35,7 +35,7 @@ def test_invalid_perform_none_token_model(test_user):
     context = {'request': request}
 
     with pytest.raises(exceptions.ValidationError) as e:
-        pipelines.token_destroy.perform(**context)
+        pipelines.token_delete.perform(**context)
 
     assert e.value.errors == constants.TOKEN_MODEL_NONE_ERROR
 
@@ -44,12 +44,12 @@ def test_valid_signal(test_user):
     request = mock.MagicMock()
     context = {'request': request, 'user': test_user}
 
-    with catch_signal(signals.token_destroyed) as handler:
-        pipelines.token_destroy.signal(**context)
+    with catch_signal(signals.token_deleted) as handler:
+        pipelines.token_delete.signal(**context)
 
     handler.assert_called_once_with(
         sender=mock.ANY,
-        signal=signals.token_destroyed,
+        signal=signals.token_deleted,
         user=test_user,
         request=request
     )
@@ -70,14 +70,14 @@ def test_valid_pipeline(test_user, settings):
     djoser_settings.TOKEN_MODEL.objects.get_or_create(user=test_user)
     assert djoser_settings.TOKEN_MODEL.objects.count() == 1
 
-    steps = djoser_settings.PIPELINES['token_destroy']
+    steps = djoser_settings.PIPELINES['token_delete']
     pipeline = pipelines.base.Pipeline(request, steps)
-    with catch_signal(signals.token_destroyed) as handler:
+    with catch_signal(signals.token_deleted) as handler:
         result = pipeline.run()
 
     handler.assert_called_once_with(
         sender=mock.ANY,
-        signal=signals.token_destroyed,
+        signal=signals.token_deleted,
         user=result['user'],
         request=request
     )
