@@ -68,10 +68,11 @@ default_settings = {
             'djoser.pipelines.token_create.serialize_request',
             'djoser.pipelines.token_create.perform',
             'djoser.pipelines.token_create.signal',
+            'djoser.pipelines.token_create.serialize_instance',
         ],
-        'token_destroy': [
-            'djoser.pipelines.token_destroy.perform',
-            'djoser.pipelines.token_destroy.signal',
+        'token_delete': [
+            'djoser.pipelines.token_delete.perform',
+            'djoser.pipelines.token_delete.signal',
         ]
     },
     'SERIALIZERS': {
