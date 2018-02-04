@@ -21,9 +21,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
+    'rest_framework.authtoken',
     'templated_mail',
     'djoser',
-    'rest_framework.authtoken',
 
     'tests',
 )
