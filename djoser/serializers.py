@@ -245,8 +245,8 @@ class UsernameUpdateRetypeSerializer(UsernameUpdateSerializer):
 
 
 class TokenSerializer(serializers.ModelSerializer):
-    auth_token = serializers.CharField(source='key')
+    token = serializers.CharField(source='key')
 
     class Meta:
         model = settings.TOKEN_MODEL
-        fields = ('auth_token',)
+        fields = ['token']
