@@ -87,7 +87,7 @@ Add ``'djoser.urls.base'`` patterns include to your ``urlpatterns``:
 
     urlpatterns = [
         ...,
-        url(r'^', include('djoser.urls.base')),
+        url(r'^', include('djoser.urls')),
     ]
 
 If you are using Django 2.0 you can also use the new routing:
@@ -96,7 +96,7 @@ If you are using Django 2.0 you can also use the new routing:
 
     urlpatterns = [
         ...,
-        path('', include('djoser.urls.base')),
+        path('', include('djoser.urls')),
     ]
 
 HTTP Basic Auth strategy is assumed by default as Django REST Framework does it.
@@ -125,4 +125,4 @@ You are ready to move on if your result contains something similar to this:
 
 .. code-block:: python
 
-    <URLResolver <module 'djoser.urls.base' ...> (None:None) ''>]
+    <URLResolver <module 'djoser.urls' ...> (None:None) ''>]
