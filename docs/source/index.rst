@@ -56,7 +56,8 @@ Django REST Framework (3.7).
     :maxdepth: 2
     :caption: Getting Started
 
-    gettings_started/first_request
+    getting_started/hello_request
+    getting_started/hello_pipelines
 
 .. toctree::
     :maxdepth: 2
