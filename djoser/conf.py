@@ -65,6 +65,9 @@ default_settings = {
         'confirmation': 'djoser.email.ConfirmationEmail',
         'password_reset': 'djoser.email.PasswordResetEmail',
     }),
+    'CONSTANTS': ObjDict({
+        'messages': 'djoser.constants.Messages',
+    }),
     'LOGOUT_ON_PASSWORD_CHANGE': False,
     'USER_EMAIL_FIELD_NAME': 'email',
     'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',
