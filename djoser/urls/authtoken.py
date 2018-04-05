@@ -5,12 +5,12 @@ from djoser import views
 
 urlpatterns = [
     url(
-        r'^token/create/$',
+        r'^token/create[/]$',
         views.TokenCreateView.as_view(),
         name='token-create'
     ),
     url(
-        r'^token/destroy/$',
+        r'^token/destroy[/]$',
         views.TokenDestroyView.as_view(),
         name='token-destroy'
     ),
