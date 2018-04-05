@@ -2,10 +2,7 @@ from django.contrib.auth import get_user_model
 from djet import assertions, restframework
 from rest_framework import status
 
-import djoser.constants
-import djoser.utils
 import djoser.views
-
 from .common import create_user
 
 User = get_user_model()

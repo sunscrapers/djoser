@@ -3,11 +3,11 @@ from django.contrib.auth.tokens import default_token_generator
 from django.test.utils import override_settings
 from djet import assertions, restframework, utils
 from rest_framework import status
+
 import djoser.constants
 import djoser.signals
 import djoser.utils
 import djoser.views
-
 from .common import create_user
 
 

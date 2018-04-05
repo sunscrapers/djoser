@@ -3,10 +3,9 @@ from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 from djet import assertions, restframework
 from rest_framework import status
-import djoser.constants
-import djoser.utils
-import djoser.views
 
+import djoser.views
+from djoser.conf import settings
 from .common import create_user, mock, perform_create_mock
 
 User = get_user_model()
@@ -121,5 +120,5 @@ class UserCreateViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data, [djoser.constants.CANNOT_CREATE_USER_ERROR]
+            response.data, [settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR]
         )

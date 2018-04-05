@@ -1,10 +1,8 @@
 from django.contrib.auth import user_logged_out
 from djet import assertions, restframework
 from rest_framework import status
-import djoser.constants
-import djoser.utils
-import djoser.views
 
+import djoser.views
 from .common import create_user
 
 
