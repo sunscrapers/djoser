@@ -50,7 +50,7 @@ are very helpful in the process.
 Some View class names and URLs has been updated
 -----------------------------------------------
 
-Also please note that for sake of consistency all URLs now end with a trailing slash.
+Also please note that for sake of consistency all URLs now end with a trailing slash. The trailing slash is optional to ensure compatibility with frontend tools that strip the trailing slash (eg Google's Chrome browser and Angular framework).
 
 View class names:
 
