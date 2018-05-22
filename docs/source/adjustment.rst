@@ -12,17 +12,18 @@ Define custom ``urls`` instead of reusing ``djoser.urls``:
 
     urlpatterns = patterns('',
         (...),
-        url(r'^register/$', views.CustomRegistrationView.as_view()),
+        url(r'^users/create/$', views.CustomRegistrationView.as_view()),
     )
 
 Define custom view/serializer (inherit from one of ``djoser`` class) and override necessary method/field:
 
 .. code-block:: python
 
-    class CustomRegistrationView(djoser.views.RegistrationView):
+    class CustomUserCreateView(djoser.views.UserCreateView):
 
-        def send_activation_email(self, *args, **kwargs):
-            your_custom_email_sender(*args, **kwargs)
+        def perform_create(self, *args, **kwargs):
+            super(UserCreateView, self).perform_update(serializer)
+            your_custom_actions()
 
 You could check ``djoser`` API in source code:
 
