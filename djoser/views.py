@@ -86,7 +86,11 @@ class UserDeleteView(generics.CreateAPIView):
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        utils.logout_user(self.request)
+        try:
+            utils.logout_user(self.request)
+        except:
+            # catch exception when JWT used instead of token
+            pass
         instance.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
