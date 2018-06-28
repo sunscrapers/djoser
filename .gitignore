@@ -38,3 +38,7 @@ ENV/
 
 # logs
 *.log
+
+# sublime editor files
+*.sublime-workspace
+*.sublime-project
