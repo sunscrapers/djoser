@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import os
 
-
 DEBUG = True
 
 BASE_DIR = os.path.dirname(__file__)

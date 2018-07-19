@@ -17,7 +17,7 @@ def get_packages(package):
 
 setup(
     name='djoser',
-    version='1.1.5',
+    version='1.1.6-rc.2',
     packages=get_packages('djoser'),
     license='MIT',
     author='SUNSCRAPERS',
@@ -32,6 +32,7 @@ setup(
         'Framework :: Django',
         'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.0',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
@@ -40,5 +41,6 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ]
 )
