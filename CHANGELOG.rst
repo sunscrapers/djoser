@@ -6,7 +6,7 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 -------------------------
-`1.1.6-rc.1`_ (2018-07-18)
+`1.1.6-rc.2`_ (2018-07-19)
 -------------------------
 
 * Add Django 2.0 to tox.ini
