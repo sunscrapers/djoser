@@ -1,9 +1,5 @@
 from __future__ import absolute_import
 import os
-import sys
-
-sys.path.append('../')
-sys.path.append('./')
 
 DEBUG = True
 
@@ -22,7 +18,7 @@ AUTH_PASSWORD_VALIDATORS = [{'NAME': 'testapp.validators.Is666'}]
 
 SECRET_KEY = '_'
 
-MIDDLEWARE_CLASSES = MIDDLEWARE = [
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
 ]
 

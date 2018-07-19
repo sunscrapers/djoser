@@ -8,7 +8,8 @@ Use this endpoint to obtain user
 `authentication token <http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication>`_.
 This endpoint is available only if you are using token based authentication.
 
-**Default URL**: ``/token/create/``
+**Default URL**: ``/login/``
+**Backward-compatible URL**: ``/token/create/``
 
 +----------+----------------------------------+----------------------------------+
 | Method   | Request                          | Response                         |
@@ -24,7 +25,8 @@ Token Destroy
 Use this endpoint to logout user (remove user authentication token).
 This endpoint is available only if you are using token based authentication.
 
-**Default URL**: ``/token/destroy/``
+**Default URL**: ``/logout/``
+**Backward-compatible URL**: ``/token/destroy/``
 
 +----------+----------------+----------------------------------+
 | Method   |  Request       | Response                         |

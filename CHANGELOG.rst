@@ -5,15 +5,18 @@ Change Log
 This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
--------------------------
-`1.1.6-rc.1`_ (2018-07-18)
--------------------------
+--------------------
+`1.2.0` (2018-07-20)
+--------------------
 
+* Refactor urls to use new RESTful ViewSets
+* Retain old urls for compatibility
 * Add Django 2.0 to tox.ini
 * Add DRF 3.8 to tox.ini
-* update requirements.txt
-* update travis.yml
-* update .gitignore
+* Drop Django 1.10 support
+* Update requirements.txt
+* Update travis.yml
+* Update .gitignore
 
 ---------------------
 `1.1.5`_ (2017-12-08)

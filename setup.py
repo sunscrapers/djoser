@@ -17,7 +17,7 @@ def get_packages(package):
 
 setup(
     name='djoser',
-    version='1.1.6-rc.1',
+    version='1.2.0',
     packages=get_packages('djoser'),
     license='MIT',
     author='SUNSCRAPERS',
@@ -30,7 +30,6 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Framework :: Django',
-        'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
         'Framework :: Django :: 2.0',
         'Intended Audience :: Developers',

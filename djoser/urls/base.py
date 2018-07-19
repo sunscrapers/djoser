@@ -1,10 +1,14 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib.auth import get_user_model
 
 from djoser import views
 
-User = get_user_model()
+from rest_framework.routers import DefaultRouter
 
+router = DefaultRouter()
+router.register('users', views.UserViewSet)
+
+User = get_user_model()
 
 urlpatterns = [
     url(r'^me/?$', views.UserView.as_view(), name='user'),
@@ -40,4 +44,5 @@ urlpatterns = [
         name='password_reset_confirm'
     ),
     url(r'^$', views.RootView.as_view(), name='root'),
+    url(r'^', include(router.urls)),
 ]

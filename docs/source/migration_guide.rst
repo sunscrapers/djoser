@@ -2,9 +2,18 @@
 Migration Guide
 ===============
 
-----------------
-Migrating to 1.0
-----------------
+-------------------------
+Migrating from 1.1 to 1.2
+-------------------------
+
+There is no urgent need to change anything as backward compatibility is retained.
+That being said we ask you to change usage from old endpoints to new  ones
+for the warm fuzzy feeling of being more RESTful :)
+
+
+-------------------------
+Migrating from 0.x to 1.0
+-------------------------
 
 The stable release has introduced a number of backward incompatible changes and
 purpose of this guide is to allow developer to quickly adapt a given project.
