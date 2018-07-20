@@ -1,14 +1,12 @@
 from djet import assertions, restframework
 from rest_framework import status
 import djoser.views
-import pytest
 
 
 class RootViewTest(restframework.APIViewTestCase,
                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.RootView
 
-    @pytest.mark.skip(reason='routing needs to be fixed')
     def test_get_should_return_urls_map(self):
         request = self.factory.get()
         view_object = self.create_view_object(request)
@@ -19,7 +17,6 @@ class RootViewTest(restframework.APIViewTestCase,
         urls_map = view_object.get_urls_map(request, urlpattern_names, None)
         self.assertEquals(urls_map, response.data)
 
-    @pytest.mark.skip(reason='routing needs to be fixed')
     def test_all_urlpattern_names_are_in_urls_map(self):
         request = self.factory.get()
         view_object = self.create_view_object(request)

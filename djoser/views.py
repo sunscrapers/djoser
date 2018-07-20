@@ -19,10 +19,19 @@ class RootView(views.APIView):
     """
     permission_classes = [permissions.AllowAny]
 
+    def _get_url_names(self, urllist):
+        names = []
+        for entry in urllist:
+            if hasattr(entry, 'url_patterns'):
+                names.extend(self._get_url_names(entry.url_patterns))
+            else:
+                names.append(entry.name)
+        return names
+
     def aggregate_djoser_urlpattern_names(self):
         from djoser.urls import base, authtoken
-        urlpattern_names = [pattern.name for pattern in base.urlpatterns]
-        urlpattern_names += [pattern.name for pattern in authtoken.urlpatterns]
+        urlpattern_names = self._get_url_names(base.urlpatterns)
+        urlpattern_names += self._get_url_names(authtoken.urlpatterns)
         urlpattern_names += self._get_jwt_urlpatterns()
 
         return urlpattern_names
@@ -45,7 +54,7 @@ class RootView(views.APIView):
     def _get_jwt_urlpatterns(self):
         try:
             from djoser.urls import jwt
-            return [pattern.name for pattern in jwt.urlpatterns]
+            return self._get_url_names(jwt.urlpatterns)
         except ImportError:
             return []
 
