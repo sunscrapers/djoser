@@ -6,7 +6,7 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 --------------------
-`1.2.0` (2018-07-20)
+`1.2.0` (2018-07-23)
 --------------------
 
 * Refactor urls to use new RESTful ViewSets
