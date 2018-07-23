@@ -9,7 +9,4 @@ def get_user_email(user):
 
 
 def get_user_email_field_name(user):
-    try:  # Assume we are Django >= 1.11
-        return user.get_email_field_name()
-    except AttributeError:  # we are using Django < 1.11
-        return settings.USER_EMAIL_FIELD_NAME
+    return user.get_email_field_name()

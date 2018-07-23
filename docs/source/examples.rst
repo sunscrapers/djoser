@@ -5,8 +5,8 @@ Examples
 Early detecting invalid password reset tokens
 ---------------------------------------------
 
-When there is need to check if password reset token is still valid without actually resetting the password it is possible
-to approach the problem like so:
+When there is need to check if password reset token is still valid without
+actually resetting the password it is possible to approach the problem like so:
 
 .. code-block:: python
 

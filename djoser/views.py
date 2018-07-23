@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.urls.exceptions import NoReverseMatch
-
-from rest_framework import generics, permissions, status, views
+from rest_framework import generics, permissions, status, views, viewsets
+from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
@@ -19,10 +19,19 @@ class RootView(views.APIView):
     """
     permission_classes = [permissions.AllowAny]
 
+    def _get_url_names(self, urllist):
+        names = []
+        for entry in urllist:
+            if hasattr(entry, 'url_patterns'):
+                names.extend(self._get_url_names(entry.url_patterns))
+            else:
+                names.append(entry.name)
+        return names
+
     def aggregate_djoser_urlpattern_names(self):
         from djoser.urls import base, authtoken
-        urlpattern_names = [pattern.name for pattern in base.urlpatterns]
-        urlpattern_names += [pattern.name for pattern in authtoken.urlpatterns]
+        urlpattern_names = self._get_url_names(base.urlpatterns)
+        urlpattern_names += self._get_url_names(authtoken.urlpatterns)
         urlpattern_names += self._get_jwt_urlpatterns()
 
         return urlpattern_names
@@ -45,7 +54,7 @@ class RootView(views.APIView):
     def _get_jwt_urlpatterns(self):
         try:
             from djoser.urls import jwt
-            return [pattern.name for pattern in jwt.urlpatterns]
+            return self._get_url_names(jwt.urlpatterns)
         except ImportError:
             return []
 
@@ -258,3 +267,100 @@ class UserView(generics.RetrieveUpdateAPIView):
             context = {'user': user}
             to = [get_user_email(user)]
             settings.EMAIL.activation(self.request, context).send(to)
+
+
+class UserViewSet(UserCreateView, viewsets.ModelViewSet):
+    serializer_class = settings.SERIALIZERS.user
+    queryset = User.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    token_generator = default_token_generator
+
+    def get_permissions(self):
+        if self.action in ['create', 'confirm']:
+            self.permission_classes = [permissions.AllowAny]
+        elif self.action == 'list':
+            self.permission_classes = [permissions.IsAdminUser]
+        return super(UserViewSet, self).get_permissions()
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return settings.SERIALIZERS.user_create
+        elif self.action == 'remove' or (
+                self.action == 'me' and self.request.method == 'DELETE'):
+            return settings.SERIALIZERS.user_delete
+        elif self.action == 'confirm':
+            return settings.SERIALIZERS.activation
+        elif self.action == 'change_username':
+            if settings.SET_USERNAME_RETYPE:
+                return settings.SERIALIZERS.set_username_retype
+            return settings.SERIALIZERS.set_username
+        return self.serializer_class
+
+    def get_instance(self):
+        return self.request.user
+
+    def perform_update(self, serializer):
+        super(UserViewSet, self).perform_update(serializer)
+        user = serializer.instance
+        if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
+            context = {'user': user}
+            to = [get_user_email(user)]
+            settings.EMAIL.activation(self.request, context).send(to)
+
+    def perform_destroy(self, instance):
+        utils.logout_user(self.request)
+        super(UserViewSet, self).perform_destroy(instance)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @list_route(['get', 'put', 'patch', 'delete'])
+    def me(self, request, *args, **kwargs):
+        self.get_object = self.get_instance
+        if request.method == 'GET':
+            return self.retrieve(request, *args, **kwargs)
+        elif request.method in ['PUT', 'PATCH']:
+            return self.update(request, *args, **kwargs)
+        elif request.method == 'DELETE':
+            return self.destroy(request, *args, **kwargs)
+
+    @list_route(['post'])
+    def confirm(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.user
+        user.is_active = True
+        user.save()
+
+        signals.user_activated.send(
+            sender=self.__class__, user=user, request=self.request
+        )
+
+        if settings.SEND_CONFIRMATION_EMAIL:
+            context = {'user': user}
+            to = [get_user_email(user)]
+            settings.EMAIL.confirmation(self.request, context).send(to)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @list_route(['post'])
+    def change_username(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.request.user
+        new_username = serializer.data['new_' + User.USERNAME_FIELD]
+
+        setattr(user, User.USERNAME_FIELD, new_username)
+        if settings.SEND_ACTIVATION_EMAIL:
+            user.is_active = False
+            context = {'user': user}
+            to = [get_user_email(user)]
+            settings.EMAIL.activation(self.request, context).send(to)
+        user.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
