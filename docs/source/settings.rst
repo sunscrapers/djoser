@@ -106,7 +106,8 @@ an email is registered in the system.
 TOKEN_MODEL
 -----------
 
-Points to which token model should be used for authentication.
+Points to which token model should be used for authentication. In case if
+only stateless tokens (e.g. JWT) are used in project it should be set to ``None``.
 
 **Example**: ``'knox.models.AuthToken'``
 **Default**: ``'rest_framework.authtoken.models.Token'``

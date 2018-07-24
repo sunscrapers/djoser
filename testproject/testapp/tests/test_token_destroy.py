@@ -1,8 +1,9 @@
+from django.conf import settings
 from django.contrib.auth import user_logged_out
+from django.test.utils import override_settings
 from djet import assertions, restframework
 from rest_framework import status
-import djoser.constants
-import djoser.utils
+
 import djoser.views
 
 from .common import create_user
@@ -44,3 +45,17 @@ class TokenDestroyViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'TOKEN_MODEL': None})
+    )
+    def test_none_token_model_results_in_no_operation(self):
+        user = create_user()
+        user_logged_out.connect(self.signal_receiver)
+        request = self.factory.post(user=user)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.data, None)
+        self.assertFalse(self.signal_sent)

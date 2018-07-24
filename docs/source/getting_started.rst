@@ -34,8 +34,8 @@ Supported Python versions
 Supported Django versions
 -------------------------
 
-* Django 1.10
 * Django 1.11
+* Django 2.0
 
 Supported Django Rest Framework versions
 ----------------------------------------
