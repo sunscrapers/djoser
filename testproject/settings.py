@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import os
 
-
 DEBUG = True
 
 BASE_DIR = os.path.dirname(__file__)
@@ -22,6 +21,7 @@ SECRET_KEY = '_'
 MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
 ]
+
 
 INSTALLED_APPS = (
     'django.contrib.auth',

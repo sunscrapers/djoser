@@ -6,7 +6,8 @@ User
 
 Use this endpoint to retrieve/update user.
 
-**Default URL**: ``/me/``
+**Default URL**: ``/users/me/``
+**Backward-compatible URL**: ``/me/``
 
 +----------+--------------------------------+----------------------------------+
 | Method   |           Request              |           Response               |
@@ -33,7 +34,8 @@ method and have `USERNAME_FIELD <https://docs.djangoproject.com/en/dev/topics/au
 and `REQUIRED_FIELDS <https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.CustomUser.REQUIRED_FIELDS>`_
 fields.
 
-**Default URL**: ``/users/create/``
+**Default URL**: ``/users/``
+**Backward-compatible URL**: ``/users/create/``
 
 +----------+-----------------------------------+----------------------------------+
 | Method   |  Request                          | Response                         |
@@ -53,7 +55,19 @@ password provided in ``current_password``, delete the auth token if token
 based authentication is used and invoke delete for a given ``User`` instance.
 One of ways to customize the delete behavior is to override ``User.delete``.
 
-**Default URL**: ``/users/delete/``
+**Default URL**: ``/users/me/``
+
++------------+---------------------------------+----------------------------------+
+| Method     |  Request                        | Response                         |
++============+=================================+==================================+
+| ``DELETE`` | * ``current_password``          | ``HTTP_204_NO_CONTENT``          |
+|            |                                 |                                  |
+|            |                                 | ``HTTP_400_BAD_REQUEST``         |
+|            |                                 |                                  |
+|            |                                 | * ``current_password``           |
++------------+---------------------------------+----------------------------------+
+
+**Backward-compatible URL**: ``/users/delete/``
 
 +----------+-----------------------------------+----------------------------------+
 | Method   |  Request                          | Response                         |
@@ -74,7 +88,8 @@ will be directly exposed to your users - you should provide site in your
 frontend application (configured by ``ACTIVATION_URL``) which will send ``POST``
 request to activate endpoint.
 
-**Default URL**: ``/users/activate/``
+**Default URL**: ``/users/confirm/``
+**Backward-compatible URL**: ``/users/activate/``
 
 +----------+----------------+----------------------------------+
 | Method   | Request        | Response                         |
@@ -88,7 +103,8 @@ Set Username
 
 Use this endpoint to change user username (``USERNAME_FIELD``).
 
-**Default URL**: ``/{{ User.USERNAME_FIELD }}/``
+**Default URL**: ``/users/change_username/``
+**Backward-compatible URL**: ``/{{ User.USERNAME_FIELD }}/``
 
 .. note::
 

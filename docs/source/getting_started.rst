@@ -4,16 +4,15 @@ Getting started
 Available endpoints
 -------------------
 
-* ``/me/``
-* ``/users/create/``
-* ``/users/delete/``
-* ``/users/activate/``
-* ``/{{ User.USERNAME_FIELD }}/``
+* ``/users/``
+* ``/users/me/``
+* ``/users/confirm/``
+* ``/users/change_username/``
 * ``/password/``
 * ``/password/reset/``
 * ``/password/reset/confirm/``
-* ``/token/create/`` (Token Based Authentication)
-* ``/token/destroy/`` (Token Based Authentication)
+* ``/token/login/`` (Token Based Authentication)
+* ``/token/logout/`` (Token Based Authentication)
 * ``/jwt/create/`` (JSON Web Token Authentication)
 * ``/jwt/refresh/`` (JSON Web Token Authentication)
 * ``/jwt/verify/`` (JSON Web Token Authentication)
