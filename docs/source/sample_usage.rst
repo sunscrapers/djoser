@@ -28,7 +28,7 @@ Register a new user:
 
 .. code-block:: text
 
-    $ curl -X POST http://127.0.0.1:8088/auth/users/ --data 'username=djoser&password=djoser'
+    $ curl -X POST http://127.0.0.1:8088/auth/users/ --data 'username=djoser&password=alpine12'
     {"email": "", "username": "djoser", "id":1}
 
 So far, so good. We have just created a new user using REST API.
