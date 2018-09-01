@@ -285,12 +285,14 @@ class UserViewSet(UserCreateView, viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'create':
             return settings.SERIALIZERS.user_create
-        elif self.action == 'remove' or (
-                self.action == 'me' and self.request.method == 'DELETE'):
+        if self.action == 'remove' or (
+                self.action == 'me' and self.request and
+                self.request.method == 'DELETE'
+        ):
             return settings.SERIALIZERS.user_delete
-        elif self.action == 'confirm':
+        if self.action == 'confirm':
             return settings.SERIALIZERS.activation
-        elif self.action == 'change_username':
+        if self.action == 'change_username':
             if settings.SET_USERNAME_RETYPE:
                 return settings.SERIALIZERS.set_username_retype
             return settings.SERIALIZERS.set_username
