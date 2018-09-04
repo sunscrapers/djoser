@@ -126,3 +126,11 @@ class UserViewSetMeTest(APITestCase,
         self.assertFalse(self.user.is_active)
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data['email']])
+
+    def test_drf_docs(self):
+        """
+        Test that DRF docs do not crash.
+        """
+        response = self.client.get('/docs/')
+
+        self.assert_status_equal(response, status.HTTP_200_OK)

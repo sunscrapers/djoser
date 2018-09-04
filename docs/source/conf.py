@@ -85,7 +85,7 @@ todo_include_todos = False
 #
 try:
     import sphinx_rtd_theme
-except:
+except Exception:
     html_theme = 'default'
 else:
     html_theme = 'sphinx_rtd_theme'

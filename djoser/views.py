@@ -286,7 +286,9 @@ class UserViewSet(UserCreateView, viewsets.ModelViewSet):
         if self.action == 'create':
             return settings.SERIALIZERS.user_create
         elif self.action == 'remove' or (
-                self.action == 'me' and self.request.method == 'DELETE'):
+                self.action == 'me' and self.request and
+                self.request.method == 'DELETE'
+        ):
             return settings.SERIALIZERS.user_delete
         elif self.action == 'confirm':
             return settings.SERIALIZERS.activation
