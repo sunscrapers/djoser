@@ -143,6 +143,7 @@ to update the defaults, so by providing, e.g. one key, all the others will stay 
         'user_create': 'djoser.serializers.UserCreateSerializer',
         'user_delete': 'djoser.serializers.UserDeleteSerializer',
         'user': 'djoser.serializers.UserSerializer',
+        'current_user': 'djoser.serializers.CurrentUserSerializer',
         'token': 'djoser.serializers.TokenSerializer',
         'token_create': 'djoser.serializers.TokenCreateSerializer',
     }

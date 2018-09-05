@@ -31,6 +31,10 @@ class UserSerializer(serializers.ModelSerializer):
         return super(UserSerializer, self).update(instance, validated_data)
 
 
+class CurrentUserSerializer(UserSerializer):
+    pass
+
+
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         style={'input_type': 'password'},
