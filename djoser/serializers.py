@@ -1,3 +1,5 @@
+import warnings
+
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions as django_exceptions
@@ -31,8 +33,21 @@ class UserSerializer(serializers.ModelSerializer):
         return super(UserSerializer, self).update(instance, validated_data)
 
 
-class CurrentUserSerializer(UserSerializer):
-    pass
+class CurrentUserSerializer(settings.SERIALIZERS.user):
+    def __init__(self, *args, **kwargs):
+        # Warn user about serializer split
+        warnings.simplefilter('default')
+        warnings.warn(
+            (
+                'Current user endpoints now use their own serializer setting. '
+                'For more information, see: '
+                'https://djoser.readthedocs.io/en/latest/settings.html#serializers'  # noqa
+            ),
+            DeprecationWarning,
+        )
+
+        # Perform regular init actions
+        super(CurrentUserSerializer, self).__init__(*args, **kwargs)
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

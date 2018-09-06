@@ -119,6 +119,14 @@ Dictionary which maps djoser serializer names to paths to serializer classes.
 This setting provides a way to easily override given serializer(s) - it's is used
 to update the defaults, so by providing, e.g. one key, all the others will stay default.
 
+.. note::
+
+    Current user endpoints now use the serializer specified by
+    ``SERIALIZERS.current_user``. This enables better security and privacy:
+    the serializers can be configured separately so that confidential fields
+    that are returned to the current user are not shown in the regular user
+    endpoints.
+
 **Examples**
 
 .. code-block:: python
