@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.urls.exceptions import NoReverseMatch
+from django.utils.timezone import now
 from rest_framework import generics, permissions, status, views, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
@@ -194,6 +195,8 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def _action(self, serializer):
         serializer.user.set_password(serializer.data['new_password'])
+        if hasattr(serializer.user, 'last_login'):
+            serializer.user.last_login = now()
         serializer.user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
