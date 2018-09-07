@@ -326,8 +326,10 @@ class UserViewSet(UserCreateView, viewsets.ModelViewSet):
         self.get_object = self.get_instance
         if request.method == 'GET':
             return self.retrieve(request, *args, **kwargs)
-        elif request.method in ['PUT', 'PATCH']:
+        elif request.method == 'PUT':
             return self.update(request, *args, **kwargs)
+        elif request.method == 'PATCH':
+            return self.partial_update(request, *args, **kwargs)
         elif request.method == 'DELETE':
             return self.destroy(request, *args, **kwargs)
 
