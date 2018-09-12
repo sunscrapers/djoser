@@ -6,6 +6,14 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 --------------------
+`1.3.0` (2018-09-12)
+--------------------
+
+* Split user serializers (thanks to @joshua-s)
+* Add Django 2.1 to tox.ini
+* Update travis.yml
+
+--------------------
 `1.2.0` (2018-07-23)
 --------------------
 
