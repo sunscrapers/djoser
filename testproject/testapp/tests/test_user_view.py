@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 
+import pytest
 from djet import assertions, restframework, utils
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -69,6 +70,10 @@ class UserViewSetMeTest(APITestCase,
     def setUp(self):
         self.user = create_user()
         self.client.force_authenticate(user=self.user)
+
+    def test_deprecation_warning(self):
+        with pytest.deprecated_call():
+            self.client.get(reverse('user-me'))
 
     def test_get_return_user(self):
         response = self.client.get(reverse('user-me'))

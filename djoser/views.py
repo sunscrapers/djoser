@@ -286,19 +286,28 @@ class UserViewSet(UserCreateView, viewsets.ModelViewSet):
         return super(UserViewSet, self).get_permissions()
 
     def get_serializer_class(self):
+        if self.action == 'me':
+            # Use the current user serializer on 'me' endpoints
+            self.serializer_class = settings.SERIALIZERS.current_user
+
         if self.action == 'create':
             return settings.SERIALIZERS.user_create
+
         elif self.action == 'remove' or (
                 self.action == 'me' and self.request and
                 self.request.method == 'DELETE'
         ):
             return settings.SERIALIZERS.user_delete
+
         elif self.action == 'confirm':
             return settings.SERIALIZERS.activation
+
         elif self.action == 'change_username':
             if settings.SET_USERNAME_RETYPE:
                 return settings.SERIALIZERS.set_username_retype
+
             return settings.SERIALIZERS.set_username
+
         return self.serializer_class
 
     def get_instance(self):

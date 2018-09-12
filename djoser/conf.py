@@ -55,6 +55,8 @@ default_settings = {
             'djoser.serializers.UserDeleteSerializer',
         'user':
             'djoser.serializers.UserSerializer',
+        'current_user':
+            'djoser.serializers.CurrentUserSerializer',
         'token':
             'djoser.serializers.TokenSerializer',
         'token_create':
