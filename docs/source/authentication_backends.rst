@@ -65,14 +65,14 @@ Configure ``urls.py`` with ``djoser.url.jwt`` module path:
         url(r'^auth/', include('djoser.urls.jwt')),
     ]
 
-Add ``rest_framework_jwt.authentication.JSONWebTokenAuthentication`` to
+Add ``rest_framework_simplejwt.authentication.JWTAuthentication`` to
 Django REST Framework authentication strategies tuple:
 
 .. code-block:: python
 
     REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
             (...)
         ),
     }

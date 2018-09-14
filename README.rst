@@ -112,7 +112,7 @@ Similar projects
 
 List of projects related to Django, REST and authentication:
 
-- `django-rest-framework-jwt <https://github.com/GetBlimp/django-rest-framework-jwt>`_
+- `django-rest-framework-simplejwt <https://github.com/davesque/django-rest-framework-simplejwt>`_
 - `django-oauth-toolkit <https://github.com/evonove/django-oauth-toolkit>`_
 - `django-rest-auth <https://github.com/Tivix/django-rest-auth>`_
 - `django-rest-framework-digestauth <https://github.com/juanriaza/django-rest-framework-digestauth>`_ (not maintained)

@@ -1,6 +1,6 @@
 -e .
 django-templated-mail==1.0.0
-djangorestframework-jwt==1.11.0
+djangorestframework-simplejwt==3.2.3
 djet==0.2.2
 social-auth-app-django==2.1.0
 coverage==4.4.1
