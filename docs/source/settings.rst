@@ -106,7 +106,8 @@ an email is registered in the system.
 TOKEN_MODEL
 -----------
 
-Points to which token model should be used for authentication.
+Points to which token model should be used for authentication. In case if
+only stateless tokens (e.g. JWT) are used in project it should be set to ``None``.
 
 **Example**: ``'knox.models.AuthToken'``
 **Default**: ``'rest_framework.authtoken.models.Token'``
@@ -117,6 +118,14 @@ SERIALIZERS
 Dictionary which maps djoser serializer names to paths to serializer classes.
 This setting provides a way to easily override given serializer(s) - it's is used
 to update the defaults, so by providing, e.g. one key, all the others will stay default.
+
+.. note::
+
+    Current user endpoints now use the serializer specified by
+    ``SERIALIZERS.current_user``. This enables better security and privacy:
+    the serializers can be configured separately so that confidential fields
+    that are returned to the current user are not shown in the regular user
+    endpoints.
 
 **Examples**
 
@@ -142,6 +151,7 @@ to update the defaults, so by providing, e.g. one key, all the others will stay 
         'user_create': 'djoser.serializers.UserCreateSerializer',
         'user_delete': 'djoser.serializers.UserDeleteSerializer',
         'user': 'djoser.serializers.UserSerializer',
+        'current_user': 'djoser.serializers.CurrentUserSerializer',
         'token': 'djoser.serializers.TokenSerializer',
         'token_create': 'djoser.serializers.TokenCreateSerializer',
     }

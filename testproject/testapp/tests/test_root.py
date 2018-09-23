@@ -1,6 +1,5 @@
 from djet import assertions, restframework
 from rest_framework import status
-
 import djoser.views
 
 

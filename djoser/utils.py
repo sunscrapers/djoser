@@ -20,10 +20,11 @@ def login_user(request, user):
 
 
 def logout_user(request):
-    settings.TOKEN_MODEL.objects.filter(user=request.user).delete()
-    user_logged_out.send(
-        sender=request.user.__class__, request=request, user=request.user
-    )
+    if settings.TOKEN_MODEL:
+        settings.TOKEN_MODEL.objects.filter(user=request.user).delete()
+        user_logged_out.send(
+            sender=request.user.__class__, request=request, user=request.user
+        )
 
 
 class ActionViewMixin(object):
