@@ -7,7 +7,6 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 import djoser.views
-
 from .common import create_user
 
 

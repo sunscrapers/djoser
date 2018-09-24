@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 
 from djoser.social.token.jwt import TokenStrategy

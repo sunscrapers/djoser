@@ -1,6 +1,5 @@
 from django.dispatch import Signal
 
-
 # New user has registered.
 user_registered = Signal(providing_args=["user", "request"])
 

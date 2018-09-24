@@ -7,7 +7,6 @@ from django.utils import six
 from django.utils.functional import LazyObject
 from django.utils.module_loading import import_string
 
-
 DJOSER_SETTINGS_NAMESPACE = 'DJOSER'
 
 

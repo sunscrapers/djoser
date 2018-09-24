@@ -1,6 +1,6 @@
+import django
 from django.contrib.auth import get_user_model
 from django.test.testcases import SimpleTestCase
-import django
 
 from djoser.compat import get_user_email_field_name
 from djoser.conf import settings

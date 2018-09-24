@@ -4,7 +4,6 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions as django_exceptions
 from django.db import IntegrityError, transaction
-
 from rest_framework import exceptions, serializers
 
 from djoser import utils
@@ -253,7 +252,6 @@ class UserDeleteSerializer(CurrentPasswordSerializer):
 
 class SetUsernameSerializer(serializers.ModelSerializer,
                             CurrentPasswordSerializer):
-
     class Meta(object):
         model = User
         fields = (User.USERNAME_FIELD, 'current_password')

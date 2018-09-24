@@ -1,11 +1,11 @@
 from django.conf import settings
 from django.test.utils import override_settings
 from djet import assertions, restframework, utils
-from djoser.conf import settings as djoser_settings
 from rest_framework import status
+
 import djoser.utils
 import djoser.views
-
+from djoser.conf import settings as djoser_settings
 from .common import create_user
 
 Token = djoser_settings.TOKEN_MODEL

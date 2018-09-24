@@ -1,15 +1,13 @@
+import pytest
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
-
-import pytest
 from djet import assertions, restframework, utils
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 import djoser.views
-
 from .common import create_user
 
 User = get_user_model()

@@ -3,14 +3,12 @@ from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 from djet import assertions, restframework
 from rest_framework import status
-
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 import djoser.constants
 import djoser.utils
 import djoser.views
-
 from .common import create_user, mock, perform_create_mock
 
 User = get_user_model()
