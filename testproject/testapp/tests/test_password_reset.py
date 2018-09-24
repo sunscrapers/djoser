@@ -6,7 +6,7 @@ from djet import assertions, restframework
 from rest_framework import status
 
 import djoser.views
-from djoser.conf import settings
+from djoser.conf import settings as default_settings
 from .common import create_user
 
 
@@ -76,5 +76,5 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data['email'][0], settings.CONSTANTS.messages.EMAIL_NOT_FOUND
+            response.data['email'][0], default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
         )
