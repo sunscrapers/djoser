@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 
 import pytest
-from djet import assertions, restframework, utils
+from djet import assertions, restframework
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -41,7 +41,7 @@ class UserViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertEqual(data['email'], user.email)
         self.assertTrue(user.is_active)
 
@@ -55,7 +55,7 @@ class UserViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertEqual(data['email'], user.email)
         self.assertFalse(user.is_active)
         self.assert_emails_in_mailbox(1)
@@ -91,7 +91,7 @@ class UserViewSetMeTest(APITestCase,
         response = self.client.put(reverse('user-me'), data=data)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        self.user = utils.refresh(self.user)
+        self.user.refresh_from_db()
         self.assertEqual(data['email'], self.user.email)
         self.assertTrue(self.user.is_active)
 
@@ -103,7 +103,7 @@ class UserViewSetMeTest(APITestCase,
         response = self.client.put(reverse('user-me'), data=data)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        self.user = utils.refresh(self.user)
+        self.user.refresh_from_db()
         self.assertEqual(data['email'], self.user.email)
         self.assertFalse(self.user.is_active)
         self.assert_emails_in_mailbox(1)
@@ -114,7 +114,7 @@ class UserViewSetMeTest(APITestCase,
         response = self.client.patch(reverse('user-me'), data=data)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        self.user = utils.refresh(self.user)
+        self.user.refresh_from_db()
         self.assertEqual(data['email'], self.user.email)
         self.assertTrue(self.user.is_active)
 
@@ -126,7 +126,7 @@ class UserViewSetMeTest(APITestCase,
         response = self.client.patch(reverse('user-me'), data=data)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        self.user = utils.refresh(self.user)
+        self.user.refresh_from_db()
         self.assertEqual(data['email'], self.user.email)
         self.assertFalse(self.user.is_active)
         self.assert_emails_in_mailbox(1)
