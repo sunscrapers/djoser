@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.test.utils import override_settings
-from djet import assertions, restframework, utils
+from djet import assertions, restframework
 from rest_framework import status
 import djoser.constants
 import djoser.utils
@@ -27,7 +27,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertTrue(user.check_password(data['new_password']))
 
     def test_post_not_set_new_password_if_broken_uid(self):
@@ -43,7 +43,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('uid', response.data)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertFalse(user.check_password(data['new_password']))
 
     def test_post_readable_error_message_when_uid_is_broken(self):
@@ -83,7 +83,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('uid', response.data)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertFalse(user.check_password(data['new_password']))
 
     def test_post_not_set_new_password_if_wrong_token(self):
@@ -102,7 +102,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             response.data['non_field_errors'],
             [djoser.constants.INVALID_TOKEN_ERROR]
         )
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertFalse(user.check_password(data['new_password']))
 
     @override_settings(
@@ -143,7 +143,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertFalse(user.check_password(data['new_password']))
 
     @override_settings(

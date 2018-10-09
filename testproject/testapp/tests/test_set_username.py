@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
-from djet import assertions, restframework, utils
+from djet import assertions, restframework
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -27,7 +27,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertEqual(data['new_username'], user.username)
 
     @override_settings(
@@ -45,7 +45,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertNotEqual(data['new_username'], user.username)
 
     def test_post_not_set_new_username_if_exists(self):
@@ -61,7 +61,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertNotEqual(user.username, username)
 
     def test_post_not_set_new_username_if_invalid(self):
@@ -75,7 +75,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertNotEqual(user.username, data['new_username'])
 
     @override_settings(
@@ -130,7 +130,7 @@ class UserViewSetChangeUsernameTest(APITestCase,
         response = self.client.post(reverse('user-change-username'), data=data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        self.user = utils.refresh(self.user)
+        self.user.refresh_from_db()
         self.assertEqual(data['new_username'], self.user.username)
 
     @override_settings(
@@ -145,8 +145,8 @@ class UserViewSetChangeUsernameTest(APITestCase,
         response = self.client.post(reverse('user-change-username'), data=data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user = utils.refresh(self.user)
-        self.assertNotEqual(data['new_username'], user.username)
+        self.user.refresh_from_db()
+        self.assertNotEqual(data['new_username'], self.user.username)
 
     def test_post_not_set_new_username_if_exists(self):
         username = 'tom'
@@ -161,7 +161,7 @@ class UserViewSetChangeUsernameTest(APITestCase,
         response = self.client.post(reverse('user-change-username'), data=data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertNotEqual(user.username, username)
 
     def test_post_not_set_new_username_if_invalid(self):
@@ -172,7 +172,7 @@ class UserViewSetChangeUsernameTest(APITestCase,
         response = self.client.post(reverse('user-change-username'), data=data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.user = utils.refresh(self.user)
+        self.user.refresh_from_db()
         self.assertNotEqual(self.user.username, data['new_username'])
 
     @override_settings(

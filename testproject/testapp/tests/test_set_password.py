@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.test.utils import override_settings
-from djet import assertions, restframework, utils
+from djet import assertions, restframework
 from djoser.conf import settings as djoser_settings
 from rest_framework import status
 import djoser.utils
@@ -26,7 +26,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertTrue(user.check_password(data['new_password']))
 
     def test_post_not_set_new_password_if_wrong_current_password(self):
@@ -56,7 +56,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertTrue(user.check_password(data['current_password']))
 
     def test_post_not_set_new_password_if_fails_validation(self):
