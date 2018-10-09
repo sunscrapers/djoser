@@ -17,7 +17,7 @@ def get_packages(package):
 
 setup(
     name='djoser',
-    version='1.3.0',
+    version='1.3.1',
     packages=get_packages('djoser'),
     license='MIT',
     author='SUNSCRAPERS',
