@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.test.utils import override_settings
-from djet import assertions, restframework, utils
+from djet import assertions, restframework
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -37,7 +37,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertTrue(user.is_active)
 
     def test_post_respond_with_bad_request_when_wrong_uid(self):
@@ -107,7 +107,7 @@ class UserViewSetConfirmationTest(APITestCase,
         response = self.client.post(reverse('user-confirm'), data=data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertTrue(user.is_active)
 
     def test_post_respond_with_bad_request_when_wrong_uid(self):

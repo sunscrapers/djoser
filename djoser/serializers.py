@@ -32,7 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
         return super(UserSerializer, self).update(instance, validated_data)
 
 
-class CurrentUserSerializer(settings.SERIALIZERS.user):
+class CurrentUserSerializer(UserSerializer):
     def __init__(self, *args, **kwargs):
         # Warn user about serializer split
         warnings.simplefilter('default')
