@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import os
-from setuptools import setup
 
+from setuptools import setup
 
 with open('README.rst', 'r') as f:
     readme = f.read()
@@ -17,7 +17,7 @@ def get_packages(package):
 
 setup(
     name='djoser',
-    version='1.2.0',
+    version='1.3.1',
     packages=get_packages('djoser'),
     license='MIT',
     author='SUNSCRAPERS',
@@ -32,6 +32,7 @@ setup(
         'Framework :: Django',
         'Framework :: Django :: 1.11',
         'Framework :: Django :: 2.0',
+        'Framework :: Django :: 2.1',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',

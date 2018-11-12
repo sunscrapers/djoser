@@ -15,13 +15,13 @@ djoser
   :target: https://scrutinizer-ci.com/g/sunscrapers/djoser
 
 REST implementation of `Django <https://www.djangoproject.com/>`_ authentication
-system. **djoser** library provides a set of `Django Rest Framework <http://www.django-rest-framework.org/>`_
+system. **djoser** library provides a set of `Django Rest Framework <https://www.django-rest-framework.org/>`_
 views to handle basic actions such as registration, login, logout, password
 reset and account activation. It works with
 `custom user model <https://docs.djangoproject.com/en/dev/topics/auth/customizing/>`_.
 
 Instead of reusing Django code (e.g. ``PasswordResetForm``), we reimplemented
-few things to fit better into `Single Page App <http://en.wikipedia.org/wiki/Single-page_application)>`_
+few things to fit better into `Single Page App <https://en.wikipedia.org/wiki/Single-page_application>`_
 architecture.
 
 Developed by `SUNSCRAPERS <http://sunscrapers.com/>`_ with passion & patience.
@@ -35,9 +35,10 @@ Requirements
 To be able to run **djoser** you have to meet following requirements:
 
 - Python (2.7, 3.4, 3.5, 3.6)
-- Django (1.11, 2.0)
+- Django (1.11, 2.0, 2.1)
 - Django REST Framework (3.7, 3.8)
 
+Bear in mind that for Django-2.x you will need at least Python 3.5
 
 Installation
 ============
@@ -49,14 +50,14 @@ Simply install using ``pip``:
     $ pip install djoser
 
 And continue with the steps described at
-`configuration <http://djoser.readthedocs.io/en/latest/getting_started.html#configuration>`_
+`configuration <https://djoser.readthedocs.io/en/latest/getting_started.html#configuration>`_
 guide.
 
 Documentation
 =============
 
 Documentation is available to study at
-`http://djoser.readthedocs.io <http://djoser.readthedocs.io>`_
+`https://djoser.readthedocs.io <https://djoser.readthedocs.io>`_
 and in ``docs`` directory.
 
 Contributing and development

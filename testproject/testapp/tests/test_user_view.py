@@ -2,7 +2,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 
-from djet import assertions, restframework, utils
+import pytest
+from djet import assertions, restframework
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -40,7 +41,7 @@ class UserViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertEqual(data['email'], user.email)
         self.assertTrue(user.is_active)
 
@@ -54,7 +55,7 @@ class UserViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        user = utils.refresh(user)
+        user.refresh_from_db()
         self.assertEqual(data['email'], user.email)
         self.assertFalse(user.is_active)
         self.assert_emails_in_mailbox(1)
@@ -69,6 +70,10 @@ class UserViewSetMeTest(APITestCase,
     def setUp(self):
         self.user = create_user()
         self.client.force_authenticate(user=self.user)
+
+    def test_deprecation_warning(self):
+        with pytest.deprecated_call():
+            self.client.get(reverse('user-me'))
 
     def test_get_return_user(self):
         response = self.client.get(reverse('user-me'))
@@ -86,7 +91,7 @@ class UserViewSetMeTest(APITestCase,
         response = self.client.put(reverse('user-me'), data=data)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        self.user = utils.refresh(self.user)
+        self.user.refresh_from_db()
         self.assertEqual(data['email'], self.user.email)
         self.assertTrue(self.user.is_active)
 
@@ -98,7 +103,7 @@ class UserViewSetMeTest(APITestCase,
         response = self.client.put(reverse('user-me'), data=data)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        self.user = utils.refresh(self.user)
+        self.user.refresh_from_db()
         self.assertEqual(data['email'], self.user.email)
         self.assertFalse(self.user.is_active)
         self.assert_emails_in_mailbox(1)
@@ -109,7 +114,7 @@ class UserViewSetMeTest(APITestCase,
         response = self.client.patch(reverse('user-me'), data=data)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        self.user = utils.refresh(self.user)
+        self.user.refresh_from_db()
         self.assertEqual(data['email'], self.user.email)
         self.assertTrue(self.user.is_active)
 
@@ -121,8 +126,16 @@ class UserViewSetMeTest(APITestCase,
         response = self.client.patch(reverse('user-me'), data=data)
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        self.user = utils.refresh(self.user)
+        self.user.refresh_from_db()
         self.assertEqual(data['email'], self.user.email)
         self.assertFalse(self.user.is_active)
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data['email']])
+
+    def test_drf_docs(self):
+        """
+        Test that DRF docs do not crash.
+        """
+        response = self.client.get('/docs/')
+
+        self.assert_status_equal(response, status.HTTP_200_OK)

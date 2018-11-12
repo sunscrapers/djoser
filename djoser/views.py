@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.urls.exceptions import NoReverseMatch
+from django.utils.timezone import now
 from rest_framework import generics, permissions, status, views, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
@@ -194,6 +195,8 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
 
     def _action(self, serializer):
         serializer.user.set_password(serializer.data['new_password'])
+        if hasattr(serializer.user, 'last_login'):
+            serializer.user.last_login = now()
         serializer.user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -283,17 +286,28 @@ class UserViewSet(UserCreateView, viewsets.ModelViewSet):
         return super(UserViewSet, self).get_permissions()
 
     def get_serializer_class(self):
+        if self.action == 'me':
+            # Use the current user serializer on 'me' endpoints
+            self.serializer_class = settings.SERIALIZERS.current_user
+
         if self.action == 'create':
             return settings.SERIALIZERS.user_create
+
         elif self.action == 'remove' or (
-                self.action == 'me' and self.request.method == 'DELETE'):
+                self.action == 'me' and self.request and
+                self.request.method == 'DELETE'
+        ):
             return settings.SERIALIZERS.user_delete
+
         elif self.action == 'confirm':
             return settings.SERIALIZERS.activation
+
         elif self.action == 'change_username':
             if settings.SET_USERNAME_RETYPE:
                 return settings.SERIALIZERS.set_username_retype
+
             return settings.SERIALIZERS.set_username
+
         return self.serializer_class
 
     def get_instance(self):
@@ -324,8 +338,10 @@ class UserViewSet(UserCreateView, viewsets.ModelViewSet):
         self.get_object = self.get_instance
         if request.method == 'GET':
             return self.retrieve(request, *args, **kwargs)
-        elif request.method in ['PUT', 'PATCH']:
+        elif request.method == 'PUT':
             return self.update(request, *args, **kwargs)
+        elif request.method == 'PATCH':
+            return self.partial_update(request, *args, **kwargs)
         elif request.method == 'DELETE':
             return self.destroy(request, *args, **kwargs)
 
