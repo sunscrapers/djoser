@@ -7,7 +7,6 @@ from django.utils import six
 from django.utils.functional import LazyObject
 from django.utils.module_loading import import_string
 
-
 DJOSER_SETTINGS_NAMESPACE = 'DJOSER'
 
 
@@ -68,6 +67,7 @@ default_settings = {
         'password_reset': 'djoser.email.PasswordResetEmail',
     }),
     'LOGOUT_ON_PASSWORD_CHANGE': False,
+    'CREATE_SESSION_ON_LOGIN': False,
     'USER_EMAIL_FIELD_NAME': 'email',
     'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',
     'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': [],
