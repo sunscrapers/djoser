@@ -231,3 +231,40 @@ class UserViewSetCreationTest(APITestCase,
         self.assertEqual(
             response.data, [djoser.constants.CANNOT_CREATE_USER_ERROR]
         )
+
+
+class UserViewSetEditTest(APITestCase,
+                          assertions.StatusCodeAssertionsMixin):
+
+    def test_patch_edits_user_attribute(self):
+        user = create_user()
+        self.client.force_authenticate(user=user)
+        response = self.client.patch(
+            path=reverse('user-detail', args=(user.pk, )),
+            data={'email': 'new@gmail.com'}
+        )
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assertTrue('email' in response.data)
+
+        user.refresh_from_db()
+        self.assertTrue(user.email == 'new@gmail.com')
+
+    def test_patch_cant_edit_others_attribute(self):
+        user = create_user()
+        another_user = create_user(**{
+            'username': 'paul',
+            'password': 'secret',
+            'email': 'paul@beatles.com',
+        })
+        self.client.force_authenticate(user=user)
+        response = self.client.patch(
+            path=reverse('user-detail', args=(another_user.pk, )),
+            data={'email': 'new@gmail.com'}
+        )
+
+        self.assert_status_equal(response, status.HTTP_403_FORBIDDEN)
+
+        another_user.refresh_from_db()
+        self.assertTrue(another_user.email == 'paul@beatles.com')
+
