@@ -10,6 +10,7 @@ from rest_framework.reverse import reverse
 from djoser import utils, signals
 from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
+from djoser.permissions import CurrentUserOrAdmin
 
 User = get_user_model()
 
@@ -275,7 +276,7 @@ class UserView(generics.RetrieveUpdateAPIView):
 class UserViewSet(UserCreateView, viewsets.ModelViewSet):
     serializer_class = settings.SERIALIZERS.user
     queryset = User.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [CurrentUserOrAdmin]
     token_generator = default_token_generator
 
     def get_permissions(self):
