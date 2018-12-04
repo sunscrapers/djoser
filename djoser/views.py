@@ -256,7 +256,7 @@ class UserView(generics.RetrieveUpdateAPIView):
     """
     Use this endpoint to retrieve/update user.
     """
-    model = User
+    queryset = User.objects.all()
     serializer_class = settings.SERIALIZERS.user
     permission_classes = [permissions.IsAuthenticated]
 
