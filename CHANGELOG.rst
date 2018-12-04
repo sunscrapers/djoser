@@ -9,6 +9,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 `1.3.2`_ (2018-12-05)
 ---------------------
 
+* Fix vulnerability of user endpoints.
 * Fix issue  that appears on DRF 3.9+ on legacy `/me/` endpoint.
 
 ---------------------
