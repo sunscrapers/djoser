@@ -5,23 +5,29 @@ Change Log
 This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
---------------------
-`1.3.1` (2018-10-09)
---------------------
+---------------------
+`1.3.2`_ (2018-12-05)
+---------------------
+
+* Fix issue  that appears on DRF 3.9+ on legacy `/me/` endpoint.
+
+---------------------
+`1.3.1`_ (2018-10-09)
+---------------------
 
 * Fix issue with circular import
 
---------------------
-`1.3.0` (2018-09-12)
---------------------
+---------------------
+`1.3.0`_ (2018-09-12)
+---------------------
 
 * Split user serializers (thanks to @joshua-s)
 * Add Django 2.1 to tox.ini
 * Update travis.yml
 
---------------------
-`1.2.0` (2018-07-23)
---------------------
+---------------------
+`1.2.0`_ (2018-07-23)
+---------------------
 
 * Refactor urls to use new RESTful ViewSets
 * Retain old urls for compatibility
@@ -277,3 +283,7 @@ few bugfixes / documentation updates. List of changes:
 .. _1.1.3: https://github.com/sunscrapers/djoser/compare/1.1.2...1.1.3
 .. _1.1.4: https://github.com/sunscrapers/djoser/compare/1.1.3...1.1.4
 .. _1.1.5: https://github.com/sunscrapers/djoser/compare/1.1.4...1.1.5
+.. _1.2.0: https://github.com/sunscrapers/djoser/compare/1.1.5...1.2.0
+.. _1.3.0: https://github.com/sunscrapers/djoser/compare/1.2.0...1.3.0
+.. _1.3.1: https://github.com/sunscrapers/djoser/compare/1.3.0...1.3.1
+.. _1.3.2: https://github.com/sunscrapers/djoser/compare/1.3.1...1.3.2
