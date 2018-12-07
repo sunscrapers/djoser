@@ -24,6 +24,7 @@ Welcome to djoser's documentation!
     token_endpoints
     jwt_endpoints
     social_endpoints
+    signals
 
 .. toctree::
     :maxdepth: 1
