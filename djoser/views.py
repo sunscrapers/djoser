@@ -11,13 +11,17 @@ def run_pipeline(request, steps):
     return settings.VIEW_PIPELINE_ADAPTER(request, steps)
 
 
-class UsersViewSet(viewsets.ViewSet):
-    permission_classes = [permissions.AllowAny]
-
+class PipelineMixin:
     def create(self, request, *args, **kwargs):
-        steps = settings.PIPELINES['user_create']
-        response_data = run_pipeline(request, steps)
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        steps = self.pipeline
+        run_pipeline(request, steps)
+        return Response(status=self.status_code)
+
+
+class UsersViewSet(PipelineMixin, viewsets.ViewSet):
+    permission_classes = [permissions.AllowAny]
+    pipeline = settings.PIPELINES['user_create']
+    status_code = status.HTTP_201_CREATED
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -39,62 +43,45 @@ class UserViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserActivateViewSet(viewsets.ViewSet):
+class UserActivateViewSet(PipelineMixin, viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
-
-    def create(self, request, *args, **kwargs):
-        steps = settings.PIPELINES['user_activate']
-        run_pipeline(request, steps)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    pipeline = settings.PIPELINES['user_activate']
+    status_code = status.HTTP_204_NO_CONTENT
 
 
-class UsernameUpdateViewSet(viewsets.ViewSet):
+class UsernameUpdateViewSet(PipelineMixin, viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
-
-    def create(self, request, *args, **kwargs):
-        steps = settings.PIPELINES['username_update']
-        run_pipeline(request, steps)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    pipeline = settings.PIPELINES['username_update']
+    status_code = status.HTTP_204_NO_CONTENT
 
 
-class PasswordUpdateViewSet(viewsets.ViewSet):
+class PasswordUpdateViewSet(PipelineMixin, viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
-
-    def create(self, request, *args, **kwargs):
-        steps = settings.PIPELINES['password_update']
-        run_pipeline(request, steps)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    pipeline = settings.PIPELINES['password_update']
+    status_code = status.HTTP_204_NO_CONTENT
 
 
-class PasswordResetViewSet(viewsets.ViewSet):
+class PasswordResetViewSet(PipelineMixin, viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
-
-    def create(self, request, *args, **kwargs):
-        steps = settings.PIPELINES['password_reset']
-        run_pipeline(request, steps)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    pipeline = settings.PIPELINES['password_reset']
+    status_code = status.HTTP_204_NO_CONTENT
 
 
-class PasswordResetConfirmViewSet(viewsets.ViewSet):
+class PasswordResetConfirmViewSet(PipelineMixin, viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
-
-    def create(self, request, *args, **kwargs):
-        steps = settings.PIPELINES['password_reset_confirm']
-        run_pipeline(request, steps)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    pipeline = settings.PIPELINES['password_reset_confirm']
+    status_code = status.HTTP_204_NO_CONTENT
 
 
-class TokenViewSet(viewsets.ViewSet):
+class TokenViewSet(PipelineMixin, viewsets.ViewSet):
+    pipeline = settings.PIPELINES['token_create']
+    status_code = status.HTTP_201_CREATED
+
     def get_permissions(self):
         if self.action == 'create':
             return [permissions.AllowAny()]
         else:
             return [permissions.IsAuthenticated()]
-
-    def create(self, request, *args, **kwargs):
-        steps = settings.PIPELINES['token_create']
-        response_data = run_pipeline(request, steps)
-        return Response(response_data, status=status.HTTP_201_CREATED)
 
     def remove_token(self, request, *args, **kwargs):
         steps = settings.PIPELINES['token_delete']
