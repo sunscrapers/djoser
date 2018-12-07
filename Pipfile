@@ -18,8 +18,8 @@ ipdb = "*"
 
 [packages]
 djangorestframework = "*"
-"djangorestframework-jwt" = "*"
 django = "*"
 "django-templated-mail" = "*"
 "social-auth-app-django" = "*"
 coreapi = "*"
+djangorestframework-simplejwt = "*"

@@ -8,7 +8,8 @@ from djoser.conf import settings
 
 class ProviderAuthSerializer(serializers.Serializer):
     # GET auth token
-    token = serializers.CharField(read_only=True)
+    access = serializers.CharField(read_only=True)
+    refresh = serializers.CharField(read_only=True)
     user = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
