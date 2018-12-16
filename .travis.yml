@@ -4,7 +4,7 @@ language: python
 python:
   - "3.5"
   - "3.6"
-  - "3.7-dev"
+  - "3.7"
 
 env:
   - DJANGO=1.11
@@ -19,7 +19,7 @@ matrix:
     - python: "3.4"
       env: DJANGO=1.11
   exclude:
-    - python: "3.7-dev"
+    - python: "3.7"
       env: DJANGO=1.11
 
 install:
