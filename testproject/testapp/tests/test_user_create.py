@@ -240,7 +240,7 @@ class UserViewSetEditTest(APITestCase,
         user = create_user()
         self.client.force_authenticate(user=user)
         response = self.client.patch(
-            path=reverse('user-detail', args=(user.pk, )),
+            path=reverse('user-detail', args=(user.pk,)),
             data={'email': 'new@gmail.com'}
         )
 
@@ -259,7 +259,7 @@ class UserViewSetEditTest(APITestCase,
         })
         self.client.force_authenticate(user=user)
         response = self.client.patch(
-            path=reverse('user-detail', args=(another_user.pk, )),
+            path=reverse('user-detail', args=(another_user.pk,)),
             data={'email': 'new@gmail.com'}
         )
 
@@ -267,4 +267,3 @@ class UserViewSetEditTest(APITestCase,
 
         another_user.refresh_from_db()
         self.assertTrue(another_user.email == 'paul@beatles.com')
-

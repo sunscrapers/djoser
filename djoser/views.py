@@ -10,7 +10,7 @@ from rest_framework.reverse import reverse
 from djoser import utils, signals
 from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
-from djoser.permissions import CurrentUserOrAdmin
+
 
 User = get_user_model()
 
@@ -66,7 +66,7 @@ class UserCreateView(generics.CreateAPIView):
     Use this endpoint to register new user.
     """
     serializer_class = settings.SERIALIZERS.user_create
-    permission_classes = [permissions.AllowAny]
+    permission_classes = settings.PERMISSIONS.user_create
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -87,7 +87,7 @@ class UserDeleteView(generics.CreateAPIView):
     Use this endpoint to remove actually authenticated user
     """
     serializer_class = settings.SERIALIZERS.user_delete
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = settings.PERMISSIONS.user_delete
 
     def get_object(self):
         return self.request.user
@@ -108,7 +108,7 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
     Use this endpoint to obtain user authentication token.
     """
     serializer_class = settings.SERIALIZERS.token_create
-    permission_classes = [permissions.AllowAny]
+    permission_classes = settings.PERMISSIONS.token_create
 
     def _action(self, serializer):
         token = utils.login_user(self.request, serializer.user)
@@ -123,7 +123,7 @@ class TokenDestroyView(views.APIView):
     """
     Use this endpoint to logout user (remove user authentication token).
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = settings.PERMISSIONS.token_destroy
 
     def post(self, request):
         utils.logout_user(request)
@@ -135,7 +135,7 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
     Use this endpoint to send email to user with password reset link.
     """
     serializer_class = settings.SERIALIZERS.password_reset
-    permission_classes = [permissions.AllowAny]
+    permission_classes = settings.PERMISSIONS.password_reset
 
     _users = None
 
@@ -165,7 +165,7 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to change user password.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = settings.PERMISSIONS.set_password
 
     def get_serializer_class(self):
         if settings.SET_PASSWORD_RETYPE:
@@ -186,7 +186,7 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to finish reset password process.
     """
-    permission_classes = [permissions.AllowAny]
+    permission_classes = settings.PERMISSIONS.password_reset_confirm
     token_generator = default_token_generator
 
     def get_serializer_class(self):
@@ -207,7 +207,7 @@ class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
     Use this endpoint to activate user account.
     """
     serializer_class = settings.SERIALIZERS.activation
-    permission_classes = [permissions.AllowAny]
+    permission_classes = settings.PERMISSIONS.activation
     token_generator = default_token_generator
 
     def _action(self, serializer):
@@ -231,7 +231,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to change user username.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = settings.PERMISSIONS.set_username
 
     def get_serializer_class(self):
         if settings.SET_USERNAME_RETYPE:
@@ -259,7 +259,7 @@ class UserView(generics.RetrieveUpdateAPIView):
     """
     queryset = User.objects.all()
     serializer_class = settings.SERIALIZERS.user
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = settings.PERMISSIONS.user
 
     def get_object(self, *args, **kwargs):
         return self.request.user
@@ -276,14 +276,16 @@ class UserView(generics.RetrieveUpdateAPIView):
 class UserViewSet(UserCreateView, viewsets.ModelViewSet):
     serializer_class = settings.SERIALIZERS.user
     queryset = User.objects.all()
-    permission_classes = [CurrentUserOrAdmin]
+    permission_classes = settings.PERMISSIONS.user
     token_generator = default_token_generator
 
     def get_permissions(self):
-        if self.action in ['create', 'confirm']:
-            self.permission_classes = [permissions.AllowAny]
+        if self.action == 'create':
+            self.permission_classes = settings.PERMISSIONS.user_create
+        elif self.action == 'confirm':
+            self.permission_classes = settings.PERMISSIONS.activation
         elif self.action == 'list':
-            self.permission_classes = [permissions.IsAdminUser]
+            self.permission_classes = settings.PERMISSIONS.user_list
         return super(UserViewSet, self).get_permissions()
 
     def get_serializer_class(self):

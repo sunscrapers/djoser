@@ -6,6 +6,16 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`1.4.0`_ (2019-01-09)
+---------------------
+
+* Introduced new framework for setting default permissions for certain views.
+  See :ref:`documentation<view-permission-settings>`.
+* Fix permissions regression introduced in 1.3.2 thanks to new permissions framework.
+  Default permission for user-list view set to read-only, like in 1.3.2
+  (defaults to read-only like in 1.3.2).
+
+---------------------
 `1.3.2`_ (2018-12-05)
 ---------------------
 
@@ -288,3 +298,4 @@ few bugfixes / documentation updates. List of changes:
 .. _1.3.0: https://github.com/sunscrapers/djoser/compare/1.2.0...1.3.0
 .. _1.3.1: https://github.com/sunscrapers/djoser/compare/1.3.0...1.3.1
 .. _1.3.2: https://github.com/sunscrapers/djoser/compare/1.3.1...1.3.2
+.. _1.3.3: https://github.com/sunscrapers/djoser/compare/1.3.2...1.3.3
