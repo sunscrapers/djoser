@@ -1,25 +1,28 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 
+
 [dev-packages]
-djet = "*"
 coverage = "*"
 pytest = "*"
-"pytest-cov" = "*"
-"pytest-django" = "*"
+pytest-cov = "*"
+pytest-django = "*"
 "flake8" = "*"
 twine = "*"
 wheel = "*"
 sphinx = "*"
-"sphinx-rtd-theme" = "*"
+sphinx-rtd-theme = "*"
 ipython = "*"
 ipdb = "*"
+pytest-pythonpath = "*"
+
 
 [packages]
-djangorestframework = "*"
 django = "*"
-"django-templated-mail" = "*"
-"social-auth-app-django" = "*"
-coreapi = "*"
+djangorestframework = "*"
 djangorestframework-simplejwt = "*"
+coreapi = "*"
+django-templated-mail = "*"
+social-auth-app-django = "*"
