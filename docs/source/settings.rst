@@ -213,6 +213,7 @@ Dictionary that maps permissions to certain views across Djoser.
     }
 
 **Defaults**
+
 .. code-block:: python
 
     {
