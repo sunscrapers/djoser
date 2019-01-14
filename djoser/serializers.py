@@ -73,7 +73,10 @@ class UserCreateSerializer(serializers.ModelSerializer):
         try:
             validate_password(password, user)
         except django_exceptions.ValidationError as e:
-            raise serializers.ValidationError({'password': list(e.messages)})
+            serializer_error = serializers.as_serializer_error(e)
+            raise serializers.ValidationError({
+                'password': serializer_error['non_field_errors']
+            })
 
         return attrs
 
