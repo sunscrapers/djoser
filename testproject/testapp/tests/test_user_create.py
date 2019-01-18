@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 from djet import assertions, restframework
+from rest_framework import __version__ as drf_version
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -10,6 +11,7 @@ import djoser.constants
 import djoser.utils
 import djoser.views
 from .common import create_user, mock, perform_create_mock
+from pkg_resources import parse_version
 
 User = get_user_model()
 
@@ -102,10 +104,16 @@ class UserCreateViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        response.render()
         self.assertEqual(
-            response.data,
-            {'password': ['Password 666 is not allowed.']}
+            str(response.data['password'][0]),
+            'Password 666 is not allowed.',
         )
+        if parse_version(drf_version) >= parse_version('3.9.0'):
+            self.assertEqual(
+                response.data['password'][0].code,
+                'no666',
+            )
 
     @mock.patch(
         'djoser.serializers.UserCreateSerializer.perform_create',
@@ -210,9 +218,14 @@ class UserViewSetCreationTest(APITestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data,
-            {'password': ['Password 666 is not allowed.']}
+            str(response.data['password'][0]),
+            'Password 666 is not allowed.',
         )
+        if parse_version(drf_version) >= parse_version('3.9.0'):
+            self.assertEqual(
+                response.data['password'][0].code,
+                'no666',
+            )
 
     @mock.patch(
         'djoser.serializers.UserCreateSerializer.perform_create',
