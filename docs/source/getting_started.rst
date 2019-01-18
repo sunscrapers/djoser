@@ -82,12 +82,24 @@ Configure ``INSTALLED_APPS``:
 
 Configure ``urls.py``:
 
+
+To mount the djoser's urls you can either user an `include` like this:
+
 .. code-block:: python
 
     urlpatterns = [
         (...),
         url(r'^auth/', include('djoser.urls')),
     ]
+
+or import a router:
+
+.. code-block:: python
+    
+    from djoser.urls import router as djoser_router
+
+    my_router.extend(djoser_router)
+
 
 HTTP Basic Auth strategy is assumed by default as Django Rest Framework does it.
 We strongly discourage and do not provide any explicit support for basic auth.
