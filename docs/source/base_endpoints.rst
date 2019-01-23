@@ -98,6 +98,23 @@ request to activate endpoint.
 |          | * ``token``    |                                  |
 +----------+----------------+----------------------------------+
 
+User Resend Activation E-mail
+------------------------------
+
+Use this endpoint to re-send the activation e-mail. Note that no e-mail would
+be sent if the user is already active or if they don't have a usable password.
+Also if the sending of activation e-mails is disabled in settings, this call
+will result in ``HTTP_400_BAD_REQUEST``
+
+**Default URL**: ``/users/resend/``
+
++----------+----------------+----------------------------------+
+| Method   | Request        | Response                         |
++==========+================+==================================+
+| ``POST`` | * ``uid``      | ``HTTP_204_NO_CONTENT``          |
+|          |                | ``HTTP_400_BAD_REQUEST``         |
++----------+----------------+----------------------------------+
+
 Set Username
 ------------
 

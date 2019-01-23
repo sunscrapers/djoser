@@ -2,7 +2,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.urls.exceptions import NoReverseMatch
 from django.utils.timezone import now
-from rest_framework import generics, permissions, status, views, viewsets
+from rest_framework import (
+    generics,
+    permissions,
+    response,
+    status, views,
+    viewsets,
+)
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -10,6 +16,7 @@ from rest_framework.reverse import reverse
 from djoser import utils, signals
 from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
+from djoser.utils import ActionViewMixin
 
 
 User = get_user_model()
@@ -80,6 +87,39 @@ class UserCreateView(generics.CreateAPIView):
             settings.EMAIL.activation(self.request, context).send(to)
         elif settings.SEND_CONFIRMATION_EMAIL:
             settings.EMAIL.confirmation(self.request, context).send(to)
+
+
+class ResendActivationView(ActionViewMixin, generics.GenericAPIView):
+    """
+    Use this endpoint to resend user activation email.
+    """
+    serializer_class = settings.SERIALIZERS.password_reset
+    permission_classes = [permissions.AllowAny]
+
+    _users = None
+
+    def _action(self, serializer):
+        if not settings.SEND_ACTIVATION_EMAIL:
+            return response.Response(status=status.HTTP_400_BAD_REQUEST)
+        for user in self.get_users(serializer.data['email']):
+            self.send_activation_email(user)
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_users(self, email):
+        if self._users is None:
+            email_field_name = get_user_email_field_name(User)
+            users = User._default_manager.filter(**{
+                email_field_name + '__iexact': email
+            })
+            self._users = [
+                u for u in users if not u.is_active and u.has_usable_password()
+            ]
+        return self._users
+
+    def send_activation_email(self, user):
+        context = {'user': user}
+        to = [get_user_email(user)]
+        settings.EMAIL.activation(self.request, context).send(to)
 
 
 class UserDeleteView(generics.CreateAPIView):
