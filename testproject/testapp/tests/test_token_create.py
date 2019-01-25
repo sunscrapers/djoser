@@ -22,6 +22,7 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
 
     def test_post_should_login_user(self):
         user = create_user()
+        previous_last_login = user.last_login
         data = {
             'username': user.username,
             'password': user.raw_password,
@@ -30,9 +31,11 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
         request = self.factory.post(data=data)
 
         response = self.view(request)
+        user.refresh_from_db()
 
         self.assert_status_equal(response, status.HTTP_200_OK)
         self.assertEqual(response.data['auth_token'], user.auth_token.key)
+        self.assertNotEqual(user.last_login, previous_last_login)
         self.assertTrue(self.signal_sent)
 
     def test_post_should_not_login_if_user_is_not_active(self):
