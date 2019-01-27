@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 
-INVALID_CREDENTIALS_ERROR = _('Unable to login with provided credentials.')
+INVALID_CREDENTIALS_ERROR = _('Unable to log in with provided credentials.')
 INACTIVE_ACCOUNT_ERROR = _('User account is disabled.')
 INVALID_TOKEN_ERROR = _('Invalid token for given user.')
 INVALID_UID_ERROR = _('Invalid user id or user doesn\'t exist.')
