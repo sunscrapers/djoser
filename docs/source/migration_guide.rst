@@ -3,6 +3,30 @@ Migration Guide
 ===============
 
 -------------------------
+Migrating from 1.3 to 1.4
+-------------------------
+
+Due to a lack of maintenance on the `django-rest-framework-jwt` project, Djoser
+has switched to using `django-rest-framework-simplejwt`. This update includes
+some backwards-incompatible changes:
+
+#. The response from the JWT Create endpoint includes both an `access` and
+   `refresh` token. `access` is essentially the same as the old `token` and
+   can be used to authenticate requests. `refresh` is used to acquire a new
+   access token.
+#. The JWT Refresh endpoint requires the `refresh` token and returns a new
+   `access` token.
+#. The JWT Verify endpoint no longer returns `token`.
+#. `django-rest-framework-simplejwt` uses `Authorization: Bearer <token>`.
+   This can be overridden by adding the following to Django Settings:
+
+   .. code-block:: python
+
+     SIMPLE_JWT = {
+         'AUTH_HEADER_TYPES': ('JWT',),
+     }
+
+-------------------------
 Migrating from 1.1 to 1.2
 -------------------------
 

@@ -55,15 +55,8 @@ Run migrations - this step will create tables for ``auth`` and ``authtoken`` app
 JSON Web Token Authentication
 -----------------------------
 
-Configure ``urls.py`` with ``djoser.url.jwt`` module path:
-
-.. code-block:: python
-
-    urlpatterns = [
-        (...),
-        url(r'^auth/', include('djoser.urls')),
-        url(r'^auth/', include('djoser.urls.jwt')),
-    ]
+Django Settings
+===============
 
 Add ``rest_framework_simplejwt.authentication.JWTAuthentication`` to
 Django REST Framework authentication strategies tuple:
@@ -76,3 +69,26 @@ Django REST Framework authentication strategies tuple:
             (...)
         ),
     }
+
+Configure `django-rest-framework-simplejwt` to use the
+`Authorization: JWT <access_token>` header:
+
+.. code-block:: python
+
+    SIMPLE_JWT = {
+       'AUTH_HEADER_TYPES': ('JWT',),
+    }
+
+
+urls.py
+=======
+
+Configure ``urls.py`` with ``djoser.url.jwt`` module path:
+
+.. code-block:: python
+
+    urlpatterns = [
+        (...),
+        url(r'^auth/', include('djoser.urls')),
+        url(r'^auth/', include('djoser.urls.jwt')),
+    ]
