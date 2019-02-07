@@ -289,10 +289,6 @@ class UserViewSet(UserCreateView, viewsets.ModelViewSet):
         return super(UserViewSet, self).get_permissions()
 
     def get_serializer_class(self):
-        if self.action == 'me':
-            # Use the current user serializer on 'me' endpoints
-            self.serializer_class = settings.SERIALIZERS.current_user
-
         if self.action == 'create':
             return settings.SERIALIZERS.user_create
 
@@ -310,6 +306,10 @@ class UserViewSet(UserCreateView, viewsets.ModelViewSet):
                 return settings.SERIALIZERS.set_username_retype
 
             return settings.SERIALIZERS.set_username
+
+        elif self.action == 'me':
+            # Use the current user serializer on 'me' endpoints
+            return settings.SERIALIZERS.current_user
 
         return self.serializer_class
 
