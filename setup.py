@@ -25,6 +25,7 @@ setup(
     author_email='info@sunscrapers.com',
     long_description=readme,
     install_requires=['django-templated-mail'],
+    setup_requires=['Babel>=2.6.0'],
     include_package_data=True,
     url='https://github.com/sunscrapers/djoser',
     classifiers=[
