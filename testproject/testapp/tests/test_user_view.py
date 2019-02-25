@@ -4,7 +4,7 @@ from django.test.utils import override_settings
 
 import pytest
 from djet import assertions, restframework
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
@@ -66,6 +66,11 @@ class UserViewSetMeTest(APITestCase,
                         assertions.EmailAssertionsMixin,
                         assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.UserView
+
+    class DummyCurrentUserSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = ('is_staff',)
 
     def setUp(self):
         self.user = create_user()
@@ -139,3 +144,23 @@ class UserViewSetMeTest(APITestCase,
         response = self.client.get('/docs/')
 
         self.assert_status_equal(response, status.HTTP_200_OK)
+
+    @override_settings(
+        DJOSER=dict(
+            settings.DJOSER,
+            **{'SERIALIZERS': {
+                'current_user': DummyCurrentUserSerializer,
+            }}
+        )
+    )
+    def test_serializer(self):
+        """
+        Test that the endpoints use the proper serializer.
+
+        How it works: it adds an additional field to the current_user
+        serializer and then checks that the field shows in the response.
+        """
+        response = self.client.get(reverse('user-me'))
+
+        self.user.refresh_from_db()
+        self.assertEqual(response.data['is_staff'], self.user.is_staff)
