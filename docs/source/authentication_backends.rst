@@ -56,7 +56,7 @@ JSON Web Token Authentication
 -----------------------------
 
 Django Settings
-===============
+~~~~~~~~~~~~~~~
 
 Add ``rest_framework_simplejwt.authentication.JWTAuthentication`` to
 Django REST Framework authentication strategies tuple:
@@ -81,7 +81,7 @@ Configure `django-rest-framework-simplejwt` to use the
 
 
 urls.py
-=======
+~~~~~~~
 
 Configure ``urls.py`` with ``djoser.url.jwt`` module path:
 
