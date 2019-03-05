@@ -1,13 +1,13 @@
 -e .
-django-templated-mail==1.0.0
+django-templated-mail==1.1.1
 djangorestframework-simplejwt==3.2.3
 djet==0.2.2
-social-auth-app-django==2.1.0
-coverage==4.4.1
+social-auth-app-django==3.1.0
+coverage==4.5.2
 coreapi==2.3.3
 
-pytest==3.6.2
-pytest-cov==2.5.1
-pytest-django==3.3.2
-pytest-pythonpath==0.7.2
-flake8==3.5.0
+pytest==4.3.0
+pytest-cov==2.6.1
+pytest-django==3.4.8
+pytest-pythonpath==0.7.3
+flake8==3.7.7
