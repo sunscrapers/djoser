@@ -280,3 +280,59 @@ class UserViewSetEditTest(APITestCase,
 
         another_user.refresh_from_db()
         self.assertTrue(another_user.email == 'paul@beatles.com')
+
+
+class TestResendActivationEmail(
+    restframework.APIViewTestCase,
+    assertions.StatusCodeAssertionsMixin,
+    assertions.EmailAssertionsMixin,
+):
+    view_class = djoser.views.ResendActivationView
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
+    )
+    def test_resend_activation_view(self):
+        user = create_user(is_active=False)
+        data = {
+            'email': user.email,
+        }
+        request = self.factory.post(data=data)
+        self.view(request)
+        self.assert_email_exists(to=[user.email])
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': False})
+    )
+    def test_dont_resend_activation_when_disabled(self):
+        user = create_user(is_active=False)
+        data = {
+            'email': user.email,
+        }
+        request = self.factory.post(data=data)
+        self.view(request)
+        self.assert_emails_in_mailbox(0)
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
+    )
+    def test_dont_resend_activation_when_active(self):
+        user = create_user(is_active=True)
+        data = {
+            'email': user.email,
+        }
+        request = self.factory.post(data=data)
+        self.view(request)
+        self.assert_emails_in_mailbox(0)
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
+    )
+    def test_dont_resend_activation_when_no_password(self):
+        user = create_user(is_active=False, password=None)
+        data = {
+            'email': user.email,
+        }
+        request = self.factory.post(data=data)
+        self.view(request)
+        self.assert_emails_in_mailbox(0)
