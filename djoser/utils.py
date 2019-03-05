@@ -6,7 +6,7 @@ from djoser.conf import settings
 
 
 def encode_uid(pk):
-    return urlsafe_base64_encode(force_bytes(pk)).decode()
+    return force_text(urlsafe_base64_encode(force_bytes(pk)))
 
 
 def decode_uid(pk):
