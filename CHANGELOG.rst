@@ -5,6 +5,17 @@ Change Log
 This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
+
+---------------------
+`1.5.0`_ (2019-03-05)
+---------------------
+
+* Added endpoint to resend activation email.
+* Added Polish and Georgian translations.
+* Fix missing **kwargs in ActionViewmixin.post() handler.
+* Fixed documentation.
+* Other small fixes.
+
 ---------------------
 `1.4.0`_ (2019-01-09)
 ---------------------
@@ -298,4 +309,6 @@ few bugfixes / documentation updates. List of changes:
 .. _1.3.0: https://github.com/sunscrapers/djoser/compare/1.2.0...1.3.0
 .. _1.3.1: https://github.com/sunscrapers/djoser/compare/1.3.0...1.3.1
 .. _1.3.2: https://github.com/sunscrapers/djoser/compare/1.3.1...1.3.2
-.. _1.3.3: https://github.com/sunscrapers/djoser/compare/1.3.2...1.4.0
+.. _1.3.3: https://github.com/sunscrapers/djoser/compare/1.3.2...1.3.3
+.. _1.4.0: https://github.com/sunscrapers/djoser/compare/1.3.3...1.4.0
+.. _1.5.0: https://github.com/sunscrapers/djoser/compare/1.4.0...1.5.0
