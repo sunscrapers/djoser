@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.urls.exceptions import NoReverseMatch
 from django.utils.timezone import now
+from djoser.permissions import CurrentUserOrAdmin
 from rest_framework import generics, permissions, status, views, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
@@ -10,7 +11,6 @@ from rest_framework.reverse import reverse
 from djoser import utils, signals
 from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
-from djoser.permissions import CurrentUserOrAdmin
 
 User = get_user_model()
 
@@ -61,13 +61,7 @@ class RootView(views.APIView):
             return []
 
 
-class UserCreateView(generics.CreateAPIView):
-    """
-    Use this endpoint to register new user.
-    """
-    serializer_class = settings.SERIALIZERS.user_create
-    permission_classes = [permissions.AllowAny]
-
+class UserCreateMixin:
     def perform_create(self, serializer):
         user = serializer.save()
         signals.user_registered.send(
@@ -80,6 +74,15 @@ class UserCreateView(generics.CreateAPIView):
             settings.EMAIL.activation(self.request, context).send(to)
         elif settings.SEND_CONFIRMATION_EMAIL:
             settings.EMAIL.confirmation(self.request, context).send(to)
+
+
+class UserCreateView(UserCreateMixin,
+                     generics.CreateAPIView):
+    """
+    Use this endpoint to register new user.
+    """
+    serializer_class = settings.SERIALIZERS.user_create
+    permission_classes = [permissions.AllowAny]
 
 
 class UserDeleteView(generics.CreateAPIView):
@@ -253,7 +256,17 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserView(generics.RetrieveUpdateAPIView):
+class UserUpdateMixin:
+    def perform_update(self, serializer):
+        super(UserUpdateMixin, self).perform_update(serializer)
+        user = serializer.instance
+        if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
+            context = {'user': user}
+            to = [get_user_email(user)]
+            settings.EMAIL.activation(self.request, context).send(to)
+
+
+class UserView(UserUpdateMixin, generics.RetrieveUpdateAPIView):
     """
     Use this endpoint to retrieve/update user.
     """
@@ -264,16 +277,10 @@ class UserView(generics.RetrieveUpdateAPIView):
     def get_object(self, *args, **kwargs):
         return self.request.user
 
-    def perform_update(self, serializer):
-        super(UserView, self).perform_update(serializer)
-        user = serializer.instance
-        if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
-            context = {'user': user}
-            to = [get_user_email(user)]
-            settings.EMAIL.activation(self.request, context).send(to)
 
-
-class UserViewSet(UserCreateView, viewsets.ModelViewSet):
+class UserViewSet(UserCreateMixin,
+                  UserUpdateMixin,
+                  viewsets.ModelViewSet):
     serializer_class = settings.SERIALIZERS.user
     queryset = User.objects.all()
     permission_classes = [CurrentUserOrAdmin]
@@ -313,14 +320,6 @@ class UserViewSet(UserCreateView, viewsets.ModelViewSet):
 
     def get_instance(self):
         return self.request.user
-
-    def perform_update(self, serializer):
-        super(UserViewSet, self).perform_update(serializer)
-        user = serializer.instance
-        if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
-            context = {'user': user}
-            to = [get_user_email(user)]
-            settings.EMAIL.activation(self.request, context).send(to)
 
     def perform_destroy(self, instance):
         utils.logout_user(self.request)
