@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 from djet import assertions, restframework
+from pkg_resources import parse_version
 from rest_framework import __version__ as drf_version
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -11,7 +12,6 @@ import djoser.constants
 import djoser.utils
 import djoser.views
 from .common import create_user, mock, perform_create_mock
-from pkg_resources import parse_version
 
 User = get_user_model()
 
@@ -244,6 +244,25 @@ class UserViewSetCreationTest(APITestCase,
         self.assertEqual(
             response.data, [djoser.constants.CANNOT_CREATE_USER_ERROR]
         )
+
+    def test_post_doesnt_work_on_me_endpoint(self):
+        user = create_user()
+        self.client.force_authenticate(user=user)
+
+        data = {
+            'username': 'john',
+            'password': 'secret',
+            'csrftoken': 'asdf',
+        }
+
+        url = reverse('user-me')  # `/users/me/` - new ViewSet-base
+        url2 = reverse('user')  # `/me/` - legacy
+
+        response = self.client.post(url, data=data)
+        response2 = self.client.post(url2, data=data)
+
+        self.assert_status_equal(response, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assert_status_equal(response2, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class UserViewSetEditTest(APITestCase,

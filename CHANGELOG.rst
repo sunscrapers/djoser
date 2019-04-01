@@ -5,6 +5,12 @@ Change Log
 This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
+---------------------
+`1.5.1`_ (2019-04-02)
+---------------------
+
+* Fixed a vulnerability of UserViewSet that allowed to create new accounts on wrong endpoint. (Thanks to @karazuba for reporting)
+* Past minor version since 1.2 will get a bugfix update and affected versions will be removed from PyPI to prevent affected versions from being installed.
 
 ---------------------
 `1.5.0`_ (2019-03-05)
