@@ -59,13 +59,7 @@ class RootView(views.APIView):
             return []
 
 
-class UserCreateView(generics.CreateAPIView):
-    """
-    Use this endpoint to register new user.
-    """
-    serializer_class = settings.SERIALIZERS.user_create
-    permission_classes = [permissions.AllowAny]
-
+class UserCreateMixin:
     def perform_create(self, serializer):
         user = serializer.save()
         signals.user_registered.send(
@@ -78,6 +72,14 @@ class UserCreateView(generics.CreateAPIView):
             settings.EMAIL.activation(self.request, context).send(to)
         elif settings.SEND_CONFIRMATION_EMAIL:
             settings.EMAIL.confirmation(self.request, context).send(to)
+
+
+class UserCreateView(UserCreateMixin, generics.CreateAPIView):
+    """
+    Use this endpoint to register new user.
+    """
+    serializer_class = settings.SERIALIZERS.user_create
+    permission_classes = [permissions.AllowAny]
 
 
 class UserDeleteView(generics.CreateAPIView):
@@ -249,7 +251,17 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserView(generics.RetrieveUpdateAPIView):
+class UserUpdateMixin:
+    def perform_update(self, serializer):
+        super(UserUpdateMixin, self).perform_update(serializer)
+        user = serializer.instance
+        if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
+            context = {'user': user}
+            to = [get_user_email(user)]
+            settings.EMAIL.activation(self.request, context).send(to)
+
+
+class UserView(UserUpdateMixin, generics.RetrieveUpdateAPIView):
     """
     Use this endpoint to retrieve/update user.
     """
@@ -260,16 +272,10 @@ class UserView(generics.RetrieveUpdateAPIView):
     def get_object(self, *args, **kwargs):
         return self.request.user
 
-    def perform_update(self, serializer):
-        super(UserView, self).perform_update(serializer)
-        user = serializer.instance
-        if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
-            context = {'user': user}
-            to = [get_user_email(user)]
-            settings.EMAIL.activation(self.request, context).send(to)
 
-
-class UserViewSet(UserCreateView, viewsets.ModelViewSet):
+class UserViewSet(UserCreateMixin,
+                  UserUpdateMixin,
+                  viewsets.ModelViewSet):
     serializer_class = settings.SERIALIZERS.user
     queryset = User.objects.all()
     permission_classes = [permissions.IsAuthenticated]
@@ -298,14 +304,6 @@ class UserViewSet(UserCreateView, viewsets.ModelViewSet):
 
     def get_instance(self):
         return self.request.user
-
-    def perform_update(self, serializer):
-        super(UserViewSet, self).perform_update(serializer)
-        user = serializer.instance
-        if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
-            context = {'user': user}
-            to = [get_user_email(user)]
-            settings.EMAIL.activation(self.request, context).send(to)
 
     def perform_destroy(self, instance):
         utils.logout_user(self.request)

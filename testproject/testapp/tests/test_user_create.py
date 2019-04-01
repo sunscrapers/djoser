@@ -231,3 +231,22 @@ class UserViewSetCreationTest(APITestCase,
         self.assertEqual(
             response.data, [djoser.constants.CANNOT_CREATE_USER_ERROR]
         )
+
+    def test_post_doesnt_work_on_me_endpoint(self):
+        user = create_user()
+        self.client.force_authenticate(user=user)
+
+        data = {
+            'username': 'john',
+            'password': 'secret',
+            'csrftoken': 'asdf',
+        }
+
+        url = reverse('user-me')  # `/users/me/` - new ViewSet-base
+        url2 = reverse('user')  # `/me/` - legacy
+
+        response = self.client.post(url, data=data)
+        response2 = self.client.post(url2, data=data)
+
+        self.assert_status_equal(response, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assert_status_equal(response2, status.HTTP_405_METHOD_NOT_ALLOWED)
