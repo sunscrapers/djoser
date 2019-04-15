@@ -6,6 +6,17 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.0.0`_ (2019-04-15)
+---------------------
+
+* Drop support for Python<3.5
+* Drop support for Django<2.1
+* Drop support for djangorestframework<3.9
+* Drop legacy routes
+* Rework built-in JWT support
+* Add CONSTANTS option to settings (@mrouhi13)
+
+---------------------
 `1.7.0`_ (2019-05-25)
 ---------------------
 
@@ -343,3 +354,4 @@ few bugfixes / documentation updates. List of changes:
 .. _1.5.1: https://github.com/sunscrapers/djoser/compare/1.5.0...1.5.1
 .. _1.6.0: https://github.com/sunscrapers/djoser/compare/1.5.1...1.6.0
 .. _1.7.0: https://github.com/sunscrapers/djoser/compare/1.6.0...1.7.0
+.. _2.0.0: https://github.com/sunscrapers/djoser/compare/1.7.0...2.0.0

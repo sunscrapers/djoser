@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
-from django.urls.exceptions import NoReverseMatch
 from django.utils.timezone import now
 from rest_framework import (
     generics,
@@ -9,9 +8,8 @@ from rest_framework import (
     status, views,
     viewsets,
 )
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
 
 from djoser import utils, signals
 from djoser.compat import get_user_email, get_user_email_field_name
@@ -19,52 +17,6 @@ from djoser.conf import settings
 from djoser.utils import ActionViewMixin
 
 User = get_user_model()
-
-
-class RootView(views.APIView):
-    """
-    Root endpoint - use one of sub endpoints.
-    """
-    permission_classes = [permissions.AllowAny]
-
-    def _get_url_names(self, urllist):
-        names = []
-        for entry in urllist:
-            if hasattr(entry, 'url_patterns'):
-                names.extend(self._get_url_names(entry.url_patterns))
-            else:
-                names.append(entry.name)
-        return names
-
-    def aggregate_djoser_urlpattern_names(self):
-        from djoser.urls import base, authtoken
-        urlpattern_names = self._get_url_names(base.urlpatterns)
-        urlpattern_names += self._get_url_names(authtoken.urlpatterns)
-        urlpattern_names += self._get_jwt_urlpatterns()
-
-        return urlpattern_names
-
-    def get_urls_map(self, request, urlpattern_names, fmt):
-        urls_map = {}
-        for urlpattern_name in urlpattern_names:
-            try:
-                url = reverse(urlpattern_name, request=request, format=fmt)
-            except NoReverseMatch:
-                url = ''
-            urls_map[urlpattern_name] = url
-        return urls_map
-
-    def get(self, request, fmt=None):
-        urlpattern_names = self.aggregate_djoser_urlpattern_names()
-        urls_map = self.get_urls_map(request, urlpattern_names, fmt)
-        return Response(urls_map)
-
-    def _get_jwt_urlpatterns(self):
-        try:
-            from djoser.urls import jwt
-            return self._get_url_names(jwt.urlpatterns)
-        except ImportError:
-            return []
 
 
 class UserCreateMixin:
@@ -80,18 +32,6 @@ class UserCreateMixin:
             settings.EMAIL.activation(self.request, context).send(to)
         elif settings.SEND_CONFIRMATION_EMAIL:
             settings.EMAIL.confirmation(self.request, context).send(to)
-
-
-class UserCreateView(UserCreateMixin, generics.CreateAPIView):
-    """
-    Use this endpoint to register new user.
-    """
-    permission_classes = settings.PERMISSIONS.user_create
-
-    def get_serializer_class(self):
-        if settings.USER_CREATE_PASSWORD_RETYPE:
-            return settings.SERIALIZERS.user_create_password_retype
-        return settings.SERIALIZERS.user_create
 
 
 class ResendActivationView(ActionViewMixin, generics.GenericAPIView):
@@ -125,27 +65,6 @@ class ResendActivationView(ActionViewMixin, generics.GenericAPIView):
         context = {'user': user}
         to = [get_user_email(user)]
         settings.EMAIL.activation(self.request, context).send(to)
-
-
-class UserDeleteView(generics.CreateAPIView):
-    """
-    Use this endpoint to remove actually authenticated user
-    """
-    serializer_class = settings.SERIALIZERS.user_delete
-    permission_classes = settings.PERMISSIONS.user_delete
-
-    def get_object(self):
-        return self.request.user
-
-    def post(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        utils.logout_user(self.request)
-        instance.delete()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -387,7 +306,7 @@ class UserViewSet(UserCreateMixin,
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @list_route(['get', 'put', 'patch', 'delete'])
+    @action(['get', 'put', 'patch', 'delete'], detail=False)
     def me(self, request, *args, **kwargs):
         self.get_object = self.get_instance
         if request.method == 'GET':
@@ -399,7 +318,7 @@ class UserViewSet(UserCreateMixin,
         elif request.method == 'DELETE':
             return self.destroy(request, *args, **kwargs)
 
-    @list_route(['post'])
+    @action(['post'], detail=False)
     def confirm(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -418,7 +337,7 @@ class UserViewSet(UserCreateMixin,
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @list_route(['post'])
+    @action(['post'], detail=False)
     def change_username(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
