@@ -374,7 +374,7 @@ class UserViewSet(UserCreateMixin,
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(methods=['get', 'put', 'patch', 'delete'])
+    @action(methods=['get', 'put', 'patch', 'delete'], detail=False)
     def me(self, request, *args, **kwargs):
         self.get_object = self.get_instance
         if request.method == 'GET':
@@ -386,7 +386,7 @@ class UserViewSet(UserCreateMixin,
         elif request.method == 'DELETE':
             return self.destroy(request, *args, **kwargs)
 
-    @action(methods=['post'])
+    @action(methods=['post'], detail=False)
     def confirm(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -405,7 +405,7 @@ class UserViewSet(UserCreateMixin,
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(methods=['post'])
+    @action(methods=['post'], detail=False)
     def change_username(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
