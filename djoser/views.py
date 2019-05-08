@@ -9,7 +9,7 @@ from rest_framework import (
     status, views,
     viewsets,
 )
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
@@ -374,7 +374,7 @@ class UserViewSet(UserCreateMixin,
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @list_route(['get', 'put', 'patch', 'delete'])
+    @action(methods=['get', 'put', 'patch', 'delete'])
     def me(self, request, *args, **kwargs):
         self.get_object = self.get_instance
         if request.method == 'GET':
@@ -386,7 +386,7 @@ class UserViewSet(UserCreateMixin,
         elif request.method == 'DELETE':
             return self.destroy(request, *args, **kwargs)
 
-    @list_route(['post'])
+    @action(methods=['post'])
     def confirm(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -405,7 +405,7 @@ class UserViewSet(UserCreateMixin,
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @list_route(['post'])
+    @action(methods=['post'])
     def change_username(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
