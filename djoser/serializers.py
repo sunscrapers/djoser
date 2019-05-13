@@ -30,6 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
             if instance_email != validated_data[email_field]:
                 instance.is_active = False
                 instance.save(update_fields=['is_active'])
+                # we can remove UserSerializer now
         return super(UserSerializer, self).update(instance, validated_data)
 
 
@@ -47,6 +48,7 @@ class CurrentUserSerializer(UserSerializer):
         )
 
         # Perform regular init actions
+        # same as above
         super(CurrentUserSerializer, self).__init__(*args, **kwargs)
 
 
@@ -108,6 +110,7 @@ class TokenCreateSerializer(serializers.Serializer):
     }
 
     def __init__(self, *args, **kwargs):
+        # same as above
         super(TokenCreateSerializer, self).__init__(*args, **kwargs)
         self.user = None
         self.fields[User.USERNAME_FIELD] = serializers.CharField(
@@ -120,6 +123,7 @@ class TokenCreateSerializer(serializers.Serializer):
             password=attrs.get('password')
         )
 
+        # why is self.user passed to _validate_user_exists?
         self._validate_user_exists(self.user)
         return attrs
 
@@ -160,6 +164,7 @@ class UidAndTokenSerializer(serializers.Serializer):
         return value
 
     def validate(self, attrs):
+        # UidAndTokenSerializer can be removed
         attrs = super(UidAndTokenSerializer, self).validate(attrs)
         is_token_valid = self.context['view'].token_generator.check_token(
             self.user, attrs['token']
@@ -174,6 +179,7 @@ class ActivationSerializer(UidAndTokenSerializer):
     default_error_messages = {'stale_token': constants.STALE_TOKEN_ERROR}
 
     def validate(self, attrs):
+        # ActivationSerializer can be removed
         attrs = super(ActivationSerializer, self).validate(attrs)
         if not self.user.is_active:
             return attrs
@@ -185,6 +191,7 @@ class PasswordSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         user = self.context['request'].user or self.user
+        # why assert? There are ValidationError / fail everywhere
         assert user is not None
 
         try:
@@ -204,6 +211,7 @@ class PasswordRetypeSerializer(PasswordSerializer):
     }
 
     def validate(self, attrs):
+        # PasswordRetypeSerializer can be removed
         attrs = super(PasswordRetypeSerializer, self).validate(attrs)
         if attrs['new_password'] == attrs['re_new_password']:
             return attrs
@@ -262,6 +270,7 @@ class SetUsernameSerializer(serializers.ModelSerializer,
         Its purpose is to replace USERNAME_FIELD with 'new_' + USERNAME_FIELD
         so that the new field is being assigned a field for USERNAME_FIELD
         """
+        # SetUsernameSerializer can be deleted
         super(SetUsernameSerializer, self).__init__(*args, **kwargs)
         username_field = User.USERNAME_FIELD
         self.fields['new_' + username_field] = self.fields.pop(username_field)
@@ -275,10 +284,12 @@ class SetUsernameRetypeSerializer(SetUsernameSerializer):
     }
 
     def __init__(self, *args, **kwargs):
+        # SetUsernameRetypeSerializer can be deleted
         super(SetUsernameRetypeSerializer, self).__init__(*args, **kwargs)
         self.fields['re_new_' + User.USERNAME_FIELD] = serializers.CharField()
 
     def validate(self, attrs):
+        # SetUsernameRetypeSerializer can be deleted
         attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
         new_username = attrs[User.USERNAME_FIELD]
         if new_username != attrs['re_new_' + User.USERNAME_FIELD]:

@@ -50,6 +50,7 @@ class ResendActivationView(ActionViewMixin, generics.GenericAPIView):
             self.send_activation_email(user)
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
+    # can many users have the same email?
     def get_users(self, email):
         if self._users is None:
             email_field_name = get_user_email_field_name(User)
@@ -108,6 +109,7 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
             self.send_password_reset_email(user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    # looks similar to get_users in ResendActivationView
     def get_users(self, email):
         if self._users is None:
             email_field_name = get_user_email_field_name(User)
@@ -207,6 +209,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
         new_username = serializer.data['new_' + User.USERNAME_FIELD]
 
         setattr(user, User.USERNAME_FIELD, new_username)
+        # should we send activation email after changing username?
         if settings.SEND_ACTIVATION_EMAIL:
             user.is_active = False
             context = {'user': user}
@@ -221,6 +224,7 @@ class UserUpdateMixin:
     def perform_update(self, serializer):
         super(UserUpdateMixin, self).perform_update(serializer)
         user = serializer.instance
+        # should we send activation email after update?
         if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
             context = {'user': user}
             to = [get_user_email(user)]

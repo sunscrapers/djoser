@@ -10,6 +10,7 @@ class ActivationEmail(BaseEmailMessage):
     template_name = 'email/activation.html'
 
     def get_context_data(self):
+        # ActivationEmail can be deleted
         context = super(ActivationEmail, self).get_context_data()
 
         user = context.get('user')
@@ -27,6 +28,7 @@ class PasswordResetEmail(BaseEmailMessage):
     template_name = 'email/password_reset.html'
 
     def get_context_data(self):
+        # PasswordResetEmail can be deleted
         context = super(PasswordResetEmail, self).get_context_data()
 
         user = context.get('user')
