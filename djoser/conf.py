@@ -103,7 +103,7 @@ default_settings = {
 
 SETTINGS_TO_IMPORT = ['TOKEN_MODEL', 'SOCIAL_AUTH_TOKEN_STRATEGY']
 
-
+# 'object' not needed now
 class Settings(object):
     def __init__(self, default_settings, explicit_overriden_settings=None):
         if explicit_overriden_settings is None:

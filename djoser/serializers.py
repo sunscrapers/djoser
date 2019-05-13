@@ -138,6 +138,7 @@ class TokenCreateSerializer(serializers.Serializer):
             password=attrs.get('password')
         )
 
+        # why is self.user passed to _validate_user_exists?
         self._validate_user_exists(self.user)
         return attrs
 
@@ -211,6 +212,7 @@ class PasswordSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         user = self.context['request'].user or self.user
+        # why assert? There are ValidationError / fail everywhere
         assert user is not None
 
         try:
