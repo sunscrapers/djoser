@@ -17,7 +17,7 @@ def get_packages(package):
 
 setup(
     name='djoser',
-    version='1.3.1',
+    version='1.5.1',
     packages=get_packages('djoser'),
     license='MIT',
     author='SUNSCRAPERS',
@@ -25,6 +25,7 @@ setup(
     author_email='info@sunscrapers.com',
     long_description=readme,
     install_requires=['django-templated-mail'],
+    setup_requires=['Babel>=2.6.0'],
     include_package_data=True,
     url='https://github.com/sunscrapers/djoser',
     classifiers=[
@@ -33,6 +34,7 @@ setup(
         'Framework :: Django :: 1.11',
         'Framework :: Django :: 2.0',
         'Framework :: Django :: 2.1',
+        'Framework :: Django :: 2.2',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',

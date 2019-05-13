@@ -72,7 +72,10 @@ class UserCreateSerializer(serializers.ModelSerializer):
         try:
             validate_password(password, user)
         except django_exceptions.ValidationError as e:
-            raise serializers.ValidationError({'password': list(e.messages)})
+            serializer_error = serializers.as_serializer_error(e)
+            raise serializers.ValidationError({
+                'password': serializer_error['non_field_errors']
+            })
 
         return attrs
 
@@ -117,16 +120,11 @@ class TokenCreateSerializer(serializers.Serializer):
         )
 
         self._validate_user_exists(self.user)
-        self._validate_user_is_active(self.user)
         return attrs
 
     def _validate_user_exists(self, user):
         if not user:
             self.fail('invalid_credentials')
-
-    def _validate_user_is_active(self, user):
-        if not user.is_active:
-            self.fail('inactive_account')
 
 
 class PasswordResetSerializer(serializers.Serializer):

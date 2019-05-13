@@ -27,6 +27,11 @@ urlpatterns = [
         name='user-activate'
     ),
     url(
+        r'^users/resend/?$',
+        views.ResendActivationView.as_view(),
+        name='user-activate-resend'
+    ),
+    url(
         r'^{0}/?$'.format(User.USERNAME_FIELD),
         views.SetUsernameView.as_view(),
         name='set_username'

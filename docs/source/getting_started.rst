@@ -21,7 +21,7 @@ Supported authentication backends
 ---------------------------------
 
 * Token based authentication from `DRF <http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication>`_
-* JSON Web Token authentication from `django-rest-framework-jwt <https://github.com/GetBlimp/django-rest-framework-jwt>`_
+* JSON Web Token authentication from `django-rest-framework-simplejwt <https://github.com/davesque/django-rest-framework-simplejwt>`_
 
 Supported Python versions
 -------------------------
@@ -50,12 +50,12 @@ Installation
     $ pip install -U djoser
 
 If you are going to use JWT authentication, you will also need to install
-`djangorestframework-jwt <https://github.com/GetBlimp/django-rest-framework-jwt>`_
+`djangorestframework_simplejwt <https://github.com/davesque/django-rest-framework-simplejwt>`_
 with:
 
 .. code-block:: bash
 
-    $ pip install -U djangorestframework-jwt
+    $ pip install -U djangorestframework_simplejwt
 
 Finally if you are going to use third party based authentication e.g. facebook,
 you will need to install `social-auth-app-django <https://github.com/python-social-auth/social-app-django>`_

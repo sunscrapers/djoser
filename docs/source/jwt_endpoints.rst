@@ -11,9 +11,10 @@ Use this endpoint to obtain JWT.
 +----------+---------------------------------+----------------------------------+
 | Method   |           Request               |           Response               |
 +==========+=================================+==================================+
-| ``POST`` | * ``token``                     | ``HTTP_200_OK``                  |
-|          |                                 |                                  |
-|          |                                 | * ``token``                      |
+| ``POST`` | * ``{{ User.USERNAME_FIELD }}`` | ``HTTP_200_OK``                  |
+|          | * ``password``                  |                                  |
+|          |                                 | * ``access``                     |
+|          |                                 | * ``refresh``                    |
 |          |                                 |                                  |
 |          |                                 | ``HTTP_400_BAD_REQUEST``         |
 |          |                                 |                                  |
@@ -30,9 +31,9 @@ Use this endpoint to refresh JWT.
 +----------+---------------------------------+----------------------------------+
 | Method   |           Request               |           Response               |
 +==========+=================================+==================================+
-| ``POST`` | * ``token``                     | ``HTTP_200_OK``                  |
+| ``POST`` | * ``refresh``                   | ``HTTP_200_OK``                  |
 |          |                                 |                                  |
-|          |                                 | * ``token``                      |
+|          |                                 | * ``access``                     |
 |          |                                 |                                  |
 |          |                                 | ``HTTP_400_BAD_REQUEST``         |
 |          |                                 |                                  |
@@ -50,8 +51,6 @@ Use this endpoint to verify JWT.
 | Method   |           Request               |           Response               |
 +==========+=================================+==================================+
 | ``POST`` | * ``token``                     | ``HTTP_200_OK``                  |
-|          |                                 |                                  |
-|          |                                 | * ``token``                      |
 |          |                                 |                                  |
 |          |                                 | ``HTTP_400_BAD_REQUEST``         |
 |          |                                 |                                  |

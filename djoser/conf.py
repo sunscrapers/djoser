@@ -13,13 +13,16 @@ DJOSER_SETTINGS_NAMESPACE = 'DJOSER'
 class ObjDict(dict):
     def __getattribute__(self, item):
         try:
-            if isinstance(self[item], str):
-                self[item] = import_string(self[item])
-            value = self[item]
+            val = self[item]
+            if isinstance(val, str):
+                val = import_string(val)
+            elif isinstance(val, (list, tuple)):
+                val = [import_string(v) if type(v) is str else v for v in val]
+            self[item] = val
         except KeyError:
-            value = super(ObjDict, self).__getattribute__(item)
+            val = super(ObjDict, self).__getattribute__(item)
 
-        return value
+        return val
 
 
 default_settings = {
@@ -70,9 +73,23 @@ default_settings = {
         'messages': 'djoser.constants.Messages',
     }),
     'LOGOUT_ON_PASSWORD_CHANGE': False,
+    'CREATE_SESSION_ON_LOGIN': False,
     'USER_EMAIL_FIELD_NAME': 'email',
     'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',
     'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': [],
+    'PERMISSIONS': ObjDict({
+        'activation': ['rest_framework.permissions.AllowAny'],
+        'password_reset': ['rest_framework.permissions.AllowAny'],
+        'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
+        'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
+        'set_username': ['rest_framework.permissions.IsAuthenticated'],
+        'user_create': ['rest_framework.permissions.AllowAny'],
+        'user_delete': ['djoser.permissions.CurrentUserOrAdmin'],
+        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        'user_list': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        'token_create': ['rest_framework.permissions.AllowAny'],
+        'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
+    }),
 }
 
 SETTINGS_TO_IMPORT = ['TOKEN_MODEL', 'SOCIAL_AUTH_TOKEN_STRATEGY']

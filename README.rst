@@ -35,8 +35,8 @@ Requirements
 To be able to run **djoser** you have to meet following requirements:
 
 - Python (2.7, 3.4, 3.5, 3.6)
-- Django (1.11, 2.0, 2.1)
-- Django REST Framework (3.7, 3.8)
+- Django (1.11, 2.0, 2.1, 2.2)
+- Django REST Framework (3.7, 3.8, 3.9)
 
 Bear in mind that for Django-2.x you will need at least Python 3.5
 
@@ -112,7 +112,7 @@ Similar projects
 
 List of projects related to Django, REST and authentication:
 
-- `django-rest-framework-jwt <https://github.com/GetBlimp/django-rest-framework-jwt>`_
+- `django-rest-framework-simplejwt <https://github.com/davesque/django-rest-framework-simplejwt>`_
 - `django-oauth-toolkit <https://github.com/evonove/django-oauth-toolkit>`_
 - `django-rest-auth <https://github.com/Tivix/django-rest-auth>`_
 - `django-rest-framework-digestauth <https://github.com/juanriaza/django-rest-framework-digestauth>`_ (not maintained)

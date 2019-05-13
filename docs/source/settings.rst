@@ -217,3 +217,37 @@ List of allowed redirect URIs for social authentication.
 
 **Example**: ``['https://auth.example.com']``
 **Default**: ``[]``
+
+.. _view-permission-settings
+
+PERMISSIONS
+-----------
+
+Dictionary that maps permissions to certain views across Djoser.
+
+
+**Examples**
+
+.. code-block:: python
+
+    {
+        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly']
+    }
+
+**Defaults**
+
+.. code-block:: python
+
+    {
+        'activation': ['rest_framework.permissions.AllowAny'],
+        'password_reset': ['rest_framework.permissions.AllowAny'],
+        'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
+        'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
+        'set_username': ['rest_framework.permissions.IsAuthenticated'],
+        'user_create': ['rest_framework.permissions.AllowAny'],
+        'user_delete': ['djoser.permissions.CurrentUserOrAdmin'],
+        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        'user_list': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        'token_create': ['rest_framework.permissions.AllowAny'],
+        'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
+    }

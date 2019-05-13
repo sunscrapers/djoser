@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 from djet import assertions, restframework
+from pkg_resources import parse_version
+from rest_framework import __version__ as drf_version
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -101,10 +103,16 @@ class UserCreateViewTest(restframework.APIViewTestCase,
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        response.render()
         self.assertEqual(
-            response.data,
-            {'password': ['Password 666 is not allowed.']}
+            str(response.data['password'][0]),
+            'Password 666 is not allowed.',
         )
+        if parse_version(drf_version) >= parse_version('3.9.0'):
+            self.assertEqual(
+                response.data['password'][0].code,
+                'no666',
+            )
 
     @mock.patch(
         'djoser.serializers.UserCreateSerializer.perform_create',
@@ -209,9 +217,14 @@ class UserViewSetCreationTest(APITestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data,
-            {'password': ['Password 666 is not allowed.']}
+            str(response.data['password'][0]),
+            'Password 666 is not allowed.',
         )
+        if parse_version(drf_version) >= parse_version('3.9.0'):
+            self.assertEqual(
+                response.data['password'][0].code,
+                'no666',
+            )
 
     @mock.patch(
         'djoser.serializers.UserCreateSerializer.perform_create',
@@ -230,3 +243,114 @@ class UserViewSetCreationTest(APITestCase,
         self.assertEqual(
             response.data, [default_settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR]
         )
+
+    def test_post_doesnt_work_on_me_endpoint(self):
+        user = create_user()
+        self.client.force_authenticate(user=user)
+
+        data = {
+            'username': 'john',
+            'password': 'secret',
+            'csrftoken': 'asdf',
+        }
+
+        url = reverse('user-me')  # `/users/me/` - new ViewSet-base
+        url2 = reverse('user')  # `/me/` - legacy
+
+        response = self.client.post(url, data=data)
+        response2 = self.client.post(url2, data=data)
+
+        self.assert_status_equal(response, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assert_status_equal(response2, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class UserViewSetEditTest(APITestCase,
+                          assertions.StatusCodeAssertionsMixin):
+
+    def test_patch_edits_user_attribute(self):
+        user = create_user()
+        self.client.force_authenticate(user=user)
+        response = self.client.patch(
+            path=reverse('user-detail', args=(user.pk,)),
+            data={'email': 'new@gmail.com'}
+        )
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assertTrue('email' in response.data)
+
+        user.refresh_from_db()
+        self.assertTrue(user.email == 'new@gmail.com')
+
+    def test_patch_cant_edit_others_attribute(self):
+        user = create_user()
+        another_user = create_user(**{
+            'username': 'paul',
+            'password': 'secret',
+            'email': 'paul@beatles.com',
+        })
+        self.client.force_authenticate(user=user)
+        response = self.client.patch(
+            path=reverse('user-detail', args=(another_user.pk,)),
+            data={'email': 'new@gmail.com'}
+        )
+
+        self.assert_status_equal(response, status.HTTP_403_FORBIDDEN)
+
+        another_user.refresh_from_db()
+        self.assertTrue(another_user.email == 'paul@beatles.com')
+
+
+class TestResendActivationEmail(
+    restframework.APIViewTestCase,
+    assertions.StatusCodeAssertionsMixin,
+    assertions.EmailAssertionsMixin,
+):
+    view_class = djoser.views.ResendActivationView
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
+    )
+    def test_resend_activation_view(self):
+        user = create_user(is_active=False)
+        data = {
+            'email': user.email,
+        }
+        request = self.factory.post(data=data)
+        self.view(request)
+        self.assert_email_exists(to=[user.email])
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': False})
+    )
+    def test_dont_resend_activation_when_disabled(self):
+        user = create_user(is_active=False)
+        data = {
+            'email': user.email,
+        }
+        request = self.factory.post(data=data)
+        self.view(request)
+        self.assert_emails_in_mailbox(0)
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
+    )
+    def test_dont_resend_activation_when_active(self):
+        user = create_user(is_active=True)
+        data = {
+            'email': user.email,
+        }
+        request = self.factory.post(data=data)
+        self.view(request)
+        self.assert_emails_in_mailbox(0)
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
+    )
+    def test_dont_resend_activation_when_no_password(self):
+        user = create_user(is_active=False, password=None)
+        data = {
+            'email': user.email,
+        }
+        request = self.factory.post(data=data)
+        self.view(request)
+        self.assert_emails_in_mailbox(0)

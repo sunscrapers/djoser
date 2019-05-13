@@ -50,7 +50,10 @@ class ProviderAuthViewTestCase(restframework.APIViewTestCase,
         request.GET = {k: v for k, v in six.iteritems(data)}
         response = self.view(request, provider='facebook')
         self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assertEqual(set(response.data.keys()), {'token', 'user'})
+        self.assertEqual(
+            set(response.data.keys()),
+            {'access', 'refresh', 'user'},
+        )
 
     def test_post_facebook_provider_code_validation_fails(self):
         data = {'code': 'XYZ', 'state': 'ABC'}

@@ -91,12 +91,29 @@ request to activate endpoint.
 **Default URL**: ``/users/confirm/``
 **Backward-compatible URL**: ``/users/activate/``
 
-+----------+----------------+----------------------------------+
-| Method   | Request        | Response                         |
-+==========+================+==================================+
-| ``POST`` | * ``uid``      | ``HTTP_204_NO_CONTENT``          |
-|          | * ``token``    |                                  |
-+----------+----------------+----------------------------------+
++----------+--------------------------------------+----------------------------------+
+| Method   | Request                              | Response                         |
++==========+======================================+==================================+
+| ``POST`` | * ``{{ User.USERNAME_FIELD }}``      | ``HTTP_204_NO_CONTENT``          |
+|          | * ``token``                          |                                  |
++----------+--------------------------------------+----------------------------------+
+
+User Resend Activation E-mail
+------------------------------
+
+Use this endpoint to re-send the activation e-mail. Note that no e-mail would
+be sent if the user is already active or if they don't have a usable password.
+Also if the sending of activation e-mails is disabled in settings, this call
+will result in ``HTTP_400_BAD_REQUEST``
+
+**Default URL**: ``/users/resend/``
+
++----------+--------------------------------------+----------------------------------+
+| Method   | Request                              | Response                         |
++==========+======================================+==================================+
+| ``POST`` | * ``{{ User.USERNAME_FIELD }}``      | ``HTTP_204_NO_CONTENT``          |
+|          |                                      | ``HTTP_400_BAD_REQUEST``         |
++----------+--------------------------------------+----------------------------------+
 
 Set Username
 ------------
@@ -151,12 +168,12 @@ setup ``PASSWORD_RESET_CONFIRM_URL``.
 
     Otherwise and if ``email`` does not exist in database ``HTTP_400_BAD_REQUEST``
 
-+----------+-------------+-------------------------------------------------+
-| Method   | Request     | Response                                        |
-+==========+=============+=================================================+
-| ``POST`` |  ``email``  | * ``HTTP_204_NO_CONTENT``                       |
-|          |             | * ``HTTP_400_BAD_REQUEST``                      |
-+----------+-------------+-------------------------------------------------+
++----------+---------------------------------+------------------------------+
+| Method   | Request                         | Response                     |
++==========+=================================+==============================+
+| ``POST`` |  ``{{ User.USERNAME_FIELD }}``  | * ``HTTP_204_NO_CONTENT``    |
+|          |                                 | * ``HTTP_400_BAD_REQUEST``   |
++----------+---------------------------------+------------------------------+
 
 Reset Password Confirmation
 ---------------------------
@@ -172,11 +189,11 @@ will send ``POST`` request to reset password confirmation endpoint.
 
     ``re_new_password`` is only required if ``PASSWORD_RESET_CONFIRM_RETYPE`` is ``True``
 
-+----------+------------------------+--------------------------------------+
-| Method   | Request                | Response                             |
-+==========+========================+======================================+
-| ``POST`` | * ``uid``              | ``HTTP_204_NO_CONTENT``              |
-|          | * ``token``            |                                      |
-|          | * ``new_password``     |                                      |
-|          | * ``re_new_password``  |                                      |
-+----------+------------------------+--------------------------------------+
++----------+----------------------------------+--------------------------------------+
+| Method   | Request                          | Response                             |
++==========+==================================+======================================+
+| ``POST`` | * ``{{ User.USERNAME_FIELD }}``  | ``HTTP_204_NO_CONTENT``              |
+|          | * ``token``                      |                                      |
+|          | * ``new_password``               |                                      |
+|          | * ``re_new_password``            |                                      |
++----------+----------------------------------+--------------------------------------+

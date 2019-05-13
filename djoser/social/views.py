@@ -21,8 +21,8 @@ class ProviderAuthView(generics.CreateAPIView):
         backend_name = self.kwargs['provider']
         backend = load_backend(
             strategy, backend_name, redirect_uri=redirect_uri
-
         )
+
         authorization_url = backend.auth_url()
         return Response(data={
             'authorization_url': authorization_url,
