@@ -71,7 +71,7 @@ msgstr "Model użytkownika nie zawiera wskazanego pola email. Zobacz "
 msgid "Account activation on %(site_name)s"
 msgstr "Aktywacja konta na stronie %(site_name)s"
 
-#: djoser/templates/email/activation.html:8
+#: templates/email/activation.html:8 templates/email/activation.html:19
 #, python-format
 msgid ""
 "You're receiving this email because you need to finish activation process on "
@@ -102,15 +102,6 @@ msgstr "Dziękujemy za korzystanie z naszej strony!"
 #, python-format
 msgid "The %(site_name)s team"
 msgstr "Zespół strony %(site_name)s"
-
-#: djoser/templates/email/activation.html:19
-#, python-format
-msgid ""
-"\n"
-"<p>You're receiving this email because you need to finish activation process "
-"on %(site_name)s.</p>"
-msgstr "<p>Otrzymałeś tego emaila, ponieważ potrzeujesz dokończyć proces aktywacji na "
-"stronie %(site_name)s.</p>"
 
 #: djoser/templates/email/confirmation.html:4
 #, python-format

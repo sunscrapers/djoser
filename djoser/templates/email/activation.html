@@ -16,8 +16,7 @@
 {% endblock text_body %}
 
 {% block html_body %}
-{% blocktrans %}
-<p>You're receiving this email because you need to finish activation process on {{ site_name }}.</p>{% endblocktrans %}
+<p>{% blocktrans %}You're receiving this email because you need to finish activation process on {{ site_name }}.{% endblocktrans %}</p>
 
 <p>{% trans "Please go to the following page to activate account:" %}</p>
 <p><a href="{{ protocol }}://{{ domain }}/{{ url|safe }}">{{ protocol }}://{{ domain }}/{{ url|safe }}</a></p>
