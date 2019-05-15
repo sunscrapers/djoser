@@ -325,6 +325,13 @@ class UserViewSet(UserCreateMixin,
     permission_classes = settings.PERMISSIONS.user
     token_generator = default_token_generator
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if not user.is_staff:
+            qs = qs.filter(pk=user.pk)
+        return qs
+
     def get_permissions(self):
         if self.action == 'create':
             self.permission_classes = settings.PERMISSIONS.user_create
