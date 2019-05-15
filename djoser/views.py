@@ -326,9 +326,9 @@ class UserViewSet(UserCreateMixin,
     token_generator = default_token_generator
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = super(UserViewSet, self).get_queryset()
         user = self.request.user
-        if not user.is_staff:
+        if not (user.is_staff or user.is_superuser):
             qs = qs.filter(pk=user.pk)
         return qs
 
