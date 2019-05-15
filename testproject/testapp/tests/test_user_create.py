@@ -295,7 +295,7 @@ class UserViewSetEditTest(APITestCase,
             data={'email': 'new@gmail.com'}
         )
 
-        self.assert_status_equal(response, status.HTTP_403_FORBIDDEN)
+        self.assert_status_equal(response, status.HTTP_404_NOT_FOUND)
 
         another_user.refresh_from_db()
         self.assertTrue(another_user.email == 'paul@beatles.com')

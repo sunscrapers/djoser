@@ -294,7 +294,7 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserUpdateMixin:
+class UserUpdateMixin(object):
     def perform_update(self, serializer):
         super(UserUpdateMixin, self).perform_update(serializer)
         user = serializer.instance
@@ -324,6 +324,13 @@ class UserViewSet(UserCreateMixin,
     queryset = User.objects.all()
     permission_classes = settings.PERMISSIONS.user
     token_generator = default_token_generator
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if not user.is_staff:
+            qs = qs.filter(pk=user.pk)
+        return qs
 
     def get_permissions(self):
         if self.action == 'create':
