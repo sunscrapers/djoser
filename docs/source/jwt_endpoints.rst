@@ -16,7 +16,7 @@ Use this endpoint to obtain JWT.
 |          |                                 | * ``access``                     |
 |          |                                 | * ``refresh``                    |
 |          |                                 |                                  |
-|          |                                 | ``HTTP_400_BAD_REQUEST``         |
+|          |                                 | ``HTTP_401_UNAUTHORIZED``         |
 |          |                                 |                                  |
 |          |                                 |  * ``non_field_errors``          |
 +----------+---------------------------------+----------------------------------+
@@ -35,7 +35,7 @@ Use this endpoint to refresh JWT.
 |          |                                 |                                  |
 |          |                                 | * ``access``                     |
 |          |                                 |                                  |
-|          |                                 | ``HTTP_400_BAD_REQUEST``         |
+|          |                                 | ``HTTP_401_UNAUTHORIZED``         |
 |          |                                 |                                  |
 |          |                                 |  * ``non_field_errors``          |
 +----------+---------------------------------+----------------------------------+
@@ -52,7 +52,7 @@ Use this endpoint to verify JWT.
 +==========+=================================+==================================+
 | ``POST`` | * ``token``                     | ``HTTP_200_OK``                  |
 |          |                                 |                                  |
-|          |                                 | ``HTTP_400_BAD_REQUEST``         |
+|          |                                 | ``HTTP_401_UNAUTHORIZED``         |
 |          |                                 |                                  |
 |          |                                 |  * ``non_field_errors``          |
 +----------+---------------------------------+----------------------------------+

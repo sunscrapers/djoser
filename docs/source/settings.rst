@@ -12,6 +12,8 @@ You may optionally provide ``DJOSER`` settings:
         'SERIALIZERS': {},
     }
 
+All following setting names written in CAPS are keys on ``DJOSER`` dict.
+
 PASSWORD_RESET_CONFIRM_URL
 --------------------------
 
@@ -122,7 +124,7 @@ to update the defaults, so by providing, e.g. one key, all the others will stay 
 .. note::
 
     Current user endpoints now use the serializer specified by
-    ``SERIALIZERS.current_user``. This enables better security and privacy:
+    ``SERIALIZERS['current_user']``. This enables better security and privacy:
     the serializers can be configured separately so that confidential fields
     that are returned to the current user are not shown in the regular user
     endpoints.

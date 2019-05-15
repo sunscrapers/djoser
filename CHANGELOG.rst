@@ -6,6 +6,17 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`1.6.0`_ (2019-04-02)
+---------------------
+
+* Added Russian translation (@ozeranskiy)
+* Added French translation (@Chadys)
+* Fix superfluous translation string (@Chadys)
+* Prevent non-staff users from getting other users' data (@hawi74)
+* Fix tests for Python 2.7
+* Fix some problems in documentation
+
+---------------------
 `1.5.1`_ (2019-04-02)
 ---------------------
 
@@ -318,3 +329,5 @@ few bugfixes / documentation updates. List of changes:
 .. _1.3.3: https://github.com/sunscrapers/djoser/compare/1.3.2...1.3.3
 .. _1.4.0: https://github.com/sunscrapers/djoser/compare/1.3.3...1.4.0
 .. _1.5.0: https://github.com/sunscrapers/djoser/compare/1.4.0...1.5.0
+.. _1.5.1: https://github.com/sunscrapers/djoser/compare/1.5.0...1.5.1
+.. _1.6.0: https://github.com/sunscrapers/djoser/compare/1.5.1...1.6.0
