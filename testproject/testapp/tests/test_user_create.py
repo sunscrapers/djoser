@@ -8,9 +8,8 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-import djoser.constants
-import djoser.utils
 import djoser.views
+from djoser.conf import settings as default_settings
 from .common import create_user, mock, perform_create_mock
 
 User = get_user_model()
@@ -131,7 +130,7 @@ class UserCreateViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data, [djoser.constants.CANNOT_CREATE_USER_ERROR]
+            response.data, [default_settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR]
         )
 
 
@@ -242,7 +241,7 @@ class UserViewSetCreationTest(APITestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data, [djoser.constants.CANNOT_CREATE_USER_ERROR]
+            response.data, [default_settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR]
         )
 
     def test_post_doesnt_work_on_me_endpoint(self):

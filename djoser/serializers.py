@@ -4,10 +4,9 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions as django_exceptions
 from django.db import IntegrityError, transaction
-
 from rest_framework import exceptions, serializers
 
-from djoser import constants, utils
+from djoser import utils
 from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
 
@@ -57,7 +56,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     )
 
     default_error_messages = {
-        'cannot_create_user': constants.CANNOT_CREATE_USER_ERROR,
+        'cannot_create_user': settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR,
     }
 
     class Meta:
@@ -103,8 +102,8 @@ class TokenCreateSerializer(serializers.Serializer):
     )
 
     default_error_messages = {
-        'invalid_credentials': constants.INVALID_CREDENTIALS_ERROR,
-        'inactive_account': constants.INACTIVE_ACCOUNT_ERROR,
+        'invalid_credentials': settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR,
+        'inactive_account': settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR,
     }
 
     def __init__(self, *args, **kwargs):
@@ -131,7 +130,7 @@ class TokenCreateSerializer(serializers.Serializer):
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
-    default_error_messages = {'email_not_found': constants.EMAIL_NOT_FOUND}
+    default_error_messages = {'email_not_found': settings.CONSTANTS.messages.EMAIL_NOT_FOUND}
 
     def validate_email(self, value):
         users = self.context['view'].get_users(value)
@@ -146,8 +145,8 @@ class UidAndTokenSerializer(serializers.Serializer):
     token = serializers.CharField()
 
     default_error_messages = {
-        'invalid_token': constants.INVALID_TOKEN_ERROR,
-        'invalid_uid': constants.INVALID_UID_ERROR,
+        'invalid_token': settings.CONSTANTS.messages.INVALID_TOKEN_ERROR,
+        'invalid_uid': settings.CONSTANTS.messages.INVALID_UID_ERROR,
     }
 
     def validate_uid(self, value):
@@ -171,7 +170,7 @@ class UidAndTokenSerializer(serializers.Serializer):
 
 
 class ActivationSerializer(UidAndTokenSerializer):
-    default_error_messages = {'stale_token': constants.STALE_TOKEN_ERROR}
+    default_error_messages = {'stale_token': settings.CONSTANTS.messages.STALE_TOKEN_ERROR}
 
     def validate(self, attrs):
         attrs = super(ActivationSerializer, self).validate(attrs)
@@ -200,7 +199,7 @@ class PasswordRetypeSerializer(PasswordSerializer):
     re_new_password = serializers.CharField(style={'input_type': 'password'})
 
     default_error_messages = {
-        'password_mismatch': constants.PASSWORD_MISMATCH_ERROR,
+        'password_mismatch': settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR,
     }
 
     def validate(self, attrs):
@@ -215,7 +214,7 @@ class CurrentPasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(style={'input_type': 'password'})
 
     default_error_messages = {
-        'invalid_password': constants.INVALID_PASSWORD_ERROR,
+        'invalid_password': settings.CONSTANTS.messages.INVALID_PASSWORD_ERROR,
     }
 
     def validate_current_password(self, value):
@@ -251,7 +250,6 @@ class UserDeleteSerializer(CurrentPasswordSerializer):
 
 class SetUsernameSerializer(serializers.ModelSerializer,
                             CurrentPasswordSerializer):
-
     class Meta(object):
         model = User
         fields = (User.USERNAME_FIELD, 'current_password')
@@ -269,7 +267,7 @@ class SetUsernameSerializer(serializers.ModelSerializer,
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer):
     default_error_messages = {
-        'username_mismatch': constants.USERNAME_MISMATCH_ERROR.format(
+        'username_mismatch': settings.CONSTANTS.messages.USERNAME_MISMATCH_ERROR.format(
             User.USERNAME_FIELD
         ),
     }
