@@ -74,7 +74,7 @@ msgstr ""
 msgid "Account activation on %(site_name)s"
 msgstr "Активация аккаунта на %(site_name)s"
 
-#: djoser/templates/email/activation.html:8
+#: djoser/templates/email/activation.html:8 djoser/templates/email/activation.html:19
 #, python-format
 msgid ""
 "You're receiving this email because you need to finish activation process on "
@@ -104,17 +104,6 @@ msgstr "Спасибо за использование нашего сайта!"
 #, python-format
 msgid "The %(site_name)s team"
 msgstr "Команда %(site_name)s"
-
-#: djoser/templates/email/activation.html:19
-#, python-format
-msgid ""
-"\n"
-"<p>You're receiving this email because you need to finish activation process on "
-"%(site_name)s.</p>"
-msgstr ""
-"\n"
-"<p>Вы получили это письмо, потому что вам нужно завершить процесс активации учетной "
-"записи на %(site_name)s.</p>"
 
 #: djoser/templates/email/confirmation.html:4
 #, python-format

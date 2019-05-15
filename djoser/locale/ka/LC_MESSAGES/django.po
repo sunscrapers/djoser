@@ -69,7 +69,7 @@ msgstr "მომხმარებელის მოდელი არ შე
 msgid "Account activation on %(site_name)s"
 msgstr "ანგარიშის აკტივაცია საიტზე %(site_name)s"
 
-#: templates/email/activation.html:8
+#: templates/email/activation.html:8 templates/email/activation.html:19
 #, python-format
 msgid ""
 "You're receiving this email because you need to finish activation process on "
@@ -94,16 +94,6 @@ msgstr "მადლობა საითის გამოიყენებ�
 #, python-format
 msgid "The %(site_name)s team"
 msgstr "საიტის %(site_name)s გუნდი"
-
-#: templates/email/activation.html:19
-#, python-format
-msgid ""
-"\n"
-"<p>You're receiving this email because you need to finish activation process "
-"on %(site_name)s.</p>"
-msgstr ""
-"\n"
-"<p>თქვენ იღებთ ამ იმეილს, რადგან საჭიროა დაამთავროთ აკტივაციი პროცესი საიტზე %(site_name)s.</p>"
 
 #: templates/email/confirmation.html:4
 #, python-format
