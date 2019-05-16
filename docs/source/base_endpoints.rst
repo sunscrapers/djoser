@@ -23,6 +23,10 @@ Use this endpoint to retrieve/update user.
 |          |                                | * ``{{ User.USERNAME_FIELD }}``  |
 |          |                                | * ``{{ User._meta.pk.name }}``   |
 |          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
+|          |                                |                                  |
+|          |                                | ``HTTP_400_BAD_REQUEST``         |
+|          |                                |                                  |
+|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
 +----------+--------------------------------+----------------------------------+
 
 User Create
@@ -45,6 +49,12 @@ fields.
 |          | * ``password``                    | * ``{{ User.USERNAME_FIELD }}``  |
 |          |                                   | * ``{{ User._meta.pk.name }}``   |
 |          |                                   | * ``{{ User.REQUIRED_FIELDS }}`` |
+|          |                                   |                                  |
+|          |                                   | ``HTTP_400_BAD_REQUEST``         |
+|          |                                   |                                  |
+|          |                                   | * ``{{ User.USERNAME_FIELD }}``  |
+|          |                                   | * ``{{ User.REQUIRED_FIELDS }}`` |
+|          |                                   | * ``password``                   |
 +----------+-----------------------------------+----------------------------------+
 
 User Delete
@@ -56,6 +66,7 @@ based authentication is used and invoke delete for a given ``User`` instance.
 One of ways to customize the delete behavior is to override ``User.delete``.
 
 **Default URL**: ``/users/me/``
+**Backward-compatible URL**: ``/users/delete/``
 
 +------------+---------------------------------+----------------------------------+
 | Method     |  Request                        | Response                         |
@@ -67,26 +78,14 @@ One of ways to customize the delete behavior is to override ``User.delete``.
 |            |                                 | * ``current_password``           |
 +------------+---------------------------------+----------------------------------+
 
-**Backward-compatible URL**: ``/users/delete/``
-
-+----------+-----------------------------------+----------------------------------+
-| Method   |  Request                          | Response                         |
-+==========+===================================+==================================+
-| ``POST`` | * ``current_password``            | ``HTTP_204_NO_CONTENT``          |
-|          |                                   |                                  |
-|          |                                   | ``HTTP_400_BAD_REQUEST``         |
-|          |                                   |                                  |
-|          |                                   | * ``current_password``           |
-+----------+-----------------------------------+----------------------------------+
-
-
 User Activate
 -------------
 
 Use this endpoint to activate user account. This endpoint is not a URL which
 will be directly exposed to your users - you should provide site in your
 frontend application (configured by ``ACTIVATION_URL``) which will send ``POST``
-request to activate endpoint.
+request to activate endpoint. ``HTTP_403_FORBIDDEN`` will be raised if user is already
+active when calling this endpoint (this will happen if you call it more than once).
 
 **Default URL**: ``/users/confirm/``
 **Backward-compatible URL**: ``/users/activate/``
@@ -94,8 +93,16 @@ request to activate endpoint.
 +----------+--------------------------------------+----------------------------------+
 | Method   | Request                              | Response                         |
 +==========+======================================+==================================+
-| ``POST`` | * ``{{ User.USERNAME_FIELD }}``      | ``HTTP_204_NO_CONTENT``          |
+| ``POST`` | * ``uid``                            | ``HTTP_204_NO_CONTENT``          |
 |          | * ``token``                          |                                  |
+|          |                                      | ``HTTP_400_BAD_REQUEST``         |
+|          |                                      |                                  |
+|          |                                      | * ``uid``                        |
+|          |                                      | * ``non_field_errors``           |
+|          |                                      |                                  |
+|          |                                      | ``HTTP_403_FORBIDDEN``           |
+|          |                                      |                                  |
+|          |                                      | * ``detail``                     |
 +----------+--------------------------------------+----------------------------------+
 
 User Resend Activation E-mail
@@ -111,7 +118,7 @@ will result in ``HTTP_400_BAD_REQUEST``
 +----------+--------------------------------------+----------------------------------+
 | Method   | Request                              | Response                         |
 +==========+======================================+==================================+
-| ``POST`` | * ``{{ User.USERNAME_FIELD }}``      | ``HTTP_204_NO_CONTENT``          |
+| ``POST`` | * ``email``                          | ``HTTP_204_NO_CONTENT``          |
 |          |                                      | ``HTTP_400_BAD_REQUEST``         |
 +----------+--------------------------------------+----------------------------------+
 
@@ -127,13 +134,17 @@ Use this endpoint to change user username (``USERNAME_FIELD``).
 
     ``re_new_{{ User.USERNAME_FIELD }}`` is only required if ``SET_USERNAME_RETYPE`` is ``True``
 
-+----------+----------------------------------------+--------------------------------------+
-| Method   | Request                                | Response                             |
-+==========+========================================+======================================+
-| ``POST`` | * ``new_{{ User.USERNAME_FIELD }}``    | ``HTTP_204_NO_CONTENT``              |
-|          | * ``re_new_{{ User.USERNAME_FIELD }}`` |                                      |
-|          | * ``current_password``                 |                                      |
-+----------+----------------------------------------+--------------------------------------+
++----------+----------------------------------------+-------------------------------------------+
+| Method   | Request                                | Response                                  |
++==========+========================================+===========================================+
+| ``POST`` | * ``new_{{ User.USERNAME_FIELD }}``    | ``HTTP_204_NO_CONTENT``                   |
+|          | * ``re_new_{{ User.USERNAME_FIELD }}`` |                                           |
+|          | * ``current_password``                 | ``HTTP_400_BAD_REQUEST``                  |
+|          |                                        |                                           |
+|          |                                        | * ``new_{{ User.USERNAME_FIELD }}``       |
+|          |                                        | * ``re_new_{{ User.USERNAME_FIELD }}``    |
+|          |                                        | * ``current_password``                    |
++----------+----------------------------------------+-------------------------------------------+
 
 Set Password
 ------------
@@ -146,13 +157,17 @@ Use this endpoint to change user password.
 
     ``re_new_password`` is only required if ``SET_PASSWORD_RETYPE`` is ``True``
 
-+----------+------------------------+--------------------------------------+
-| Method   | Request                | Response                             |
-+==========+========================+======================================+
-| ``POST`` | * ``new_password``     | ``HTTP_204_NO_CONTENT``              |
-|          | * ``re_new_password``  |                                      |
-|          | * ``current_password`` |                                      |
-+----------+------------------------+--------------------------------------+
++----------+------------------------+-------------------------------------------+
+| Method   | Request                | Response                                  |
++==========+========================+===========================================+
+| ``POST`` | * ``new_password``     | ``HTTP_204_NO_CONTENT``                   |
+|          | * ``re_new_password``  |                                           |
+|          | * ``current_password`` | ``HTTP_400_BAD_REQUEST``                  |
+|          |                        |                                           |
+|          |                        | * ``new_password``                        |
+|          |                        | * ``re_new_password``                     |
+|          |                        | * ``current_password``                    |
++----------+------------------------+-------------------------------------------+
 
 Reset Password
 --------------
@@ -171,8 +186,11 @@ setup ``PASSWORD_RESET_CONFIRM_URL``.
 +----------+---------------------------------+------------------------------+
 | Method   | Request                         | Response                     |
 +==========+=================================+==============================+
-| ``POST`` |  ``{{ User.USERNAME_FIELD }}``  | * ``HTTP_204_NO_CONTENT``    |
-|          |                                 | * ``HTTP_400_BAD_REQUEST``   |
+| ``POST`` |  ``email``                      | ``HTTP_204_NO_CONTENT``      |
+|          |                                 |                              |
+|          |                                 | ``HTTP_400_BAD_REQUEST``     |
+|          |                                 |                              |
+|          |                                 | * ``email``                  |
 +----------+---------------------------------+------------------------------+
 
 Reset Password Confirmation
@@ -182,6 +200,8 @@ Use this endpoint to finish reset password process. This endpoint is not a URL
 which will be directly exposed to your users - you should provide site in your
 frontend application (configured by ``PASSWORD_RESET_CONFIRM_URL``) which
 will send ``POST`` request to reset password confirmation endpoint.
+``HTTP_400_BAD_REQUEST`` will be raised if the user has logged in or changed password
+since the token creation.
 
 **Default URL**: ``/password/reset/confirm/``
 
@@ -192,8 +212,12 @@ will send ``POST`` request to reset password confirmation endpoint.
 +----------+----------------------------------+--------------------------------------+
 | Method   | Request                          | Response                             |
 +==========+==================================+======================================+
-| ``POST`` | * ``{{ User.USERNAME_FIELD }}``  | ``HTTP_204_NO_CONTENT``              |
+| ``POST`` | * ``uid``                        | ``HTTP_204_NO_CONTENT``              |
 |          | * ``token``                      |                                      |
-|          | * ``new_password``               |                                      |
+|          | * ``new_password``               | ``HTTP_400_BAD_REQUEST``             |
 |          | * ``re_new_password``            |                                      |
+|          |                                  | * ``uid``                            |
+|          |                                  | * ``non_field_errors``               |
+|          |                                  | * ``new_password``                   |
+|          |                                  | * ``re_new_password``                |
 +----------+----------------------------------+--------------------------------------+
