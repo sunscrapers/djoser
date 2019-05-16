@@ -16,4 +16,4 @@ class CompatTestCase(SimpleTestCase):
             email_field_name = settings.USER_EMAIL_FIELD_NAME
 
         user_email_field_name = get_user_email_field_name(User)
-        self.assertEquals(user_email_field_name, email_field_name)
+        self.assertEqual(user_email_field_name, email_field_name)
