@@ -11,6 +11,8 @@ from rest_framework.test import APITestCase
 import djoser.constants
 import djoser.utils
 import djoser.views
+from djoser.compat import get_user_email
+from ..models import CustomUser
 from .common import create_user, mock, perform_create_mock
 
 User = get_user_model()
@@ -133,6 +135,60 @@ class UserCreateViewTest(restframework.APIViewTestCase,
         self.assertEqual(
             response.data, [djoser.constants.CANNOT_CREATE_USER_ERROR]
         )
+
+    @mock.patch(
+        'djoser.serializers.User', CustomUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.model', CustomUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.fields', tuple(CustomUser.REQUIRED_FIELDS) + (
+            CustomUser.USERNAME_FIELD, CustomUser._meta.pk.name, 'password',
+        ))
+    @mock.patch(
+        'djoser.views.User', CustomUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.CustomUser')
+    def test_post_create_custom_user_with_all_required_fields(self):
+        data = {
+            'custom_username': 'john',
+            'password': 'secret',
+            'custom_required_field': '42'
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
+        self.assertTrue('password' not in response.data)
+        custom_user_model = get_user_model()
+        self.assert_instance_exists(custom_user_model, custom_username=data[custom_user_model.USERNAME_FIELD])
+        user = custom_user_model.objects.get(custom_username=data[custom_user_model.USERNAME_FIELD])
+        self.assertTrue(user.check_password(data['password']))
+
+    @mock.patch(
+        'djoser.serializers.User', CustomUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.model', CustomUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.fields', tuple(CustomUser.REQUIRED_FIELDS) + (
+            CustomUser.USERNAME_FIELD, CustomUser._meta.pk.name, 'password',
+        ))
+    @mock.patch(
+        'djoser.views.User', CustomUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.CustomUser')
+    def test_post_not_create_custom_user_with_missing_required_fields(self):
+        data = {
+            'custom_username': 'john',
+            'password': 'secret',
+        }
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        response.render()
+        self.assertEqual(response.data['custom_required_field'][0].code, 'required')
 
 
 class UserViewSetCreationTest(APITestCase,
@@ -264,6 +320,57 @@ class UserViewSetCreationTest(APITestCase,
         self.assert_status_equal(response, status.HTTP_405_METHOD_NOT_ALLOWED)
         self.assert_status_equal(response2, status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    @mock.patch(
+        'djoser.serializers.User', CustomUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.model', CustomUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.fields', tuple(CustomUser.REQUIRED_FIELDS) + (
+            CustomUser.USERNAME_FIELD, CustomUser._meta.pk.name, 'password',
+        ))
+    @mock.patch(
+        'djoser.views.User', CustomUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.CustomUser')
+    def test_post_create_custom_user_with_all_required_fields(self):
+        data = {
+            'custom_username': 'john',
+            'password': 'secret',
+            'custom_required_field': '42'
+        }
+        response = self.client.post(path=reverse('user-list'), data=data)
+
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
+        self.assertTrue('password' not in response.data)
+
+        custom_user_model = get_user_model()
+        self.assert_instance_exists(custom_user_model, custom_username=data[custom_user_model.USERNAME_FIELD])
+        user = custom_user_model.objects.get(custom_username=data[custom_user_model.USERNAME_FIELD])
+        self.assertTrue(user.check_password(data['password']))
+
+    @mock.patch(
+        'djoser.serializers.User', CustomUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.model', CustomUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.fields', tuple(CustomUser.REQUIRED_FIELDS) + (
+            CustomUser.USERNAME_FIELD, CustomUser._meta.pk.name, 'password',
+        ))
+    @mock.patch(
+        'djoser.views.User', CustomUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.CustomUser')
+    def test_post_not_create_custom_user_with_missing_required_fields(self):
+        data = {
+            'custom_username': 'john',
+            'password': 'secret',
+        }
+        response = self.client.post(path=reverse('user-list'), data=data)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        response.render()
+        self.assertEqual(response.data['custom_required_field'][0].code, 'required')
+
 
 class UserViewSetEditTest(APITestCase,
                           assertions.StatusCodeAssertionsMixin):
@@ -355,3 +462,20 @@ class TestResendActivationEmail(
         request = self.factory.post(data=data)
         self.view(request)
         self.assert_emails_in_mailbox(0)
+
+    @mock.patch(
+        'djoser.serializers.User', CustomUser)
+    @mock.patch(
+        'djoser.views.User', CustomUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.CustomUser',
+        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
+    )
+    def test_resend_activation_view_custom_user(self):
+        user = create_user(use_custom_data=True, is_active=False)
+        data = {
+            'custom_email': get_user_email(user),
+        }
+        request = self.factory.post(data=data)
+        self.view(request)
+        self.assert_email_exists(to=[get_user_email(user)])

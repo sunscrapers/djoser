@@ -8,7 +8,8 @@ from rest_framework.test import APITestCase
 
 import djoser.views
 
-from .common import create_user
+from .common import create_user, mock
+from ..models import CustomUser
 
 
 class SetUsernameViewTest(restframework.APIViewTestCase,
@@ -111,6 +112,57 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertTrue(user.is_active)
 
+    @mock.patch(
+        'djoser.serializers.User', CustomUser)
+    @mock.patch(
+        'djoser.serializers.SetUsernameSerializer.Meta.model', CustomUser)
+    @mock.patch(
+        'djoser.serializers.SetUsernameSerializer.Meta.fields', (CustomUser.USERNAME_FIELD, 'current_password'))
+    @mock.patch(
+        'djoser.views.User', CustomUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.CustomUser')
+    def test_post_set_new_custom_username(self):
+        user = create_user(use_custom_data=True)
+        data = {
+            'new_custom_username': 'ringo',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        user.refresh_from_db()
+        self.assertEqual(data['new_custom_username'], user.get_username())
+
+    @mock.patch(
+        'djoser.serializers.User', CustomUser)
+    @mock.patch(
+        'djoser.serializers.SetUsernameSerializer.Meta.model', CustomUser)
+    @mock.patch(
+        'djoser.serializers.SetUsernameSerializer.Meta.fields', (CustomUser.USERNAME_FIELD, 'current_password'))
+    @mock.patch(
+        'djoser.views.User', CustomUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.CustomUser',
+        DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True})
+    )
+    def test_post_not_set_new_custom_username_if_mismatch(self):
+        user = create_user(use_custom_data=True)
+        data = {
+            'new_custom_username': 'ringo',
+            're_new_custom_username': 'wrong',
+            'current_password': 'secret',
+        }
+        request = self.factory.post(user=user, data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        user.refresh_from_db()
+        self.assertNotEqual(data['new_custom_username'], user.get_username())
+
 
 class UserViewSetChangeUsernameTest(APITestCase,
                                     assertions.EmailAssertionsMixin,
@@ -201,3 +253,56 @@ class UserViewSetChangeUsernameTest(APITestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertTrue(self.user.is_active)
+
+    @mock.patch(
+        'djoser.serializers.User', CustomUser)
+    @mock.patch(
+        'djoser.serializers.SetUsernameSerializer.Meta.model', CustomUser)
+    @mock.patch(
+        'djoser.serializers.SetUsernameSerializer.Meta.fields', (CustomUser.USERNAME_FIELD, 'current_password'))
+    @mock.patch(
+        'djoser.urls.base.User', CustomUser)
+    @mock.patch(
+        'djoser.views.User', CustomUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.CustomUser')
+    def test_post_set_new_custom_username(self):
+        user = create_user(use_custom_data=True)
+        data = {
+            'new_custom_username': 'ringo',
+            'current_password': 'secret',
+        }
+        self.client.force_authenticate(user)
+        response = self.client.post(reverse('user-change-username'), data=data)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        user.refresh_from_db()
+        self.assertEqual(data['new_custom_username'], user.get_username())
+
+    @mock.patch(
+        'djoser.serializers.User', CustomUser)
+    @mock.patch(
+        'djoser.serializers.SetUsernameSerializer.Meta.model', CustomUser)
+    @mock.patch(
+        'djoser.serializers.SetUsernameSerializer.Meta.fields', (CustomUser.USERNAME_FIELD, 'current_password'))
+    @mock.patch(
+        'djoser.urls.base.User', CustomUser)
+    @mock.patch(
+        'djoser.views.User', CustomUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.CustomUser',
+        DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True})
+    )
+    def test_post_not_set_new_custom_username_if_mismatch(self):
+        user = create_user(use_custom_data=True)
+        data = {
+            'new_custom_username': 'ringo',
+            're_new_custom_username': 'wrong',
+            'current_password': 'secret',
+        }
+        self.client.force_authenticate(user)
+        response = self.client.post(reverse('user-change-username'), data=data)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        user.refresh_from_db()
+        self.assertNotEqual(data['new_custom_username'], user.get_username())
