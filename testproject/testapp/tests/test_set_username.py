@@ -9,7 +9,7 @@ from rest_framework.test import APITestCase
 import djoser.views
 
 from .common import create_user, mock
-from ..models import CustomUser
+from testapp.models import CustomUser
 
 
 class SetUsernameViewTest(restframework.APIViewTestCase,

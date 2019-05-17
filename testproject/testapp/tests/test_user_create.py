@@ -11,7 +11,7 @@ from rest_framework.test import APITestCase
 import djoser.views
 from djoser.conf import settings as default_settings
 from djoser.compat import get_user_email
-from ..models import CustomUser
+from testapp.models import CustomUser
 from .common import create_user, mock, perform_create_mock
 
 User = get_user_model()

@@ -9,7 +9,7 @@ import djoser.views
 from djoser.compat import get_user_email
 from djoser.conf import settings as default_settings
 from .common import create_user, mock
-from ..models import CustomUser
+from testapp.models import CustomUser
 
 
 class PasswordResetViewTest(restframework.APIViewTestCase,
