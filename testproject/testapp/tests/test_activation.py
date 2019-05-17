@@ -6,11 +6,10 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-import djoser.constants
 import djoser.signals
 import djoser.utils
 import djoser.views
-
+from djoser.conf import settings as default_settings
 from .common import create_user
 
 
@@ -56,7 +55,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
         self.assertEqual(list(response.data.keys()), ['uid'])
         self.assertEqual(
             response.data['uid'],
-            [djoser.constants.INVALID_UID_ERROR]
+            [default_settings.CONSTANTS.messages.INVALID_UID_ERROR]
         )
 
     def test_post_respond_with_bad_request_when_stale_token(self):
@@ -74,7 +73,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
         self.assertEqual(list(response.data.keys()), ['detail'])
         self.assertEqual(
             response.data['detail'],
-            djoser.constants.STALE_TOKEN_ERROR
+            default_settings.CONSTANTS.messages.STALE_TOKEN_ERROR
         )
         self.assertFalse(self.signal_sent)
 
@@ -94,7 +93,7 @@ class ActivationViewTest(restframework.APIViewTestCase,
         self.assertEqual(list(response.data.keys()), ['token'])
         self.assertEqual(
             response.data['token'],
-            [djoser.constants.INVALID_TOKEN_ERROR]
+            [default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR]
         )
 
     @override_settings(
@@ -155,7 +154,7 @@ class UserViewSetConfirmationTest(APITestCase,
         self.assertEqual(list(response.data.keys()), ['uid'])
         self.assertEqual(
             response.data['uid'],
-            [djoser.constants.INVALID_UID_ERROR]
+            [default_settings.CONSTANTS.messages.INVALID_UID_ERROR]
         )
 
     def test_post_respond_with_bad_request_when_stale_token(self):
@@ -171,7 +170,7 @@ class UserViewSetConfirmationTest(APITestCase,
         self.assertEqual(list(response.data.keys()), ['detail'])
         self.assertEqual(
             response.data['detail'],
-            djoser.constants.STALE_TOKEN_ERROR
+            default_settings.CONSTANTS.messages.STALE_TOKEN_ERROR
         )
         self.assertFalse(self.signal_sent)
 
@@ -189,7 +188,7 @@ class UserViewSetConfirmationTest(APITestCase,
         self.assertEqual(list(response.data.keys()), ['token'])
         self.assertEqual(
             response.data['token'],
-            [djoser.constants.INVALID_TOKEN_ERROR]
+            [default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR]
         )
 
     @override_settings(
