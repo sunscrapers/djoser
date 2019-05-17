@@ -6,6 +6,13 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+git
+---------------------
+
+* Add CONSTANTS option to settings (@mrouhi13)
+
+
+---------------------
 `1.6.0`_ (2019-05-15)
 ---------------------
 

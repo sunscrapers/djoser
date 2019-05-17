@@ -1,15 +1,13 @@
-from django.core import mail
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
+from django.core import mail
 from django.test.utils import override_settings
-
 from djet import assertions, restframework
 from rest_framework import status
 
-import djoser.constants
 import djoser.views
 from djoser.compat import get_user_email
-
+from djoser.conf import settings as default_settings
 from .common import create_user, mock
 from ..models import CustomUser
 
@@ -80,7 +78,7 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data['email'][0], djoser.constants.EMAIL_NOT_FOUND
+            response.data['email'][0], default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
         )
 
     @mock.patch(
@@ -123,5 +121,5 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data['custom_email'][0], djoser.constants.EMAIL_NOT_FOUND
+            response.data['custom_email'][0], default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
         )
