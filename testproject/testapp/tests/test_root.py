@@ -15,7 +15,7 @@ class RootViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_200_OK)
         urlpattern_names = view_object.aggregate_djoser_urlpattern_names()
         urls_map = view_object.get_urls_map(request, urlpattern_names, None)
-        self.assertEquals(urls_map, response.data)
+        self.assertEqual(urls_map, response.data)
 
     def test_all_urlpattern_names_are_in_urls_map(self):
         request = self.factory.get()
@@ -33,4 +33,4 @@ class RootViewTest(restframework.APIViewTestCase,
 
         urlpattern_names = ['non-existent-urlpattern']
         urls_map = view_object.get_urls_map(request, urlpattern_names, None)
-        self.assertEquals(urls_map, {urlpattern_names[0]: ''})
+        self.assertEqual(urls_map, {urlpattern_names[0]: ''})

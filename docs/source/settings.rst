@@ -182,6 +182,25 @@ Same as in case of ``SERIALIZERS`` it allows partial override.
         'password_reset': 'djoser.email.PasswordResetEmail',
     }
 
+CONSTANTS
+-----
+
+Dictionary which maps djoser constant names to paths to constant classes.
+Same as in case of ``SERIALIZERS`` it allows partial override.
+
+**Examples**
+
+.. code-block:: python
+    {
+        'messages': 'myapp.constants.CustomMessages',
+    }
+**Default**:
+
+.. code-block:: python
+    {
+        'messages': 'djoser.constants.Messages',
+    }
+
 SOCIAL_AUTH_TOKEN_STRATEGY
 --------------------------
 
