@@ -6,7 +6,6 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-import djoser.constants
 import djoser.signals
 import djoser.utils
 import djoser.views

@@ -4,7 +4,6 @@ from django.test.utils import override_settings
 from djet import assertions, restframework
 from rest_framework import status
 
-import djoser.constants
 import djoser.utils
 import djoser.views
 from djoser.conf import settings as default_settings
