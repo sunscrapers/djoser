@@ -3,10 +3,11 @@ from django.contrib.auth.tokens import default_token_generator
 from django.test.utils import override_settings
 from djet import assertions, restframework
 from rest_framework import status
+
 import djoser.constants
 import djoser.utils
 import djoser.views
-
+from djoser.conf import settings as default_settings
 from .common import create_user
 
 
@@ -67,7 +68,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         self.assertIn('uid', response.data)
         self.assertEqual(len(response.data['uid']), 1)
         self.assertEqual(
-            response.data['uid'][0], djoser.constants.INVALID_UID_ERROR
+            response.data['uid'][0], default_settings.CONSTANTS.messages.INVALID_UID_ERROR
         )
 
     def test_post_not_set_new_password_if_user_does_not_exist(self):
@@ -100,7 +101,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data['non_field_errors'],
-            [djoser.constants.INVALID_TOKEN_ERROR]
+            [default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR]
         )
         user.refresh_from_db()
         self.assertFalse(user.check_password(data['new_password']))
@@ -123,7 +124,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data['non_field_errors'],
-            [djoser.constants.PASSWORD_MISMATCH_ERROR]
+            [default_settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR]
         )
 
     @override_settings(
