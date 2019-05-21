@@ -49,6 +49,14 @@ placeholders, e.g. ``#/activate/{uid}/{token}``. You should pass ``uid`` and
 
 **Required**: ``True``
 
+USER_CREATE_PASSWORD_RETYPE
+---------------------------
+
+If ``True``, you need to pass ``re_password`` to
+``/users/`` endpoint, to validate password equality.
+
+**Default**: ``False``
+
 SET_USERNAME_RETYPE
 -------------------
 

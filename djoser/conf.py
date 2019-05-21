@@ -28,6 +28,7 @@ class ObjDict(dict):
 default_settings = {
     'SEND_ACTIVATION_EMAIL': False,
     'SEND_CONFIRMATION_EMAIL': False,
+    'USER_CREATE_PASSWORD_RETYPE': False,
     'SET_PASSWORD_RETYPE': False,
     'SET_USERNAME_RETYPE': False,
     'PASSWORD_RESET_CONFIRM_RETYPE': False,
@@ -53,6 +54,8 @@ default_settings = {
             'djoser.serializers.SetUsernameRetypeSerializer',
         'user_create':
             'djoser.serializers.UserCreateSerializer',
+        'user_create_password_retype':
+            'djoser.serializers.UserCreatePasswordRetypeSerializer',
         'user_delete':
             'djoser.serializers.UserDeleteSerializer',
         'user':
