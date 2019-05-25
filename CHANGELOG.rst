@@ -10,7 +10,9 @@ git
 ---------------------
 
 * Add CONSTANTS option to settings (@mrouhi13)
-
+* Allow using custom email field (@Chadys)
+* Remove non_field_error from base endpoints (@Chadys)
+* Other small fixes
 
 ---------------------
 `1.6.0`_ (2019-05-15)
