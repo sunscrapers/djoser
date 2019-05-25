@@ -86,8 +86,12 @@ class UserCreateView(UserCreateMixin, generics.CreateAPIView):
     """
     Use this endpoint to register new user.
     """
-    serializer_class = settings.SERIALIZERS.user_create
     permission_classes = settings.PERMISSIONS.user_create
+
+    def get_serializer_class(self):
+        if settings.USER_CREATE_PASSWORD_RETYPE:
+            return settings.SERIALIZERS.user_create_password_retype
+        return settings.SERIALIZERS.user_create
 
 
 class ResendActivationView(ActionViewMixin, generics.GenericAPIView):
@@ -343,6 +347,8 @@ class UserViewSet(UserCreateMixin,
 
     def get_serializer_class(self):
         if self.action == 'create':
+            if settings.USER_CREATE_PASSWORD_RETYPE:
+                return settings.SERIALIZERS.user_create_password_retype
             return settings.SERIALIZERS.user_create
 
         elif self.action == 'remove' or (

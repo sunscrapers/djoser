@@ -41,13 +41,17 @@ fields.
 **Default URL**: ``/users/``
 **Backward-compatible URL**: ``/users/create/``
 
+.. note::
+
+    ``re_password`` is only required if ``USER_CREATE_PASSWORD_RETYPE`` is ``True``
+
 +----------+-----------------------------------+----------------------------------+
 | Method   |  Request                          | Response                         |
 +==========+===================================+==================================+
 | ``POST`` | * ``{{ User.USERNAME_FIELD }}``   | ``HTTP_201_CREATED``             |
 |          | * ``{{ User.REQUIRED_FIELDS }}``  |                                  |
 |          | * ``password``                    | * ``{{ User.USERNAME_FIELD }}``  |
-|          |                                   | * ``{{ User._meta.pk.name }}``   |
+|          | * ``re_password``                 | * ``{{ User._meta.pk.name }}``   |
 |          |                                   | * ``{{ User.REQUIRED_FIELDS }}`` |
 |          |                                   |                                  |
 |          |                                   | ``HTTP_400_BAD_REQUEST``         |
@@ -55,6 +59,7 @@ fields.
 |          |                                   | * ``{{ User.USERNAME_FIELD }}``  |
 |          |                                   | * ``{{ User.REQUIRED_FIELDS }}`` |
 |          |                                   | * ``password``                   |
+|          |                                   | * ``re_password``                |
 +----------+-----------------------------------+----------------------------------+
 
 User Delete

@@ -97,6 +97,24 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return user
 
 
+class UserCreatePasswordRetypeSerializer(UserCreateSerializer):
+    default_error_messages = {
+        'password_mismatch': settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR,
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(UserCreatePasswordRetypeSerializer, self).__init__(*args, **kwargs)
+        self.fields['re_password'] = serializers.CharField(style={'input_type': 'password'})
+
+    def validate(self, attrs):
+        re_password = attrs.pop('re_password')
+        attrs = super(UserCreatePasswordRetypeSerializer, self).validate(attrs)
+        if attrs['password'] == re_password:
+            return attrs
+        else:
+            self.fail('password_mismatch')
+
+
 class TokenCreateSerializer(serializers.Serializer):
     password = serializers.CharField(
         required=False, style={'input_type': 'password'}
