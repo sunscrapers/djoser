@@ -6,9 +6,10 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
-`1.7.0`_ (2019-05-25
+`1.7.0`_ (2019-05-25)
 ---------------------
 
+* Add LOGIN_FIELD setting
 * Add CONSTANTS option to settings (@mrouhi13)
 * Add USER_CREATE_PASSWORD_RETYPE option (@Chadys)
 * Allow using custom email field (@Chadys)
