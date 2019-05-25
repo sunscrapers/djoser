@@ -1,5 +1,6 @@
 import warnings
 
+from django.apps import apps
 from django.conf import settings as django_settings
 from django.core.exceptions import ImproperlyConfigured
 from django.test.signals import setting_changed
@@ -8,6 +9,10 @@ from django.utils.functional import LazyObject
 from django.utils.module_loading import import_string
 
 DJOSER_SETTINGS_NAMESPACE = 'DJOSER'
+
+auth_module, user_model = django_settings.AUTH_USER_MODEL.rsplit('.', 1)
+
+User = apps.get_model(auth_module, user_model)
 
 
 class ObjDict(dict):
@@ -26,6 +31,7 @@ class ObjDict(dict):
 
 
 default_settings = {
+    'LOGIN_FIELD': User.USERNAME_FIELD,
     'SEND_ACTIVATION_EMAIL': False,
     'SEND_CONFIRMATION_EMAIL': False,
     'USER_CREATE_PASSWORD_RETYPE': False,

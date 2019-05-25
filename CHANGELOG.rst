@@ -6,10 +6,11 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
-git
+`1.7.0`_ (2019-05-25
 ---------------------
 
 * Add CONSTANTS option to settings (@mrouhi13)
+* Add USER_CREATE_PASSWORD_RETYPE option (@Chadys)
 * Allow using custom email field (@Chadys)
 * Remove non_field_error from base endpoints (@Chadys)
 * Other small fixes
@@ -340,3 +341,4 @@ few bugfixes / documentation updates. List of changes:
 .. _1.5.0: https://github.com/sunscrapers/djoser/compare/1.4.0...1.5.0
 .. _1.5.1: https://github.com/sunscrapers/djoser/compare/1.5.0...1.5.1
 .. _1.6.0: https://github.com/sunscrapers/djoser/compare/1.5.1...1.6.0
+.. _1.7.0: https://github.com/sunscrapers/djoser/compare/1.6.0...1.7.0

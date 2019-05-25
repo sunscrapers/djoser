@@ -19,9 +19,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
             User._meta.pk.name,
-            User.USERNAME_FIELD,
+            settings.LOGIN_FIELD,
         )
-        read_only_fields = (User.USERNAME_FIELD,)
+        read_only_fields = (settings.LOGIN_FIELD,)
 
     def update(self, instance, validated_data):
         email_field = get_user_email_field_name(User)
@@ -63,7 +63,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
-            User.USERNAME_FIELD, User._meta.pk.name, 'password',
+            settings.LOGIN_FIELD, User._meta.pk.name, 'password',
         )
 
     def validate(self, attrs):
@@ -128,13 +128,13 @@ class TokenCreateSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         super(TokenCreateSerializer, self).__init__(*args, **kwargs)
         self.user = None
-        self.fields[User.USERNAME_FIELD] = serializers.CharField(
+        self.fields[settings.LOGIN_FIELD] = serializers.CharField(
             required=False
         )
 
     def validate(self, attrs):
         self.user = authenticate(
-            username=attrs.get(User.USERNAME_FIELD),
+            username=attrs.get(settings.LOGIN_FIELD),
             password=attrs.get('password')
         )
 
@@ -279,34 +279,35 @@ class SetUsernameSerializer(serializers.ModelSerializer,
                             CurrentPasswordSerializer):
     class Meta(object):
         model = User
-        fields = (User.USERNAME_FIELD, 'current_password')
+        fields = (settings.LOGIN_FIELD, 'current_password')
 
     def __init__(self, *args, **kwargs):
-        """
-        This method should probably be replaced by a better solution.
-        Its purpose is to replace USERNAME_FIELD with 'new_' + USERNAME_FIELD
-        so that the new field is being assigned a field for USERNAME_FIELD
-        """
         super(SetUsernameSerializer, self).__init__(*args, **kwargs)
-        username_field = User.USERNAME_FIELD
-        self.fields['new_' + username_field] = self.fields.pop(username_field)
+        self.username_field = settings.LOGIN_FIELD
+        self._default_username_field = self.Meta.model.USERNAME_FIELD
+        self.fields['new_' + self.username_field] = self.fields.pop(self.username_field)
+
+    def save(self, **kwargs):
+        if self.username_field != self._default_username_field:
+            kwargs[User.USERNAME_FIELD] = self.validated_data.get('new_' + self.username_field)
+        return super(SetUsernameSerializer, self).save(**kwargs)
 
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer):
     default_error_messages = {
         'username_mismatch': settings.CONSTANTS.messages.USERNAME_MISMATCH_ERROR.format(
-            User.USERNAME_FIELD
+            settings.LOGIN_FIELD
         ),
     }
 
     def __init__(self, *args, **kwargs):
         super(SetUsernameRetypeSerializer, self).__init__(*args, **kwargs)
-        self.fields['re_new_' + User.USERNAME_FIELD] = serializers.CharField()
+        self.fields['re_new_' + settings.LOGIN_FIELD] = serializers.CharField()
 
     def validate(self, attrs):
         attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
-        new_username = attrs[User.USERNAME_FIELD]
-        if new_username != attrs['re_new_' + User.USERNAME_FIELD]:
+        new_username = attrs[settings.LOGIN_FIELD]
+        if new_username != attrs['re_new_' + settings.LOGIN_FIELD]:
             self.fail('username_mismatch')
         else:
             return attrs

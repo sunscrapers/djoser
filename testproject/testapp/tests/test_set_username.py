@@ -121,7 +121,9 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
     @mock.patch(
         'djoser.views.User', CustomUser)
     @override_settings(
-        AUTH_USER_MODEL='testapp.CustomUser')
+        AUTH_USER_MODEL='testapp.CustomUser',
+        DJOSER=dict(settings.DJOSER, **{'LOGIN_FIELD': CustomUser.USERNAME_FIELD}),
+    )
     def test_post_set_new_custom_username(self):
         user = create_user(use_custom_data=True)
         data = {
@@ -146,7 +148,7 @@ class SetUsernameViewTest(restframework.APIViewTestCase,
         'djoser.views.User', CustomUser)
     @override_settings(
         AUTH_USER_MODEL='testapp.CustomUser',
-        DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True})
+        DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True, 'LOGIN_FIELD': CustomUser.USERNAME_FIELD})
     )
     def test_post_not_set_new_custom_username_if_mismatch(self):
         user = create_user(use_custom_data=True)
@@ -265,7 +267,9 @@ class UserViewSetChangeUsernameTest(APITestCase,
     @mock.patch(
         'djoser.views.User', CustomUser)
     @override_settings(
-        AUTH_USER_MODEL='testapp.CustomUser')
+        AUTH_USER_MODEL='testapp.CustomUser',
+        DJOSER=dict(settings.DJOSER, **{'LOGIN_FIELD': CustomUser.USERNAME_FIELD}),
+    )
     def test_post_set_new_custom_username(self):
         user = create_user(use_custom_data=True)
         data = {
@@ -291,7 +295,7 @@ class UserViewSetChangeUsernameTest(APITestCase,
         'djoser.views.User', CustomUser)
     @override_settings(
         AUTH_USER_MODEL='testapp.CustomUser',
-        DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True})
+        DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True, 'LOGIN_FIELD': CustomUser.USERNAME_FIELD})
     )
     def test_post_not_set_new_custom_username_if_mismatch(self):
         user = create_user(use_custom_data=True)

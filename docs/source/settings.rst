@@ -14,6 +14,15 @@ You may optionally provide ``DJOSER`` settings:
 
 All following setting names written in CAPS are keys on ``DJOSER`` dict.
 
+LOGIN_FIELD
+-----------
+
+Name of a field in User model to be used as login field. This is useful if you
+want to change the login field from ``username`` to ``email`` without providing
+custom User model.
+
+**Default**: ``User.USERNAME_FIELD`` where ``User`` is the model set with Django's setting AUTH_USER_MODEL.
+
 PASSWORD_RESET_CONFIRM_URL
 --------------------------
 
