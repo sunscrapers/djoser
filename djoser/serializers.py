@@ -5,6 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions as django_exceptions
 from django.db import IntegrityError, transaction
 from rest_framework import exceptions, serializers
+from rest_framework.exceptions import ValidationError
 
 from djoser import utils
 from djoser.compat import get_user_email, get_user_email_field_name
@@ -173,7 +174,8 @@ class UidAndTokenSerializer(serializers.Serializer):
         if is_token_valid:
             return attrs
         else:
-            self.fail('invalid_token')
+            key_error = 'invalid_token'
+            raise ValidationError({'token': [self.error_messages[key_error]]}, code=key_error)
 
 
 class ActivationSerializer(UidAndTokenSerializer):
