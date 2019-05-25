@@ -99,7 +99,7 @@ If ``True``, setting new password will logout the user.
 
 .. note::
 
-    Logout will only works with token based authentication.
+    Logout only works with token based authentication.
 
 USER_EMAIL_FIELD_NAME
 ---------------------
