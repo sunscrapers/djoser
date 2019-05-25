@@ -128,16 +128,23 @@ class TokenCreateSerializer(serializers.Serializer):
 
 
 class PasswordResetSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-
     default_error_messages = {'email_not_found': settings.CONSTANTS.messages.EMAIL_NOT_FOUND}
 
-    def validate_email(self, value):
-        users = self.context['view'].get_users(value)
-        if settings.PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND and not users:
-            self.fail('email_not_found')
-        else:
-            return value
+    def __init__(self, *args, **kwargs):
+        super(PasswordResetSerializer, self).__init__(*args, **kwargs)
+
+        email_field = get_user_email_field_name(User)
+        self.fields[email_field] = serializers.EmailField()
+        validate_email_fn_name = 'validate_' + email_field
+
+        def validate_email_fn(self, value):
+            users = self.context['view'].get_users(value)
+            if settings.PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND and not users:
+                self.fail('email_not_found')
+            else:
+                return value
+
+        setattr(PasswordResetSerializer, validate_email_fn_name, validate_email_fn)
 
 
 class UidAndTokenSerializer(serializers.Serializer):

@@ -102,7 +102,7 @@ class ResendActivationView(ActionViewMixin, generics.GenericAPIView):
     def _action(self, serializer):
         if not settings.SEND_ACTIVATION_EMAIL:
             return response.Response(status=status.HTTP_400_BAD_REQUEST)
-        for user in self.get_users(serializer.data['email']):
+        for user in self.get_users(serializer.data[get_user_email_field_name(User)]):
             self.send_activation_email(user)
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -181,7 +181,7 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
     _users = None
 
     def _action(self, serializer):
-        for user in self.get_users(serializer.data['email']):
+        for user in self.get_users(serializer.data[get_user_email_field_name(User)]):
             self.send_password_reset_email(user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 

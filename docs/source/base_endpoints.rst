@@ -118,7 +118,7 @@ will result in ``HTTP_400_BAD_REQUEST``
 +----------+--------------------------------------+----------------------------------+
 | Method   | Request                              | Response                         |
 +==========+======================================+==================================+
-| ``POST`` | * ``email``                          | ``HTTP_204_NO_CONTENT``          |
+| ``POST`` | * ``{{ User.EMAIL_FIELD }}``         | ``HTTP_204_NO_CONTENT``          |
 |          |                                      | ``HTTP_400_BAD_REQUEST``         |
 +----------+--------------------------------------+----------------------------------+
 
@@ -181,16 +181,16 @@ setup ``PASSWORD_RESET_CONFIRM_URL``.
 
     ``HTTP_204_NO_CONTENT`` if ``PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND`` is ``False``
 
-    Otherwise and if ``email`` does not exist in database ``HTTP_400_BAD_REQUEST``
+    Otherwise and if ``{{ User.EMAIL_FIELD }}`` does not exist in database ``HTTP_400_BAD_REQUEST``
 
 +----------+---------------------------------+------------------------------+
 | Method   | Request                         | Response                     |
 +==========+=================================+==============================+
-| ``POST`` |  ``email``                      | ``HTTP_204_NO_CONTENT``      |
+| ``POST`` |  ``{{ User.EMAIL_FIELD }}``     | ``HTTP_204_NO_CONTENT``      |
 |          |                                 |                              |
 |          |                                 | ``HTTP_400_BAD_REQUEST``     |
 |          |                                 |                              |
-|          |                                 | * ``email``                  |
+|          |                                 | * ``{{ User.EMAIL_FIELD }}`` |
 +----------+---------------------------------+------------------------------+
 
 Reset Password Confirmation
