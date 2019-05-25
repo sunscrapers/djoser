@@ -99,7 +99,7 @@ msgstr "საიტის %(site_name)s გუნდი"
 #, python-format
 msgid ""
 "%(site_name)s - Your account has been successfully created and activated!"
-msgstr "თქვენი ანგარიში წარმატებით შეიქმნილია და გააკტიურებულია."
+msgstr "%(site_name)s - თქვენი ანგარიში წარმატებით შეიქმნილია და გააკტიურებულია."
 
 #: templates/email/confirmation.html:8 templates/email/confirmation.html:16
 msgid "Your account has been created and is ready to use!"
