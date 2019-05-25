@@ -116,6 +116,27 @@ class UserCreateViewTest(restframework.APIViewTestCase,
                 'no666',
             )
 
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'USER_CREATE_PASSWORD_RETYPE': True})
+    )
+    def test_post_not_register_if_password_mismatch(self):
+        data = {
+            'username': 'john',
+            'password': 'secret',
+            're_password': 'wrong',
+            'csrftoken': 'asdf',
+        }
+
+        request = self.factory.post(data=data)
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        response.render()
+        self.assertEqual(
+            str(response.data['non_field_errors'][0]),
+            default_settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR,
+        )
+
     @mock.patch(
         'djoser.serializers.UserCreateSerializer.perform_create',
         side_effect=perform_create_mock
@@ -281,6 +302,25 @@ class UserViewSetCreationTest(APITestCase,
                 response.data['password'][0].code,
                 'no666',
             )
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'USER_CREATE_PASSWORD_RETYPE': True})
+    )
+    def test_post_not_register_if_password_mismatch(self):
+        data = {
+            'username': 'john',
+            'password': 'secret',
+            're_password': 'wrong',
+            'csrftoken': 'asdf',
+        }
+
+        response = self.client.post(reverse('user-list'), data=data)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            str(response.data['non_field_errors'][0]),
+            default_settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR,
+        )
 
     @mock.patch(
         'djoser.serializers.UserCreateSerializer.perform_create',
