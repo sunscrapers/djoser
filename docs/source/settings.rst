@@ -1,7 +1,7 @@
 Settings
 ========
 
-You may optionally provide ``DJOSER`` settings:
+You can provide ``DJOSER`` settings like this:
 
 .. code-block:: python
 

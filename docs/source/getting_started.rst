@@ -26,21 +26,20 @@ Supported authentication backends
 Supported Python versions
 -------------------------
 
-* Python 2.7
-* Python 3.4
 * Python 3.5
 * Python 3.6
+* Python 3.7
 
 Supported Django versions
 -------------------------
 
-* Django 1.11
-* Django 2.0
+* Django 2.1
+* Django 2.2
 
 Supported Django Rest Framework versions
 ----------------------------------------
 
-* Django Rest Framework 3.7
+* Django Rest Framework 3.9
 
 Installation
 ------------

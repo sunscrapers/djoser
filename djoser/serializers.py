@@ -30,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
             if instance_email != validated_data[email_field]:
                 instance.is_active = False
                 instance.save(update_fields=['is_active'])
-        return super(UserSerializer, self).update(instance, validated_data)
+        return super().update(instance, validated_data)
 
 
 class CurrentUserSerializer(UserSerializer):
@@ -47,7 +47,7 @@ class CurrentUserSerializer(UserSerializer):
         )
 
         # Perform regular init actions
-        super(CurrentUserSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -126,7 +126,7 @@ class TokenCreateSerializer(serializers.Serializer):
     }
 
     def __init__(self, *args, **kwargs):
-        super(TokenCreateSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.user = None
         self.fields[settings.LOGIN_FIELD] = serializers.CharField(
             required=False
@@ -185,7 +185,7 @@ class UidAndTokenSerializer(serializers.Serializer):
         return value
 
     def validate(self, attrs):
-        attrs = super(UidAndTokenSerializer, self).validate(attrs)
+        attrs = super().validate(attrs)
         is_token_valid = self.context['view'].token_generator.check_token(
             self.user, attrs['token']
         )
@@ -200,7 +200,7 @@ class ActivationSerializer(UidAndTokenSerializer):
     default_error_messages = {'stale_token': settings.CONSTANTS.messages.STALE_TOKEN_ERROR}
 
     def validate(self, attrs):
-        attrs = super(ActivationSerializer, self).validate(attrs)
+        attrs = super().validate(attrs)
         if not self.user.is_active:
             return attrs
         raise exceptions.PermissionDenied(self.error_messages['stale_token'])
@@ -219,7 +219,7 @@ class PasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError({
                 'new_password': list(e.messages)
             })
-        return super(PasswordSerializer, self).validate(attrs)
+        return super().validate(attrs)
 
 
 class PasswordRetypeSerializer(PasswordSerializer):
@@ -230,7 +230,7 @@ class PasswordRetypeSerializer(PasswordSerializer):
     }
 
     def validate(self, attrs):
-        attrs = super(PasswordRetypeSerializer, self).validate(attrs)
+        attrs = super().validate(attrs)
         if attrs['new_password'] == attrs['re_new_password']:
             return attrs
         else:
@@ -282,15 +282,15 @@ class SetUsernameSerializer(serializers.ModelSerializer,
         fields = (settings.LOGIN_FIELD, 'current_password')
 
     def __init__(self, *args, **kwargs):
-        super(SetUsernameSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.username_field = settings.LOGIN_FIELD
-        self._default_username_field = self.Meta.model.USERNAME_FIELD
+        self._default_username_field = User.USERNAME_FIELD
         self.fields['new_' + self.username_field] = self.fields.pop(self.username_field)
 
     def save(self, **kwargs):
         if self.username_field != self._default_username_field:
             kwargs[User.USERNAME_FIELD] = self.validated_data.get('new_' + self.username_field)
-        return super(SetUsernameSerializer, self).save(**kwargs)
+        return super().save(**kwargs)
 
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer):
@@ -301,11 +301,11 @@ class SetUsernameRetypeSerializer(SetUsernameSerializer):
     }
 
     def __init__(self, *args, **kwargs):
-        super(SetUsernameRetypeSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['re_new_' + settings.LOGIN_FIELD] = serializers.CharField()
 
     def validate(self, attrs):
-        attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
+        attrs = super().validate(attrs)
         new_username = attrs[settings.LOGIN_FIELD]
         if new_username != attrs['re_new_' + settings.LOGIN_FIELD]:
             self.fail('username_mismatch')

@@ -3,6 +3,17 @@ Migration Guide
 ===============
 
 -------------------------
+Migrating from 1.x to 2.0
+-------------------------
+
+Here are some advices to help you with the transition to new Djoser.
+
+#. If you still use Python 2.x - stay on Djoser 1.x.
+#. If you still use Django 1.x - stay on Djoser 1.x.
+#. URL structure has been simplified
+
+
+-------------------------
 Migrating from 1.3 to 1.4
 -------------------------
 

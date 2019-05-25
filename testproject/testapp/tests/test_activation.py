@@ -16,7 +16,7 @@ from .common import create_user
 class ActivationViewTest(restframework.APIViewTestCase,
                          assertions.EmailAssertionsMixin,
                          assertions.StatusCodeAssertionsMixin):
-    view_class = djoser.views.ActivationView
+    # view_class = djoser.views.ActivationView
 
     def setUp(self):
         self.signal_sent = False

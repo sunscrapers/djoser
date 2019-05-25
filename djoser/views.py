@@ -166,56 +166,6 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
-    """
-    Use this endpoint to activate user account.
-    """
-    serializer_class = settings.SERIALIZERS.activation
-    permission_classes = settings.PERMISSIONS.activation
-    token_generator = default_token_generator
-
-    def _action(self, serializer):
-        user = serializer.user
-        user.is_active = True
-        user.save()
-
-        signals.user_activated.send(
-            sender=self.__class__, user=user, request=self.request
-        )
-
-        if settings.SEND_CONFIRMATION_EMAIL:
-            context = {'user': user}
-            to = [get_user_email(user)]
-            settings.EMAIL.confirmation(self.request, context).send(to)
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
-    """
-    Use this endpoint to change user username.
-    """
-    permission_classes = settings.PERMISSIONS.set_username
-
-    def get_serializer_class(self):
-        if settings.SET_USERNAME_RETYPE:
-            return settings.SERIALIZERS.set_username_retype
-        return settings.SERIALIZERS.set_username
-
-    def _action(self, serializer):
-        user = self.request.user
-        new_username = serializer.data['new_' + User.USERNAME_FIELD]
-
-        setattr(user, User.USERNAME_FIELD, new_username)
-        if settings.SEND_ACTIVATION_EMAIL:
-            user.is_active = False
-            context = {'user': user}
-            to = [get_user_email(user)]
-            settings.EMAIL.activation(self.request, context).send(to)
-        user.save()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 class UserUpdateMixin(object):
     def perform_update(self, serializer):
@@ -226,18 +176,6 @@ class UserUpdateMixin(object):
             to = [get_user_email(user)]
             settings.EMAIL.activation(self.request, context).send(to)
 
-
-class UserView(UserUpdateMixin,
-               generics.RetrieveUpdateAPIView):
-    """
-    Use this endpoint to retrieve/update user.
-    """
-    queryset = User.objects.all()
-    serializer_class = settings.SERIALIZERS.user
-    permission_classes = settings.PERMISSIONS.user
-
-    def get_object(self, *args, **kwargs):
-        return self.request.user
 
 
 class UserViewSet(UserCreateMixin,
