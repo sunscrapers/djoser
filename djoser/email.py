@@ -34,3 +34,7 @@ class PasswordResetEmail(BaseEmailMessage):
         context['token'] = default_token_generator.make_token(user)
         context['url'] = settings.PASSWORD_RESET_CONFIRM_URL.format(**context)
         return context
+
+
+class PasswordChangedConfirmationEmail(BaseEmailMessage):
+    template_name = 'email/password_changed_confirmation.html'

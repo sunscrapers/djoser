@@ -221,6 +221,13 @@ class SetPasswordView(utils.ActionViewMixin, generics.GenericAPIView):
         self.request.user.set_password(serializer.data['new_password'])
         self.request.user.save()
 
+        if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
+            context = {'user': self.request.user}
+            to = [get_user_email(self.request.user)]
+            settings.EMAIL.password_changed_confirmation(
+                self.request, context
+            ).send(to)
+
         if settings.LOGOUT_ON_PASSWORD_CHANGE:
             utils.logout_user(self.request)
 
@@ -240,10 +247,19 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
         return settings.SERIALIZERS.password_reset_confirm
 
     def _action(self, serializer):
-        serializer.user.set_password(serializer.data['new_password'])
-        if hasattr(serializer.user, 'last_login'):
-            serializer.user.last_login = now()
-        serializer.user.save()
+        user = serializer.user
+
+        user.set_password(serializer.data['new_password'])
+        if hasattr(user, 'last_login'):
+            user.last_login = now()
+        user.save()
+
+        if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
+            context = {'user': user}
+            to = [get_user_email(user)]
+            settings.EMAIL.password_changed_confirmation(
+                self.request, context
+            ).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
