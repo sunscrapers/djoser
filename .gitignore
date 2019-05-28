@@ -140,3 +140,5 @@ venv.bak/
 
 ### Python Patch ###
 .venv/
+
+.DS_Store

@@ -39,13 +39,12 @@ default_settings = {
     'SET_USERNAME_RETYPE': False,
     'PASSWORD_RESET_CONFIRM_RETYPE': False,
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': False,
-    'PASSWORD_VALIDATORS': [],
     'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
     'SERIALIZERS': ObjDict({
         'activation':
             'djoser.serializers.ActivationSerializer',
         'password_reset':
-            'djoser.serializers.PasswordResetSerializer',
+            'djoser.serializers.ResetSerializer',
         'password_reset_confirm':
             'djoser.serializers.PasswordResetConfirmSerializer',
         'password_reset_confirm_retype':
@@ -58,6 +57,12 @@ default_settings = {
             'djoser.serializers.SetUsernameSerializer',
         'set_username_retype':
             'djoser.serializers.SetUsernameRetypeSerializer',
+        'username_reset':
+            'djoser.serializers.ResetSerializer',
+        'username_reset_confirm':
+            'djoser.serializers.UsernameResetConfirmSerializer',
+        'username_reset_confirm_retype':
+            'djoser.serializers.UsernameResetConfirmRetypeSerializer',
         'user_create':
             'djoser.serializers.UserCreateSerializer',
         'user_create_password_retype':
@@ -77,6 +82,7 @@ default_settings = {
         'activation': 'djoser.email.ActivationEmail',
         'confirmation': 'djoser.email.ConfirmationEmail',
         'password_reset': 'djoser.email.PasswordResetEmail',
+        'username_reset': 'djoser.email.UsernameResetEmail',
     }),
     'CONSTANTS': ObjDict({
         'messages': 'djoser.constants.Messages',
@@ -91,7 +97,9 @@ default_settings = {
         'password_reset': ['rest_framework.permissions.AllowAny'],
         'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
         'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
-        'set_username': ['rest_framework.permissions.IsAuthenticated'],
+        'username_reset': ['rest_framework.permissions.AllowAny'],
+        'username_reset_confirm': ['rest_framework.permissions.AllowAny'],
+        'set_username': ['djoser.permissions.CurrentUserOrAdmin'],
         'user_create': ['rest_framework.permissions.AllowAny'],
         'user_delete': ['djoser.permissions.CurrentUserOrAdmin'],
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
@@ -103,8 +111,8 @@ default_settings = {
 
 SETTINGS_TO_IMPORT = ['TOKEN_MODEL', 'SOCIAL_AUTH_TOKEN_STRATEGY']
 
-# 'object' not needed now
-class Settings(object):
+
+class Settings:
     def __init__(self, default_settings, explicit_overriden_settings=None):
         if explicit_overriden_settings is None:
             explicit_overriden_settings = {}
