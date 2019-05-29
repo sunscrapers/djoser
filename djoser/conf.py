@@ -41,6 +41,7 @@ default_settings = {
     'USERNAME_RESET_CONFIRM_RETYPE': False,
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': False,
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': False,
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': False,
     'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
     'SERIALIZERS': ObjDict({
         'activation':
@@ -86,6 +87,8 @@ default_settings = {
         'password_reset': 'djoser.email.PasswordResetEmail',
         'password_changed_confirmation':
             'djoser.email.PasswordChangedConfirmationEmail',
+        'username_changed_confirmation':
+            'djoser.email.UsernameChangedConfirmationEmail',
         'username_reset': 'djoser.email.UsernameResetEmail',
     }),
     'CONSTANTS': ObjDict({

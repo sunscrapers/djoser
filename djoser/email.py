@@ -42,6 +42,10 @@ class PasswordChangedConfirmationEmail(BaseEmailMessage):
     template_name = 'email/password_changed_confirmation.html'
 
 
+class UsernameChangedConfirmationEmail(BaseEmailMessage):
+    template_name = 'email/username_changed_confirmation.html'
+
+
 class UsernameResetEmail(BaseEmailMessage):
     template_name = 'email/username_reset.html'
 

@@ -56,6 +56,13 @@ If ``True``, change password endpoints will send confirmation email to user.
 
 **Default**: ``False``
 
+USERNAME_CHANGED_EMAIL_CONFIRMATION
+-----------------------
+
+If ``True``, change username endpoints will send confirmation email to user.
+
+**Default**: ``False``
+
 ACTIVATION_URL
 --------------
 

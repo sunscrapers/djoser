@@ -172,6 +172,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(['post'], detail=False)
     def confirm(self, request, *args, **kwargs):
+        # maybe activation is a better name?
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.user
@@ -261,14 +262,13 @@ class UserViewSet(viewsets.ModelViewSet):
         new_username = serializer.data['new_' + User.USERNAME_FIELD]
 
         setattr(user, User.USERNAME_FIELD, new_username)
-        # Add reset username, similar to reset_password
-        # if settings.SEND_ACTIVATION_EMAIL:
-        #     user.is_active = False
-        #     context = {'user': user}
-        #     to = [get_user_email(user)]
-        #     settings.EMAIL.activation(self.request, context).send(to)
         user.save()
-
+        if settings.USERNAME_CHANGED_EMAIL_CONFIRMATION:
+            context = {'user': user}
+            to = [get_user_email(user)]
+            settings.EMAIL.username_changed_confirmation(
+                self.request, context
+            ).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(['post'], detail=False)
@@ -294,4 +294,10 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.user.last_login = now()
         serializer.user.save()
 
+        if settings.USERNAME_CHANGED_EMAIL_CONFIRMATION:
+            context = {'user': serializer.user}
+            to = [get_user_email(serializer.user)]
+            settings.EMAIL.username_changed_confirmation(
+                self.request, context
+            ).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
