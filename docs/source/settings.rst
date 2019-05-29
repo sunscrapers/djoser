@@ -70,7 +70,7 @@ SET_USERNAME_RETYPE
 -------------------
 
 If ``True``, you need to pass ``re_new_{{ User.USERNAME_FIELD }}`` to
-``/{{ User.USERNAME_FIELD }}/`` endpoint, to validate username equality.
+``/users/change_username/`` endpoint, to validate username equality.
 
 **Default**: ``False``
 
@@ -96,6 +96,10 @@ LOGOUT_ON_PASSWORD_CHANGE
 If ``True``, setting new password will logout the user.
 
 **Default**: ``False``
+
+.. note::
+
+    Logout only works with token based authentication.
 
 USER_EMAIL_FIELD_NAME
 ---------------------
