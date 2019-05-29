@@ -143,13 +143,9 @@ class TokenCreateSerializer(serializers.Serializer):
             password=attrs.get('password')
         )
 
-        # why is self.user passed to _validate_user_exists?
-        self._validate_user_exists(self.user)
-        return attrs
-
-    def _validate_user_exists(self, user):
-        if not user:
+        if not self.user:
             self.fail('invalid_credentials')
+        return attrs
 
 
 class UserFunctionsMixin:
