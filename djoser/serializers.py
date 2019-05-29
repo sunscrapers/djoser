@@ -192,22 +192,22 @@ class UidAndTokenSerializer(serializers.Serializer):
         'invalid_uid': settings.CONSTANTS.messages.INVALID_UID_ERROR,
     }
 
-    def validate_uid(self, value):
+    def validate(self, attrs):
+        validated_data = super().validate(attrs)
+
+        # uid validation have to be here, because validate_<field_name>
+        # doesn't work with modelserializer
         try:
-            uid = utils.decode_uid(value)
+            uid = utils.decode_uid(self.initial_data.get('uid', ''))
             self.user = User.objects.get(pk=uid)
         except (User.DoesNotExist, ValueError, TypeError, OverflowError):
             self.fail('invalid_uid')
 
-        return value
-
-    def validate(self, attrs):
-        attrs = super().validate(attrs)
         is_token_valid = self.context['view'].token_generator.check_token(
-            self.user, attrs['token']
+            self.user, self.initial_data.get('token', '')
         )
         if is_token_valid:
-            return attrs
+            return validated_data
         else:
             key_error = 'invalid_token'
             raise ValidationError(
@@ -277,9 +277,9 @@ class CurrentPasswordSerializer(serializers.Serializer):
 
 
 class UsernameSerializer(serializers.ModelSerializer):
-    class Meta(object):
+    class Meta:
         model = User
-        fields = (settings.LOGIN_FIELD, 'current_password')
+        fields = (settings.LOGIN_FIELD,)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -316,52 +316,71 @@ class UsernameRetypeSerializer(UsernameSerializer):
             return attrs
 
 
-class SetPasswordSerializer(PasswordSerializer, CurrentPasswordSerializer):
-    pass
-
-
-class SetPasswordRetypeSerializer(PasswordRetypeSerializer,
-                                  CurrentPasswordSerializer):
-    pass
-
-
-class PasswordResetConfirmSerializer(UidAndTokenSerializer,
-                                     PasswordSerializer):
-    pass
-
-
-class PasswordResetConfirmRetypeSerializer(UidAndTokenSerializer,
-                                           PasswordRetypeSerializer):
-    pass
-
-
-class UsernameResetConfirmSerializer(UidAndTokenSerializer,
-                                     UsernameSerializer):  # Doesn't work
-    pass
-
-
-class UsernameResetConfirmRetypeSerializer(UidAndTokenSerializer,
-                                           UsernameRetypeSerializer):  # Doesn't work
-    pass
-
-
-class UserDeleteSerializer(CurrentPasswordSerializer):
-    pass
-
-
-class SetUsernameSerializer(UsernameSerializer,
-                            CurrentPasswordSerializer):
-    pass
-
-
-class SetUsernameRetypeSerializer(UsernameRetypeSerializer,
-                                  CurrentPasswordSerializer):
-    pass
-
-
 class TokenSerializer(serializers.ModelSerializer):
     auth_token = serializers.CharField(source='key')
 
     class Meta:
         model = settings.TOKEN_MODEL
         fields = ('auth_token',)
+
+
+class SetPasswordSerializer(
+    PasswordSerializer,
+    CurrentPasswordSerializer,
+):
+    pass
+
+
+class SetPasswordRetypeSerializer(
+    PasswordRetypeSerializer,
+    CurrentPasswordSerializer,
+):
+    pass
+
+
+class PasswordResetConfirmSerializer(
+    UidAndTokenSerializer,
+    PasswordSerializer,
+):
+    pass
+
+
+class PasswordResetConfirmRetypeSerializer(
+    UidAndTokenSerializer,
+    PasswordRetypeSerializer,
+):
+    pass
+
+
+class UsernameResetConfirmSerializer(
+    UidAndTokenSerializer,
+    UsernameSerializer,
+):
+    pass
+
+
+class UsernameResetConfirmRetypeSerializer(
+    UidAndTokenSerializer,
+    UsernameRetypeSerializer,
+):
+    pass
+
+
+class UserDeleteSerializer(
+    CurrentPasswordSerializer
+):
+    pass
+
+
+class SetUsernameSerializer(
+    UsernameSerializer,
+    CurrentPasswordSerializer,
+):
+    pass
+
+
+class SetUsernameRetypeSerializer(
+    UsernameRetypeSerializer,
+    CurrentPasswordSerializer,
+):
+    pass

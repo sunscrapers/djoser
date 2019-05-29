@@ -112,7 +112,7 @@ class UserViewSet(viewsets.ModelViewSet):
         elif self.action == 'reset_username':
             return settings.SERIALIZERS.username_reset
         elif self.action == 'reset_username_confirm':
-            if settings.PASSWORD_RESET_CONFIRM_RETYPE:
+            if settings.USERNAME_RESET_CONFIRM_RETYPE:
                 return settings.SERIALIZERS.username_reset_confirm_retype
             return settings.SERIALIZERS.username_reset_confirm
         elif self.action == 'me':
@@ -274,10 +274,11 @@ class UserViewSet(viewsets.ModelViewSet):
     def reset_username_confirm(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = self.request.user
         new_username = serializer.data['new_' + User.USERNAME_FIELD]
 
-        setattr(user, User.USERNAME_FIELD, new_username)
-        user.save()
+        setattr(serializer.user, User.USERNAME_FIELD, new_username)
+        if hasattr(serializer.user, 'last_login'):
+            serializer.user.last_login = now()
+        serializer.user.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
