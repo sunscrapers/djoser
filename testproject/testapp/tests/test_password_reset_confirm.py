@@ -11,6 +11,7 @@ from .common import create_user
 
 
 class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
+                                   assertions.EmailAssertionsMixin,
                                    assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.PasswordResetConfirmView
 
@@ -29,6 +30,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()
         self.assertTrue(user.check_password(data['new_password']))
+        self.assert_emails_in_mailbox(0)
 
     def test_post_not_set_new_password_if_broken_uid(self):
         user = create_user()
@@ -164,3 +166,25 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         self.assertEqual(
             response.data, {'new_password': ['Password 666 is not allowed.']}
         )
+
+    @override_settings(
+        DJOSER=dict(
+            settings.DJOSER, **{'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True})
+    )
+    def test_post_password_changed_confirmation_email(self):
+        user = create_user()
+        data = {
+            'uid': djoser.utils.encode_uid(user.pk),
+            'token': default_token_generator.make_token(user),
+            'new_password': 'new password',
+        }
+
+        request = self.factory.post(data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        user.refresh_from_db()
+        self.assertTrue(user.check_password(data['new_password']))
+        self.assert_emails_in_mailbox(1)
+        self.assert_email_exists(to=[user.email])

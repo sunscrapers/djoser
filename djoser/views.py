@@ -215,6 +215,12 @@ class UserViewSet(viewsets.ModelViewSet):
         if settings.LOGOUT_ON_PASSWORD_CHANGE:
             utils.logout_user(self.request)
 
+        if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
+            context = {'user': self.request.user}
+            to = [get_user_email(self.request.user)]
+            settings.EMAIL.password_changed_confirmation(
+                self.request, context
+            ).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(['post'], detail=False)
@@ -238,6 +244,13 @@ class UserViewSet(viewsets.ModelViewSet):
         if hasattr(serializer.user, 'last_login'):
             serializer.user.last_login = now()
         serializer.user.save()
+
+        if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
+            context = {'user': serializer.user}
+            to = [get_user_email(serializer.user)]
+            settings.EMAIL.password_changed_confirmation(
+                self.request, context
+            ).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(['post'], detail=False)

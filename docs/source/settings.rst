@@ -49,6 +49,13 @@ If ``True``, register or activation endpoint will send confirmation email to use
 
 **Default**: ``False``
 
+PASSWORD_CHANGED_EMAIL_CONFIRMATION
+-----------------------
+
+If ``True``, change password endpoints will send confirmation email to user.
+
+**Default**: ``False``
+
 ACTIVATION_URL
 --------------
 
