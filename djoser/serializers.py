@@ -164,7 +164,7 @@ class UserFunctionsMixin:
             self.fail('email_not_found')
         else:
             # what error?
-            self.fail('error')
+            self.fail('email_not_found')
 
 
 class SendEmailResetSerializer(serializers.Serializer, UserFunctionsMixin):
@@ -197,7 +197,11 @@ class UidAndTokenSerializer(serializers.Serializer):
             uid = utils.decode_uid(self.initial_data.get('uid', ''))
             self.user = User.objects.get(pk=uid)
         except (User.DoesNotExist, ValueError, TypeError, OverflowError):
-            self.fail('invalid_uid')
+            key_error = 'invalid_uid'
+            raise ValidationError(
+                {'uid': [self.error_messages[key_error]]},
+                code=key_error
+            )
 
         is_token_valid = self.context['view'].token_generator.check_token(
             self.user, self.initial_data.get('token', '')
