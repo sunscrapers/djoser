@@ -171,7 +171,7 @@ class UserFunctionsMixin:
             self.fail('error')
 
 
-class ResetSerializer(serializers.Serializer, UserFunctionsMixin):
+class SendEmailResetSerializer(serializers.Serializer, UserFunctionsMixin):
     default_error_messages = {
         'email_not_found': settings.CONSTANTS.messages.EMAIL_NOT_FOUND
     }

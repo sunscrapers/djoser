@@ -46,7 +46,7 @@ default_settings = {
         'activation':
             'djoser.serializers.ActivationSerializer',
         'password_reset':
-            'djoser.serializers.ResetSerializer',
+            'djoser.serializers.SendEmailResetSerializer',
         'password_reset_confirm':
             'djoser.serializers.PasswordResetConfirmSerializer',
         'password_reset_confirm_retype':
@@ -60,7 +60,7 @@ default_settings = {
         'set_username_retype':
             'djoser.serializers.SetUsernameRetypeSerializer',
         'username_reset':
-            'djoser.serializers.ResetSerializer',
+            'djoser.serializers.SendEmailResetSerializer',
         'username_reset_confirm':
             'djoser.serializers.UsernameResetConfirmSerializer',
         'username_reset_confirm_retype':

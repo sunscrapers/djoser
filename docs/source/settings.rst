@@ -171,7 +171,7 @@ to update the defaults, so by providing, e.g. one key, all the others will stay 
 
     {
         'activation': 'djoser.serializers.ActivationSerializer',
-        'password_reset': 'djoser.serializers.ResetSerializer',
+        'password_reset': 'djoser.serializers.SendEmailResetSerializer',
         'password_reset_confirm': 'djoser.serializers.PasswordResetConfirmSerializer',
         'password_reset_confirm_retype': 'djoser.serializers.PasswordResetConfirmRetypeSerializer',
         'set_password': 'djoser.serializers.SetPasswordSerializer',
