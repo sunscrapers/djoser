@@ -1,23 +1,22 @@
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
-from django.test import TestCase
 from django.test.utils import override_settings
-from djoser.conf import settings as default_settings
 
 from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase
 
 import djoser.signals
 import djoser.utils
 import djoser.views
+from djoser.conf import settings as default_settings
 
 from testapp.tests.common import create_user
 
 
 class ActivationViewTest(
-    TestCase,
+    APITestCase,
     assertions.EmailAssertionsMixin,
     assertions.StatusCodeAssertionsMixin
 ):
@@ -37,8 +36,8 @@ class ActivationViewTest(
             'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
         }
-        client = APIClient()
-        response = client.post(self.base_url, data)
+
+        response = self.client.post(self.base_url, data)
         user.refresh_from_db()
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
@@ -50,9 +49,8 @@ class ActivationViewTest(
             'uid': 'wrong-uid',
             'token': default_token_generator.make_token(user),
         }
-        client = APIClient()
 
-        response = client.post(self.base_url, data)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(list(response.data.keys()), ['uid'])
@@ -68,9 +66,8 @@ class ActivationViewTest(
             'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
         }
-        client = APIClient()
 
-        response = client.post(self.base_url, data)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_403_FORBIDDEN)
         self.assertEqual(list(response.data.keys()), ['detail'])
@@ -87,9 +84,8 @@ class ActivationViewTest(
             'uid': djoser.utils.encode_uid(user.pk),
             'token': 'wrong-token',
         }
-        client = APIClient()
 
-        response = client.post(self.base_url, data)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(list(response.data.keys()), ['token'])
@@ -111,9 +107,8 @@ class ActivationViewTest(
             'uid': djoser.utils.encode_uid(user.pk),
             'token': default_token_generator.make_token(user),
         }
-        client = APIClient()
 
-        response = client.post(self.base_url, data)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(1)

@@ -1,11 +1,10 @@
 from django.conf import settings
 from django.test.utils import override_settings
-from django.test import TestCase
 
 from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase
 
 from djoser.compat import get_user_email
 
@@ -14,7 +13,7 @@ from testapp.tests.common import create_user, mock
 
 
 class TestResendActivationEmail(
-    TestCase,
+    APITestCase,
     assertions.EmailAssertionsMixin,
     assertions.StatusCodeAssertionsMixin,
 ):
@@ -30,8 +29,8 @@ class TestResendActivationEmail(
         data = {
             'email': user.email,
         }
-        client = APIClient()
-        response = client.post(self.base_url, data)
+        response = self.client.post(self.base_url, data)
+
         self.assert_email_exists(to=[user.email])
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
 
@@ -43,8 +42,8 @@ class TestResendActivationEmail(
         data = {
             'email': user.email,
         }
-        client = APIClient()
-        response = client.post(self.base_url, data)
+        response = self.client.post(self.base_url, data)
+
         self.assert_emails_in_mailbox(0)
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
@@ -56,8 +55,8 @@ class TestResendActivationEmail(
         data = {
             'email': user.email,
         }
-        client = APIClient()
-        response = client.post(self.base_url, data)
+        response = self.client.post(self.base_url, data)
+
         self.assert_emails_in_mailbox(0)
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
@@ -69,8 +68,8 @@ class TestResendActivationEmail(
         data = {
             'email': user.email,
         }
-        client = APIClient()
-        response = client.post(self.base_url, data)
+        response = self.client.post(self.base_url, data)
+
         self.assert_emails_in_mailbox(0)
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
@@ -87,8 +86,8 @@ class TestResendActivationEmail(
         data = {
             'custom_email': get_user_email(user),
         }
-        client = APIClient()
-        response = client.post(self.base_url, data)
+        response = self.client.post(self.base_url, data)
+
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[get_user_email(user)])
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)

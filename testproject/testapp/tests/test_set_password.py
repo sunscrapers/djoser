@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.test.utils import override_settings
 
-from djet import assertions, restframework
+from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase
 
 from djoser.conf import settings as djoser_settings
 
@@ -14,7 +14,7 @@ Token = djoser_settings.TOKEN_MODEL
 
 
 class SetPasswordViewTest(
-    restframework.APIViewTestCase,
+    APITestCase,
     assertions.EmailAssertionsMixin,
     assertions.StatusCodeAssertionsMixin,
 ):
@@ -28,10 +28,9 @@ class SetPasswordViewTest(
             'new_password': 'new password',
             'current_password': 'secret',
         }
-        client = APIClient()
-        login_user(client, user)
+        login_user(self.client, user)
 
-        response = client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()
@@ -44,10 +43,9 @@ class SetPasswordViewTest(
             'new_password': 'new password',
             'current_password': 'wrong',
         }
-        client = APIClient()
-        login_user(client, user)
+        login_user(self.client, user)
 
-        response = client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
@@ -61,10 +59,9 @@ class SetPasswordViewTest(
             're_new_password': 'wrong',
             'current_password': 'secret',
         }
-        client = APIClient()
-        login_user(client, user)
+        login_user(self.client, user)
 
-        response = client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         user.refresh_from_db()
@@ -77,10 +74,9 @@ class SetPasswordViewTest(
             're_new_password': '666',
             'current_password': 'secret',
         }
-        client = APIClient()
-        login_user(client, user)
+        login_user(self.client, user)
 
-        response = client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -96,10 +92,9 @@ class SetPasswordViewTest(
             'new_password': 'new password',
             'current_password': 'secret',
         }
-        client = APIClient()
-        login_user(client, user)
+        login_user(self.client, user)
 
-        response = client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         is_logged = Token.objects.filter(user=user).exists()
@@ -111,10 +106,9 @@ class SetPasswordViewTest(
             'new_password': 'new password',
             'current_password': 'secret',
         }
-        client = APIClient()
-        login_user(client, user)
+        login_user(self.client, user)
 
-        response = client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         is_logged = Token.objects.filter(user=user).exists()
@@ -130,10 +124,9 @@ class SetPasswordViewTest(
             'new_password': 'new password',
             'current_password': 'secret',
         }
-        client = APIClient()
-        login_user(client, user)
+        login_user(self.client, user)
 
-        response = client.post(self.base_url, data, user=user)
+        response = self.client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()
