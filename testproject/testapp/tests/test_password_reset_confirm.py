@@ -1,19 +1,27 @@
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.test.utils import override_settings
+
 from djet import assertions, restframework
 from rest_framework import status
+from rest_framework.reverse import reverse
+from rest_framework.test import APIClient
 
+from djoser.conf import settings as default_settings
 import djoser.utils
 import djoser.views
-from djoser.conf import settings as default_settings
-from .common import create_user
+
+from testapp.tests.common import create_user
 
 
-class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
-                                   assertions.EmailAssertionsMixin,
-                                   assertions.StatusCodeAssertionsMixin):
-    view_class = djoser.views.PasswordResetConfirmView
+class PasswordResetConfirmViewTest(
+    restframework.APIViewTestCase,
+    assertions.EmailAssertionsMixin,
+    assertions.StatusCodeAssertionsMixin,
+):
+
+    def setUp(self):
+        self.base_url = reverse('user-reset-password-confirm')
 
     def test_post_set_new_password(self):
         user = create_user()
@@ -22,10 +30,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
         }
+        client = APIClient()
 
-        request = self.factory.post(data=data)
-
-        response = self.view(request)
+        response = client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()
@@ -39,9 +46,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
+        response = client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('uid', response.data)
@@ -61,15 +68,16 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
+        response = client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('uid', response.data)
         self.assertEqual(len(response.data['uid']), 1)
         self.assertEqual(
-            response.data['uid'][0], default_settings.CONSTANTS.messages.INVALID_UID_ERROR
+            response.data['uid'][0],
+            default_settings.CONSTANTS.messages.INVALID_UID_ERROR
         )
 
     def test_post_not_set_new_password_if_user_does_not_exist(self):
@@ -79,9 +87,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
+        response = client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('uid', response.data)
@@ -95,9 +103,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             'token': 'wrong-token',
             'new_password': 'new password',
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
+        response = client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -118,9 +126,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             'new_password': 'new password',
             're_new_password': 'wrong',
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
+        response = client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -139,10 +147,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             'new_password': 'new password',
             're_new_password': 'wrong',
         }
+        client = APIClient()
 
-        request = self.factory.post(data=data)
-
-        response = self.view(request)
+        response = client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         user.refresh_from_db()
@@ -159,9 +166,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             'new_password': '666',
             're_new_password': 'isokpassword',
         }
+        client = APIClient()
 
-        request = self.factory.post(data=data)
-        response = self.view(request)
+        response = client.post(self.base_url, data)
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data, {'new_password': ['Password 666 is not allowed.']}
@@ -178,10 +185,9 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
             'token': default_token_generator.make_token(user),
             'new_password': 'new password',
         }
+        client = APIClient()
 
-        request = self.factory.post(data=data)
-
-        response = self.view(request)
+        response = client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()
