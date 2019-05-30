@@ -1,20 +1,26 @@
 from django.conf import settings
 from django.test.utils import override_settings
-from djet import assertions, restframework
-from djoser.conf import settings as djoser_settings
-from rest_framework import status
-import djoser.utils
-import djoser.views
 
-from .common import create_user
+from djet import assertions, restframework
+from rest_framework import status
+from rest_framework.reverse import reverse
+from rest_framework.test import APIClient
+
+from djoser.conf import settings as djoser_settings
+
+from testapp.tests.common import create_user, login_user
 
 Token = djoser_settings.TOKEN_MODEL
 
 
-class SetPasswordViewTest(restframework.APIViewTestCase,
-                          assertions.EmailAssertionsMixin,
-                          assertions.StatusCodeAssertionsMixin):
-    view_class = djoser.views.SetPasswordView
+class SetPasswordViewTest(
+    restframework.APIViewTestCase,
+    assertions.EmailAssertionsMixin,
+    assertions.StatusCodeAssertionsMixin,
+):
+
+    def setUp(self):
+        self.base_url = reverse('user-set-password')
 
     def test_post_set_new_password(self):
         user = create_user()
@@ -22,9 +28,10 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
             'new_password': 'new password',
             'current_password': 'secret',
         }
-        request = self.factory.post(user=user, data=data)
+        client = APIClient()
+        login_user(client, user)
 
-        response = self.view(request)
+        response = client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()
@@ -37,9 +44,10 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
             'new_password': 'new password',
             'current_password': 'wrong',
         }
-        request = self.factory.post(user=user, data=data)
+        client = APIClient()
+        login_user(client, user)
 
-        response = self.view(request)
+        response = client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
@@ -53,9 +61,10 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
             're_new_password': 'wrong',
             'current_password': 'secret',
         }
-        request = self.factory.post(user=user, data=data)
+        client = APIClient()
+        login_user(client, user)
 
-        response = self.view(request)
+        response = client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         user.refresh_from_db()
@@ -68,9 +77,10 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
             're_new_password': '666',
             'current_password': 'secret',
         }
-        request = self.factory.post(user=user, data=data)
+        client = APIClient()
+        login_user(client, user)
 
-        response = self.view(request)
+        response = client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -86,10 +96,10 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
             'new_password': 'new password',
             'current_password': 'secret',
         }
-        request = self.factory.post(user=user, data=data)
-        djoser.utils.login_user(request, user)
+        client = APIClient()
+        login_user(client, user)
 
-        response = self.view(request)
+        response = client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         is_logged = Token.objects.filter(user=user).exists()
@@ -101,10 +111,10 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
             'new_password': 'new password',
             'current_password': 'secret',
         }
-        request = self.factory.post(user=user, data=data)
-        djoser.utils.login_user(request, user)
+        client = APIClient()
+        login_user(client, user)
 
-        response = self.view(request)
+        response = client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         is_logged = Token.objects.filter(user=user).exists()
@@ -120,9 +130,10 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
             'new_password': 'new password',
             'current_password': 'secret',
         }
-        request = self.factory.post(user=user, data=data)
+        client = APIClient()
+        login_user(client, user)
 
-        response = self.view(request)
+        response = client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()

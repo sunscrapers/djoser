@@ -40,6 +40,7 @@ default_settings = {
     'SET_USERNAME_RETYPE': False,
     'USERNAME_RESET_CONFIRM_RETYPE': False,
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': False,
+    'USERNAME_RESET_SHOW_EMAIL_NOT_FOUND': False,
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': False,
     'USERNAME_CHANGED_EMAIL_CONFIRMATION': False,
     'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',

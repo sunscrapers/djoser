@@ -160,10 +160,10 @@ class UserFunctionsMixin:
                 return user
         except User.DoesNotExist:
             pass
-        if settings.PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND:
-            self.fail('email_not_found')
-        else:
-            # what error?
+        if (
+            settings.PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND or
+            settings.USERNAME_RESET_SHOW_EMAIL_NOT_FOUND
+        ):
             self.fail('email_not_found')
 
 

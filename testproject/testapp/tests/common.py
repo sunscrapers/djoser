@@ -1,12 +1,17 @@
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 
+from djoser.conf import settings as djoser_settings
+
 try:
     from unittest import mock
 except ImportError:
     import mock
 
 __all__ = ['get_user_model', 'IntegrityError', 'mock']
+
+
+Token = djoser_settings.TOKEN_MODEL
 
 
 def create_user(use_custom_data=False, **kwargs):
@@ -24,6 +29,11 @@ def create_user(use_custom_data=False, **kwargs):
     user = get_user_model().objects.create_user(**data)
     user.raw_password = data['password']
     return user
+
+
+def login_user(client, user):
+    token = Token.objects.create(user=user)
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
 
 def perform_create_mock(x):

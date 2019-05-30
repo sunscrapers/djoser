@@ -230,9 +230,10 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         user = serializer.get_user()
 
-        context = {'user': user}
-        to = [get_user_email(user)]
-        settings.EMAIL.password_reset(self.request, context).send(to)
+        if user:
+            context = {'user': user}
+            to = [get_user_email(user)]
+            settings.EMAIL.password_reset(self.request, context).send(to)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -277,9 +278,10 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         user = serializer.get_user()
 
-        context = {'user': user}
-        to = [get_user_email(user)]
-        settings.EMAIL.username_reset(self.request, context).send(to)
+        if user:
+            context = {'user': user}
+            to = [get_user_email(user)]
+            settings.EMAIL.username_reset(self.request, context).send(to)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
