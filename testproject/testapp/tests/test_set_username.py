@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 from djet import assertions
 from rest_framework import status
@@ -9,7 +8,8 @@ from rest_framework.test import APITestCase
 
 from testapp.tests.common import (
     create_user,
-    login_user, mock
+    login_user,
+    mock,
 )
 from testapp.models import CustomUser
 

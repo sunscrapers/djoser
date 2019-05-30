@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.timezone import now
+
 from rest_framework import (
     generics,
     status, views,
@@ -196,7 +197,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         user = serializer.get_user(is_active=False)
 
-        if not settings.SEND_ACTIVATION_EMAIL:
+        if not settings.SEND_ACTIVATION_EMAIL or not user:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         context = {'user': user}

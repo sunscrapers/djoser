@@ -3,7 +3,10 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from .common import create_user
+from testapp.tests.common import (
+    create_user,
+    login_user,
+)
 
 
 class UserViewSetListTest(APITestCase, assertions.StatusCodeAssertionsMixin):
@@ -40,3 +43,87 @@ class UserViewSetListTest(APITestCase, assertions.StatusCodeAssertionsMixin):
         response = self.client.get(reverse('user-detail', args=[self.user.pk]))
 
         self.assert_status_equal(response, status.HTTP_200_OK)
+
+
+class UserViewSetEditTest(APITestCase, assertions.StatusCodeAssertionsMixin):
+
+    def test_patch_edits_user_attribute(self):
+        user = create_user()
+        login_user(self.client, user)
+        response = self.client.patch(
+            path=reverse(
+                'user-detail',
+                args=(user.pk,)
+            ), data={'email': 'new@gmail.com'}
+        )
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assertTrue('email' in response.data)
+
+        user.refresh_from_db()
+        self.assertTrue(user.email == 'new@gmail.com')
+
+    def test_patch_cant_edit_others_attribute(self):
+        user = create_user()
+        another_user = create_user(**{
+            'username': 'paul',
+            'password': 'secret',
+            'email': 'paul@beatles.com',
+        })
+        login_user(self.client, user)
+        response = self.client.patch(
+            path=reverse(
+                'user-detail',
+                args=(another_user.pk,)
+            ), data={'email': 'new@gmail.com'}
+        )
+
+        self.assert_status_equal(response, status.HTTP_404_NOT_FOUND)
+
+        another_user.refresh_from_db()
+        self.assertTrue(another_user.email == 'paul@beatles.com')
+
+    def test_put_edits_user_attribute(self):
+        user_data = {
+            'username': 'paul',
+            'password': 'secret',
+            'email': 'paul@beatles.com',
+        }
+        user = create_user(**user_data)
+        user_data['password'] = 'changed_secret'
+        login_user(self.client, user)
+
+        response = self.client.patch(
+            path=reverse(
+                'user-detail',
+                args=(user.pk,)
+            ), data=user_data
+        )
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+
+        user.refresh_from_db()
+        self.assertTrue(user.email == 'paul@beatles.com')
+
+    def test_put_cant_edit_others_attribute(self):
+        user = create_user()
+        another_user_data = {
+            'username': 'paul',
+            'password': 'secret',
+            'email': 'paul@beatles.com',
+        }
+        another_user = create_user(**another_user_data)
+        another_user_data['password'] = 'changed_secret'
+        login_user(self.client, user)
+
+        response = self.client.patch(
+            path=reverse(
+                'user-detail',
+                args=(another_user.pk,)
+            ), data=another_user_data
+        )
+
+        self.assert_status_equal(response, status.HTTP_404_NOT_FOUND)
+
+        another_user.refresh_from_db()
+        self.assertTrue(another_user.email == 'paul@beatles.com')

@@ -113,7 +113,7 @@ class UsernameResetConfirmViewTest(
             **{'USERNAME_RESET_CONFIRM_RETYPE': True}
         )
     )
-    def test_post_not_set_new_username_if_password_mismatch(self):
+    def test_post_not_set_new_username_if_username_mismatch(self):
         user = create_user()
         data = {
             'uid': djoser.utils.encode_uid(user.pk),

@@ -1,27 +1,36 @@
+from pkg_resources import parse_version
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
-from djet import assertions, restframework
-from pkg_resources import parse_version
+
+from djet import assertions
 from rest_framework import __version__ as drf_version
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-import djoser.views
 from djoser.conf import settings as default_settings
-from djoser.compat import get_user_email
+
 from testapp.models import CustomUser
-from .common import create_user, mock, perform_create_mock
+from testapp.tests.common import (
+    create_user,
+    mock,
+    perform_create_mock,
+)
 
 User = get_user_model()
 
 
-class UserCreateViewTest(restframework.APIViewTestCase,
-                         assertions.StatusCodeAssertionsMixin,
-                         assertions.EmailAssertionsMixin,
-                         assertions.InstanceAssertionsMixin):
-    view_class = djoser.views.UserCreateView
+class UserCreateViewTest(
+    APITestCase,
+    assertions.StatusCodeAssertionsMixin,
+    assertions.EmailAssertionsMixin,
+    assertions.InstanceAssertionsMixin,
+):
+
+    def setUp(self):
+        self.base_url = reverse('user-list')  # /auth/users/
 
     def test_post_create_user_without_login(self):
         data = {
@@ -29,9 +38,7 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             'password': 'secret',
             'csrftoken': 'asdf',
         }
-        request = self.factory.post(data=data)
-
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
         self.assertTrue('password' not in response.data)
@@ -48,8 +55,7 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             'email': 'john@beatles.com',
             'password': 'secret',
         }
-        request = self.factory.post(data=data)
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
         self.assert_instance_exists(User, username=data['username'])
@@ -70,8 +76,7 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             'email': 'john@beatles.com',
             'password': 'secret',
         }
-        request = self.factory.post(data=data)
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
         self.assert_instance_exists(User, username=data['username'])
@@ -88,9 +93,7 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             'password': 'secret',
             'csrftoken': 'asdf',
         }
-        request = self.factory.post(data=data)
-
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
@@ -100,9 +103,7 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             'password': '666',
             'csrftoken': 'asdf',
         }
-
-        request = self.factory.post(data=data)
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         response.render()
@@ -126,9 +127,7 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             're_password': 'wrong',
             'csrftoken': 'asdf',
         }
-
-        request = self.factory.post(data=data)
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         response.render()
@@ -147,13 +146,12 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             'email': 'john@beatles.com',
             'password': 'secret',
         }
-
-        request = self.factory.post(data=data)
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data, [default_settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR]
+            response.data, [
+                default_settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR]
         )
 
     @mock.patch(
@@ -161,9 +159,12 @@ class UserCreateViewTest(restframework.APIViewTestCase,
     @mock.patch(
         'djoser.serializers.UserCreateSerializer.Meta.model', CustomUser)
     @mock.patch(
-        'djoser.serializers.UserCreateSerializer.Meta.fields', tuple(CustomUser.REQUIRED_FIELDS) + (
+        'djoser.serializers.UserCreateSerializer.Meta.fields',
+        tuple(CustomUser.REQUIRED_FIELDS) +
+        (
             CustomUser.USERNAME_FIELD, CustomUser._meta.pk.name, 'password',
-        ))
+        )
+    )
     @mock.patch(
         'djoser.views.User', CustomUser)
     @override_settings(
@@ -174,15 +175,17 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             'password': 'secret',
             'custom_required_field': '42'
         }
-        request = self.factory.post(data=data)
-
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
         self.assertTrue('password' not in response.data)
         custom_user_model = get_user_model()
-        self.assert_instance_exists(custom_user_model, custom_username=data[custom_user_model.USERNAME_FIELD])
-        user = custom_user_model.objects.get(custom_username=data[custom_user_model.USERNAME_FIELD])
+        self.assert_instance_exists(
+            custom_user_model,
+            custom_username=data[custom_user_model.USERNAME_FIELD]
+        )
+        user = custom_user_model.objects.get(
+            custom_username=data[custom_user_model.USERNAME_FIELD])
         self.assertTrue(user.check_password(data['password']))
 
     @mock.patch(
@@ -190,9 +193,11 @@ class UserCreateViewTest(restframework.APIViewTestCase,
     @mock.patch(
         'djoser.serializers.UserCreateSerializer.Meta.model', CustomUser)
     @mock.patch(
-        'djoser.serializers.UserCreateSerializer.Meta.fields', tuple(CustomUser.REQUIRED_FIELDS) + (
+        'djoser.serializers.UserCreateSerializer.Meta.fields',
+        tuple(CustomUser.REQUIRED_FIELDS) + (
             CustomUser.USERNAME_FIELD, CustomUser._meta.pk.name, 'password',
-        ))
+        )
+    )
     @mock.patch(
         'djoser.views.User', CustomUser)
     @override_settings(
@@ -202,246 +207,9 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             'custom_username': 'john',
             'password': 'secret',
         }
-        request = self.factory.post(data=data)
-
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         response.render()
-        self.assertEqual(response.data['custom_required_field'][0].code, 'required')
-
-
-class UserViewSetCreationTest(APITestCase,
-                              assertions.StatusCodeAssertionsMixin,
-                              assertions.EmailAssertionsMixin,
-                              assertions.InstanceAssertionsMixin):
-
-    def test_post_create_user_without_login(self):
-        data = {
-            'username': 'john',
-            'password': 'secret',
-        }
-
-        response = self.client.post(path=reverse('user-list'), data=data)
-
-        self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assertTrue('password' not in response.data)
-
-        self.assert_instance_exists(User, username=data['username'])
-        user = User.objects.get(username=data['username'])
-        self.assertTrue(user.check_password(data['password']))
-
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'SEND_ACTIVATION_EMAIL': True})
-    )
-    def test_post_create_user_with_login_and_send_activation_email(self):
-        data = {
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        }
-
-        response = self.client.post(reverse('user-list'), data=data)
-
-        self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assert_instance_exists(User, username=data['username'])
-        self.assert_emails_in_mailbox(1)
-        self.assert_email_exists(to=[data['email']])
-
-        user = User.objects.get(username='john')
-        self.assertFalse(user.is_active)
-
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{
-            'SEND_ACTIVATION_EMAIL': False, 'SEND_CONFIRMATION_EMAIL': True
-        })
-    )
-    def test_post_create_user_with_login_and_send_confirmation_email(self):
-        data = {
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        }
-        response = self.client.post(reverse('user-list'), data=data)
-
-        self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assert_instance_exists(User, username=data['username'])
-        self.assert_emails_in_mailbox(1)
-        self.assert_email_exists(to=[data['email']])
-
-        user = User.objects.get(username='john')
-        self.assertTrue(user.is_active)
-
-    def test_post_not_create_new_user_if_username_exists(self):
-        create_user(username='john')
-        data = {
-            'username': 'john',
-            'password': 'secret',
-            'csrftoken': 'asdf',
-        }
-        response = self.client.post(reverse('user-list'), data=data)
-
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-
-    def test_post_not_register_if_fails_password_validation(self):
-        data = {
-            'username': 'john',
-            'password': '666',
-            'csrftoken': 'asdf',
-        }
-
-        response = self.client.post(reverse('user-list'), data=data)
-
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            str(response.data['password'][0]),
-            'Password 666 is not allowed.',
-        )
-        if parse_version(drf_version) >= parse_version('3.9.0'):
-            self.assertEqual(
-                response.data['password'][0].code,
-                'no666',
-            )
-
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'USER_CREATE_PASSWORD_RETYPE': True})
-    )
-    def test_post_not_register_if_password_mismatch(self):
-        data = {
-            'username': 'john',
-            'password': 'secret',
-            're_password': 'wrong',
-            'csrftoken': 'asdf',
-        }
-
-        response = self.client.post(reverse('user-list'), data=data)
-
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            str(response.data['non_field_errors'][0]),
-            default_settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR,
-        )
-
-    @mock.patch(
-        'djoser.serializers.UserCreateSerializer.perform_create',
-        side_effect=perform_create_mock
-    )
-    def test_post_return_400_for_integrity_error(self, perform_create):
-        data = {
-            'username': 'john',
-            'email': 'john@beatles.com',
-            'password': 'secret',
-        }
-
-        response = self.client.post(reverse('user-list'), data=data)
-
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.data, [default_settings.CONSTANTS.messages.CANNOT_CREATE_USER_ERROR]
-        )
-
-    def test_post_doesnt_work_on_me_endpoint(self):
-        user = create_user()
-        self.client.force_authenticate(user=user)
-
-        data = {
-            'username': 'john',
-            'password': 'secret',
-            'csrftoken': 'asdf',
-        }
-
-        url = reverse('user-me')  # `/users/me/` - new ViewSet-base
-        url2 = reverse('user')  # `/me/` - legacy
-
-        response = self.client.post(url, data=data)
-        response2 = self.client.post(url2, data=data)
-
-        self.assert_status_equal(response, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assert_status_equal(response2, status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    @mock.patch(
-        'djoser.serializers.User', CustomUser)
-    @mock.patch(
-        'djoser.serializers.UserCreateSerializer.Meta.model', CustomUser)
-    @mock.patch(
-        'djoser.serializers.UserCreateSerializer.Meta.fields', tuple(CustomUser.REQUIRED_FIELDS) + (
-            CustomUser.USERNAME_FIELD, CustomUser._meta.pk.name, 'password',
-        ))
-    @mock.patch(
-        'djoser.views.User', CustomUser)
-    @override_settings(
-        AUTH_USER_MODEL='testapp.CustomUser')
-    def test_post_create_custom_user_with_all_required_fields(self):
-        data = {
-            'custom_username': 'john',
-            'password': 'secret',
-            'custom_required_field': '42'
-        }
-        response = self.client.post(path=reverse('user-list'), data=data)
-
-        self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assertTrue('password' not in response.data)
-
-        custom_user_model = get_user_model()
-        self.assert_instance_exists(custom_user_model, custom_username=data[custom_user_model.USERNAME_FIELD])
-        user = custom_user_model.objects.get(custom_username=data[custom_user_model.USERNAME_FIELD])
-        self.assertTrue(user.check_password(data['password']))
-
-    @mock.patch(
-        'djoser.serializers.User', CustomUser)
-    @mock.patch(
-        'djoser.serializers.UserCreateSerializer.Meta.model', CustomUser)
-    @mock.patch(
-        'djoser.serializers.UserCreateSerializer.Meta.fields', tuple(CustomUser.REQUIRED_FIELDS) + (
-            CustomUser.USERNAME_FIELD, CustomUser._meta.pk.name, 'password',
-        ))
-    @mock.patch(
-        'djoser.views.User', CustomUser)
-    @override_settings(
-        AUTH_USER_MODEL='testapp.CustomUser')
-    def test_post_not_create_custom_user_with_missing_required_fields(self):
-        data = {
-            'custom_username': 'john',
-            'password': 'secret',
-        }
-        response = self.client.post(path=reverse('user-list'), data=data)
-
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        response.render()
-        self.assertEqual(response.data['custom_required_field'][0].code, 'required')
-
-
-class UserViewSetEditTest(APITestCase,
-                          assertions.StatusCodeAssertionsMixin):
-
-    def test_patch_edits_user_attribute(self):
-        user = create_user()
-        self.client.force_authenticate(user=user)
-        response = self.client.patch(
-            path=reverse('user-detail', args=(user.pk,)),
-            data={'email': 'new@gmail.com'}
-        )
-
-        self.assert_status_equal(response, status.HTTP_200_OK)
-        self.assertTrue('email' in response.data)
-
-        user.refresh_from_db()
-        self.assertTrue(user.email == 'new@gmail.com')
-
-    def test_patch_cant_edit_others_attribute(self):
-        user = create_user()
-        another_user = create_user(**{
-            'username': 'paul',
-            'password': 'secret',
-            'email': 'paul@beatles.com',
-        })
-        self.client.force_authenticate(user=user)
-        response = self.client.patch(
-            path=reverse('user-detail', args=(another_user.pk,)),
-            data={'email': 'new@gmail.com'}
-        )
-
-        self.assert_status_equal(response, status.HTTP_404_NOT_FOUND)
-
-        another_user.refresh_from_db()
-        self.assertTrue(another_user.email == 'paul@beatles.com')
+            response.data['custom_required_field'][0].code, 'required')

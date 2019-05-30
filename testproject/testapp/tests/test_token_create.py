@@ -1,11 +1,13 @@
 import django
 from django.contrib.auth import user_logged_in, user_login_failed
+
 from djet import assertions, restframework
 from rest_framework import status
 
 import djoser.views
 from djoser.conf import settings
-from .common import create_user
+
+from testapp.tests.common import create_user
 
 
 class TokenCreateViewTest(restframework.APIViewTestCase,

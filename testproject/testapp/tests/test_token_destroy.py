@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.contrib.auth import user_logged_out
 from django.test.utils import override_settings
+
 from djet import assertions, restframework
 from rest_framework import status
 
 import djoser.views
 
-from .common import create_user
+from testapp.tests.common import create_user
 
 
 class TokenDestroyViewTest(restframework.APIViewTestCase,
