@@ -2,29 +2,37 @@ from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import mail
 from django.test.utils import override_settings
+
 from djet import assertions, restframework
 from rest_framework import status
+from rest_framework.reverse import reverse
+from rest_framework.test import APIClient
 
-import djoser.views
 from djoser.compat import get_user_email
 from djoser.conf import settings as default_settings
-from .common import create_user, mock
+
 from testapp.models import CustomUser
+from testapp.tests.common import create_user, mock
 
 
-class PasswordResetViewTest(restframework.APIViewTestCase,
-                            assertions.StatusCodeAssertionsMixin,
-                            assertions.EmailAssertionsMixin):
-    view_class = djoser.views.PasswordResetView
+class PasswordResetViewTest(
+    restframework.APIViewTestCase,
+    assertions.StatusCodeAssertionsMixin,
+    assertions.EmailAssertionsMixin,
+):
+
+    def setUp(self):
+        self.base_url = reverse('user-reset-password')
 
     def test_post_should_send_email_to_user_with_password_reset_link(self):
         user = create_user()
         data = {
             'email': user.email,
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
+        response = client.post(self.base_url, data)
+        request = response.wsgi_request
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(1)
@@ -38,9 +46,10 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         data = {
             'email': user.email,
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        self.view(request)
+        response = client.post(self.base_url, data)
+        request = response.wsgi_request
 
         self.assertIn(request.get_host(), mail.outbox[0].body)
 
@@ -48,10 +57,9 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         data = {
             'email': 'john@beatles.com',
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
-
+        response = client.post(self.base_url, data)
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(0)
 
@@ -59,9 +67,9 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         data = {
             'email': 'john@beatles.com',
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
+        response = client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
 
@@ -72,13 +80,13 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         data = {
             'email': 'john@beatles.com',
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
-
+        response = client.post(self.base_url, data)
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data['email'][0], default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
+            response.json()[0],
+            default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
         )
 
     @mock.patch(
@@ -87,14 +95,15 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         'djoser.views.User', CustomUser)
     @override_settings(
         AUTH_USER_MODEL='testapp.CustomUser')
-    def test_post_should_send_email_to_custom_user_with_password_reset_link(self):
+    def test_post_should_send_email_to_custom_user_with_password_reset_link(self):  # noqa
         user = create_user(use_custom_data=True)
         data = {
             'custom_email': get_user_email(user),
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
+        response = client.post(self.base_url, data)
+        request = response.wsgi_request
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(1)
@@ -111,15 +120,16 @@ class PasswordResetViewTest(restframework.APIViewTestCase,
         AUTH_USER_MODEL='testapp.CustomUser',
         DJOSER=dict(settings.DJOSER,
                     **{'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True}))
-    def test_post_should_return_bad_request_with_custom_email_field_if_user_does_not_exist(self):
+    def test_post_should_return_bad_request_with_custom_email_field_if_user_does_not_exist(self):  # noqa
         data = {
             'custom_email': 'john@beatles.com',
         }
-        request = self.factory.post(data=data)
+        client = APIClient()
 
-        response = self.view(request)
+        response = client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data['custom_email'][0], default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
+            response.json()[0],
+            default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
         )
