@@ -9,6 +9,7 @@ from rest_framework.test import APITestCase
 
 from testapp.tests.common import (
     create_user,
+    login_user,
 )
 
 User = get_user_model()
@@ -29,7 +30,7 @@ class UserViewSetMeTest(
     def setUp(self):
         self.base_url = reverse('user-me')
         self.user = create_user()
-        self.client.force_authenticate(user=self.user)
+        login_user(self.client, self.user)
 
     def test_get_return_user(self):
         response = self.client.get(self.base_url)
@@ -132,7 +133,7 @@ class UserViewSetMeDeleteTest(
         data = {
             'current_password': 'secret',
         }
-        self.client.force_authenticate(user=user)
+        login_user(self.client, user)
 
         response = self.client.delete(self.base_url, data=data, user=user)
 
@@ -145,7 +146,7 @@ class UserViewSetMeDeleteTest(
         data = {
             'current_password': 'incorrect',
         }
-        self.client.force_authenticate(user=user)
+        login_user(self.client, user)
 
         response = self.client.delete(self.base_url, data=data, user=user)
 
