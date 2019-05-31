@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 from djet import assertions
 from rest_framework import status
@@ -13,6 +14,8 @@ from testapp.tests.common import (
 )
 from testapp.models import CustomUser
 
+User = get_user_model()
+
 
 class SetUsernameViewTest(
     APITestCase,
@@ -21,7 +24,7 @@ class SetUsernameViewTest(
 ):
 
     def setUp(self):
-        self.base_url = reverse('user-set-username')
+        self.base_url = reverse('user-set-{}'.format(User.USERNAME_FIELD))
 
     def test_post_set_new_username(self):
         user = create_user()

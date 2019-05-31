@@ -24,7 +24,9 @@ class UsernameResetConfirmViewTest(
 ):
 
     def setUp(self):
-        self.base_url = reverse('user-reset-username-confirm')
+        self.base_url = reverse(
+            'user-reset-{}-confirm'.format(User.USERNAME_FIELD)
+        )
 
     def test_post_set_new_username(self):
         user = create_user()

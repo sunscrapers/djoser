@@ -60,7 +60,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'create':
             self.permission_classes = settings.PERMISSIONS.user_create
-        elif self.action == 'confirm':
+        elif self.action == 'activation':
             self.permission_classes = settings.PERMISSIONS.activation
         elif self.action == 'resend_activation':
             self.permission_classes = settings.PERMISSIONS.password_reset
@@ -92,7 +92,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 self.request.method == 'DELETE'
         ):
             return settings.SERIALIZERS.user_delete
-        elif self.action == 'confirm':
+        elif self.action == 'activation':
             return settings.SERIALIZERS.activation
         elif self.action == 'resend_activation':
             return settings.SERIALIZERS.password_reset
@@ -147,15 +147,13 @@ class UserViewSet(viewsets.ModelViewSet):
             to = [get_user_email(user)]
             settings.EMAIL.activation(self.request, context).send(to)
 
-    def perform_destroy(self, instance):
-        utils.logout_user(self.request)
-        super().perform_destroy(instance)
-
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        if instance == request.user:
+            utils.logout_user(self.request)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -172,8 +170,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return self.destroy(request, *args, **kwargs)
 
     @action(['post'], detail=False)
-    def confirm(self, request, *args, **kwargs):
-        # maybe activation is a better name?
+    def activation(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.user
@@ -187,7 +184,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if settings.SEND_CONFIRMATION_EMAIL:
             context = {'user': user}
             to = [get_user_email(user)]
-            settings.EMAIL.confirmation(self.request, context).send(to)
+            settings.EMAIL.activation(self.request, context).send(to)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -256,7 +253,11 @@ class UserViewSet(viewsets.ModelViewSet):
             ).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(['post'], detail=False)
+    @action(
+        ['post'],
+        detail=False,
+        url_path='set_{}'.format(User.USERNAME_FIELD)
+    )
     def set_username(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -273,7 +274,11 @@ class UserViewSet(viewsets.ModelViewSet):
             ).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(['post'], detail=False)
+    @action(
+        ['post'],
+        detail=False,
+        url_path='reset_{}'.format(User.USERNAME_FIELD)
+    )
     def reset_username(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -286,7 +291,11 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(['post'], detail=False)
+    @action(
+        ['post'],
+        detail=False,
+        url_path='reset_{}_confirm'.format(User.USERNAME_FIELD)
+    )
     def reset_username_confirm(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import mail
 from django.test.utils import override_settings
@@ -14,6 +15,8 @@ from djoser.conf import settings as default_settings
 from testapp.models import CustomUser
 from testapp.tests.common import create_user, mock
 
+User = get_user_model()
+
 
 class UsernameResetViewTest(
     APITestCase,
@@ -22,7 +25,7 @@ class UsernameResetViewTest(
 ):
 
     def setUp(self):
-        self.base_url = reverse('user-reset-username')
+        self.base_url = reverse('user-reset-{}'.format(User.USERNAME_FIELD))
 
     def test_post_should_send_email_to_user_with_username_reset_link(self):
         user = create_user()

@@ -22,7 +22,7 @@ class ActivationViewTest(
 ):
 
     def setUp(self):
-        self.base_url = reverse('user-confirm')
+        self.base_url = reverse('user-activation')
         self.signal_sent = False
 
     def signal_receiver(self, *args, **kwargs):
