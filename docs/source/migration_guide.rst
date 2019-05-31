@@ -115,3 +115,52 @@ Token Based Authentication URLs:
 * ``login`` URL name has been renamed to ``token-create``
 * ``logout/`` has been renamed to ``token/destroy/``
 * ``logout`` URL name has been renamed to ``token-destroy``
+
+Dropped support for Django < 2.0
+---------------------------------
+
+Support for Django < 2.0 has been dropped in Djoser version 2. It is
+recommended to upgrade to latest version of Django (2.2.1).
+
+Some View class names and URLs has been updated or removed
+-----------------------------------------------
+
+View class names:
+
+* ``RootView`` has been removed``
+* ``UserCreateView`` has been replaced to ``UserViewSet``
+* ``UserDeleteView`` has been replaced to ``UserViewSet``
+* ``UserView`` has been replaced to ``UserViewSet``
+* ``PasswordResetView`` has been replaced to ``UserViewSet``
+* ``SetPasswordView`` has been replaced to ``UserViewSet``
+* ``PasswordResetConfirmView`` has been replaced to ``UserViewSet``
+* ``SetUsernameView`` has been replaced to ``UserViewSet``
+* ``ActivationView`` has been replaced to ``UserViewSet``
+* ``ResendActivationView`` has been replaced to ``UserViewSet``
+
+Base URLs:
+
+* ``users/create/`` has been renamed to ``users/``
+* ``users/delete/`` has been renamed to ``users/me/`` and ``users/{}/``
+* ``users/confirm/`` has been renamed to ``users/activation/``
+* ``users/resend/`` has been renamed to ``users/resend_activation/``
+* ``password/`` has been renamed to ``users/set_password/``
+* ``password/reset/`` has been renamed to ``users/reset_password/``
+* ``password/reset/confirm/`` has been renamed to ``users/reset_password_confirm/``
+
+Token Based Authentication URLs:
+
+* ``login/`` has been renamed to ``token/create/``
+* ``login`` URL name has been renamed to ``token-create``
+* ``logout/`` has been renamed to ``token/destroy/``
+* ``logout`` URL name has been renamed to ``token-destroy``
+
+Added URLs:
+* ``users/set_{0}/`` format(User.USERNAME_FIELD)
+* ``users/reset_{0}/`` format(User.USERNAME_FIELD)
+* ``users/reset_{0}_confirm/`` format(User.USERNAME_FIELD)
+
+Dropped URLs:
+* ``users/change_username/``
+* ``'{0}/'.format(User.USERNAME_FIELD)``
+* ``/``` RootView

@@ -7,6 +7,7 @@ You can provide ``DJOSER`` settings like this:
 
     DJOSER = {
         'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+        'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
         'ACTIVATION_URL': '#/activate/{uid}/{token}',
         'SEND_ACTIVATION_EMAIL': True,
         'SERIALIZERS': {},
@@ -29,6 +30,15 @@ PASSWORD_RESET_CONFIRM_URL
 URL to your frontend password reset page. It should contain ``{uid}`` and
 ``{token}`` placeholders, e.g. ``#/password-reset/{uid}/{token}``.
 You should pass ``uid`` and ``token`` to reset password confirmation endpoint.
+
+**Required**: ``True``
+
+USERNAME_RESET_CONFIRM_URL
+--------------------------
+
+URL to your frontend username reset page. It should contain ``{uid}`` and
+``{token}`` placeholders, e.g. ``#/username-reset/{uid}/{token}``.
+You should pass ``uid`` and ``token`` to reset username confirmation endpoint.
 
 **Required**: ``True``
 
@@ -84,23 +94,31 @@ SET_USERNAME_RETYPE
 -------------------
 
 If ``True``, you need to pass ``re_new_{{ User.USERNAME_FIELD }}`` to
-``/users/change_username/`` endpoint, to validate username equality.
+``/users/set_{0}/`` endpoint, to validate username equality.
 
 **Default**: ``False``
 
 SET_PASSWORD_RETYPE
 -------------------
 
-If ``True``, you need to pass ``re_new_password`` to ``/password/`` endpoint, to
-validate password equality.
+If ``True``, you need to pass ``re_new_password`` to ``/users/set_password/``
+endpoint, to validate password equality.
 
 **Default**: ``False``
 
 PASSWORD_RESET_CONFIRM_RETYPE
 -----------------------------
 
-If ``True``, you need to pass ``re_new_password`` to ``/password/reset/confirm/``
+If ``True``, you need to pass ``re_new_password`` to ``/users/reset_password_confirm/``
 endpoint in order to validate password equality.
+
+**Default**: ``False``
+
+USERNAME_RESET_CONFIRM_RETYPE
+-----------------------------
+
+If ``True``, you need to pass ``re_new_{{ User.USERNAME_FIELD }}`` to
+``/users/reset_{0}_confirm/`` endpoint in order to validate username equality.
 
 **Default**: ``False``
 
@@ -128,11 +146,26 @@ This setting will be dropped when Django 1.8 LTS goes EOL.
 PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND
 -----------------------------------
 
-If ``True``, posting a non-existent ``email`` to ``/password/reset/`` will return
+If ``True``, posting a non-existent ``email`` to ``/users/reset_password/`` will return
 a ``HTTP_400_BAD_REQUEST`` response with an ``EMAIL_NOT_FOUND`` error message
 ('User with given email does not exist.').
 
-If ``False`` (default), the ``/password/reset/`` endpoint will always return
+If ``False`` (default), the ``/users/reset_password/`` endpoint will always return
+a ``HTTP_204_NO_CONTENT`` response.
+
+Please note that setting this to ``True`` will expose information whether
+an email is registered in the system.
+
+**Default**: ``False``
+
+USERNAME_RESET_SHOW_EMAIL_NOT_FOUND
+-----------------------------------
+
+If ``True``, posting a non-existent ``email`` to ``/users/reset_username/`` will return
+a ``HTTP_400_BAD_REQUEST`` response with an ``EMAIL_NOT_FOUND`` error message
+('User with given email does not exist.').
+
+If ``False`` (default), the ``/users/reset_username/`` endpoint will always return
 a ``HTTP_204_NO_CONTENT`` response.
 
 Please note that setting this to ``True`` will expose information whether
@@ -185,7 +218,11 @@ to update the defaults, so by providing, e.g. one key, all the others will stay 
         'set_password_retype': 'djoser.serializers.SetPasswordRetypeSerializer',
         'set_username': 'djoser.serializers.SetUsernameSerializer',
         'set_username_retype': 'djoser.serializers.SetUsernameRetypeSerializer',
+        'username_reset': 'djoser.serializers.SendEmailResetSerializer',
+        'username_reset_confirm': 'djoser.serializers.UsernameResetConfirmSerializer',
+        'username_reset_confirm_retype': 'djoser.serializers.UsernameResetConfirmRetypeSerializer',
         'user_create': 'djoser.serializers.UserCreateSerializer',
+        'user_create_password_retype': 'djoser.serializers.UserCreatePasswordRetypeSerializer',
         'user_delete': 'djoser.serializers.UserDeleteSerializer',
         'user': 'djoser.serializers.UserSerializer',
         'current_user': 'djoser.serializers.CurrentUserSerializer',
@@ -215,6 +252,9 @@ Same as in case of ``SERIALIZERS`` it allows partial override.
         'activation': 'djoser.email.ActivationEmail',
         'confirmation': 'djoser.email.ConfirmationEmail',
         'password_reset': 'djoser.email.PasswordResetEmail',
+        'password_changed_confirmation': 'djoser.email.PasswordChangedConfirmationEmail',
+        'username_changed_confirmation': 'djoser.email.UsernameChangedConfirmationEmail',
+        'username_reset': 'djoser.email.UsernameResetEmail',
     }
 
 CONSTANTS
@@ -277,7 +317,9 @@ Dictionary that maps permissions to certain views across Djoser.
         'password_reset': ['rest_framework.permissions.AllowAny'],
         'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
         'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
-        'set_username': ['rest_framework.permissions.IsAuthenticated'],
+        'username_reset': ['rest_framework.permissions.AllowAny'],
+        'username_reset_confirm': ['rest_framework.permissions.AllowAny'],
+        'set_username': ['djoser.permissions.CurrentUserOrAdmin'],
         'user_create': ['rest_framework.permissions.AllowAny'],
         'user_delete': ['djoser.permissions.CurrentUserOrAdmin'],
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],

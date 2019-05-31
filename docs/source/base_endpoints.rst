@@ -1,34 +1,6 @@
 Base Endpoints
 ==============
 
-User
-----
-
-Use this endpoint to retrieve/update user.
-
-**Default URL**: ``/users/me/``
-**Backward-compatible URL**: ``/me/``
-
-+----------+--------------------------------+----------------------------------+
-| Method   |           Request              |           Response               |
-+==========+================================+==================================+
-| ``GET``  |    --                          | ``HTTP_200_OK``                  |
-|          |                                |                                  |
-|          |                                | * ``{{ User.USERNAME_FIELD }}``  |
-|          |                                | * ``{{ User._meta.pk.name }}``   |
-|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
-+----------+--------------------------------+----------------------------------+
-| ``PUT``  | ``{{ User.REQUIRED_FIELDS }}`` | ``HTTP_200_OK``                  |
-|          |                                |                                  |
-|          |                                | * ``{{ User.USERNAME_FIELD }}``  |
-|          |                                | * ``{{ User._meta.pk.name }}``   |
-|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
-|          |                                |                                  |
-|          |                                | ``HTTP_400_BAD_REQUEST``         |
-|          |                                |                                  |
-|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
-+----------+--------------------------------+----------------------------------+
-
 User Create
 -----------
 
@@ -61,27 +33,6 @@ fields.
 |          |                                   | * ``password``                   |
 |          |                                   | * ``re_password``                |
 +----------+-----------------------------------+----------------------------------+
-
-User Delete
------------
-
-Use this endpoint to delete authenticated user. By default it will simply verify
-password provided in ``current_password``, delete the auth token if token
-based authentication is used and invoke delete for a given ``User`` instance.
-One of ways to customize the delete behavior is to override ``User.delete``.
-
-**Default URL**: ``/users/me/``
-**Backward-compatible URL**: ``/users/delete/``
-
-+------------+---------------------------------+----------------------------------+
-| Method     |  Request                        | Response                         |
-+============+=================================+==================================+
-| ``DELETE`` | * ``current_password``          | ``HTTP_204_NO_CONTENT``          |
-|            |                                 |                                  |
-|            |                                 | ``HTTP_400_BAD_REQUEST``         |
-|            |                                 |                                  |
-|            |                                 | * ``current_password``           |
-+------------+---------------------------------+----------------------------------+
 
 User Activate
 -------------
@@ -118,7 +69,7 @@ be sent if the user is already active or if they don't have a usable password.
 Also if the sending of activation e-mails is disabled in settings, this call
 will result in ``HTTP_400_BAD_REQUEST``
 
-**Default URL**: ``/users/resend/``
+**Default URL**: ``/users/resend_activation/``
 
 +----------+--------------------------------------+----------------------------------+
 | Method   | Request                              | Response                         |
@@ -127,12 +78,71 @@ will result in ``HTTP_400_BAD_REQUEST``
 |          |                                      | ``HTTP_400_BAD_REQUEST``         |
 +----------+--------------------------------------+----------------------------------+
 
+User
+----
+
+Use this endpoint to retrieve/update user.
+
+**Default URL**: ``/users/me/``
+**Backward-compatible URL**: ``/me/``
+
++----------+--------------------------------+----------------------------------+
+| Method   |           Request              |           Response               |
++==========+================================+==================================+
+| ``GET``  |    --                          | ``HTTP_200_OK``                  |
+|          |                                |                                  |
+|          |                                | * ``{{ User.USERNAME_FIELD }}``  |
+|          |                                | * ``{{ User._meta.pk.name }}``   |
+|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
++----------+--------------------------------+----------------------------------+
+| ``PUT``  | ``{{ User.REQUIRED_FIELDS }}`` | ``HTTP_200_OK``                  |
+|          |                                |                                  |
+|          |                                | * ``{{ User.USERNAME_FIELD }}``  |
+|          |                                | * ``{{ User._meta.pk.name }}``   |
+|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
+|          |                                |                                  |
+|          |                                | ``HTTP_400_BAD_REQUEST``         |
+|          |                                |                                  |
+|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
++----------+--------------------------------+----------------------------------+
+| ``PATCH``| ``{{ User.FIELDS_TO_UPDATE }}``| ``HTTP_200_OK``                  |
+|          |                                |                                  |
+|          |                                | * ``{{ User.USERNAME_FIELD }}``  |
+|          |                                | * ``{{ User._meta.pk.name }}``   |
+|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
+|          |                                |                                  |
+|          |                                | ``HTTP_400_BAD_REQUEST``         |
+|          |                                |                                  |
+|          |                                | * ``{{ User.REQUIRED_FIELDS }}`` |
++----------+--------------------------------+----------------------------------+
+
+User Delete
+-----------
+
+Use this endpoint to delete authenticated user. By default it will simply verify
+password provided in ``current_password``, delete the auth token if token
+based authentication is used and invoke delete for a given ``User`` instance.
+One of ways to customize the delete behavior is to override ``User.delete``.
+
+**Default URL**: ``/users/me/``
+**Backward-compatible URL**: ``/users/delete/``
+
++------------+---------------------------------+----------------------------------+
+| Method     |  Request                        | Response                         |
++============+=================================+==================================+
+| ``DELETE`` | * ``current_password``          | ``HTTP_204_NO_CONTENT``          |
+|            |                                 |                                  |
+|            |                                 | ``HTTP_400_BAD_REQUEST``         |
+|            |                                 |                                  |
+|            |                                 | * ``current_password``           |
++------------+---------------------------------+----------------------------------+
+
 Set Username
 ------------
 
 Use this endpoint to change user username (``USERNAME_FIELD``).
 
-**Default URL**: ``/users/change_username/``
+**Default URL**: ``/users/set_username/``
 **Backward-compatible URL**: ``/{{ User.USERNAME_FIELD }}/``
 
 .. note::
@@ -151,12 +161,65 @@ Use this endpoint to change user username (``USERNAME_FIELD``).
 |          |                                        | * ``current_password``                    |
 +----------+----------------------------------------+-------------------------------------------+
 
+Reset Username
+--------------
+
+Use this endpoint to send email to user with username reset link. You have to
+setup ``USERNAME_RESET_CONFIRM_URL``.
+
+**Default URL**: ``/users/reset_username/``
+
+.. note::
+
+    ``HTTP_204_NO_CONTENT`` if ``USERNAME_RESET_SHOW_EMAIL_NOT_FOUND`` is ``False``
+
+    Otherwise and if ``{{ User.EMAIL_FIELD }}`` does not exist in database ``HTTP_400_BAD_REQUEST``
+
++----------+---------------------------------+------------------------------+
+| Method   | Request                         | Response                     |
++==========+=================================+==============================+
+| ``POST`` |  ``{{ User.EMAIL_FIELD }}``     | ``HTTP_204_NO_CONTENT``      |
+|          |                                 |                              |
+|          |                                 | ``HTTP_400_BAD_REQUEST``     |
+|          |                                 |                              |
+|          |                                 | * ``{{ User.EMAIL_FIELD }}`` |
++----------+---------------------------------+------------------------------+
+
+Reset Username Confirmation
+---------------------------
+
+Use this endpoint to finish reset username process. This endpoint is not a URL
+which will be directly exposed to your users - you should provide site in your
+frontend application (configured by ``USERNAME_RESET_CONFIRM_URL``) which
+will send ``POST`` request to reset username confirmation endpoint.
+``HTTP_400_BAD_REQUEST`` will be raised if the user has logged in or changed username
+since the token creation.
+
+**Default URL**: ``/users/reset_username_confirm/``
+
+.. note::
+
+    ``re_new_username`` is only required if ``USERNAME_RESET_CONFIRM_RETYPE`` is ``True``
+
++----------+----------------------------------+--------------------------------------+
+| Method   | Request                          | Response                             |
++==========+==================================+======================================+
+| ``POST`` | * ``uid``                        | ``HTTP_204_NO_CONTENT``              |
+|          | * ``token``                      |                                      |
+|          | * ``new_username``               | ``HTTP_400_BAD_REQUEST``             |
+|          | * ``re_new_username``            |                                      |
+|          |                                  | * ``uid``                            |
+|          |                                  | * ``token``                          |
+|          |                                  | * ``new_username``                   |
+|          |                                  | * ``re_new_username``                |
++----------+----------------------------------+--------------------------------------+
+
 Set Password
 ------------
 
 Use this endpoint to change user password.
 
-**Default URL**: ``/password/``
+**Default URL**: ``/users/set_password/``
 
 .. note::
 
@@ -180,7 +243,7 @@ Reset Password
 Use this endpoint to send email to user with password reset link. You have to
 setup ``PASSWORD_RESET_CONFIRM_URL``.
 
-**Default URL**: ``/password/reset/``
+**Default URL**: ``/users/reset_password/``
 
 .. note::
 
@@ -208,7 +271,7 @@ will send ``POST`` request to reset password confirmation endpoint.
 ``HTTP_400_BAD_REQUEST`` will be raised if the user has logged in or changed password
 since the token creation.
 
-**Default URL**: ``/password/reset/confirm/``
+**Default URL**: ``/users/reset_password_confirm/``
 
 .. note::
 
@@ -222,7 +285,7 @@ since the token creation.
 |          | * ``new_password``               | ``HTTP_400_BAD_REQUEST``             |
 |          | * ``re_new_password``            |                                      |
 |          |                                  | * ``uid``                            |
-|          |                                  | * ``token``               |
+|          |                                  | * ``token``                          |
 |          |                                  | * ``new_password``                   |
 |          |                                  | * ``re_new_password``                |
 +----------+----------------------------------+--------------------------------------+
