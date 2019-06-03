@@ -48,6 +48,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'NON_FIELD_ERRORS_KEY': 'yolo',
 }
 
 ROOT_URLCONF = 'urls'

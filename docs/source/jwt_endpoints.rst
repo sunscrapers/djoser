@@ -16,9 +16,9 @@ Use this endpoint to obtain JWT.
 |          |                                 | * ``access``                     |
 |          |                                 | * ``refresh``                    |
 |          |                                 |                                  |
-|          |                                 | ``HTTP_401_UNAUTHORIZED``         |
+|          |                                 | ``HTTP_401_UNAUTHORIZED``        |
 |          |                                 |                                  |
-|          |                                 |  * ``non_field_errors``          |
+|          |                                 |  * ``detail``                    |
 +----------+---------------------------------+----------------------------------+
 
 JWT Refresh
@@ -35,9 +35,9 @@ Use this endpoint to refresh JWT.
 |          |                                 |                                  |
 |          |                                 | * ``access``                     |
 |          |                                 |                                  |
-|          |                                 | ``HTTP_401_UNAUTHORIZED``         |
+|          |                                 | ``HTTP_401_UNAUTHORIZED``        |
 |          |                                 |                                  |
-|          |                                 |  * ``non_field_errors``          |
+|          |                                 |  * ``detail``                    |
 +----------+---------------------------------+----------------------------------+
 
 JWT Verify
@@ -52,7 +52,7 @@ Use this endpoint to verify JWT.
 +==========+=================================+==================================+
 | ``POST`` | * ``token``                     | ``HTTP_200_OK``                  |
 |          |                                 |                                  |
-|          |                                 | ``HTTP_401_UNAUTHORIZED``         |
+|          |                                 | ``HTTP_401_UNAUTHORIZED``        |
 |          |                                 |                                  |
-|          |                                 |  * ``non_field_errors``          |
+|          |                                 |  * ``detail``                    |
 +----------+---------------------------------+----------------------------------+
