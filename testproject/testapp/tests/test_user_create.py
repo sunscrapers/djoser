@@ -12,7 +12,10 @@ from rest_framework.test import APITestCase
 
 from djoser.conf import settings as default_settings
 
-from testapp.models import CustomUser
+from testapp.models import (
+    CustomUser,
+    TestUser,
+)
 from testapp.tests.common import (
     create_user,
     mock,
@@ -213,3 +216,58 @@ class UserCreateViewTest(
         response.render()
         self.assertEqual(
             response.data['custom_required_field'][0].code, 'required')
+
+    @mock.patch(
+        'djoser.serializers.User', TestUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.model', TestUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.fields',
+        tuple(TestUser.REQUIRED_FIELDS) +
+        (
+            TestUser.USERNAME_FIELD, TestUser._meta.pk.name, 'password',
+        )
+    )
+    @mock.patch(
+        'djoser.views.User', TestUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.TestUser')
+    def test_post_create_custom_user_without_username(self):
+        data = {
+            'password': 'secret',
+            'email': 'test@user1.com',
+        }
+        response = self.client.post(self.base_url, data)
+
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
+        self.assertTrue('password' not in response.data)
+        self.assert_instance_exists(TestUser, email=data['email'])
+        user = TestUser.objects.get(email=data['email'])
+        self.assertTrue(user.check_password(data['password']))
+
+    @mock.patch(
+        'djoser.serializers.User', TestUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.model', TestUser)
+    @mock.patch(
+        'djoser.serializers.UserCreateSerializer.Meta.fields',
+        tuple(TestUser.REQUIRED_FIELDS) +
+        (
+            TestUser.USERNAME_FIELD, TestUser._meta.pk.name, 'password',
+        )
+    )
+    @mock.patch(
+        'djoser.views.User', TestUser)
+    @override_settings(
+        AUTH_USER_MODEL='testapp.TestUser')
+    def test_post_create_custom_user_missing_required_fields(self):
+        data = {
+            'password': 'secret',
+        }
+        response = self.client.post(self.base_url, data)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['email'][0].code,
+            'required'
+        )

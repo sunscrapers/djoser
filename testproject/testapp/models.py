@@ -33,3 +33,28 @@ class CustomUser(AbstractBaseUser):
     EMAIL_FIELD = 'custom_email'
     USERNAME_FIELD = 'custom_username'
     REQUIRED_FIELDS = ['custom_email', 'custom_required_field']
+
+
+class TestUserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def create_user(self, email, password=None, **extra_fields):
+        email = self.normalize_email(email)
+        user = self.model(
+            email=email,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save()
+        return user
+
+
+class TestUser(AbstractBaseUser):
+    email = models.EmailField(unique=True)
+    is_staff = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+
+    objects = TestUserManager()
+
+    EMAIL_FIELD = 'email'
+    USERNAME_FIELD = 'email'
