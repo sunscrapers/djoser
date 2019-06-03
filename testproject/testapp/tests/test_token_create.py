@@ -1,22 +1,26 @@
 import django
 from django.contrib.auth import user_logged_in, user_login_failed
 
-from djet import assertions, restframework
+from djet import assertions
 from rest_framework import status
+from rest_framework.reverse import reverse
+from rest_framework.test import APITestCase
 
-import djoser.views
+
 from djoser.conf import settings
 
 from testapp.tests.common import create_user
 
 
-class TokenCreateViewTest(restframework.APIViewTestCase,
-                          assertions.StatusCodeAssertionsMixin,
-                          assertions.InstanceAssertionsMixin):
-    view_class = djoser.views.TokenCreateView
+class TokenCreateViewTest(
+    APITestCase,
+    assertions.StatusCodeAssertionsMixin,
+    assertions.InstanceAssertionsMixin
+):
 
     def setUp(self):
         self.signal_sent = False
+        self.base_url = reverse('login')
 
     def signal_receiver(self, *args, **kwargs):
         self.signal_sent = True
@@ -29,9 +33,8 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
             'password': user.raw_password,
         }
         user_logged_in.connect(self.signal_receiver)
-        request = self.factory.post(data=data)
 
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
         user.refresh_from_db()
 
         self.assert_status_equal(response, status.HTTP_200_OK)
@@ -53,14 +56,17 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
         user.is_active = False
         user.save()
         user_logged_in.connect(self.signal_receiver)
-        request = self.factory.post(data=data)
 
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         if django.VERSION >= (1, 10):
-            expected_errors = [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR]
+            expected_errors = [
+                settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR
+            ]
         else:
-            expected_errors = [settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR]
+            expected_errors = [
+                settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR
+            ]
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['non_field_errors'], expected_errors)
@@ -73,9 +79,8 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
             'password': 'wrong',
         }
         user_login_failed.connect(self.signal_receiver)
-        request = self.factory.post(data=data)
 
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -86,9 +91,8 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
 
     def test_post_should_not_login_if_empty_request(self):
         data = {}
-        request = self.factory.post(data=data)
 
-        response = self.view(request)
+        response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
