@@ -7,6 +7,9 @@ Authentication Backends
 
     Both Token Based and JWT Authentication can coexist at same time.
     Simply, follow instructions for both authentication methods and it should work.
+    
+
+
 
 Token Based Authentication
 --------------------------
@@ -51,6 +54,33 @@ Run migrations - this step will create tables for ``auth`` and ``authtoken`` app
 .. code-block:: text
 
     $ ./manage.py migrate
+    
+Session Authentication
+----------------------
+
+Session authentication is only intended for AJAX clients that are running in the same session context as your website and is currently tied to Token Based Authentication. After having configured Token Based Authentication, you may activate session authentication by adding rest_framework.authentication.SessionAuthentication to Django REST Framework authentication strategies tuple:
+
+.. code-block:: python
+
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.SessionAuthentication',
+            'rest_framework.authentication.TokenAuthentication',
+            (...)
+        ),
+    }
+
+And using the following setting
+
+.. code-block:: python
+
+    DJOSER = {
+
+        'CREATE_SESSION_ON_LOGIN': True,
+        ...
+    
+    }
+
 
 JSON Web Token Authentication
 -----------------------------
