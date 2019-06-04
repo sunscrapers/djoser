@@ -133,7 +133,7 @@ class UserCreateViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         response.render()
         self.assertEqual(
-            str(response.data['non_field_errors'][0]),
+            str(response.data['re_password'][0]),
             default_settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR,
         )
 
@@ -318,7 +318,7 @@ class UserViewSetCreationTest(APITestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            str(response.data['non_field_errors'][0]),
+            str(response.data['re_password'][0]),
             default_settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR,
         )
 
