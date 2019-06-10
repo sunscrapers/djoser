@@ -117,6 +117,69 @@ class UserCreateViewTest(restframework.APIViewTestCase,
             )
 
     @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'ALLOW_ANY_PASSWORD': True})
+    )
+    def test_post_register_with_any_password(self):
+        data = {
+            'username': 'john',
+            'password': '666',
+            'csrftoken': 'asdf',
+        }
+
+        request = self.factory.post(data=data)
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
+        self.assertTrue('password' not in response.data)
+        self.assert_instance_exists(User, username=data['username'])
+        user = User.objects.get(username=data['username'])
+        self.assertTrue(user.check_password(data['password']))
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'PASSWORD_VALIDATORS': [{'NAME': 'testapp.validators.Is666666'}]})
+    )
+    def test_post_register_with_overridden_default_validator(self):
+        data = {
+            'username': 'john',
+            'password': '666',
+            'csrftoken': 'asdf',
+        }
+
+        request = self.factory.post(data=data)
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
+        self.assertTrue('password' not in response.data)
+        self.assert_instance_exists(User, username=data['username'])
+        user = User.objects.get(username=data['username'])
+        self.assertTrue(user.check_password(data['password']))
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{'PASSWORD_VALIDATORS': [{'NAME': 'testapp.validators.Is666666'}]})
+    )
+    def test_post_not_register_if_fails_password_with_overridden_validators(self):
+        data = {
+            'username': 'john',
+            'password': '666666',
+            'csrftoken': 'asdf',
+        }
+
+        request = self.factory.post(data=data)
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        response.render()
+        self.assertEqual(
+            str(response.data['password'][0]),
+            'Password 666666 is extremely not allowed.',
+        )
+        if parse_version(drf_version) >= parse_version('3.9.0'):
+            self.assertEqual(
+                response.data['password'][0].code,
+                'no666666',
+            )
+
+    @override_settings(
         DJOSER=dict(settings.DJOSER, **{'USER_CREATE_PASSWORD_RETYPE': True})
     )
     def test_post_not_register_if_password_mismatch(self):
