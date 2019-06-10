@@ -1,3 +1,5 @@
+from urlparse import urlparse
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.urls.exceptions import NoReverseMatch
@@ -189,6 +191,14 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
             self.send_password_reset_email(user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def get_origin_domain(self):
+        domain = self.request.META.get('HTTP_ORIGIN')
+        if domain:
+            domain = urlparse(domain)
+            if domain in settings.PASSWORD_RESET_DOMAINS:
+                return domain
+        return None
+        
     def get_users(self, email):
         if self._users is None:
             email_field_name = get_user_email_field_name(User)
@@ -201,7 +211,10 @@ class PasswordResetView(utils.ActionViewMixin, generics.GenericAPIView):
         return self._users
 
     def send_password_reset_email(self, user):
-        context = {'user': user}
+        context = {
+            'domain': self.get_origin_domain(),
+            'user': user,
+        }
         to = [get_user_email(user)]
         settings.EMAIL.password_reset(self.request, context).send(to)
 
