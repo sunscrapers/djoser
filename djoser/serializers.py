@@ -1,7 +1,7 @@
 import warnings
 
 from django.contrib.auth import authenticate, get_user_model
-from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.password_validation import validate_password, get_password_validators
 from django.core import exceptions as django_exceptions
 from django.db import IntegrityError, transaction
 from rest_framework import exceptions, serializers
@@ -13,6 +13,15 @@ from djoser.compat import get_user_email, get_user_email_field_name
 from djoser.conf import settings
 
 User = get_user_model()
+
+
+class PasswordValidatorsMixin:
+    @staticmethod
+    def password_validators():
+        if settings.ALLOW_ANY_PASSWORD:
+            return []
+        elif settings.PASSWORD_VALIDATORS:
+            return get_password_validators(settings.PASSWORD_VALIDATORS)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -51,7 +60,7 @@ class CurrentUserSerializer(UserSerializer):
         super(CurrentUserSerializer, self).__init__(*args, **kwargs)
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(PasswordValidatorsMixin, serializers.ModelSerializer):
     password = serializers.CharField(
         style={'input_type': 'password'},
         write_only=True
@@ -72,7 +81,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         password = attrs.get('password')
 
         try:
-            validate_password(password, user)
+            validate_password(password, user, self.password_validators())
         except django_exceptions.ValidationError as e:
             serializer_error = serializers.as_serializer_error(e)
             raise serializers.ValidationError({
@@ -208,7 +217,7 @@ class ActivationSerializer(UidAndTokenSerializer):
         raise exceptions.PermissionDenied(self.error_messages['stale_token'])
 
 
-class PasswordSerializer(serializers.Serializer):
+class PasswordSerializer(PasswordValidatorsMixin, serializers.Serializer):
     new_password = serializers.CharField(style={'input_type': 'password'})
 
     def validate(self, attrs):
@@ -216,7 +225,7 @@ class PasswordSerializer(serializers.Serializer):
         assert user is not None
 
         try:
-            validate_password(attrs['new_password'], user)
+            validate_password(attrs['new_password'], user, self.password_validators())
         except django_exceptions.ValidationError as e:
             raise serializers.ValidationError({
                 'new_password': list(e.messages)
