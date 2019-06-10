@@ -40,6 +40,7 @@ default_settings = {
     'PASSWORD_RESET_CONFIRM_RETYPE': False,
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': False,
     'PASSWORD_VALIDATORS': [],
+    'ALLOW_ANY_PASSWORD': False,
     'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
     'SERIALIZERS': ObjDict({
         'activation':
