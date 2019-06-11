@@ -103,7 +103,7 @@ active when calling this endpoint (this will happen if you call it more than onc
 |          |                                      | ``HTTP_400_BAD_REQUEST``         |
 |          |                                      |                                  |
 |          |                                      | * ``uid``                        |
-|          |                                      | * ``token``           |
+|          |                                      | * ``token``                      |
 |          |                                      |                                  |
 |          |                                      | ``HTTP_403_FORBIDDEN``           |
 |          |                                      |                                  |
@@ -222,7 +222,7 @@ since the token creation.
 |          | * ``new_password``               | ``HTTP_400_BAD_REQUEST``             |
 |          | * ``re_new_password``            |                                      |
 |          |                                  | * ``uid``                            |
-|          |                                  | * ``token``               |
+|          |                                  | * ``token``                          |
 |          |                                  | * ``new_password``                   |
 |          |                                  | * ``re_new_password``                |
 +----------+----------------------------------+--------------------------------------+

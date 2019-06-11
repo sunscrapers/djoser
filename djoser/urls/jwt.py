@@ -6,17 +6,17 @@ from rest_framework_simplejwt import views
 urlpatterns = [
     url(
         r'^jwt/create/?',
-        views.TokenObtainPairView.as_view(),
+        views.token_obtain_pair,
         name='jwt-create',
     ),
     url(
         r'^jwt/refresh/?',
-        views.TokenRefreshView.as_view(),
+        views.token_refresh,
         name='jwt-refresh',
     ),
     url(
         r'^jwt/verify/?',
-        views.TokenVerifyView.as_view(),
+        views.token_verify,
         name='jwt-verify',
     ),
 ]

@@ -6,6 +6,7 @@ from django.core import exceptions as django_exceptions
 from django.db import IntegrityError, transaction
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.settings import api_settings
 
 from djoser import utils
 from djoser.compat import get_user_email, get_user_email_field_name
@@ -75,7 +76,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         except django_exceptions.ValidationError as e:
             serializer_error = serializers.as_serializer_error(e)
             raise serializers.ValidationError({
-                'password': serializer_error['non_field_errors']
+                'password': serializer_error[api_settings.NON_FIELD_ERRORS_KEY]
             })
 
         return attrs
@@ -112,7 +113,8 @@ class UserCreatePasswordRetypeSerializer(UserCreateSerializer):
         if attrs['password'] == re_password:
             return attrs
         else:
-            self.fail('password_mismatch')
+            key_error = 'password_mismatch'
+            raise ValidationError({'re_password': [self.error_messages[key_error]]}, code=key_error)
 
 
 class TokenCreateSerializer(serializers.Serializer):
@@ -234,7 +236,8 @@ class PasswordRetypeSerializer(PasswordSerializer):
         if attrs['new_password'] == attrs['re_new_password']:
             return attrs
         else:
-            self.fail('password_mismatch')
+            key_error = 'password_mismatch'
+            raise ValidationError({'re_new_password': [self.error_messages[key_error]]}, code=key_error)
 
 
 class CurrentPasswordSerializer(serializers.Serializer):
@@ -308,7 +311,8 @@ class SetUsernameRetypeSerializer(SetUsernameSerializer):
         attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
         new_username = attrs[settings.LOGIN_FIELD]
         if new_username != attrs['re_new_' + settings.LOGIN_FIELD]:
-            self.fail('username_mismatch')
+            key_error = 'username_mismatch'
+            raise ValidationError({'re_new_' + settings.LOGIN_FIELD: [self.error_messages[key_error]]}, code=key_error)
         else:
             return attrs
 

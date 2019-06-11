@@ -2,6 +2,7 @@ import django
 from django.contrib.auth import user_logged_in, user_login_failed
 from djet import assertions, restframework
 from rest_framework import status
+from rest_framework.settings import api_settings
 
 import djoser.views
 from djoser.conf import settings
@@ -61,7 +62,7 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
             expected_errors = [settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR]
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['non_field_errors'], expected_errors)
+        self.assertEqual(response.data[api_settings.NON_FIELD_ERRORS_KEY], expected_errors)
         self.assertFalse(self.signal_sent)
 
     def test_post_should_not_login_if_invalid_credentials(self):
@@ -77,7 +78,7 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data['non_field_errors'],
+            response.data[api_settings.NON_FIELD_ERRORS_KEY],
             [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR]
         )
         self.assertTrue(self.signal_sent)
@@ -90,6 +91,6 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data['non_field_errors'],
+            response.data[api_settings.NON_FIELD_ERRORS_KEY],
             [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR]
         )

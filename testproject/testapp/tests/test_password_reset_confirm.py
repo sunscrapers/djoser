@@ -122,7 +122,7 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data['non_field_errors'],
+            response.data['re_new_password'],
             [default_settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR]
         )
 
