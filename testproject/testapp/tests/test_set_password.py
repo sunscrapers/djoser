@@ -11,45 +11,38 @@ from .common import create_user
 Token = djoser_settings.TOKEN_MODEL
 
 
-class SetPasswordViewTest(restframework.APIViewTestCase,
-                          assertions.StatusCodeAssertionsMixin):
+class SetPasswordViewTest(
+    restframework.APIViewTestCase, assertions.StatusCodeAssertionsMixin
+):
     view_class = djoser.views.SetPasswordView
 
     def test_post_set_new_password(self):
         user = create_user()
-        data = {
-            'new_password': 'new password',
-            'current_password': 'secret',
-        }
+        data = {"new_password": "new password", "current_password": "secret"}
         request = self.factory.post(user=user, data=data)
 
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()
-        self.assertTrue(user.check_password(data['new_password']))
+        self.assertTrue(user.check_password(data["new_password"]))
 
     def test_post_not_set_new_password_if_wrong_current_password(self):
         user = create_user()
-        data = {
-            'new_password': 'new password',
-            'current_password': 'wrong',
-        }
+        data = {"new_password": "new password", "current_password": "wrong"}
         request = self.factory.post(user=user, data=data)
 
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'SET_PASSWORD_RETYPE': True})
-    )
+    @override_settings(DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
     def test_post_not_set_new_password_if_mismatch(self):
         user = create_user()
         data = {
-            'new_password': 'new password',
-            're_new_password': 'wrong',
-            'current_password': 'secret',
+            "new_password": "new password",
+            "re_new_password": "wrong",
+            "current_password": "secret",
         }
         request = self.factory.post(user=user, data=data)
 
@@ -57,14 +50,14 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         user.refresh_from_db()
-        self.assertTrue(user.check_password(data['current_password']))
+        self.assertTrue(user.check_password(data["current_password"]))
 
     def test_post_not_set_new_password_if_fails_validation(self):
         user = create_user()
         data = {
-            'new_password': '666',
-            're_new_password': '666',
-            'current_password': 'secret',
+            "new_password": "666",
+            "re_new_password": "666",
+            "current_password": "secret",
         }
         request = self.factory.post(user=user, data=data)
 
@@ -72,18 +65,15 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data, {'new_password': ['Password 666 is not allowed.']}
+            response.data, {"new_password": ["Password 666 is not allowed."]}
         )
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'LOGOUT_ON_PASSWORD_CHANGE': True})
+        DJOSER=dict(settings.DJOSER, **{"LOGOUT_ON_PASSWORD_CHANGE": True})
     )
     def test_post_logout_after_password_change(self):
         user = create_user()
-        data = {
-            'new_password': 'new password',
-            'current_password': 'secret',
-        }
+        data = {"new_password": "new password", "current_password": "secret"}
         request = self.factory.post(user=user, data=data)
         djoser.utils.login_user(request, user)
 
@@ -95,10 +85,7 @@ class SetPasswordViewTest(restframework.APIViewTestCase,
 
     def test_post_not_logout_after_password_change_if_setting_is_false(self):
         user = create_user()
-        data = {
-            'new_password': 'new password',
-            'current_password': 'secret',
-        }
+        data = {"new_password": "new password", "current_password": "secret"}
         request = self.factory.post(user=user, data=data)
         djoser.utils.login_user(request, user)
 

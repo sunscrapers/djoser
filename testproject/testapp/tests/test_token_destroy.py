@@ -9,8 +9,9 @@ import djoser.views
 from .common import create_user
 
 
-class TokenDestroyViewTest(restframework.APIViewTestCase,
-                           assertions.StatusCodeAssertionsMixin):
+class TokenDestroyViewTest(
+    restframework.APIViewTestCase, assertions.StatusCodeAssertionsMixin
+):
     view_class = djoser.views.TokenDestroyView
 
     def setUp(self):
@@ -46,9 +47,7 @@ class TokenDestroyViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_200_OK)
 
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'TOKEN_MODEL': None})
-    )
+    @override_settings(DJOSER=dict(settings.DJOSER, **{"TOKEN_MODEL": None}))
     def test_none_token_model_results_in_no_operation(self):
         user = create_user()
         user_logged_out.connect(self.signal_receiver)

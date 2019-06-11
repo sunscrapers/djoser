@@ -3,8 +3,7 @@ from rest_framework import status
 import djoser.views
 
 
-class RootViewTest(restframework.APIViewTestCase,
-                   assertions.StatusCodeAssertionsMixin):
+class RootViewTest(restframework.APIViewTestCase, assertions.StatusCodeAssertionsMixin):
     view_class = djoser.views.RootView
 
     def test_get_should_return_urls_map(self):
@@ -31,6 +30,6 @@ class RootViewTest(restframework.APIViewTestCase,
         request = self.factory.get()
         view_object = self.create_view_object(request)
 
-        urlpattern_names = ['non-existent-urlpattern']
+        urlpattern_names = ["non-existent-urlpattern"]
         urls_map = view_object.get_urls_map(request, urlpattern_names, None)
-        self.assertEqual(urls_map, {urlpattern_names[0]: ''})
+        self.assertEqual(urls_map, {urlpattern_names[0]: ""})

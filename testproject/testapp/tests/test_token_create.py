@@ -9,9 +9,11 @@ from djoser.conf import settings
 from .common import create_user
 
 
-class TokenCreateViewTest(restframework.APIViewTestCase,
-                          assertions.StatusCodeAssertionsMixin,
-                          assertions.InstanceAssertionsMixin):
+class TokenCreateViewTest(
+    restframework.APIViewTestCase,
+    assertions.StatusCodeAssertionsMixin,
+    assertions.InstanceAssertionsMixin,
+):
     view_class = djoser.views.TokenCreateView
 
     def setUp(self):
@@ -23,10 +25,7 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
     def test_post_should_login_user(self):
         user = create_user()
         previous_last_login = user.last_login
-        data = {
-            'username': user.username,
-            'password': user.raw_password,
-        }
+        data = {"username": user.username, "password": user.raw_password}
         user_logged_in.connect(self.signal_receiver)
         request = self.factory.post(data=data)
 
@@ -34,7 +33,7 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
         user.refresh_from_db()
 
         self.assert_status_equal(response, status.HTTP_200_OK)
-        self.assertEqual(response.data['auth_token'], user.auth_token.key)
+        self.assertEqual(response.data["auth_token"], user.auth_token.key)
         self.assertNotEqual(user.last_login, previous_last_login)
         self.assertTrue(self.signal_sent)
 
@@ -45,10 +44,7 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
         succeeds if user is inactive.
         """
         user = create_user()
-        data = {
-            'username': user.username,
-            'password': user.raw_password,
-        }
+        data = {"username": user.username, "password": user.raw_password}
         user.is_active = False
         user.save()
         user_logged_in.connect(self.signal_receiver)
@@ -62,15 +58,14 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
             expected_errors = [settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR]
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data[api_settings.NON_FIELD_ERRORS_KEY], expected_errors)
+        self.assertEqual(
+            response.data[api_settings.NON_FIELD_ERRORS_KEY], expected_errors
+        )
         self.assertFalse(self.signal_sent)
 
     def test_post_should_not_login_if_invalid_credentials(self):
         user = create_user()
-        data = {
-            'username': user.username,
-            'password': 'wrong',
-        }
+        data = {"username": user.username, "password": "wrong"}
         user_login_failed.connect(self.signal_receiver)
         request = self.factory.post(data=data)
 
@@ -79,7 +74,7 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data[api_settings.NON_FIELD_ERRORS_KEY],
-            [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR]
+            [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR],
         )
         self.assertTrue(self.signal_sent)
 
@@ -92,5 +87,5 @@ class TokenCreateViewTest(restframework.APIViewTestCase,
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data[api_settings.NON_FIELD_ERRORS_KEY],
-            [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR]
+            [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR],
         )

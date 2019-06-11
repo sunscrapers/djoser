@@ -10,16 +10,17 @@ from djoser.conf import settings as default_settings
 from .common import create_user
 
 
-class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
-                                   assertions.StatusCodeAssertionsMixin):
+class PasswordResetConfirmViewTest(
+    restframework.APIViewTestCase, assertions.StatusCodeAssertionsMixin
+):
     view_class = djoser.views.PasswordResetConfirmView
 
     def test_post_set_new_password(self):
         user = create_user()
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
-            'new_password': 'new password',
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": default_token_generator.make_token(user),
+            "new_password": "new password",
         }
 
         request = self.factory.post(data=data)
@@ -28,23 +29,23 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()
-        self.assertTrue(user.check_password(data['new_password']))
+        self.assertTrue(user.check_password(data["new_password"]))
 
     def test_post_not_set_new_password_if_broken_uid(self):
         user = create_user()
         data = {
-            'uid': 'x',
-            'token': default_token_generator.make_token(user),
-            'new_password': 'new password',
+            "uid": "x",
+            "token": default_token_generator.make_token(user),
+            "new_password": "new password",
         }
         request = self.factory.post(data=data)
 
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('uid', response.data)
+        self.assertIn("uid", response.data)
         user.refresh_from_db()
-        self.assertFalse(user.check_password(data['new_password']))
+        self.assertFalse(user.check_password(data["new_password"]))
 
     def test_post_readable_error_message_when_uid_is_broken(self):
         """
@@ -55,43 +56,44 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
         """
         user = create_user()
         data = {
-            'uid': b'\xd3\x10\xb4',
-            'token': default_token_generator.make_token(user),
-            'new_password': 'new password',
+            "uid": b"\xd3\x10\xb4",
+            "token": default_token_generator.make_token(user),
+            "new_password": "new password",
         }
         request = self.factory.post(data=data)
 
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('uid', response.data)
-        self.assertEqual(len(response.data['uid']), 1)
+        self.assertIn("uid", response.data)
+        self.assertEqual(len(response.data["uid"]), 1)
         self.assertEqual(
-            response.data['uid'][0], default_settings.CONSTANTS.messages.INVALID_UID_ERROR
+            response.data["uid"][0],
+            default_settings.CONSTANTS.messages.INVALID_UID_ERROR,
         )
 
     def test_post_not_set_new_password_if_user_does_not_exist(self):
         user = create_user()
         data = {
-            'uid': djoser.utils.encode_uid(user.pk + 1),
-            'token': default_token_generator.make_token(user),
-            'new_password': 'new password',
+            "uid": djoser.utils.encode_uid(user.pk + 1),
+            "token": default_token_generator.make_token(user),
+            "new_password": "new password",
         }
         request = self.factory.post(data=data)
 
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('uid', response.data)
+        self.assertIn("uid", response.data)
         user.refresh_from_db()
-        self.assertFalse(user.check_password(data['new_password']))
+        self.assertFalse(user.check_password(data["new_password"]))
 
     def test_post_not_set_new_password_if_wrong_token(self):
         user = create_user()
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': 'wrong-token',
-            'new_password': 'new password',
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": "wrong-token",
+            "new_password": "new password",
         }
         request = self.factory.post(data=data)
 
@@ -99,22 +101,22 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data['token'],
-            [default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR]
+            response.data["token"],
+            [default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR],
         )
         user.refresh_from_db()
-        self.assertFalse(user.check_password(data['new_password']))
+        self.assertFalse(user.check_password(data["new_password"]))
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True})
+        DJOSER=dict(settings.DJOSER, **{"PASSWORD_RESET_CONFIRM_RETYPE": True})
     )
     def test_post_not_set_new_password_if_password_mismatch(self):
         user = create_user()
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
-            'new_password': 'new password',
-            're_new_password': 'wrong',
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": default_token_generator.make_token(user),
+            "new_password": "new password",
+            "re_new_password": "wrong",
         }
         request = self.factory.post(data=data)
 
@@ -122,20 +124,20 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data['re_new_password'],
-            [default_settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR]
+            response.data["re_new_password"],
+            [default_settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR],
         )
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True})
+        DJOSER=dict(settings.DJOSER, **{"PASSWORD_RESET_CONFIRM_RETYPE": True})
     )
     def test_post_not_set_new_password_if_mismatch(self):
         user = create_user()
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
-            'new_password': 'new password',
-            're_new_password': 'wrong',
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": default_token_generator.make_token(user),
+            "new_password": "new password",
+            "re_new_password": "wrong",
         }
 
         request = self.factory.post(data=data)
@@ -144,23 +146,23 @@ class PasswordResetConfirmViewTest(restframework.APIViewTestCase,
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         user.refresh_from_db()
-        self.assertFalse(user.check_password(data['new_password']))
+        self.assertFalse(user.check_password(data["new_password"]))
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'PASSWORD_RESET_CONFIRM_RETYPE': True})
+        DJOSER=dict(settings.DJOSER, **{"PASSWORD_RESET_CONFIRM_RETYPE": True})
     )
     def test_post_not_reset_if_fails_password_validation(self):
         user = create_user()
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
-            'new_password': '666',
-            're_new_password': 'isokpassword',
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": default_token_generator.make_token(user),
+            "new_password": "666",
+            "re_new_password": "isokpassword",
         }
 
         request = self.factory.post(data=data)
         response = self.view(request)
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data, {'new_password': ['Password 666 is not allowed.']}
+            response.data, {"new_password": ["Password 666 is not allowed."]}
         )

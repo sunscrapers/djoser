@@ -13,9 +13,11 @@ from djoser.conf import settings as default_settings
 from .common import create_user
 
 
-class ActivationViewTest(restframework.APIViewTestCase,
-                         assertions.EmailAssertionsMixin,
-                         assertions.StatusCodeAssertionsMixin):
+class ActivationViewTest(
+    restframework.APIViewTestCase,
+    assertions.EmailAssertionsMixin,
+    assertions.StatusCodeAssertionsMixin,
+):
     view_class = djoser.views.ActivationView
 
     def setUp(self):
@@ -29,8 +31,8 @@ class ActivationViewTest(restframework.APIViewTestCase,
         user.is_active = False
         user.save()
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": default_token_generator.make_token(user),
         }
         request = self.factory.post(data=data)
 
@@ -42,62 +44,56 @@ class ActivationViewTest(restframework.APIViewTestCase,
 
     def test_post_respond_with_bad_request_when_wrong_uid(self):
         user = create_user()
-        data = {
-            'uid': 'wrong-uid',
-            'token': default_token_generator.make_token(user),
-        }
+        data = {"uid": "wrong-uid", "token": default_token_generator.make_token(user)}
         request = self.factory.post(data=data)
 
         response = self.view(request)
         response.render()
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(list(response.data.keys()), ['uid'])
+        self.assertEqual(list(response.data.keys()), ["uid"])
         self.assertEqual(
-            response.data['uid'],
-            [default_settings.CONSTANTS.messages.INVALID_UID_ERROR]
+            response.data["uid"],
+            [default_settings.CONSTANTS.messages.INVALID_UID_ERROR],
         )
 
     def test_post_respond_with_bad_request_when_stale_token(self):
         user = create_user()
         djoser.signals.user_activated.connect(self.signal_receiver)
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": default_token_generator.make_token(user),
         }
         request = self.factory.post(data=data)
 
         response = self.view(request)
 
         self.assert_status_equal(response, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(list(response.data.keys()), ['detail'])
+        self.assertEqual(list(response.data.keys()), ["detail"])
         self.assertEqual(
-            response.data['detail'],
-            default_settings.CONSTANTS.messages.STALE_TOKEN_ERROR
+            response.data["detail"],
+            default_settings.CONSTANTS.messages.STALE_TOKEN_ERROR,
         )
         self.assertFalse(self.signal_sent)
 
     def test_post_respond_with_bad_request_when_wrong_token(self):
         user = create_user()
         djoser.signals.user_activated.connect(self.signal_receiver)
-        data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': 'wrong-token',
-        }
+        data = {"uid": djoser.utils.encode_uid(user.pk), "token": "wrong-token"}
         request = self.factory.post(data=data)
 
         response = self.view(request)
         response.render()
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(list(response.data.keys()), ['token'])
+        self.assertEqual(list(response.data.keys()), ["token"])
         self.assertEqual(
-            response.data['token'],
-            [default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR]
+            response.data["token"],
+            [default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR],
         )
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'SEND_CONFIRMATION_EMAIL': True})
+        DJOSER=dict(settings.DJOSER, **{"SEND_CONFIRMATION_EMAIL": True})
     )
     def test_post_sent_confirmation_email(self):
         user = create_user()
@@ -105,8 +101,8 @@ class ActivationViewTest(restframework.APIViewTestCase,
         user.save()
         djoser.signals.user_activated.connect(self.signal_receiver)
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": default_token_generator.make_token(user),
         }
         request = self.factory.post(data=data)
 
@@ -117,10 +113,9 @@ class ActivationViewTest(restframework.APIViewTestCase,
         self.assert_email_exists(to=[user.email])
 
 
-class UserViewSetConfirmationTest(APITestCase,
-                                  assertions.EmailAssertionsMixin,
-                                  assertions.StatusCodeAssertionsMixin):
-
+class UserViewSetConfirmationTest(
+    APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
+):
     def setUp(self):
         self.signal_sent = False
 
@@ -132,10 +127,10 @@ class UserViewSetConfirmationTest(APITestCase,
         user.is_active = False
         user.save()
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": default_token_generator.make_token(user),
         }
-        response = self.client.post(reverse('user-confirm'), data=data)
+        response = self.client.post(reverse("user-confirm"), data=data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         user.refresh_from_db()
@@ -143,56 +138,50 @@ class UserViewSetConfirmationTest(APITestCase,
 
     def test_post_respond_with_bad_request_when_wrong_uid(self):
         user = create_user()
-        data = {
-            'uid': 'wrong-uid',
-            'token': default_token_generator.make_token(user),
-        }
-        response = self.client.post(reverse('user-confirm'), data=data)
+        data = {"uid": "wrong-uid", "token": default_token_generator.make_token(user)}
+        response = self.client.post(reverse("user-confirm"), data=data)
         response.render()
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(list(response.data.keys()), ['uid'])
+        self.assertEqual(list(response.data.keys()), ["uid"])
         self.assertEqual(
-            response.data['uid'],
-            [default_settings.CONSTANTS.messages.INVALID_UID_ERROR]
+            response.data["uid"],
+            [default_settings.CONSTANTS.messages.INVALID_UID_ERROR],
         )
 
     def test_post_respond_with_bad_request_when_stale_token(self):
         user = create_user()
         djoser.signals.user_activated.connect(self.signal_receiver)
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": default_token_generator.make_token(user),
         }
-        response = self.client.post(reverse('user-confirm'), data=data)
+        response = self.client.post(reverse("user-confirm"), data=data)
 
         self.assert_status_equal(response, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(list(response.data.keys()), ['detail'])
+        self.assertEqual(list(response.data.keys()), ["detail"])
         self.assertEqual(
-            response.data['detail'],
-            default_settings.CONSTANTS.messages.STALE_TOKEN_ERROR
+            response.data["detail"],
+            default_settings.CONSTANTS.messages.STALE_TOKEN_ERROR,
         )
         self.assertFalse(self.signal_sent)
 
     def test_post_respond_with_bad_request_when_wrong_token(self):
         user = create_user()
         djoser.signals.user_activated.connect(self.signal_receiver)
-        data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': 'wrong-token',
-        }
-        response = self.client.post(reverse('user-confirm'), data=data)
+        data = {"uid": djoser.utils.encode_uid(user.pk), "token": "wrong-token"}
+        response = self.client.post(reverse("user-confirm"), data=data)
         response.render()
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(list(response.data.keys()), ['token'])
+        self.assertEqual(list(response.data.keys()), ["token"])
         self.assertEqual(
-            response.data['token'],
-            [default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR]
+            response.data["token"],
+            [default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR],
         )
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'SEND_CONFIRMATION_EMAIL': True})
+        DJOSER=dict(settings.DJOSER, **{"SEND_CONFIRMATION_EMAIL": True})
     )
     def test_post_sent_confirmation_email(self):
         user = create_user()
@@ -200,10 +189,10 @@ class UserViewSetConfirmationTest(APITestCase,
         user.save()
         djoser.signals.user_activated.connect(self.signal_receiver)
         data = {
-            'uid': djoser.utils.encode_uid(user.pk),
-            'token': default_token_generator.make_token(user),
+            "uid": djoser.utils.encode_uid(user.pk),
+            "token": default_token_generator.make_token(user),
         }
-        response = self.client.post(reverse('user-confirm'), data=data)
+        response = self.client.post(reverse("user-confirm"), data=data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(1)
