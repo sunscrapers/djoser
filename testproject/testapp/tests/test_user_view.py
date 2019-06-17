@@ -60,6 +60,29 @@ class UserViewTest(
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data["email"]])
 
+    @override_settings(
+        DJOSER=dict(
+            settings.DJOSER,
+            **{
+                "SEND_ACTIVATION_EMAIL": True,
+                "ACTIVATION_NEEDED_ON_EMAIL_UPDATE": False,
+            }
+        )
+    )
+    def test_email_change_with_send_activation_email_true_and_activation_on_email_update_false(
+        self
+    ):
+        user = create_user()
+        data = {"email": "ringo@beatles.com"}
+        request = self.factory.put(user=user, data=data)
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        user.refresh_from_db()
+        self.assertEqual(data["email"], user.email)
+        self.assertTrue(user.is_active)
+        self.assert_emails_in_mailbox(0)
+
 
 class UserViewSetMeTest(
     APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
@@ -110,6 +133,28 @@ class UserViewSetMeTest(
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data["email"]])
 
+    @override_settings(
+        DJOSER=dict(
+            settings.DJOSER,
+            **{
+                "SEND_ACTIVATION_EMAIL": True,
+                "ACTIVATION_NEEDED_ON_EMAIL_UPDATE": False,
+            }
+        )
+    )
+    def test_put_email_change_with_send_activation_email_true_and_activation_on_email_update_false(
+        self
+    ):
+        data = {"email": "ringo@beatles.com"}
+        response = self.client.put(reverse("user-me"), data=data)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(data["email"], self.user.email)
+        self.assertTrue(self.user.is_active)
+        self.assert_emails_in_mailbox(0)
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": False}))
     def test_patch_email_change_with_send_activation_email_false(self):
         data = {"email": "ringo@beatles.com"}
         response = self.client.patch(reverse("user-me"), data=data)
@@ -130,6 +175,27 @@ class UserViewSetMeTest(
         self.assertFalse(self.user.is_active)
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[data["email"]])
+
+    @override_settings(
+        DJOSER=dict(
+            settings.DJOSER,
+            **{
+                "SEND_ACTIVATION_EMAIL": True,
+                "ACTIVATION_NEEDED_ON_EMAIL_UPDATE": False,
+            }
+        )
+    )
+    def test_patch_email_change_with_send_activation_email_true_and_activation_on_email_update_false(
+        self
+    ):
+        data = {"email": "ringo@beatles.com"}
+        response = self.client.patch(reverse("user-me"), data=data)
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(data["email"], self.user.email)
+        self.assertTrue(self.user.is_active)
+        self.assert_emails_in_mailbox(0)
 
     def test_drf_docs(self):
         """

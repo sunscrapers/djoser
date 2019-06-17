@@ -85,6 +85,28 @@ class SetUsernameViewTest(
         user = get_user_model().objects.get(username="dango")
         self.assertFalse(user.is_active)
 
+    @override_settings(
+        DJOSER=dict(
+            settings.DJOSER,
+            **{
+                "SEND_ACTIVATION_EMAIL": True,
+                "ACTIVATION_NEEDED_ON_USERNAME_UPDATE": False,
+            }
+        )
+    )
+    def test_post_update_username_and_not_send_activation_email(self):
+        user = create_user()
+        data = {"new_username": "dango", "current_password": "secret"}
+        request = self.factory.post(user=user, data=data)
+
+        response = self.view(request)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        self.assert_emails_in_mailbox(0)
+
+        user = get_user_model().objects.get(username="dango")
+        self.assertTrue(user.is_active)
+
     def test_post_not_set_new_username_if_same(self):
         user = create_user()
         data = {"new_username": "john", "current_password": "secret"}
@@ -210,6 +232,25 @@ class UserViewSetChangeUsernameTest(
 
         user = get_user_model().objects.get(username="dango")
         self.assertFalse(user.is_active)
+
+    @override_settings(
+        DJOSER=dict(
+            settings.DJOSER,
+            **{
+                "SEND_ACTIVATION_EMAIL": True,
+                "ACTIVATION_NEEDED_ON_USERNAME_UPDATE": False,
+            }
+        )
+    )
+    def test_post_update_username_and_not_send_activation_email(self):
+        data = {"new_username": "dango", "current_password": "secret"}
+        response = self.client.post(reverse("user-change-username"), data=data)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        self.assert_emails_in_mailbox(0)
+
+        user = get_user_model().objects.get(username="dango")
+        self.assertTrue(user.is_active)
 
     def test_post_not_set_new_username_if_same(self):
         data = {"new_username": "john", "current_password": "secret"}

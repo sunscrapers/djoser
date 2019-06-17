@@ -38,9 +38,26 @@ SEND_ACTIVATION_EMAIL
 If ``True`` user will be required to click activation link sent in email after:
 
 * creating an account via ``RegistrationView``
-* updating his email via ``UserView``
+* updating ``User.EMAIL_FIELD`` via ``/users/me/`` endpoint (also depends on ``ACTIVATION_NEEDED_ON_EMAIL_UPDATE`` setting)
+* updating ``User.USERNAME_FIELD`` via ``/users/change_username/`` endpoint (also depends on ``ACTIVATION_NEEDED_ON_USERNAME_UPDATE`` setting)
 
 **Default**: ``False``
+
+ACTIVATION_NEEDED_ON_EMAIL_UPDATE
+---------------------------------
+
+User will only be required to activate their account again after updating their ``User.EMAIL_FIELD``
+if this setting and ``SEND_ACTIVATION_EMAIL`` are both set to ``True``.
+
+**Default**: ``True``
+
+ACTIVATION_NEEDED_ON_USERNAME_UPDATE
+------------------------------------
+
+User will only be required to activate their account again after updating their ``User.USERNAME_FIELD``
+if this setting and ``SEND_ACTIVATION_EMAIL`` are both set to ``True``.
+
+**Default**: ``True``
 
 SEND_CONFIRMATION_EMAIL
 -----------------------

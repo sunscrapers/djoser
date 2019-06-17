@@ -292,7 +292,10 @@ class SetUsernameView(utils.ActionViewMixin, generics.GenericAPIView):
         new_username = serializer.data["new_" + User.USERNAME_FIELD]
 
         setattr(user, User.USERNAME_FIELD, new_username)
-        if settings.SEND_ACTIVATION_EMAIL:
+        if (
+            settings.SEND_ACTIVATION_EMAIL
+            and settings.ACTIVATION_NEEDED_ON_USERNAME_UPDATE
+        ):
             user.is_active = False
             context = {"user": user}
             to = [get_user_email(user)]
@@ -306,7 +309,11 @@ class UserUpdateMixin(object):
     def perform_update(self, serializer):
         super(UserUpdateMixin, self).perform_update(serializer)
         user = serializer.instance
-        if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
+        if (
+            settings.SEND_ACTIVATION_EMAIL
+            and settings.ACTIVATION_NEEDED_ON_EMAIL_UPDATE
+            and not user.is_active
+        ):
             context = {"user": user}
             to = [get_user_email(user)]
             settings.EMAIL.activation(self.request, context).send(to)
@@ -427,7 +434,10 @@ class UserViewSet(UserCreateMixin, UserUpdateMixin, viewsets.ModelViewSet):
         new_username = serializer.data["new_" + User.USERNAME_FIELD]
 
         setattr(user, User.USERNAME_FIELD, new_username)
-        if settings.SEND_ACTIVATION_EMAIL:
+        if (
+            settings.SEND_ACTIVATION_EMAIL
+            and settings.ACTIVATION_NEEDED_ON_USERNAME_UPDATE
+        ):
             user.is_active = False
             context = {"user": user}
             to = [get_user_email(user)]
