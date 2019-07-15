@@ -43,7 +43,6 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ),
     "NON_FIELD_ERRORS_KEY": "yolo",
-    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
 
 ROOT_URLCONF = "urls"

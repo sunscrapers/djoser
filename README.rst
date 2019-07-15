@@ -36,7 +36,7 @@ To be able to run **djoser** you have to meet following requirements:
 
 - Python (2.7, 3.4, 3.5, 3.6)
 - Django (1.11, 2.0, 2.1, 2.2)
-- Django REST Framework (3.7, 3.8, 3.9)
+- Django REST Framework (3.8, 3.9, 3.10)
 
 Bear in mind that for Django-2.x you will need at least Python 3.5
 
