@@ -2,22 +2,15 @@ from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
-
-from testapp.tests.common import (
-    create_user,
-    login_user,
-)
+from testapp.tests.common import create_user, login_user
 
 
 class UserViewSetListTest(APITestCase, assertions.StatusCodeAssertionsMixin):
-
     def setUp(self):
-        self.base_url = reverse('user-list')
-        self.user = create_user(username='user', email='user@example.com')
+        self.base_url = reverse("user-list")
+        self.user = create_user(username="user", email="user@example.com")
         self.superuser = create_user(
-            username='superuser',
-            email='superuser@example.com',
-            is_superuser=True,
+            username="superuser", email="superuser@example.com", is_superuser=True
         )
 
     def test_unauthenticated_user_cannot_list_users(self):

@@ -1,18 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.timezone import now
-
-from rest_framework import (
-    generics,
-    status, views,
-    viewsets,
-)
-from rest_framework.decorators import action
-from rest_framework.response import Response
-
-from djoser import utils, signals
+from djoser import signals, utils
 from djoser.compat import get_user_email
 from djoser.conf import settings
+from rest_framework import generics, status, views, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 User = get_user_model()
 
@@ -21,6 +15,7 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
     """
     Use this endpoint to obtain user authentication token.
     """
+
     serializer_class = settings.SERIALIZERS.token_create
     permission_classes = settings.PERMISSIONS.token_create
 
@@ -28,8 +23,7 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
         token = utils.login_user(self.request, serializer.user)
         token_serializer_class = settings.SERIALIZERS.token
         return Response(
-            data=token_serializer_class(token).data,
-            status=status.HTTP_200_OK,
+            data=token_serializer_class(token).data, status=status.HTTP_200_OK
         )
 
 
@@ -37,6 +31,7 @@ class TokenDestroyView(views.APIView):
     """
     Use this endpoint to logout user (remove user authentication token).
     """
+
     permission_classes = settings.PERMISSIONS.token_destroy
 
     def post(self, request):
@@ -58,65 +53,62 @@ class UserViewSet(viewsets.ModelViewSet):
         return qs
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action == "create":
             self.permission_classes = settings.PERMISSIONS.user_create
-        elif self.action == 'activation':
+        elif self.action == "activation":
             self.permission_classes = settings.PERMISSIONS.activation
-        elif self.action == 'resend_activation':
+        elif self.action == "resend_activation":
             self.permission_classes = settings.PERMISSIONS.password_reset
-        elif self.action == 'list':
+        elif self.action == "list":
             self.permission_classes = settings.PERMISSIONS.user_list
-        elif self.action == 'reset_password':
+        elif self.action == "reset_password":
             self.permission_classes = settings.PERMISSIONS.password_reset
-        elif self.action == 'reset_password_confirm':
-            self.permission_classes = \
-                settings.PERMISSIONS.password_reset_confirm
-        elif self.action == 'set_password':
+        elif self.action == "reset_password_confirm":
+            self.permission_classes = settings.PERMISSIONS.password_reset_confirm
+        elif self.action == "set_password":
             self.permission_classes = settings.PERMISSIONS.set_password
-        elif self.action == 'set_username':
+        elif self.action == "set_username":
             self.permission_classes = settings.PERMISSIONS.set_username
-        elif self.action == 'reset_username':
+        elif self.action == "reset_username":
             self.permission_classes = settings.PERMISSIONS.username_reset
-        elif self.action == 'reset_username_confirm':
-            self.permission_classes = \
-                settings.PERMISSIONS.username_reset_confirm
+        elif self.action == "reset_username_confirm":
+            self.permission_classes = settings.PERMISSIONS.username_reset_confirm
         return super().get_permissions()
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == "create":
             if settings.USER_CREATE_PASSWORD_RETYPE:
                 return settings.SERIALIZERS.user_create_password_retype
             return settings.SERIALIZERS.user_create
-        elif self.action == 'remove' or (
-                self.action == 'me' and self.request and
-                self.request.method == 'DELETE'
+        elif self.action == "remove" or (
+            self.action == "me" and self.request and self.request.method == "DELETE"
         ):
             return settings.SERIALIZERS.user_delete
-        elif self.action == 'activation':
+        elif self.action == "activation":
             return settings.SERIALIZERS.activation
-        elif self.action == 'resend_activation':
+        elif self.action == "resend_activation":
             return settings.SERIALIZERS.password_reset
-        elif self.action == 'reset_password':
+        elif self.action == "reset_password":
             return settings.SERIALIZERS.password_reset
-        elif self.action == 'reset_password_confirm':
+        elif self.action == "reset_password_confirm":
             if settings.PASSWORD_RESET_CONFIRM_RETYPE:
                 return settings.SERIALIZERS.password_reset_confirm_retype
             return settings.SERIALIZERS.password_reset_confirm
-        elif self.action == 'set_password':
+        elif self.action == "set_password":
             if settings.SET_PASSWORD_RETYPE:
                 return settings.SERIALIZERS.set_password_retype
             return settings.SERIALIZERS.set_password
-        elif self.action == 'set_username':
+        elif self.action == "set_username":
             if settings.SET_USERNAME_RETYPE:
                 return settings.SERIALIZERS.set_username_retype
             return settings.SERIALIZERS.set_username
-        elif self.action == 'reset_username':
+        elif self.action == "reset_username":
             return settings.SERIALIZERS.username_reset
-        elif self.action == 'reset_username_confirm':
+        elif self.action == "reset_username_confirm":
             if settings.USERNAME_RESET_CONFIRM_RETYPE:
                 return settings.SERIALIZERS.username_reset_confirm_retype
             return settings.SERIALIZERS.username_reset_confirm
-        elif self.action == 'me':
+        elif self.action == "me":
             # Use the current user serializer on 'me' endpoints
             return settings.SERIALIZERS.current_user
 
@@ -131,7 +123,7 @@ class UserViewSet(viewsets.ModelViewSet):
             sender=self.__class__, user=user, request=self.request
         )
 
-        context = {'user': user}
+        context = {"user": user}
         to = [get_user_email(user)]
         if settings.SEND_ACTIVATION_EMAIL:
             settings.EMAIL.activation(self.request, context).send(to)
@@ -143,7 +135,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user = serializer.instance
         # should we send activation email after update?
         if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
-            context = {'user': user}
+            context = {"user": user}
             to = [get_user_email(user)]
             settings.EMAIL.activation(self.request, context).send(to)
 
@@ -157,19 +149,19 @@ class UserViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(['get', 'put', 'patch', 'delete'], detail=False)
+    @action(["get", "put", "patch", "delete"], detail=False)
     def me(self, request, *args, **kwargs):
         self.get_object = self.get_instance
-        if request.method == 'GET':
+        if request.method == "GET":
             return self.retrieve(request, *args, **kwargs)
-        elif request.method == 'PUT':
+        elif request.method == "PUT":
             return self.update(request, *args, **kwargs)
-        elif request.method == 'PATCH':
+        elif request.method == "PATCH":
             return self.partial_update(request, *args, **kwargs)
-        elif request.method == 'DELETE':
+        elif request.method == "DELETE":
             return self.destroy(request, *args, **kwargs)
 
-    @action(['post'], detail=False)
+    @action(["post"], detail=False)
     def activation(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -182,13 +174,13 @@ class UserViewSet(viewsets.ModelViewSet):
         )
 
         if settings.SEND_CONFIRMATION_EMAIL:
-            context = {'user': user}
+            context = {"user": user}
             to = [get_user_email(user)]
             settings.EMAIL.activation(self.request, context).send(to)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(['post'], detail=False)
+    @action(["post"], detail=False)
     def resend_activation(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -197,119 +189,101 @@ class UserViewSet(viewsets.ModelViewSet):
         if not settings.SEND_ACTIVATION_EMAIL or not user:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        context = {'user': user}
+        context = {"user": user}
         to = [get_user_email(user)]
         settings.EMAIL.activation(self.request, context).send(to)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(['post'], detail=False)
+    @action(["post"], detail=False)
     def set_password(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        self.request.user.set_password(serializer.data['new_password'])
+        self.request.user.set_password(serializer.data["new_password"])
         self.request.user.save()
 
         if settings.LOGOUT_ON_PASSWORD_CHANGE:
             utils.logout_user(self.request)
 
         if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
-            context = {'user': self.request.user}
+            context = {"user": self.request.user}
             to = [get_user_email(self.request.user)]
-            settings.EMAIL.password_changed_confirmation(
-                self.request, context
-            ).send(to)
+            settings.EMAIL.password_changed_confirmation(self.request, context).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(['post'], detail=False)
+    @action(["post"], detail=False)
     def reset_password(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.get_user()
 
         if user:
-            context = {'user': user}
+            context = {"user": user}
             to = [get_user_email(user)]
             settings.EMAIL.password_reset(self.request, context).send(to)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(['post'], detail=False)
+    @action(["post"], detail=False)
     def reset_password_confirm(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        serializer.user.set_password(serializer.data['new_password'])
-        if hasattr(serializer.user, 'last_login'):
+        serializer.user.set_password(serializer.data["new_password"])
+        if hasattr(serializer.user, "last_login"):
             serializer.user.last_login = now()
         serializer.user.save()
 
         if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
-            context = {'user': serializer.user}
+            context = {"user": serializer.user}
             to = [get_user_email(serializer.user)]
-            settings.EMAIL.password_changed_confirmation(
-                self.request, context
-            ).send(to)
+            settings.EMAIL.password_changed_confirmation(self.request, context).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(
-        ['post'],
-        detail=False,
-        url_path='set_{}'.format(User.USERNAME_FIELD)
-    )
+    @action(["post"], detail=False, url_path="set_{}".format(User.USERNAME_FIELD))
     def set_username(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = self.request.user
-        new_username = serializer.data['new_' + User.USERNAME_FIELD]
+        new_username = serializer.data["new_" + User.USERNAME_FIELD]
 
         setattr(user, User.USERNAME_FIELD, new_username)
         user.save()
         if settings.USERNAME_CHANGED_EMAIL_CONFIRMATION:
-            context = {'user': user}
+            context = {"user": user}
             to = [get_user_email(user)]
-            settings.EMAIL.username_changed_confirmation(
-                self.request, context
-            ).send(to)
+            settings.EMAIL.username_changed_confirmation(self.request, context).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(
-        ['post'],
-        detail=False,
-        url_path='reset_{}'.format(User.USERNAME_FIELD)
-    )
+    @action(["post"], detail=False, url_path="reset_{}".format(User.USERNAME_FIELD))
     def reset_username(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.get_user()
 
         if user:
-            context = {'user': user}
+            context = {"user": user}
             to = [get_user_email(user)]
             settings.EMAIL.username_reset(self.request, context).send(to)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        ['post'],
-        detail=False,
-        url_path='reset_{}_confirm'.format(User.USERNAME_FIELD)
+        ["post"], detail=False, url_path="reset_{}_confirm".format(User.USERNAME_FIELD)
     )
     def reset_username_confirm(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        new_username = serializer.data['new_' + User.USERNAME_FIELD]
+        new_username = serializer.data["new_" + User.USERNAME_FIELD]
 
         setattr(serializer.user, User.USERNAME_FIELD, new_username)
-        if hasattr(serializer.user, 'last_login'):
+        if hasattr(serializer.user, "last_login"):
             serializer.user.last_login = now()
         serializer.user.save()
 
         if settings.USERNAME_CHANGED_EMAIL_CONFIRMATION:
-            context = {'user': serializer.user}
+            context = {"user": serializer.user}
             to = [get_user_email(serializer.user)]
-            settings.EMAIL.username_changed_confirmation(
-                self.request, context
-            ).send(to)
+            settings.EMAIL.username_changed_confirmation(self.request, context).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)

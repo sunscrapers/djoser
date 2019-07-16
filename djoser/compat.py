@@ -1,6 +1,6 @@
 from djoser.conf import settings
 
-__all__ = ['settings']
+__all__ = ["settings"]
 
 
 def get_user_email(user):

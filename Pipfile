@@ -6,20 +6,24 @@ verify_ssl = true
 djet = "*"
 coverage = "*"
 pytest = "*"
-"pytest-cov" = "*"
-"pytest-django" = "*"
-"flake8" = "*"
+pytest-cov = "*"
+pytest-django = "*"
 twine = "*"
 wheel = "*"
 sphinx = "*"
-"sphinx-rtd-theme" = "*"
+sphinx-rtd-theme = "*"
 ipython = "*"
 ipdb = "*"
+black = "==19.3b0"
+pre-commit = "*"
+pytest-pythonpath = "*"
 
 [packages]
 djangorestframework = "*"
 django = "*"
-"django-templated-mail" = "*"
-"social-auth-app-django" = "*"
+django-templated-mail = "*"
 coreapi = "*"
 djangorestframework-simplejwt = "*"
+
+[dev-packages.isort]
+extras = [ "pyproject",]

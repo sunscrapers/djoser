@@ -1,0 +1,37 @@
+[build-system]
+requires = [ "setuptools >= 35.0.2", "wheel >= 0.29.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 88
+target-version = ['py35']
+include = '\.pyi?$'
+exclude = '''
+
+(
+  /(
+      \.cache
+    | \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.pytest_cache
+    | \.tox
+    | \.venv
+    | __pycache__
+    | _build
+    | buck-out
+    | build
+    | dist
+    | docs
+    | migrations
+  )/
+
+)
+'''
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = false
+line_length = 88
+known_third_party = "django,djet,pkg_resources,rest_framework,rest_framework_simplejwt,setuptools,social_core,social_django,templated_mail,testapp"

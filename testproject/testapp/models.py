@@ -10,14 +10,10 @@ class CustomUserManager(BaseUserManager):
         self, custom_username, custom_email=None, password=None, **extra_fields
     ):
         if not custom_username:
-            raise ValueError('The given custom_username must be set')
+            raise ValueError("The given custom_username must be set")
         email = self.normalize_email(custom_email)
         username = self.model.normalize_username(custom_username)
-        user = self.model(
-            custom_username=username,
-            custom_email=email,
-            **extra_fields
-        )
+        user = self.model(custom_username=username, custom_email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -30,9 +26,9 @@ class CustomUser(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     objects = CustomUserManager()
 
-    EMAIL_FIELD = 'custom_email'
-    USERNAME_FIELD = 'custom_username'
-    REQUIRED_FIELDS = ['custom_email', 'custom_required_field']
+    EMAIL_FIELD = "custom_email"
+    USERNAME_FIELD = "custom_username"
+    REQUIRED_FIELDS = ["custom_email", "custom_required_field"]
 
 
 class TestUserManager(BaseUserManager):
@@ -40,10 +36,7 @@ class TestUserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         email = self.normalize_email(email)
-        user = self.model(
-            email=email,
-            **extra_fields
-        )
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save()
         return user
@@ -56,5 +49,5 @@ class TestUser(AbstractBaseUser):
 
     objects = TestUserManager()
 
-    EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = "email"
+    USERNAME_FIELD = "email"

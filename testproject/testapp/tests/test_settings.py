@@ -19,24 +19,24 @@ class SettingsTestCase(SimpleTestCase):
                 setting_value = import_string(setting_value)
                 self.assertEqual(setting_value, overridden_value)
 
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{'SET_USERNAME_RETYPE': True})
-    )
+    @override_settings(DJOSER=dict(settings.DJOSER, **{"SET_USERNAME_RETYPE": True}))
     def test_djoser_simple_setting_overriden(self):
         from djoser.conf import settings as djoser_settings
+
         self.assertTrue(djoser_settings.SET_USERNAME_RETYPE)
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER, **{
-            'SERIALIZERS': {'user': 'djoser.serializers.TokenSerializer'}
-        })
+        DJOSER=dict(
+            settings.DJOSER,
+            **{"SERIALIZERS": {"user": "djoser.serializers.TokenSerializer"}},
+        )
     )
     def test_djoser_serializer_setting_overriden(self):
         from djoser.conf import settings as djoser_settings
-        self.assertEqual(
-            djoser_settings.SERIALIZERS.user.__name__, 'TokenSerializer'
-        )
+
+        self.assertEqual(djoser_settings.SERIALIZERS.user.__name__, "TokenSerializer")
 
     def test_djoser_settings_compat_method(self):
         from djoser.conf import settings as djoser_settings
-        self.assertFalse(djoser_settings.get('SET_USERNAME_RETYPE'))
+
+        self.assertFalse(djoser_settings.get("SET_USERNAME_RETYPE"))
