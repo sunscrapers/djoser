@@ -9,7 +9,7 @@ from rest_framework import __version__ as drf_version
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
-from testapp.models import CustomUser, TestUser
+from testapp.models import CustomUser, ExampleUser
 from testapp.tests.common import create_user, mock, perform_create_mock
 
 User = get_user_model()
@@ -162,34 +162,34 @@ class UserCreateViewTest(
         response.render()
         self.assertEqual(response.data["custom_required_field"][0].code, "required")
 
-    @mock.patch("djoser.serializers.User", TestUser)
-    @mock.patch("djoser.serializers.UserCreateSerializer.Meta.model", TestUser)
+    @mock.patch("djoser.serializers.User", ExampleUser)
+    @mock.patch("djoser.serializers.UserCreateSerializer.Meta.model", ExampleUser)
     @mock.patch(
         "djoser.serializers.UserCreateSerializer.Meta.fields",
-        tuple(TestUser.REQUIRED_FIELDS)
-        + (TestUser.USERNAME_FIELD, TestUser._meta.pk.name, "password"),
+        tuple(ExampleUser.REQUIRED_FIELDS)
+        + (ExampleUser.USERNAME_FIELD, ExampleUser._meta.pk.name, "password"),
     )
-    @mock.patch("djoser.views.User", TestUser)
-    @override_settings(AUTH_USER_MODEL="testapp.TestUser")
+    @mock.patch("djoser.views.User", ExampleUser)
+    @override_settings(AUTH_USER_MODEL="testapp.ExampleUser")
     def test_post_create_custom_user_without_username(self):
         data = {"password": "secret", "email": "test@user1.com"}
         response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_201_CREATED)
         self.assertTrue("password" not in response.data)
-        self.assert_instance_exists(TestUser, email=data["email"])
-        user = TestUser.objects.get(email=data["email"])
+        self.assert_instance_exists(ExampleUser, email=data["email"])
+        user = ExampleUser.objects.get(email=data["email"])
         self.assertTrue(user.check_password(data["password"]))
 
-    @mock.patch("djoser.serializers.User", TestUser)
-    @mock.patch("djoser.serializers.UserCreateSerializer.Meta.model", TestUser)
+    @mock.patch("djoser.serializers.User", ExampleUser)
+    @mock.patch("djoser.serializers.UserCreateSerializer.Meta.model", ExampleUser)
     @mock.patch(
         "djoser.serializers.UserCreateSerializer.Meta.fields",
-        tuple(TestUser.REQUIRED_FIELDS)
-        + (TestUser.USERNAME_FIELD, TestUser._meta.pk.name, "password"),
+        tuple(ExampleUser.REQUIRED_FIELDS)
+        + (ExampleUser.USERNAME_FIELD, ExampleUser._meta.pk.name, "password"),
     )
-    @mock.patch("djoser.views.User", TestUser)
-    @override_settings(AUTH_USER_MODEL="testapp.TestUser")
+    @mock.patch("djoser.views.User", ExampleUser)
+    @override_settings(AUTH_USER_MODEL="testapp.ExampleUser")
     def test_post_create_custom_user_missing_required_fields(self):
         data = {"password": "secret"}
         response = self.client.post(self.base_url, data)

@@ -12,8 +12,3 @@ class Messages(object):
     INVALID_PASSWORD_ERROR = _("Invalid password.")
     EMAIL_NOT_FOUND = _("User with given email does not exist.")
     CANNOT_CREATE_USER_ERROR = _("Unable to create account.")
-    USER_WITHOUT_EMAIL_FIELD_ERROR = _(
-        "User model does not contain specified email field. "
-        "Please see http://djoser.readthedocs.io/en/latest/settings.html#"
-        "USER_EMAIL_FIELD_NAME for more details."
-    )

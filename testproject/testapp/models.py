@@ -31,7 +31,7 @@ class CustomUser(AbstractBaseUser):
     REQUIRED_FIELDS = ["custom_email", "custom_required_field"]
 
 
-class TestUserManager(BaseUserManager):
+class ExampleUserManager(BaseUserManager):
     use_in_migrations = True
 
     def create_user(self, email, password=None, **extra_fields):
@@ -42,12 +42,12 @@ class TestUserManager(BaseUserManager):
         return user
 
 
-class TestUser(AbstractBaseUser):
+class ExampleUser(AbstractBaseUser):
     email = models.EmailField(unique=True)
     is_staff = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
 
-    objects = TestUserManager()
+    objects = ExampleUserManager()
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"

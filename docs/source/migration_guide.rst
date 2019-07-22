@@ -9,26 +9,26 @@ Migrating from 1.x to 2.0
 Here are some advices to help you with the transition to new Djoser.
 
 #. If you still use Python 2.x - stay on Djoser 1.x.
-#. If you still use Django 1.x - stay on Djoser 1.x.
-#. URL structure has been simplified
-
+#. If you still use Django REST Framework 3.9 or lower - stay on Djoser 1.x.
+#. There were several changes to default `settings<settings>`_
+#. User-related enpoints are gathered within UserViewSet.
 
 -------------------------
 Migrating from 1.3 to 1.4
 -------------------------
 
-Due to a lack of maintenance on the `django-rest-framework-jwt` project, Djoser
-has switched to using `django-rest-framework-simplejwt`. This update includes
+Due to a lack of maintenance on the ``django-rest-framework-jwt`` project, Djoser
+has switched to using ``django-rest-framework-simplejwt``. This update includes
 some backwards-incompatible changes:
 
-#. The response from the JWT Create endpoint includes both an `access` and
-   `refresh` token. `access` is essentially the same as the old `token` and
-   can be used to authenticate requests. `refresh` is used to acquire a new
+#. The response from the JWT Create endpoint includes both an ``access`` and
+   ``refresh`` token. ``access`` is essentially the same as the old ``token`` and
+   can be used to authenticate requests. ``refresh`` is used to acquire a new
    access token.
-#. The JWT Refresh endpoint requires the `refresh` token and returns a new
-   `access` token.
-#. The JWT Verify endpoint no longer returns `token`.
-#. `django-rest-framework-simplejwt` uses `Authorization: Bearer <token>`.
+#. The JWT Refresh endpoint requires the ``refresh`` token and returns a new
+   ``access`` token.
+#. The JWT Verify endpoint no longer returns ``token``.
+#. ``django-rest-framework-simplejwt`` uses ``Authorization: Bearer <token>``.
    This can be overridden by adding the following to Django Settings:
 
    .. code-block:: python

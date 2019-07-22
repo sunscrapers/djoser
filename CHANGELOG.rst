@@ -6,15 +6,16 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
-`2.0.0`_ (2019-04-15)
+`2.0.0`_ (2019-07-23)
 ---------------------
 
 * Drop support for Python<3.5
-* Drop support for Django<2.1
-* Drop support for djangorestframework<3.9
+* Drop support for djangorestframework<3.10
 * Drop legacy routes
-* Rework built-in JWT support
+* Reworked permissions logic and default classes (see `View Permission Settings<view-permission-settings>`_)
 * Add CONSTANTS option to settings (@mrouhi13)
+* Remove deprecated ``CurrentUserSerializer``
+* Remove deprecated ``settings.get()`` method
 
 ---------------------
 `1.7.0`_ (2019-05-25)

@@ -35,8 +35,3 @@ class SettingsTestCase(SimpleTestCase):
         from djoser.conf import settings as djoser_settings
 
         self.assertEqual(djoser_settings.SERIALIZERS.user.__name__, "TokenSerializer")
-
-    def test_djoser_settings_compat_method(self):
-        from djoser.conf import settings as djoser_settings
-
-        self.assertFalse(djoser_settings.get("SET_USERNAME_RETYPE"))

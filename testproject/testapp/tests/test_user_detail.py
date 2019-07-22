@@ -9,7 +9,10 @@ class UserViewSetListTest(APITestCase, assertions.StatusCodeAssertionsMixin):
     def setUp(self):
         self.user = create_user(username="user", email="user@example.com")
         self.superuser = create_user(
-            username="superuser", email="superuser@example.com", is_superuser=True
+            username="superuser",
+            email="superuser@example.com",
+            is_superuser=True,
+            is_staff=True,
         )
 
     def test_unauthenticated_user_cannot_get_user_detail(self):

@@ -3,28 +3,38 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 
 [dev-packages]
-djet = "*"
-coverage = "*"
-pytest = "*"
-pytest-cov = "*"
-pytest-django = "*"
+djet = "==0.2.2"
+coverage = "==4.5.3"
+pytest = "==5.0.1"
+pytest-cov = "==2.7.1"
+pytest-django = "==3.5.1"
 twine = "*"
 wheel = "*"
-sphinx = "*"
+Sphinx = "*"
 sphinx-rtd-theme = "*"
 ipython = "*"
 ipdb = "*"
 black = "==19.3b0"
 pre-commit = "*"
-pytest-pythonpath = "*"
+pytest-pythonpath = "==0.7.3"
 tox = "*"
+django-templated-mail = "==1.1.1"
+djangorestframework-simplejwt = "==4.3.0"
+social-auth-app-django = "==3.1.0"
+coreapi = "*"
+docutils = "==0.15"
 
 [packages]
 djangorestframework = "*"
-django = "*"
+Django = "*"
 django-templated-mail = "*"
 coreapi = "*"
 djangorestframework-simplejwt = "*"
+docutils = "==0.15"
 
 [dev-packages.isort]
 extras = [ "pyproject",]
+
+[dev-packages.be19849]
+path = "/home/minder/projekty/sunscrapers/djoser"
+editable = true

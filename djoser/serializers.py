@@ -32,23 +32,6 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class CurrentUserSerializer(UserSerializer):
-    def __init__(self, *args, **kwargs):
-        # Warn user about serializer split
-        warnings.simplefilter("default")
-        warnings.warn(
-            (
-                "Current user endpoints now use their own serializer setting. "
-                "For more information, see: "
-                "https://djoser.readthedocs.io/en/latest/settings.html#serializers"  # noqa
-            ),
-            DeprecationWarning,
-        )
-
-        # Perform regular init actions
-        super().__init__(*args, **kwargs)
-
-
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style={"input_type": "password"}, write_only=True)
 

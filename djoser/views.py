@@ -6,6 +6,7 @@ from djoser.compat import get_user_email
 from djoser.conf import settings
 from rest_framework import generics, status, views, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 User = get_user_model()
@@ -45,16 +46,23 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = settings.PERMISSIONS.user
     token_generator = default_token_generator
 
+    def permission_denied(self, request, message=None):
+        if (
+            settings.HIDE_USERS
+            and request.user.is_authenticated
+            and self.action in ["update", "partial_update", "list", "retrieve"]
+        ):
+            raise NotFound()
+        super().permission_denied(request, message=message)
+
     def get_queryset(self):
-        qs = super().get_queryset()
         user = self.request.user
-        if not (user.is_staff or user.is_superuser):
-            qs = qs.filter(pk=user.pk)
-        return qs
+        queryset = super().get_queryset()
+        if settings.HIDE_USERS and self.action == "list" and not user.is_staff:
+            queryset = queryset.filter(pk=user.pk)
+        return queryset
 
     def get_permissions(self):
-        # self.permission_classes = getattr(settings.PERMISSIONS, self.action, self.permission_classes)
-
         if self.action == "create":
             self.permission_classes = settings.PERMISSIONS.user_create
         elif self.action == "activation":
@@ -111,7 +119,6 @@ class UserViewSet(viewsets.ModelViewSet):
                 return settings.SERIALIZERS.username_reset_confirm_retype
             return settings.SERIALIZERS.username_reset_confirm
         elif self.action == "me":
-            # Use the current user serializer on 'me' endpoints
             return settings.SERIALIZERS.current_user
 
         return self.serializer_class

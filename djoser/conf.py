@@ -1,8 +1,5 @@
-import warnings
-
 from django.apps import apps
 from django.conf import settings as django_settings
-from django.core.exceptions import ImproperlyConfigured
 from django.test.signals import setting_changed
 from django.utils import six
 from django.utils.functional import LazyObject
@@ -61,7 +58,7 @@ default_settings = {
             "user_create_password_retype": "djoser.serializers.UserCreatePasswordRetypeSerializer",
             "user_delete": "djoser.serializers.UserDeleteSerializer",
             "user": "djoser.serializers.UserSerializer",
-            "current_user": "djoser.serializers.CurrentUserSerializer",
+            "current_user": "djoser.serializers.UserSerializer",
             "token": "djoser.serializers.TokenSerializer",
             "token_create": "djoser.serializers.TokenCreateSerializer",
         }
@@ -79,9 +76,9 @@ default_settings = {
     "CONSTANTS": ObjDict({"messages": "djoser.constants.Messages"}),
     "LOGOUT_ON_PASSWORD_CHANGE": False,
     "CREATE_SESSION_ON_LOGIN": False,
-    "USER_EMAIL_FIELD_NAME": "email",
     "SOCIAL_AUTH_TOKEN_STRATEGY": "djoser.social.token.jwt.TokenStrategy",
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": [],
+    "HIDE_USERS": True,
     "PERMISSIONS": ObjDict(
         {
             "activation": ["rest_framework.permissions.AllowAny"],
@@ -93,8 +90,8 @@ default_settings = {
             "set_username": ["djoser.permissions.CurrentUserOrAdmin"],
             "user_create": ["rest_framework.permissions.AllowAny"],
             "user_delete": ["djoser.permissions.CurrentUserOrAdmin"],
-            "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
-            "user_list": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
+            "user": ["djoser.permissions.CurrentUserOrAdmin"],
+            "user_list": ["djoser.permissions.CurrentUserOrAdmin"],
             "token_create": ["rest_framework.permissions.AllowAny"],
             "token_destroy": ["rest_framework.permissions.IsAuthenticated"],
         }
@@ -141,23 +138,6 @@ class Settings:
 class LazySettings(LazyObject):
     def _setup(self, explicit_overriden_settings=None):
         self._wrapped = Settings(default_settings, explicit_overriden_settings)
-
-    def get(self, key):
-        """
-        This function is here only to provide backwards compatibility in
-        case anyone uses old settings interface.
-        It is strongly encouraged to use dot notation.
-        """
-        warnings.warn(
-            "The settings.get(key) is superseded by the dot attribute access.",
-            PendingDeprecationWarning,
-        )
-        try:
-            return getattr(self, key)
-        except AttributeError:
-            raise ImproperlyConfigured(
-                "Missing settings: {}['{}']".format(DJOSER_SETTINGS_NAMESPACE, key)
-            )
 
 
 settings = LazySettings()

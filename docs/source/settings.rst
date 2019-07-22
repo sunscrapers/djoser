@@ -13,7 +13,10 @@ You can provide ``DJOSER`` settings like this:
         'SERIALIZERS': {},
     }
 
-All following setting names written in CAPS are keys on ``DJOSER`` dict.
+.. note::
+
+    All following setting names written in CAPS are keys on ``DJOSER`` dict.
+
 
 LOGIN_FIELD
 -----------
@@ -47,8 +50,8 @@ SEND_ACTIVATION_EMAIL
 
 If ``True`` user will be required to click activation link sent in email after:
 
-* creating an account via ``RegistrationView``
-* updating his email via ``UserView``
+* creating an account
+* updating their email
 
 **Default**: ``False``
 
@@ -93,8 +96,8 @@ If ``True``, you need to pass ``re_password`` to
 SET_USERNAME_RETYPE
 -------------------
 
-If ``True``, you need to pass ``re_new_{{ User.USERNAME_FIELD }}`` to
-``/users/set_{0}/`` endpoint, to validate username equality.
+If ``True``, you need to pass ``re_new_username`` to
+``/users/set_username/`` endpoint, to validate username equality.
 
 **Default**: ``False``
 
@@ -117,8 +120,8 @@ endpoint in order to validate password equality.
 USERNAME_RESET_CONFIRM_RETYPE
 -----------------------------
 
-If ``True``, you need to pass ``re_new_{{ User.USERNAME_FIELD }}`` to
-``/users/reset_{0}_confirm/`` endpoint in order to validate username equality.
+If ``True``, you need to pass ``re_new_username`` to
+``/users/reset_username_confirm/`` endpoint in order to validate username equality.
 
 **Default**: ``False``
 
@@ -132,16 +135,6 @@ If ``True``, setting new password will logout the user.
 .. note::
 
     Logout only works with token based authentication.
-
-USER_EMAIL_FIELD_NAME
----------------------
-
-Determines which field in ``User`` model is used for email in versions of Django
-before 1.11. In Django 1.11 and greater value of this setting is ignored and
-value provided by ``User.get_email_field_name`` is used.
-This setting will be dropped when Django 1.8 LTS goes EOL.
-
-**Default**: ``'email'``
 
 PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND
 -----------------------------------
@@ -185,17 +178,14 @@ only stateless tokens (e.g. JWT) are used in project it should be set to ``None`
 SERIALIZERS
 -----------
 
-Dictionary which maps djoser serializer names to paths to serializer classes.
-This setting provides a way to easily override given serializer(s) - it's is used
+Dictionary which maps djoser serializer names to serializer classes (use dotted path).
+This setting provides a way to easily override given serializer(s) - it is used
 to update the defaults, so by providing, e.g. one key, all the others will stay default.
 
 .. note::
 
-    Current user endpoints now use the serializer specified by
-    ``SERIALIZERS['current_user']``. This enables better security and privacy:
-    the serializers can be configured separately so that confidential fields
-    that are returned to the current user are not shown in the regular user
-    endpoints.
+    Key ``'user'`` is used for general users whereas ``'current_user'`` lets you set
+    serializer for special ``/users/me`` endpoint. They both default to the same serializer though.
 
 **Examples**
 
@@ -299,6 +289,11 @@ PERMISSIONS
 
 Dictionary that maps permissions to certain views across Djoser.
 
+.. note::
+
+    Admin refers hereto users that have ``is_staff`` flag set to True,
+    not just superusers.
+
 
 **Examples**
 
@@ -322,8 +317,20 @@ Dictionary that maps permissions to certain views across Djoser.
         'set_username': ['djoser.permissions.CurrentUserOrAdmin'],
         'user_create': ['rest_framework.permissions.AllowAny'],
         'user_delete': ['djoser.permissions.CurrentUserOrAdmin'],
-        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
-        'user_list': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        'user': ['djoser.permissions.CurrentUserOrAdmin'],
+        'user_list': ['djoser.permissions.CurrentUserOrAdmin'],
         'token_create': ['rest_framework.permissions.AllowAny'],
         'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
     }
+
+
+.. _hide_users_setting
+
+HIDE_USERS
+----------
+
+If set to True, listing ``/users/`` enpoint by normal user will return only
+that user's profile in the list. Beside that, accessing ``/users/<id>/``
+endpoints by user without proper permission will result in HTTP 404 instead of HTTP 403.
+
+**Default**: ``True``

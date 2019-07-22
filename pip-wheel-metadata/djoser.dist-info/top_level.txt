@@ -1,5 +1,0 @@
-djoser
-djoser/social
-djoser/social/backends
-djoser/social/token
-djoser/urls

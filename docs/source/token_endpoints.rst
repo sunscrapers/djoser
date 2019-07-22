@@ -9,7 +9,6 @@ Use this endpoint to obtain user
 This endpoint is available only if you are using token based authentication.
 
 **Default URL**: ``/token/login/``
-**Backward-compatible URL**: ``/token/create/``
 
 +----------+----------------------------------+----------------------------------+
 | Method   | Request                          | Response                         |
@@ -26,7 +25,6 @@ Use this endpoint to logout user (remove user authentication token).
 This endpoint is available only if you are using token based authentication.
 
 **Default URL**: ``/token/logout/``
-**Backward-compatible URL**: ``/token/destroy/``
 
 +----------+----------------+----------------------------------+
 | Method   |  Request       | Response                         |

@@ -11,7 +11,6 @@ and `REQUIRED_FIELDS <https://docs.djangoproject.com/en/dev/topics/auth/customiz
 fields.
 
 **Default URL**: ``/users/``
-**Backward-compatible URL**: ``/users/create/``
 
 .. note::
 
@@ -44,7 +43,6 @@ request to activate endpoint. ``HTTP_403_FORBIDDEN`` will be raised if user is a
 active when calling this endpoint (this will happen if you call it more than once).
 
 **Default URL**: ``/users/confirm/``
-**Backward-compatible URL**: ``/users/activate/``
 
 +----------+--------------------------------------+----------------------------------+
 | Method   | Request                              | Response                         |
@@ -84,7 +82,6 @@ User
 Use this endpoint to retrieve/update user.
 
 **Default URL**: ``/users/me/``
-**Backward-compatible URL**: ``/me/``
 
 +----------+--------------------------------+----------------------------------+
 | Method   |           Request              |           Response               |
@@ -125,7 +122,6 @@ based authentication is used and invoke delete for a given ``User`` instance.
 One of ways to customize the delete behavior is to override ``User.delete``.
 
 **Default URL**: ``/users/me/``
-**Backward-compatible URL**: ``/users/delete/``
 
 +------------+---------------------------------+----------------------------------+
 | Method     |  Request                        | Response                         |
@@ -143,21 +139,20 @@ Set Username
 Use this endpoint to change user username (``USERNAME_FIELD``).
 
 **Default URL**: ``/users/set_username/``
-**Backward-compatible URL**: ``/{{ User.USERNAME_FIELD }}/``
 
 .. note::
 
-    ``re_new_{{ User.USERNAME_FIELD }}`` is only required if ``SET_USERNAME_RETYPE`` is ``True``
+    ``re_new_username`` is only required if ``SET_USERNAME_RETYPE`` is ``True``
 
 +----------+----------------------------------------+-------------------------------------------+
 | Method   | Request                                | Response                                  |
 +==========+========================================+===========================================+
-| ``POST`` | * ``new_{{ User.USERNAME_FIELD }}``    | ``HTTP_204_NO_CONTENT``                   |
-|          | * ``re_new_{{ User.USERNAME_FIELD }}`` |                                           |
+| ``POST`` | * ``new_username``                     | ``HTTP_204_NO_CONTENT``                   |
+|          | * ``re_new_username``                  |                                           |
 |          | * ``current_password``                 | ``HTTP_400_BAD_REQUEST``                  |
 |          |                                        |                                           |
-|          |                                        | * ``new_{{ User.USERNAME_FIELD }}``       |
-|          |                                        | * ``re_new_{{ User.USERNAME_FIELD }}``    |
+|          |                                        | * ``new_username``                        |
+|          |                                        | * ``re_new_username``                     |
 |          |                                        | * ``current_password``                    |
 +----------+----------------------------------------+-------------------------------------------+
 
