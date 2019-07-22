@@ -53,6 +53,8 @@ class UserViewSet(viewsets.ModelViewSet):
         return qs
 
     def get_permissions(self):
+        # self.permission_classes = getattr(settings.PERMISSIONS, self.action, self.permission_classes)
+
         if self.action == "create":
             self.permission_classes = settings.PERMISSIONS.user_create
         elif self.action == "activation":

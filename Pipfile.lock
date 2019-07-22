@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d2bdcc612e5d158422e7305c85c332989902dade8c835105cf73470a342f4976"
+            "sha256": "670dd1538f23e09d21614a5d1b55286099b24ae0763b7229dc0560481ed4a390"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -57,10 +57,10 @@
         },
         "djangorestframework": {
             "hashes": [
-                "sha256:1f274ebbb930dfa709751fac31b2332b2e662303f8c66d7eacea534702611e34",
-                "sha256:bd389598d052fb79a68904eff35d34303118b5c2abefa65329b5f1a07b571ce1"
+                "sha256:1ca4a5599a5ec31f3d6238a687fcc1dd4c41b1d90edab9ad398fcbf87872b7ba",
+                "sha256:c3c5edfdbc5dd33f9121bb84305bfd603d2c791f20cff9782772f44a7684a4e4"
             ],
-            "version": "==3.10.0"
+            "version": "==3.10.1"
         },
         "djangorestframework-simplejwt": {
             "hashes": [
@@ -239,10 +239,10 @@
         },
         "cfgv": {
             "hashes": [
-                "sha256:32edbe09de6f4521224b87822103a8c16a614d31a894735f7a5b3bcf0eb3c37e",
-                "sha256:3bd31385cd2bebddbba8012200aaf15aa208539f1b33973759b4d02fc2148da5"
+                "sha256:edb387943b665bf9c434f717bf630fa78aecd53d5900d2e05da6ad6048553144",
+                "sha256:fbd93c9ab0a523bf7daec408f3be2ed99a980e20b2d19b50fc184ca6b820d289"
             ],
-            "version": "==2.0.0"
+            "version": "==2.0.1"
         },
         "chardet": {
             "hashes": [
@@ -320,11 +320,17 @@
         },
         "docutils": {
             "hashes": [
-                "sha256:02aec4bd92ab067f6ff27a38a38a41173bf01bed8f89157768c1573f53e474a6",
-                "sha256:51e64ef2ebfb29cae1faa133b3710143496eca21c530f3f71424d77687764274",
-                "sha256:7a4bd47eaf6596e1295ecb11361139febe29b084a87bf005bf899f9a42edc3c6"
+                "sha256:54a349c622ff31c91cbec43b0b512f113b5b24daf00e2ea530bb1bd9aac14849",
+                "sha256:d2ddba74835cb090a1b627d3de4e7835c628d07ee461f7b4480f51af2fe4d448"
             ],
-            "version": "==0.14"
+            "version": "==0.15"
+        },
+        "filelock": {
+            "hashes": [
+                "sha256:18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59",
+                "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"
+            ],
+            "version": "==3.0.12"
         },
         "identify": {
             "hashes": [
@@ -430,10 +436,10 @@
         },
         "more-itertools": {
             "hashes": [
-                "sha256:3ad685ff8512bf6dc5a8b82ebf73543999b657eded8c11803d9ba6b648986f4d",
-                "sha256:8bb43d1f51ecef60d81854af61a3a880555a14643691cc4b64a6ee269c78f09a"
+                "sha256:409cd48d4db7052af495b09dec721011634af3753ae1ef92d2b32f73a745f832",
+                "sha256:92b8c4b06dac4f0611c0729b2f2ede52b2e1bac1ab48f089c7ddc12e26bb60c4"
             ],
-            "version": "==7.1.0"
+            "version": "==7.2.0"
         },
         "nodeenv": {
             "hashes": [
@@ -522,10 +528,10 @@
         },
         "pyparsing": {
             "hashes": [
-                "sha256:1873c03321fc118f4e9746baf201ff990ceb915f433f23b395f5580d1840cb2a",
-                "sha256:9b6323ef4ab914af344ba97510e966d64ba91055d6b9afa6b30799340e89cc03"
+                "sha256:530d8bf8cc93a34019d08142593cf4d78a05c890da8cf87ffa3120af53772238",
+                "sha256:f78e99616b6f1a4745c0580e170251ef1bbafc0d0513e270c4bd281bf29d2800"
             ],
-            "version": "==2.4.0"
+            "version": "==2.4.1"
         },
         "pytest": {
             "hashes": [
@@ -674,6 +680,13 @@
                 "sha256:f1db651f9657708513243e61e6cc67d101a39bad662eaa9b5546f789338e07a3"
             ],
             "version": "==0.10.0"
+        },
+        "tox": {
+            "hashes": [
+                "sha256:dab0b0160dd187b654fc33d690ee1d7bf328bd5b8dc6ef3bb3cc468969c659ba",
+                "sha256:ee35ffce74933a6c6ac10c9a0182e41763140a5a5070e21b114feca56eaccdcd"
+            ],
+            "version": "==3.13.2"
         },
         "tqdm": {
             "hashes": [

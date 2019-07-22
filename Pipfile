@@ -17,6 +17,7 @@ ipdb = "*"
 black = "==19.3b0"
 pre-commit = "*"
 pytest-pythonpath = "*"
+tox = "*"
 
 [packages]
 djangorestframework = "*"

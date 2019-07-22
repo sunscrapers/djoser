@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import os
 
 DEBUG = True
@@ -43,6 +41,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
 
 ROOT_URLCONF = "urls"
