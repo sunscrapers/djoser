@@ -9,6 +9,11 @@ python:
   - "3.7"
   - "3.8-dev"
 
+stages:
+  - test
+  - name: codacy
+    if: branch = master AND type = push
+
 install:
   - travis_retry pip install -U tox-travis
 
@@ -18,3 +23,14 @@ script:
 after_success:
   - travis_retry pip install -U codecov
   - codecov
+
+
+jobs:
+  include:
+    - stage: test
+      if: branch = master AND type = push
+      skip_cleanup: true
+    - stage: codacy
+      name: "Update codacy"
+      script:
+        - tox -e upload_coverage
