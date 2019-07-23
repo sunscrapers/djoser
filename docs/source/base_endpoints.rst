@@ -42,7 +42,7 @@ frontend application (configured by ``ACTIVATION_URL``) which will send ``POST``
 request to activate endpoint. ``HTTP_403_FORBIDDEN`` will be raised if user is already
 active when calling this endpoint (this will happen if you call it more than once).
 
-**Default URL**: ``/users/confirm/``
+**Default URL**: ``/users/activation/``
 
 +----------+--------------------------------------+----------------------------------+
 | Method   | Request                              | Response                         |
