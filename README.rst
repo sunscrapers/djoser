@@ -85,11 +85,8 @@ requirements manually:
     $ pip install django djangorestframework
     $ pip install -r requirements.txt
 
-If you are running djoser tests on Python 2.7 you also need to install **mock** library.
-
 .. code-block:: bash
 
-    $ pip install mock  # only on Python 2.7
     $ cd testproject
     $ ./manage.py test
 
@@ -116,4 +113,3 @@ List of projects related to Django, REST and authentication:
 - `django-oauth-toolkit <https://github.com/evonove/django-oauth-toolkit>`_
 - `django-rest-auth <https://github.com/Tivix/django-rest-auth>`_
 - `django-rest-framework-digestauth <https://github.com/juanriaza/django-rest-framework-digestauth>`_ (not maintained)
-- `doac <https://github.com/Rediker-Software/doac>`_ (not maintained)
