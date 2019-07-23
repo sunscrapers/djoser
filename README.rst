@@ -3,16 +3,17 @@ djoser
 ======
 
 .. image:: https://img.shields.io/pypi/v/djoser.svg
-  :target: https://pypi.org/project/djoser
+   :target: https://pypi.org/project/djoser
 
 .. image:: https://img.shields.io/travis/sunscrapers/djoser/master.svg
-  :target: https://travis-ci.org/sunscrapers/djoser
+   :target: https://travis-ci.org/sunscrapers/djoser
 
 .. image:: https://img.shields.io/codecov/c/github/sunscrapers/djoser.svg
-  :target: https://codecov.io/gh/sunscrapers/djoser
+   :target: https://codecov.io/gh/sunscrapers/djoser
 
-.. image:: https://img.shields.io/scrutinizer/g/sunscrapers/djoser.svg
-  :target: https://scrutinizer-ci.com/g/sunscrapers/djoser
+.. image:: https://api.codacy.com/project/badge/Grade/c9bf80318d2741e5bb63912a5e0b32dc
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/app/dekoza/djoser?utm_source=github.com&utm_medium=referral&utm_content=sunscrapers/djoser&utm_campaign=Badge_Grade_Dashboard
 
 REST implementation of `Django <https://www.djangoproject.com/>`_ authentication
 system. **djoser** library provides a set of `Django Rest Framework <https://www.django-rest-framework.org/>`_
@@ -113,8 +114,3 @@ List of projects related to Django, REST and authentication:
 - `django-oauth-toolkit <https://github.com/evonove/django-oauth-toolkit>`_
 - `django-rest-auth <https://github.com/Tivix/django-rest-auth>`_
 - `django-rest-framework-digestauth <https://github.com/juanriaza/django-rest-framework-digestauth>`_ (not maintained)
-
-
-.. image:: https://api.codacy.com/project/badge/Grade/c9bf80318d2741e5bb63912a5e0b32dc
-   :alt: Codacy Badge
-   :target: https://app.codacy.com/app/dekoza/djoser?utm_source=github.com&utm_medium=referral&utm_content=sunscrapers/djoser&utm_campaign=Badge_Grade_Dashboard
