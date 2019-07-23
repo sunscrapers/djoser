@@ -12,8 +12,8 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 * Drop support for Python<3.5
 * Drop support for djangorestframework<3.10
 * Drop legacy routes
-* Reworked permissions logic and default classes (see `View Permission Settings<view-permission-settings>`_)
-* Add CONSTANTS option to settings (@mrouhi13)
+* Reworked permissions logic and default classes (see :ref:`View Permission Settings<view-permission-settings>`)
+* Add ``CONSTANTS`` option to settings (@mrouhi13)
 * Remove deprecated ``CurrentUserSerializer``
 * Remove deprecated ``settings.get()`` method
 

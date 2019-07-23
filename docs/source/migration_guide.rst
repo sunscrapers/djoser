@@ -10,7 +10,7 @@ Here are some advices to help you with the transition to new Djoser.
 
 #. If you still use Python 2.x - stay on Djoser 1.x.
 #. If you still use Django REST Framework 3.9 or lower - stay on Djoser 1.x.
-#. There were several changes to default `settings<settings>`_
+#. There were several changes to default :doc:`settings<settings>`
 #. User-related enpoints are gathered within UserViewSet.
 
 -------------------------
@@ -123,7 +123,7 @@ Support for Django < 2.0 has been dropped in Djoser version 2. It is
 recommended to upgrade to latest version of Django (2.2.1).
 
 Some View class names and URLs has been updated or removed
------------------------------------------------
+----------------------------------------------------------
 
 View class names:
 

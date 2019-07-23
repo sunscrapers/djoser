@@ -63,14 +63,14 @@ If ``True``, register or activation endpoint will send confirmation email to use
 **Default**: ``False``
 
 PASSWORD_CHANGED_EMAIL_CONFIRMATION
------------------------
+-----------------------------------
 
 If ``True``, change password endpoints will send confirmation email to user.
 
 **Default**: ``False``
 
 USERNAME_CHANGED_EMAIL_CONFIRMATION
------------------------
+-----------------------------------
 
 If ``True``, change username endpoints will send confirmation email to user.
 
@@ -173,6 +173,7 @@ Points to which token model should be used for authentication. In case if
 only stateless tokens (e.g. JWT) are used in project it should be set to ``None``.
 
 **Example**: ``'knox.models.AuthToken'``
+
 **Default**: ``'rest_framework.authtoken.models.Token'``
 
 SERIALIZERS
@@ -248,7 +249,7 @@ Same as in case of ``SERIALIZERS`` it allows partial override.
     }
 
 CONSTANTS
------
+---------
 
 Dictionary which maps djoser constant names to paths to constant classes.
 Same as in case of ``SERIALIZERS`` it allows partial override.
@@ -256,12 +257,15 @@ Same as in case of ``SERIALIZERS`` it allows partial override.
 **Examples**
 
 .. code-block:: python
+
     {
         'messages': 'myapp.constants.CustomMessages',
     }
+
 **Default**:
 
 .. code-block:: python
+
     {
         'messages': 'djoser.constants.Messages',
     }
@@ -272,6 +276,7 @@ SOCIAL_AUTH_TOKEN_STRATEGY
 String path to class responsible for token strategy used by social authentication.
 
 **Example**: ``'myapp.token.MyStrategy'``
+
 **Default**: ``'djoser.social.token.jwt.TokenStrategy'``
 
 SOCIAL_AUTH_ALLOWED_REDIRECT_URIS
@@ -280,19 +285,23 @@ SOCIAL_AUTH_ALLOWED_REDIRECT_URIS
 List of allowed redirect URIs for social authentication.
 
 **Example**: ``['https://auth.example.com']``
+
 **Default**: ``[]``
 
-.. _view-permission-settings
+
+.. _view-permission-settings:
 
 PERMISSIONS
 -----------
+
+.. versionchanged:: 2.0
 
 Dictionary that maps permissions to certain views across Djoser.
 
 .. note::
 
-    Admin refers hereto users that have ``is_staff`` flag set to True,
-    not just superusers.
+    ``Admin`` in class names refers to users that have ``is_staff`` flag set to True,
+    not superusers.
 
 
 **Examples**
@@ -324,10 +333,13 @@ Dictionary that maps permissions to certain views across Djoser.
     }
 
 
-.. _hide_users_setting
+
+.. _hide_users_setting:
 
 HIDE_USERS
 ----------
+
+.. versionadded:: 2.0
 
 If set to True, listing ``/users/`` enpoint by normal user will return only
 that user's profile in the list. Beside that, accessing ``/users/<id>/``
