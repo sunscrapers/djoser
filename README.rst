@@ -113,3 +113,8 @@ List of projects related to Django, REST and authentication:
 - `django-oauth-toolkit <https://github.com/evonove/django-oauth-toolkit>`_
 - `django-rest-auth <https://github.com/Tivix/django-rest-auth>`_
 - `django-rest-framework-digestauth <https://github.com/juanriaza/django-rest-framework-digestauth>`_ (not maintained)
+
+
+.. image:: https://api.codacy.com/project/badge/Grade/c9bf80318d2741e5bb63912a5e0b32dc
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/app/dekoza/djoser?utm_source=github.com&utm_medium=referral&utm_content=sunscrapers/djoser&utm_campaign=Badge_Grade_Dashboard
