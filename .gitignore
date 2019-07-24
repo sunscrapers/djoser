@@ -142,3 +142,4 @@ venv.bak/
 .venv/
 
 .DS_Store
+pip-wheel-metadata/
