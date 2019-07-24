@@ -19,7 +19,7 @@ class ObjDict(dict):
             if isinstance(val, str):
                 val = import_string(val)
             elif isinstance(val, (list, tuple)):
-                val = [import_string(v) if type(v) is str else v for v in val]
+                val = [import_string(v) if isinstance(v, str) else v for v in val]
             self[item] = val
         except KeyError:
             val = super(ObjDict, self).__getattribute__(item)
