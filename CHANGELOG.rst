@@ -6,6 +6,12 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.0.1`_ (2019-07-25)
+---------------------
+
+* Fixed a registration bug when ``USER_CREATE_PASSWORD_RETYPE`` is set to ``True``.
+
+---------------------
 `2.0.0`_ (2019-07-23)
 ---------------------
 
@@ -356,3 +362,4 @@ few bugfixes / documentation updates. List of changes:
 .. _1.6.0: https://github.com/sunscrapers/djoser/compare/1.5.1...1.6.0
 .. _1.7.0: https://github.com/sunscrapers/djoser/compare/1.6.0...1.7.0
 .. _2.0.0: https://github.com/sunscrapers/djoser/compare/1.7.0...2.0.0
+.. _2.0.1: https://github.com/sunscrapers/djoser/compare/2.0.0...2.0.1
