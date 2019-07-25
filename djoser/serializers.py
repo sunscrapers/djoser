@@ -90,6 +90,7 @@ class UserCreatePasswordRetypeSerializer(UserCreateSerializer):
         )
 
     def validate(self, attrs):
+        self.fields.pop("re_password", None)
         re_password = attrs.pop("re_password")
         attrs = super().validate(attrs)
         if attrs["password"] == re_password:

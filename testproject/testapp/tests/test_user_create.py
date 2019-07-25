@@ -196,3 +196,15 @@ class UserCreateViewTest(
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["email"][0].code, "required")
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{"USER_CREATE_PASSWORD_RETYPE": True})
+    )
+    def test_user_create_with_retype_password(self):
+        # GIVEN user is required to retype password
+        # (see decorator)
+        # HAVING sent correctly retyped password
+        data = {"username": "john", "password": "secret", "re_password": "secret"}
+        response = self.client.post(self.base_url, data)
+        # THEN I get correct response
+        self.assert_status_equal(response, status.HTTP_201_CREATED)
