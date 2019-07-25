@@ -203,7 +203,7 @@ class UserCreateViewTest(
     def test_user_create_with_retype_password(self):
         # GIVEN user is required to retype password
         # (see decorator)
-        # HAVING sent correctly retyped password
+        # WHEN sent correctly retyped password
         data = {"username": "john", "password": "secret", "re_password": "secret"}
         response = self.client.post(self.base_url, data)
         # THEN I get correct response
