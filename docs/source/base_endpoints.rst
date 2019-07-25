@@ -79,7 +79,7 @@ will result in ``HTTP_400_BAD_REQUEST``
 User
 ----
 
-Use this endpoint to retrieve/update user.
+Use this endpoint to retrieve/update the authenticated user.
 
 **Default URL**: ``/users/me/``
 
@@ -136,23 +136,39 @@ One of ways to customize the delete behavior is to override ``User.delete``.
 Set Username
 ------------
 
-Use this endpoint to change user username (``USERNAME_FIELD``).
-
-**Default URL**: ``/users/set_username/``
+Use this endpoint to change user's ``USERNAME_FIELD``.
+By default this changes the ``username``.
 
 .. note::
 
-    ``re_new_username`` is only required if ``SET_USERNAME_RETYPE`` is ``True``
+    URLs of following settings rely on the User model. Django allows you to set
+    User.USERNAME_FIELD and User.EMAIL_FIELD fields and Djoser respects that by
+    modifying its default url structure and serializers to reflect that settings.
+    When you see ``{USERNAME_FIELD}`` or ``{EMAIL_FIELD}`` in the settings below,
+    it means that those parts will be substituted with what you set in your User
+    model.
+
+    For example: here, the default URL is presented like this: ``/users/set_{USERNAME_FIELD}/``
+    this means that if your custom User model has ``USERNAME_FIELD`` set to ``nickname``,
+    the URL will look like this: ``/users/set_nickname/``. The same rule applies
+    to fields sent with the request.
+
+
+**Default URL**: ``/users/set_{USERNAME_FIELD}/``
+
+.. note::
+
+    ``re_new_{USERNAME_FIELD}`` is only required if ``SET_USERNAME_RETYPE`` is ``True``
 
 +----------+----------------------------------------+-------------------------------------------+
 | Method   | Request                                | Response                                  |
 +==========+========================================+===========================================+
-| ``POST`` | * ``new_username``                     | ``HTTP_204_NO_CONTENT``                   |
-|          | * ``re_new_username``                  |                                           |
+| ``POST`` | * ``new_{USERNAME_FIELD}``             | ``HTTP_204_NO_CONTENT``                   |
+|          | * ``re_new_{USERNAME_FIELD}``          |                                           |
 |          | * ``current_password``                 | ``HTTP_400_BAD_REQUEST``                  |
 |          |                                        |                                           |
-|          |                                        | * ``new_username``                        |
-|          |                                        | * ``re_new_username``                     |
+|          |                                        | * ``new_{USERNAME_FIELD}``                |
+|          |                                        | * ``re_new_{USERNAME_FIELD}``             |
 |          |                                        | * ``current_password``                    |
 +----------+----------------------------------------+-------------------------------------------+
 
@@ -162,22 +178,23 @@ Reset Username
 Use this endpoint to send email to user with username reset link. You have to
 setup ``USERNAME_RESET_CONFIRM_URL``.
 
-**Default URL**: ``/users/reset_username/``
+**Default URL**: ``/users/reset_{USERNAME_FIELD}/``
 
 .. note::
 
     ``HTTP_204_NO_CONTENT`` if ``USERNAME_RESET_SHOW_EMAIL_NOT_FOUND`` is ``False``
 
-    Otherwise and if ``{{ User.EMAIL_FIELD }}`` does not exist in database ``HTTP_400_BAD_REQUEST``
+    Otherwise if the value of ``{EMAIL_FIELD}`` does not exist in database
+    ``HTTP_400_BAD_REQUEST``
 
 +----------+---------------------------------+------------------------------+
 | Method   | Request                         | Response                     |
 +==========+=================================+==============================+
-| ``POST`` |  ``{{ User.EMAIL_FIELD }}``     | ``HTTP_204_NO_CONTENT``      |
+| ``POST`` |  ``{EMAIL_FIELD}``              | ``HTTP_204_NO_CONTENT``      |
 |          |                                 |                              |
 |          |                                 | ``HTTP_400_BAD_REQUEST``     |
 |          |                                 |                              |
-|          |                                 | * ``{{ User.EMAIL_FIELD }}`` |
+|          |                                 | * ``{EMAIL_FIELD}`` |
 +----------+---------------------------------+------------------------------+
 
 Reset Username Confirmation
@@ -190,7 +207,7 @@ will send ``POST`` request to reset username confirmation endpoint.
 ``HTTP_400_BAD_REQUEST`` will be raised if the user has logged in or changed username
 since the token creation.
 
-**Default URL**: ``/users/reset_username_confirm/``
+**Default URL**: ``/users/reset_{USERNAME_FIELD}_confirm/``
 
 .. note::
 
@@ -201,12 +218,12 @@ since the token creation.
 +==========+==================================+======================================+
 | ``POST`` | * ``uid``                        | ``HTTP_204_NO_CONTENT``              |
 |          | * ``token``                      |                                      |
-|          | * ``new_username``               | ``HTTP_400_BAD_REQUEST``             |
-|          | * ``re_new_username``            |                                      |
+|          | * ``new_{USERNAME_FIELD}``       | ``HTTP_400_BAD_REQUEST``             |
+|          | * ``re_new_{USERNAME_FIELD}``    |                                      |
 |          |                                  | * ``uid``                            |
 |          |                                  | * ``token``                          |
-|          |                                  | * ``new_username``                   |
-|          |                                  | * ``re_new_username``                |
+|          |                                  | * ``new_{USERNAME_FIELD}``           |
+|          |                                  | * ``re_new_{USERNAME_FIELD}``        |
 +----------+----------------------------------+--------------------------------------+
 
 Set Password
@@ -244,16 +261,17 @@ setup ``PASSWORD_RESET_CONFIRM_URL``.
 
     ``HTTP_204_NO_CONTENT`` if ``PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND`` is ``False``
 
-    Otherwise and if ``{{ User.EMAIL_FIELD }}`` does not exist in database ``HTTP_400_BAD_REQUEST``
+    Otherwise if the value of ``{EMAIL_FIELD}`` does not exist in database
+    ``HTTP_400_BAD_REQUEST``
 
 +----------+---------------------------------+------------------------------+
 | Method   | Request                         | Response                     |
 +==========+=================================+==============================+
-| ``POST`` |  ``{{ User.EMAIL_FIELD }}``     | ``HTTP_204_NO_CONTENT``      |
+| ``POST`` |  ``{EMAIL_FIELD}``              | ``HTTP_204_NO_CONTENT``      |
 |          |                                 |                              |
 |          |                                 | ``HTTP_400_BAD_REQUEST``     |
 |          |                                 |                              |
-|          |                                 | * ``{{ User.EMAIL_FIELD }}`` |
+|          |                                 | * ``{EMAIL_FIELD}``          |
 +----------+---------------------------------+------------------------------+
 
 Reset Password Confirmation

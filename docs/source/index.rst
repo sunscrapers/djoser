@@ -35,9 +35,6 @@ Welcome to djoser's documentation!
     :caption: Usage
 
     migration_guide
-    emails
-    adjustment
-    examples
 
 Indices and tables
 ==================
