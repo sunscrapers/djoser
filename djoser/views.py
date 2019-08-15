@@ -185,7 +185,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if settings.SEND_CONFIRMATION_EMAIL:
             context = {"user": user}
             to = [get_user_email(user)]
-            settings.EMAIL.activation(self.request, context).send(to)
+            settings.EMAIL.confirmation(self.request, context).send(to)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
