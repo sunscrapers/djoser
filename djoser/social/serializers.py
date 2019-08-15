@@ -1,7 +1,8 @@
-from djoser.conf import settings
 from rest_framework import serializers
 from social_core import exceptions
 from social_django.utils import load_backend, load_strategy
+
+from djoser.conf import settings
 
 
 class ProviderAuthSerializer(serializers.Serializer):

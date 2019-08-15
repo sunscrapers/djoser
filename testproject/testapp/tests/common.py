@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
+
 from djoser.conf import settings as djoser_settings
 
 try:

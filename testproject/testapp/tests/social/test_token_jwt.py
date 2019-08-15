@@ -1,6 +1,7 @@
 from django.test import TestCase
-from djoser.social.token.jwt import TokenStrategy
 from rest_framework_simplejwt.serializers import TokenVerifySerializer
+
+from djoser.social.token.jwt import TokenStrategy
 
 from ..common import create_user
 

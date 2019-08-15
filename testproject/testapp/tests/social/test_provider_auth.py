@@ -1,9 +1,10 @@
-import djoser.social.views
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.utils import six
 from djet import assertions, restframework
 from rest_framework import status
 from social_core.exceptions import AuthException
+
+import djoser.social.views
 
 from ..common import create_user, mock
 

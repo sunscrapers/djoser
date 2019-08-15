@@ -1,8 +1,9 @@
-from djoser.conf import settings
-from djoser.social.serializers import ProviderAuthSerializer
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from social_django.utils import load_backend, load_strategy
+
+from djoser.conf import settings
+from djoser.social.serializers import ProviderAuthSerializer
 
 
 class ProviderAuthView(generics.CreateAPIView):

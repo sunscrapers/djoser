@@ -1,4 +1,5 @@
 from django.conf.urls import url
+
 from djoser import views
 
 urlpatterns = [

@@ -1,10 +1,11 @@
 from django.conf import settings
 from django.test.utils import override_settings
 from djet import assertions
-from djoser.conf import settings as djoser_settings
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+
+from djoser.conf import settings as djoser_settings
 from testapp.tests.common import create_user, login_user
 
 Token = djoser_settings.TOKEN_MODEL

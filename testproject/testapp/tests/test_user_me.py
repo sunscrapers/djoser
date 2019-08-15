@@ -5,6 +5,7 @@ from djet import assertions
 from rest_framework import serializers, status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+
 from testapp.tests.common import create_user, login_user
 
 User = get_user_model()

@@ -1,13 +1,14 @@
-import djoser.utils
-import djoser.views
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.test.utils import override_settings
 from djet import assertions
-from djoser.conf import settings as default_settings
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+
+import djoser.utils
+import djoser.views
+from djoser.conf import settings as default_settings
 from testapp.tests.common import create_user
 
 

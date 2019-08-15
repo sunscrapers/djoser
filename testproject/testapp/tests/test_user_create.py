@@ -1,14 +1,14 @@
-from pkg_resources import parse_version
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 from djet import assertions
-from djoser.conf import settings as default_settings
+from pkg_resources import parse_version
 from rest_framework import __version__ as drf_version
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+
+from djoser.conf import settings as default_settings
 from testapp.models import CustomUser, ExampleUser
 from testapp.tests.common import create_user, mock, perform_create_mock
 

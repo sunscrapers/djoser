@@ -3,11 +3,12 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core import mail
 from django.test.utils import override_settings
 from djet import assertions
-from djoser.compat import get_user_email
-from djoser.conf import settings as default_settings
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+
+from djoser.compat import get_user_email
+from djoser.conf import settings as default_settings
 from testapp.models import CustomUser
 from testapp.tests.common import create_user, mock
 

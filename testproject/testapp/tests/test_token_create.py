@@ -1,10 +1,11 @@
 import django
 from django.contrib.auth import user_logged_in, user_login_failed
 from djet import assertions
-from djoser.conf import settings
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+
+from djoser.conf import settings
 from testapp.tests.common import create_user
 
 

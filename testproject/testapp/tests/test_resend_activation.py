@@ -1,10 +1,11 @@
 from django.conf import settings
 from django.test.utils import override_settings
 from djet import assertions
-from djoser.compat import get_user_email
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+
+from djoser.compat import get_user_email
 from testapp.models import CustomUser
 from testapp.tests.common import create_user, mock
 

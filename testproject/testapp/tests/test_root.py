@@ -1,7 +1,8 @@
-import djoser.views
 import pytest
 from djet import assertions, restframework
 from rest_framework import status
+
+import djoser.views
 
 # @pytest.mark.skip
 # class RootViewTest(restframework.APIViewTestCase,
