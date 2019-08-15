@@ -84,6 +84,10 @@ class UserViewSet(viewsets.ModelViewSet):
             self.permission_classes = settings.PERMISSIONS.username_reset
         elif self.action == "reset_username_confirm":
             self.permission_classes = settings.PERMISSIONS.username_reset_confirm
+        elif self.action == "destroy" or (
+            self.action == "me" and self.request and self.request.method == "DELETE"
+        ):
+            self.permission_classes = settings.PERMISSIONS.user_delete
         return super().get_permissions()
 
     def get_serializer_class(self):
@@ -91,7 +95,7 @@ class UserViewSet(viewsets.ModelViewSet):
             if settings.USER_CREATE_PASSWORD_RETYPE:
                 return settings.SERIALIZERS.user_create_password_retype
             return settings.SERIALIZERS.user_create
-        elif self.action == "remove" or (
+        elif self.action == "destroy" or (
             self.action == "me" and self.request and self.request.method == "DELETE"
         ):
             return settings.SERIALIZERS.user_delete
