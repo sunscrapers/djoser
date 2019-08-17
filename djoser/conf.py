@@ -1,7 +1,6 @@
 from django.apps import apps
 from django.conf import settings as django_settings
 from django.test.signals import setting_changed
-from django.utils import six
 from django.utils.functional import LazyObject
 from django.utils.module_loading import import_string
 
@@ -102,7 +101,7 @@ SETTINGS_TO_IMPORT = ["TOKEN_MODEL", "SOCIAL_AUTH_TOKEN_STRATEGY"]
 
 
 class Settings:
-    def __init__(self, default_settings, explicit_overriden_settings=None):
+    def __init__(self, default_settings, explicit_overriden_settings: dict = None):
         if explicit_overriden_settings is None:
             explicit_overriden_settings = {}
 
@@ -116,12 +115,12 @@ class Settings:
         self._init_settings_to_import()
 
     def _load_default_settings(self):
-        for setting_name, setting_value in six.iteritems(default_settings):
+        for setting_name, setting_value in default_settings.items():
             if setting_name.isupper():
                 setattr(self, setting_name, setting_value)
 
-    def _override_settings(self, overriden_settings):
-        for setting_name, setting_value in six.iteritems(overriden_settings):
+    def _override_settings(self, overriden_settings: dict):
+        for setting_name, setting_value in overriden_settings.items():
             value = setting_value
             if isinstance(setting_value, dict):
                 value = getattr(self, setting_name, {})

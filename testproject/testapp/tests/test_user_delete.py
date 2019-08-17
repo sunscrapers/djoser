@@ -58,10 +58,9 @@ class UserMeDeleteViewTest(
 
             self.client.force_authenticate(user=user)
             self.client.delete(reverse("user-me"), data=data, user=user)
-        with override_settings(
+        override_settings(
             DJOSER=dict(settings.DJOSER, **{"PERMISSIONS": {"user_delete": old_value}})
-        ):
-            pass
+        ).enable()
 
     def test_serializer_class(self):
         old_value = djoser_settings.SERIALIZERS["user_delete"]
@@ -77,10 +76,9 @@ class UserMeDeleteViewTest(
 
             self.client.force_authenticate(user=user)
             self.client.delete(reverse("user-me"), data=data, user=user)
-        with override_settings(
+        override_settings(
             DJOSER=dict(settings.DJOSER, **{"SERIALIZERS": {"user_delete": old_value}})
-        ):
-            pass
+        ).enable()
 
 
 class UserViewSetDeletionTest(
@@ -131,10 +129,9 @@ class UserViewSetDeletionTest(
             self.client.delete(
                 reverse("user-detail", kwargs={"pk": user.pk}), data=data, user=user
             )
-        with override_settings(
+        override_settings(
             DJOSER=dict(settings.DJOSER, **{"PERMISSIONS": {"user_delete": old_value}})
-        ):
-            pass
+        ).enable()
 
     def test_serializer_class(self):
         old_value = djoser_settings.SERIALIZERS["user_delete"]
@@ -152,7 +149,6 @@ class UserViewSetDeletionTest(
             self.client.delete(
                 reverse("user-detail", kwargs={"pk": user.pk}), data=data, user=user
             )
-        with override_settings(
+        override_settings(
             DJOSER=dict(settings.DJOSER, **{"SERIALIZERS": {"user_delete": old_value}})
-        ):
-            pass
+        ).enable()
