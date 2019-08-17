@@ -32,6 +32,7 @@ django-templated-mail = "*"
 coreapi = "*"
 djangorestframework-simplejwt = "*"
 docutils = "==0.15"
+wheel = "*"
 
 [dev-packages.isort]
 extras = [ "pyproject",]
