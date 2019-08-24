@@ -1,5 +1,3 @@
-import warnings
-
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions as django_exceptions
@@ -114,13 +112,16 @@ class TokenCreateSerializer(serializers.Serializer):
         self.fields[settings.LOGIN_FIELD] = serializers.CharField(required=False)
 
     def validate(self, attrs):
-        self.user = authenticate(
-            username=attrs.get(settings.LOGIN_FIELD), password=attrs.get("password")
-        )
-
+        password = attrs.get("password")
+        params = {settings.LOGIN_FIELD: attrs.get(settings.LOGIN_FIELD)}
+        self.user = authenticate(**params, password=password)
         if not self.user:
-            self.fail("invalid_credentials")
-        return attrs
+            self.user = User.objects.filter(**params).first()
+            if self.user and not self.user.check_password(password):
+                self.fail("invalid_credentials")
+        if self.user and self.user.is_active:
+            return attrs
+        self.fail("invalid_credentials")
 
 
 class UserFunctionsMixin:

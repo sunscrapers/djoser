@@ -1,5 +1,7 @@
 import django
+from django.conf import settings as django_settings
 from django.contrib.auth import user_logged_in, user_login_failed
+from django.test import override_settings
 from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -82,3 +84,18 @@ class TokenCreateViewTest(
             response.data["non_field_errors"],
             [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR],
         )
+
+    @override_settings(DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "email"}))
+    def test_login_using_email(self):
+        user = create_user()
+        previous_last_login = user.last_login
+        data = {"email": user.email, "password": user.raw_password}
+        user_logged_in.connect(self.signal_receiver)
+
+        response = self.client.post(self.base_url, data)
+        user.refresh_from_db()
+
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        self.assertEqual(response.data["auth_token"], user.auth_token.key)
+        self.assertNotEqual(user.last_login, previous_last_login)
+        self.assertTrue(self.signal_sent)
