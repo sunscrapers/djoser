@@ -216,7 +216,7 @@ to update the defaults, so by providing, e.g. one key, all the others will stay 
         'user_create_password_retype': 'djoser.serializers.UserCreatePasswordRetypeSerializer',
         'user_delete': 'djoser.serializers.UserDeleteSerializer',
         'user': 'djoser.serializers.UserSerializer',
-        'current_user': 'djoser.serializers.CurrentUserSerializer',
+        'current_user': 'djoser.serializers.UserSerializer',
         'token': 'djoser.serializers.TokenSerializer',
         'token_create': 'djoser.serializers.TokenCreateSerializer',
     }
