@@ -132,7 +132,8 @@ class UserViewSet(viewsets.ModelViewSet):
         return self.request.user
 
     def perform_create(self, serializer):
-        user = serializer.save()
+        super().perform_create(serializer)
+        user = serializer.instance
         signals.user_registered.send(
             sender=self.__class__, user=user, request=self.request
         )
