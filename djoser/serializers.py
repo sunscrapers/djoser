@@ -327,9 +327,12 @@ class UserDeleteSerializer(CurrentPasswordSerializer):
     pass
 
 
-class SetUsernameSerializer(UsernameSerializer, CurrentPasswordSerializer):
-    pass
+class SetUsernameSerializer(UsernameSerializer,
+                            CurrentPasswordSerializer):
+    class Meta:
+        model = User
+        fields = (settings.LOGIN_FIELD, 'current_password')
 
 
-class SetUsernameRetypeSerializer(UsernameRetypeSerializer, CurrentPasswordSerializer):
+class SetUsernameRetypeSerializer(SetUsernameSerializer, UsernameRetypeSerializer):
     pass
