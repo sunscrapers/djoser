@@ -29,6 +29,18 @@ class SetUsernameViewTest(
         user.refresh_from_db()
         self.assertEqual(data["new_username"], user.username)
 
+    def test_post_not_set_new_username_if_wrong_current_password(self):
+        user = create_user()
+        orig_username = user.get_username()
+        data = {"new_username": "ringo", "current_password": "wrong"}
+        login_user(self.client, user)
+
+        response = self.client.post(self.base_url, data, user=user)
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        user.refresh_from_db()
+        self.assertEqual(orig_username, user.username)
+
     @override_settings(DJOSER=dict(settings.DJOSER, **{"SET_USERNAME_RETYPE": True}))
     def test_post_not_set_new_username_if_mismatch(self):
         user = create_user()

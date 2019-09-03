@@ -136,8 +136,8 @@ class UserFunctionsMixin:
         except User.DoesNotExist:
             pass
         if (
-            settings.PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND
-            or settings.USERNAME_RESET_SHOW_EMAIL_NOT_FOUND
+                settings.PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND
+                or settings.USERNAME_RESET_SHOW_EMAIL_NOT_FOUND
         ):
             self.fail("email_not_found")
 
@@ -328,8 +328,10 @@ class UserDeleteSerializer(CurrentPasswordSerializer):
 
 
 class SetUsernameSerializer(UsernameSerializer, CurrentPasswordSerializer):
-    pass
+    class Meta:
+        model = User
+        fields = (settings.LOGIN_FIELD, 'current_password')
 
 
-class SetUsernameRetypeSerializer(UsernameRetypeSerializer, CurrentPasswordSerializer):
+class SetUsernameRetypeSerializer(SetUsernameSerializer, UsernameRetypeSerializer):
     pass
