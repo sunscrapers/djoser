@@ -38,6 +38,7 @@ class SetUsernameViewTest(
         response = self.client.post(self.base_url, data, user=user)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()['current_password'], ['Invalid password.'])
         user.refresh_from_db()
         self.assertEqual(orig_username, user.username)
 
