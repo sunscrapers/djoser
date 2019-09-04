@@ -112,7 +112,7 @@ class UserViewSetMeDeleteTest(
         data = {"current_password": "secret"}
         login_user(self.client, user)
 
-        response = self.client.delete(self.base_url, data=data, user=user)
+        response = self.client.delete(self.base_url, data=data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_instance_does_not_exist(User, username="john")
@@ -123,7 +123,7 @@ class UserViewSetMeDeleteTest(
         data = {"current_password": "incorrect"}
         login_user(self.client, user)
 
-        response = self.client.delete(self.base_url, data=data, user=user)
+        response = self.client.delete(self.base_url, data=data)
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {"current_password": ["Invalid password."]})
