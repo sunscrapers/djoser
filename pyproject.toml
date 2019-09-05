@@ -35,4 +35,4 @@ multi_line_output = 3
 include_trailing_comma = false
 line_length = 88
 known_first_party = ["testapp", "djoser"]
-known_third_party = ["django", "djet", "pkg_resources", "pytest", "rest_framework", "rest_framework_simplejwt", "setuptools", "social_core", "social_django", "templated_mail"]
+known_third_party = ["django", "djet", "pkg_resources", "pytest", "rest_framework", "rest_framework_simplejwt", "setuptools", "social_core", "social_django", "templated_mail", "webauthn"]

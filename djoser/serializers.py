@@ -31,7 +31,25 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserCreateMixin:
+    def create(self, validated_data):
+        try:
+            user = self.perform_create(validated_data)
+        except IntegrityError:
+            self.fail("cannot_create_user")
+
+        return user
+
+    def perform_create(self, validated_data):
+        with transaction.atomic():
+            user = User.objects.create_user(**validated_data)
+            if settings.SEND_ACTIVATION_EMAIL:
+                user.is_active = False
+                user.save(update_fields=["is_active"])
+        return user
+
+
+class UserCreateSerializer(UserCreateMixin, serializers.ModelSerializer):
     password = serializers.CharField(style={"input_type": "password"}, write_only=True)
 
     default_error_messages = {
@@ -59,22 +77,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
             )
 
         return attrs
-
-    def create(self, validated_data):
-        try:
-            user = self.perform_create(validated_data)
-        except IntegrityError:
-            self.fail("cannot_create_user")
-
-        return user
-
-    def perform_create(self, validated_data):
-        with transaction.atomic():
-            user = User.objects.create_user(**validated_data)
-            if settings.SEND_ACTIVATION_EMAIL:
-                user.is_active = False
-                user.save(update_fields=["is_active"])
-        return user
 
 
 class UserCreatePasswordRetypeSerializer(UserCreateSerializer):
