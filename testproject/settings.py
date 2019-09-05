@@ -75,3 +75,5 @@ DJOSER = {
 }
 
 JWT_AUTH = {"JWT_ALLOW_REFRESH": True}
+STATIC_ROOT = "static"
+ALLOWED_HOSTS = ["*"]

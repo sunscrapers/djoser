@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Djoser Webauthn example</title>
+</head>
+<body>
+    <h1>Webauthn example</h1>
+    <hr />
+    <h2>Registration</h2>
+    <form id="signup-form">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="signup-username" required>
+        </div>
+        <div>
+            <label for="display-name">Display name:</label>
+            <input type="text" name="display-name" id="signup-displayname" required>
+        </div>
+        <button type="submit">Register with WebAuthn</button>
+    </form>
+    <hr />
+    <h2>Logging in</h2>
+    <form id="login-form">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="login-username" required>
+        </div>
+        <button type="submit">Log in with WebAuthn</button>
+    </form>
+<script type="text/javascript" src="{% static 'js/base64.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/webauthn.js' %}"></script>
+</body>
+</html>
