@@ -31,6 +31,7 @@ INSTALLED_APPS = (
     "djoser",
     "social_django",
     "testapp",
+    "djoser.webauthn",
 )
 
 STATIC_URL = "/static/"
