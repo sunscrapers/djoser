@@ -1,18 +1,18 @@
-from django.urls import path
+from django.conf.urls import url
 
 from . import views
 
 urlpatterns = [
-    path(
-        "signup_request/",
+    url(
+        r"^signup_request/$",
         views.SingupRequestView.as_view(),
         name="webauthn_signup_request",
     ),
-    path("signup/<ukey>/", views.SignupView.as_view(), name="webauthn_signup"),
-    path(
-        "login_request/",
+    url(r"^signup/(?P<ukey>.+)/$", views.SignupView.as_view(), name="webauthn_signup"),
+    url(
+        r"^login_request/$",
         views.LoginRequestView.as_view(),
         name="webauthn_login_request",
     ),
-    path("login/", views.LoginView.as_view(), name="webauthn_login"),
+    url(r"^login/$", views.LoginView.as_view(), name="webauthn_login"),
 ]
