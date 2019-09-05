@@ -25,7 +25,7 @@ setup(
     description="REST version of Django authentication system.",
     author_email="info@sunscrapers.com",
     long_description=readme,
-    install_requires=["django-templated-mail"],
+    install_requires=["django-templated-mail", "webauthn"],
     setup_requires=["Babel>=2.6.0"],
     include_package_data=True,
     url="https://github.com/sunscrapers/djoser",
