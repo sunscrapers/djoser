@@ -17,6 +17,13 @@ You can provide ``DJOSER`` settings like this:
 
     All following setting names written in CAPS are keys on ``DJOSER`` dict.
 
+USER_ID_FIELD
+-------------
+
+Name of a unique field in User model to be used as id for ``/users/<id>/`` endpoints.
+This is useful if you want to not change default primary key of the User model and hide from public.
+
+**Default**: ``User._meta.pk.name`` where ``User`` is the model set with Django's setting AUTH_USER_MODEL.
 
 LOGIN_FIELD
 -----------
