@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
-            User._meta.pk.name,
+            settings.ID_FIELD,
             settings.LOGIN_FIELD,
         )
         read_only_fields = (settings.LOGIN_FIELD,)
@@ -60,7 +60,7 @@ class UserCreateSerializer(UserCreateMixin, serializers.ModelSerializer):
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
             settings.LOGIN_FIELD,
-            User._meta.pk.name,
+            settings.ID_FIELD,
             "password",
         )
 
