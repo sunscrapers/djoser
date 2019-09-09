@@ -46,6 +46,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = settings.PERMISSIONS.user
     token_generator = default_token_generator
+    lookup_field = settings.USER_ID_FIELD
 
     def permission_denied(self, request, message=None):
         if (

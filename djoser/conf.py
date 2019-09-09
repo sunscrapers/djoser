@@ -27,6 +27,7 @@ class ObjDict(dict):
 
 
 default_settings = {
+    "USER_ID_FIELD": User._meta.pk.name,
     "LOGIN_FIELD": User.USERNAME_FIELD,
     "SEND_ACTIVATION_EMAIL": False,
     "SEND_CONFIRMATION_EMAIL": False,

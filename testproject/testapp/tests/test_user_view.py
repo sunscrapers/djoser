@@ -17,7 +17,7 @@ class UserViewTest(
     def setUp(self):
         self.user = create_user()
         self.client.force_authenticate(user=self.user)
-        self.url = reverse("user-detail", kwargs={"pk": self.user.pk})
+        self.url = reverse("user-detail", kwargs={User._meta.pk.name: self.user.pk})
 
     def test_get_return_user(self):
         response = self.client.get(self.url)
@@ -62,7 +62,7 @@ class UserViewTest(
             }
         )
         data = {"email": "ringo@beatles.com"}
-        url = reverse("user-detail", kwargs={"pk": other_user.pk})
+        url = reverse("user-detail", kwargs={User._meta.pk.name: other_user.pk})
 
         response = self.client.get(self.url)
         self.assert_status_equal(response, status.HTTP_200_OK)
@@ -81,7 +81,7 @@ class UserViewTest(
             }
         )
         data = {"email": "ringo@beatles.com"}
-        url = reverse("user-detail", kwargs={"pk": other_user.pk})
+        url = reverse("user-detail", kwargs={User._meta.pk.name: other_user.pk})
 
         response = self.client.get(self.url)
         self.assert_status_equal(response, status.HTTP_200_OK)
