@@ -205,7 +205,7 @@ class PasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(style={"input_type": "password"})
 
     def validate(self, attrs):
-        user = self.context["request"].user or self.user
+        user = getattr(self, 'user', None) or self.context["request"].user
         # why assert? There are ValidationError / fail everywhere
         assert user is not None
 
