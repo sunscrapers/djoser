@@ -52,7 +52,7 @@ active when calling this endpoint (this will happen if you call it more than onc
 |          |                                      | ``HTTP_400_BAD_REQUEST``         |
 |          |                                      |                                  |
 |          |                                      | * ``uid``                        |
-|          |                                      | * ``token``           |
+|          |                                      | * ``token``                      |
 |          |                                      |                                  |
 |          |                                      | ``HTTP_403_FORBIDDEN``           |
 |          |                                      |                                  |
