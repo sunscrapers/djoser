@@ -96,6 +96,19 @@ default_settings = {
             "token_destroy": ["rest_framework.permissions.IsAuthenticated"],
         }
     ),
+    "ALLOW_URLS": {
+        "user-list": ('get', 'post'),
+        "user-detail": ('get', 'put', 'patch', 'delete'),
+        "user-activation": ('post',),
+        "user-me": ('get', 'put', 'patch', 'delete'),
+        "user-resend-activation": ('post',),
+        "user-reset-password": ('post',),
+        "user-reset-password-confirm": ('post',),
+        "user-reset-username": ('post',),
+        "user-reset-username-confirm": ('post',),
+        "user-set-password": ('post',),
+        "user-set-username": ('post',)
+    }
 }
 
 SETTINGS_TO_IMPORT = ["TOKEN_MODEL", "SOCIAL_AUTH_TOKEN_STRATEGY"]
