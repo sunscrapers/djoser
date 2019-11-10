@@ -34,9 +34,9 @@ djangorestframework-simplejwt = "*"
 docutils = "==0.15"
 wheel = "*"
 
-[dev-packages.isort]
-extras = [ "pyproject",]
+#[dev-packages.isort]
+#extras = [ "pyproject",]
 
-[dev-packages.be19849]
-path = "/home/minder/projekty/sunscrapers/djoser"
-editable = true
+#[dev-packages.be19849]
+#path = "/home/minder/projekty/sunscrapers/djoser"
+#editable = true
