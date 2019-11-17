@@ -194,7 +194,7 @@ setup ``USERNAME_RESET_CONFIRM_URL``.
 |          |                                 |                              |
 |          |                                 | ``HTTP_400_BAD_REQUEST``     |
 |          |                                 |                              |
-|          |                                 | * ``{EMAIL_FIELD}`` |
+|          |                                 | * ``{EMAIL_FIELD}``          |
 +----------+---------------------------------+------------------------------+
 
 Reset Username Confirmation
