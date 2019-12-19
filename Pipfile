@@ -36,7 +36,3 @@ wheel = "*"
 
 [dev-packages.isort]
 extras = [ "pyproject",]
-
-[dev-packages.be19849]
-path = "/home/minder/projekty/sunscrapers/djoser"
-editable = true
