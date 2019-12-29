@@ -218,13 +218,13 @@ class UserViewSet(viewsets.ModelViewSet):
         self.request.user.set_password(serializer.data["new_password"])
         self.request.user.save()
 
-        if settings.LOGOUT_ON_PASSWORD_CHANGE:
-            utils.logout_user(self.request)
-
         if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
             context = {"user": self.request.user}
             to = [get_user_email(self.request.user)]
             settings.EMAIL.password_changed_confirmation(self.request, context).send(to)
+
+        if settings.LOGOUT_ON_PASSWORD_CHANGE:
+            utils.logout_user(self.request)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(["post"], detail=False)
