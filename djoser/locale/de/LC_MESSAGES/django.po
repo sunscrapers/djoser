@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: djoser\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-13 17:15+0100\n"
+"POT-Creation-Date: 2020-01-13 17:40+0100\n"
 "Last-Translator: Bertram Bühner <github@sheepyhollow.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -20,11 +20,11 @@ msgstr ""
 
 #: constants.py:4
 msgid "Unable to log in with provided credentials."
-msgstr "Die Anmeldung mit den angegebenen Daten ist nicht möglich."
+msgstr "Eine Anmeldung ist mit den angegebenen Daten nicht möglich."
 
 #: constants.py:5
 msgid "User account is disabled."
-msgstr "Dieser Benutzeraccount ist deaktiviert."
+msgstr "Dieses Benutzerkonto ist deaktiviert."
 
 #: constants.py:6
 msgid "Invalid token for given user."
@@ -45,15 +45,15 @@ msgstr "Die beiden Passwörter stimmen nicht überein."
 #: constants.py:10
 #, python-brace-format
 msgid "The two {0} fields didn't match."
-msgstr "Die beiden {0} Felder stimmen nicht überein."
+msgstr "Die beiden {0}-Felder stimmen nicht überein."
 
 #: constants.py:11
 msgid "Invalid password."
-msgstr "Ungültiges Passwort."
+msgstr "Das Passwort ist ungültig."
 
 #: constants.py:12
 msgid "User with given email does not exist."
-msgstr "Es existiert kein Benutzer mit dieser Mailadresse."
+msgstr "Es existiert kein Benutzer mit dieser E-Mailadresse."
 
 #: constants.py:13
 msgid "Unable to create account."
@@ -111,7 +111,7 @@ msgstr ""
 
 #: templates/email/confirmation.html:8 templates/email/confirmation.html:16
 msgid "Your account has been created and is ready to use!"
-msgstr "Ihr Benutzerkonto wurde erstellt und ist bereit zur Verwendung!"
+msgstr "Ihr Benutzerkonto wurde erstellt und ist freigeschaltet!"
 
 #: templates/email/password_reset.html:4
 #, python-format
@@ -124,7 +124,7 @@ msgid ""
 "You're receiving this email because you requested a password reset for your "
 "user account at %(site_name)s."
 msgstr ""
-"Sie erhalten diese Mail, da Sie das Zurücksetzen Ihres Passworts auf "
+"Sie erhalten diese E-Mail, da Sie das Zurücksetzen Ihres Passworts auf "
 "%(site_name)s angefordert haben."
 
 #: templates/email/password_reset.html:10
