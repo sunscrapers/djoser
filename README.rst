@@ -27,8 +27,8 @@ architecture.
 
 Developed by `SUNSCRAPERS <http://sunscrapers.com/>`_ with passion & patience.
 
-.. image:: https://asciinema.org/a/FBTYjfDPUr99jxZqbLOZhh9Pd.png
-  :target: https://asciinema.org/a/FBTYjfDPUr99jxZqbLOZhh9Pd?autoplay=1&speed=2
+.. image:: https://asciinema.org/a/94J4eG2tSBD2iEfF30a6vGtXw.png
+  :target: https://asciinema.org/a/94J4eG2tSBD2iEfF30a6vGtXw
 
 Requirements
 ============
@@ -114,3 +114,7 @@ List of projects related to Django, REST and authentication:
 - `django-oauth-toolkit <https://github.com/evonove/django-oauth-toolkit>`_
 - `django-rest-auth <https://github.com/Tivix/django-rest-auth>`_
 - `django-rest-framework-digestauth <https://github.com/juanriaza/django-rest-framework-digestauth>`_ (not maintained)
+
+* Please, keep in mind that while using custom authentication and TokenCreateSerializer 
+validation, there is a path that **ignores intentional return of None** from authenticate() 
+and try to find User using parameters. Probably, that will be changed in the future. 
