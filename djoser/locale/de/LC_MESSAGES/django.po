@@ -1,0 +1,138 @@
+# Copyright (C) Sunscrapers
+# This file is distributed under the same license as the djoser package.
+#
+# Translators:
+# Bertram Bühner <github@sheepyhollow.de>, 2020
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: djoser\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-01-13 17:40+0100\n"
+"Last-Translator: Bertram Bühner <github@sheepyhollow.de>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: constants.py:4
+msgid "Unable to log in with provided credentials."
+msgstr "Eine Anmeldung ist mit den angegebenen Daten nicht möglich."
+
+#: constants.py:5
+msgid "User account is disabled."
+msgstr "Dieses Benutzerkonto ist deaktiviert."
+
+#: constants.py:6
+msgid "Invalid token for given user."
+msgstr "Das Token für diesen Benutzer ist ungültig."
+
+#: constants.py:7
+msgid "Invalid user id or user doesn't exist."
+msgstr "Die User-ID ist ungültig oder dieser Benutzer existiert nicht."
+
+#: constants.py:8
+msgid "Stale token for given user."
+msgstr "Das Token für diesen Benutzer ist abgelaufen."
+
+#: constants.py:9
+msgid "The two password fields didn't match."
+msgstr "Die beiden Passwörter stimmen nicht überein."
+
+#: constants.py:10
+#, python-brace-format
+msgid "The two {0} fields didn't match."
+msgstr "Die beiden {0}-Felder stimmen nicht überein."
+
+#: constants.py:11
+msgid "Invalid password."
+msgstr "Das Passwort ist ungültig."
+
+#: constants.py:12
+msgid "User with given email does not exist."
+msgstr "Es existiert kein Benutzer mit dieser E-Mailadresse."
+
+#: constants.py:13
+msgid "Unable to create account."
+msgstr "Das Benutzerkonto kann nicht angelegt werden."
+
+#: constants.py:15
+msgid ""
+"User model does not contain specified email field. Please see http://djoser."
+"readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME for more "
+"details."
+msgstr ""
+"Das user-model enthält kein E-Mail-Feld. Weitere Details unter "
+"http://djoser.readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME "
+"."
+
+#: templates/email/activation.html:4
+#, python-format
+msgid "Account activation on %(site_name)s"
+msgstr "Aktivierung des Benutzerkontos auf %(site_name)s"
+
+#: templates/email/activation.html:8 templates/email/activation.html:19
+#, python-format
+msgid ""
+"You're receiving this email because you need to finish activation process on "
+"%(site_name)s."
+msgstr ""
+"Sie erhalten diese E-Mail, da Sie den Aktivierungsprozess auf %(site_name)s."
+"abschließen müssen."
+
+#: templates/email/activation.html:10 templates/email/activation.html:22
+msgid "Please go to the following page to activate account:"
+msgstr "Bitte begeben Sie sich auf folgende Seite, um die Aktivierung abzuschließen:"
+
+#: templates/email/activation.html:13 templates/email/activation.html:25
+#: templates/email/confirmation.html:10 templates/email/confirmation.html:18
+#: templates/email/password_reset.html:14
+#: templates/email/password_reset.html:26
+msgid "Thanks for using our site!"
+msgstr "Vielen Dank für die Nutzung unserer Seite!"
+
+#: templates/email/activation.html:15 templates/email/activation.html:27
+#: templates/email/confirmation.html:12 templates/email/confirmation.html:20
+#: templates/email/password_reset.html:16
+#: templates/email/password_reset.html:28
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "Das Team von %(site_name)s"
+
+#: templates/email/confirmation.html:4
+#, python-format
+msgid ""
+"%(site_name)s - Your account has been successfully created and activated!"
+msgstr ""
+"%(site_name)s - Ihr Benutzerkonto wurde erfolgreich erstellt und aktiviert!"
+
+#: templates/email/confirmation.html:8 templates/email/confirmation.html:16
+msgid "Your account has been created and is ready to use!"
+msgstr "Ihr Benutzerkonto wurde erstellt und ist freigeschaltet!"
+
+#: templates/email/password_reset.html:4
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr "Zurücksetzen des Passworts auf %(site_name)s"
+
+#: templates/email/password_reset.html:8 templates/email/password_reset.html:20
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"Sie erhalten diese E-Mail, da Sie das Zurücksetzen Ihres Passworts auf "
+"%(site_name)s angefordert haben."
+
+#: templates/email/password_reset.html:10
+#: templates/email/password_reset.html:22
+msgid "Please go to the following page and choose a new password:"
+msgstr "Bitte geben Sie auf der folgenden Seite ein neues Passwort ein:"
+
+#: templates/email/password_reset.html:12
+#: templates/email/password_reset.html:24
+msgid "Your username, in case you've forgotten:"
+msgstr "Ihr Benutzername - falls Sie ihn vergessen haben - lautet:"
