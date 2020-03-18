@@ -11,7 +11,7 @@ Here are some advices to help you with the transition to new Djoser.
 #. If you still use Python 2.x - stay on Djoser 1.x.
 #. If you still use Django REST Framework 3.9 or lower - stay on Djoser 1.x.
 #. There were several changes to default :doc:`settings<settings>`
-#. User-related enpoints are gathered within UserViewSet.
+#. User-related endpoints are gathered within UserViewSet.
 
 
 Some View class names and URLs has been updated or removed
@@ -31,7 +31,7 @@ subclassing UserViewSet and overwrite appropriate methods there.
 Base URLs:
 
 * ``users/create/``, ``users/delete/``, ``users/confirm/``, and ``users/resend/``
-  removed; use viewset-provided enpoints (see :doc:`settings<settings>`)
+  removed; use viewset-provided endpoints (see :doc:`settings<settings>`)
 * ``password/`` has been renamed to ``users/set_password/``
 * ``password/reset/`` has been renamed to ``users/reset_password/``
 * ``password/reset/confirm/`` has been renamed to ``users/reset_password_confirm/``
