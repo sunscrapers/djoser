@@ -12,7 +12,8 @@ Token = djoser_settings.TOKEN_MODEL
 
 
 class SetPasswordViewTest(
-    APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
+    APITestCase, assertions.EmailAssertionsMixin,
+    assertions.StatusCodeAssertionsMixin
 ):
     def setUp(self):
         self.base_url = reverse("user-set-password")
@@ -32,7 +33,8 @@ class SetPasswordViewTest(
         self.assertTrue(user.check_password(data["new_password"]))
         self.assert_emails_in_mailbox(0)
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
     def test_post_set_new_password_with_retype(self):
         user = create_user()
         data = {
@@ -58,7 +60,8 @@ class SetPasswordViewTest(
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
     def test_post_not_set_new_password_if_mismatch(self):
         user = create_user()
         data = {
@@ -116,7 +119,8 @@ class SetPasswordViewTest(
         self.assertTrue(is_logged)
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER, **{"PASSWORD_CHANGED_EMAIL_CONFIRMATION": True})
+        DJOSER=dict(settings.DJOSER,
+                    **{"PASSWORD_CHANGED_EMAIL_CONFIRMATION": True})
     )
     def test_post_password_changed_confirmation_email(self):
         user = create_user()
@@ -130,3 +134,20 @@ class SetPasswordViewTest(
         self.assertTrue(user.check_password(data["new_password"]))
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[user.email])
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER,
+                    **{"PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
+                       "LOGOUT_ON_PASSWORD_CHANGE": True,
+                       "CREATE_SESSION_ON_LOGIN": True})
+    )
+    def test_post_logout_with_confirmation_email_if_session_created(self):
+        user = create_user()
+        data = {"new_password": "new password", "current_password": "secret"}
+        login_user(self.client, user)
+
+        response = self.client.post(self.base_url, data)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        is_logged = Token.objects.filter(user=user).exists()
+        self.assertFalse(is_logged)
