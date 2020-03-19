@@ -1,0 +1,141 @@
+# Copyright (C) Sunscrapers
+# This file is distributed under the same license as the djoser package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: djoser commit 298825d on master\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-18 21:45-0300\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Matheus Gomes <gomes0502@gmail.com>\n"
+"Language-Team: Brasileiro\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: djoser/constants.py:4
+msgid "Unable to login with provided credentials."
+msgstr "Não foi possível fazer login com os dados inseridos."
+
+#: djoser/constants.py:5
+msgid "User account is disabled."
+msgstr "A conta do usuário está desativada."
+
+#: djoser/constants.py:6
+msgid "Invalid token for given user."
+msgstr "Token inválido para o usuário fornecido."
+
+#: djoser/constants.py:7
+msgid "Invalid user id or user doesn't exist."
+msgstr "ID de usuário inválido ou inexistente."
+
+#: djoser/constants.py:8
+msgid "Stale token for given user."
+msgstr "Token expirado para o usuário fornecido."
+
+#: djoser/constants.py:9
+msgid "The two password fields didn't match."
+msgstr "Os campos de senha não estão iguais."
+
+#: djoser/constants.py:10
+#, python-brace-format
+msgid "The two {0} fields didn't match."
+msgstr "Os dois campos {0} não estão iguais."
+
+#: djoser/constants.py:11
+msgid "Invalid password."
+msgstr "Senha inválida."
+
+#: djoser/constants.py:12
+msgid "User with given email does not exist."
+msgstr "Não existe um usuário com o email fornecido."
+
+#: djoser/constants.py:13
+msgid "Unable to create account."
+msgstr "Não foi possível criar a conta."
+
+#: djoser/constants.py:15
+msgid ""
+"User model does not contain specified email field. Please see http://djoser."
+"readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME for more "
+"details."
+msgstr ""
+"O usuário fornecido não possui campo de email definido. Por favor, confira "
+"http://djoser.readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME "
+"para mais detalhes."
+
+#: djoser/templates/email/activation.html:4
+#, python-format
+msgid "Account activation on %(site_name)s"
+msgstr "Ativação de conta em %(site_name)s"
+
+#: templates/email/activation.html:8 templates/email/activation.html:19
+#, python-format
+msgid ""
+"You're receiving this email because you need to finish activation process on "
+"%(site_name)s."
+msgstr ""
+"Você está recebendo este email porque você precisa terminar o processo em "
+"%(site_name)s."
+
+#: djoser/templates/email/activation.html:10
+#: djoser/templates/email/activation.html:22
+msgid "Please go to the following page to activate account:"
+msgstr "Por favor, visite a seguinte página para ativar sua conta:"
+
+#: djoser/templates/email/activation.html:13
+#: djoser/templates/email/activation.html:25
+#: djoser/templates/email/confirmation.html:10
+#: djoser/templates/email/confirmation.html:18
+#: djoser/templates/email/password_reset.html:14
+#: djoser/templates/email/password_reset.html:26
+msgid "Thanks for using our site!"
+msgstr "Obrigado por usar nosso site!"
+
+#: djoser/templates/email/activation.html:15
+#: djoser/templates/email/activation.html:27
+#: djoser/templates/email/confirmation.html:12
+#: djoser/templates/email/confirmation.html:20
+#: djoser/templates/email/password_reset.html:16
+#: djoser/templates/email/password_reset.html:28
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "Time %(site_name)s"
+
+#: djoser/templates/email/confirmation.html:4
+#, python-format
+msgid ""
+"%(site_name)s - Your account has been successfully created and activated!"
+msgstr "%(site_name)s - Sua conta foi criada e ativada com sucesso!"
+
+#: djoser/templates/email/confirmation.html:8
+#: djoser/templates/email/confirmation.html:16
+msgid "Your account has been created and is ready to use!"
+msgstr "Sua conta foi criada com sucesso e está pronta para uso!"
+
+#: djoser/templates/email/password_reset.html:4
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr "Redefina sua senha em %(site_name)s"
+
+#: djoser/templates/email/password_reset.html:8
+#: djoser/templates/email/password_reset.html:20
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"Você está recebendo este email porque você solicitou a redefinição de senha "
+"para sua conta em %(site_name)s."
+
+#: djoser/templates/email/password_reset.html:10
+#: djoser/templates/email/password_reset.html:22
+msgid "Please go to the following page and choose a new password:"
+msgstr "Por favor, visite a seguinte página para definir uma senha nova:"
+
+#: djoser/templates/email/password_reset.html:12
+#: djoser/templates/email/password_reset.html:24
+msgid "Your username, in case you've forgotten:"
+msgstr "Caso tenha esquecido, seu usuário:"
