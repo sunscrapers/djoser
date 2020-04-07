@@ -1,5 +1,5 @@
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.utils import six
+import six
 from djet import assertions, restframework
 from rest_framework import status
 from social_core.exceptions import AuthException
