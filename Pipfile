@@ -24,6 +24,7 @@ social-auth-app-django = "==3.1.0"
 coreapi = "*"
 docutils = "==0.15"
 codacy-coverage = "*"
+isort = {extras = [ "pyproject",]}
 
 [packages]
 djangorestframework = "*"
@@ -33,6 +34,5 @@ coreapi = "*"
 djangorestframework-simplejwt = "*"
 docutils = "==0.15"
 wheel = "*"
+six = "*"
 
-[dev-packages.isort]
-extras = [ "pyproject",]
