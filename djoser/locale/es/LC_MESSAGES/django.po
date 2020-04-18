@@ -1,0 +1,189 @@
+# Copyright (C) Sunscrapers
+# This file is distributed under the same license as the djoser package.
+#
+# Translators:
+# Ariel Torti <arieltorti14@gmail.com>, 2020
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: djoser\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-18 20:06-0300\n"
+"Last-Translator: Ariel Torti <arieltorti14@gmail.com>\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: djoser/constants.py:5
+msgid "Unable to log in with provided credentials."
+msgstr "No es posible iniciar sesion con las credenciales proveídas."
+
+#: djoser/constants.py:6
+msgid "User account is disabled."
+msgstr "Esta cuenta de usuario esta deshabilitada."
+
+#: djoser/constants.py:7
+msgid "Invalid token for given user."
+msgstr "El token del usuario no es valido."
+
+#: djoser/constants.py:8
+msgid "Invalid user id or user doesn't exist."
+msgstr "Id de usuario invalida o usuario inexistente."
+
+#: djoser/constants.py:9
+msgid "Stale token for given user."
+msgstr "El token del usuario ha expirado."
+
+#: djoser/constants.py:10
+msgid "The two password fields didn't match."
+msgstr "El contenido de los dos campos de contraseña no coincide."
+
+#: djoser/constants.py:11
+#, python-brace-format
+msgid "The two {0} fields didn't match."
+msgstr "El contenido de los dos campos de {0} no coincide."
+
+#: djoser/constants.py:12
+msgid "Invalid password."
+msgstr "Contraseña invalida."
+
+#: djoser/constants.py:13
+msgid "User with given email does not exist."
+msgstr "No existe un usuario con el email dado."
+
+#: djoser/constants.py:14
+msgid "Unable to create account."
+msgstr "No es posible crear la cuenta de usuario."
+
+#: djoser/templates/email/activation.html:4
+#, python-format
+msgid "Account activation on %(site_name)s"
+msgstr "Activacion de la cuenta %(site_name)s"
+
+#: djoser/templates/email/activation.html:8
+#: djoser/templates/email/activation.html:19
+#, python-format
+msgid ""
+"You're receiving this email because you need to finish activation process on "
+"%(site_name)s."
+msgstr ""
+"Usted ha recibido este email porque necesita finalizar el proceso de activacion en "
+"%(site_name)s."
+
+#: djoser/templates/email/activation.html:10
+#: djoser/templates/email/activation.html:21
+msgid "Please go to the following page to activate account:"
+msgstr "Por favor diríjase a la siguiente página para activar su cuenta:"
+
+#: djoser/templates/email/activation.html:13
+#: djoser/templates/email/activation.html:24
+#: djoser/templates/email/confirmation.html:10
+#: djoser/templates/email/confirmation.html:18
+#: djoser/templates/email/password_changed_confirmation.html:10
+#: djoser/templates/email/password_changed_confirmation.html:18
+#: djoser/templates/email/password_reset.html:14
+#: djoser/templates/email/password_reset.html:26
+#: djoser/templates/email/username_changed_confirmation.html:10
+#: djoser/templates/email/username_changed_confirmation.html:18
+#: djoser/templates/email/username_reset.html:14
+#: djoser/templates/email/username_reset.html:26
+msgid "Thanks for using our site!"
+msgstr "Gracias por usar nuestro sitio!"
+
+#: djoser/templates/email/activation.html:15
+#: djoser/templates/email/activation.html:26
+#: djoser/templates/email/confirmation.html:12
+#: djoser/templates/email/confirmation.html:20
+#: djoser/templates/email/password_changed_confirmation.html:12
+#: djoser/templates/email/password_changed_confirmation.html:20
+#: djoser/templates/email/password_reset.html:16
+#: djoser/templates/email/password_reset.html:28
+#: djoser/templates/email/username_changed_confirmation.html:12
+#: djoser/templates/email/username_changed_confirmation.html:20
+#: djoser/templates/email/username_reset.html:16
+#: djoser/templates/email/username_reset.html:28
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "El equipo de %(site_name)s"
+
+#: djoser/templates/email/confirmation.html:4
+#, python-format
+msgid ""
+"%(site_name)s - Your account has been successfully created and activated!"
+msgstr "%(site_name)s - Su cuenta ha sido creada y activada con exito!"
+
+#: djoser/templates/email/confirmation.html:8
+#: djoser/templates/email/confirmation.html:16
+msgid "Your account has been created and is ready to use!"
+msgstr "Su cuenta fue creada y esta lista para usarse!"
+
+#: djoser/templates/email/password_changed_confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your password has been successfully changed!"
+msgstr "%(site_name)s - Su contraseña ha sido cambiada con exito!"
+
+#: djoser/templates/email/password_changed_confirmation.html:8
+#: djoser/templates/email/password_changed_confirmation.html:16
+msgid "Your password has been changed!"
+msgstr "Su contraseña ha sido cambiada!"
+
+#: djoser/templates/email/password_reset.html:4
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr "Reseteo de contraseña en %(site_name)s"
+
+#: djoser/templates/email/password_reset.html:8
+#: djoser/templates/email/password_reset.html:20
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"Usted ha recibido este email porque solicito un cambio de contraseña para su "
+"cuenta en %(site_name)s"
+
+#: djoser/templates/email/password_reset.html:10
+#: djoser/templates/email/password_reset.html:22
+msgid "Please go to the following page and choose a new password:"
+msgstr "Por favor diríjase a la siguiente página para seleccionar su nueva contraseña:"
+
+#: djoser/templates/email/password_reset.html:12
+#: djoser/templates/email/password_reset.html:24
+#: djoser/templates/email/username_reset.html:12
+#: djoser/templates/email/username_reset.html:24
+msgid "Your username, in case you've forgotten:"
+msgstr "Su usuario, en caso que lo haya olvidado:"
+
+#: djoser/templates/email/username_changed_confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your username has been successfully changed!"
+msgstr "%(site_name)s - Su usuario ha sido cambiado con exito!"
+
+#: djoser/templates/email/username_changed_confirmation.html:8
+#: djoser/templates/email/username_changed_confirmation.html:16
+msgid "Your username has been changed!"
+msgstr "Su usuario ha sido cambiado!"
+
+#: djoser/templates/email/username_reset.html:4
+#, python-format
+msgid "Username reset on %(site_name)s"
+msgstr "Reseteo de usuario en %(site_name)s"
+
+#: djoser/templates/email/username_reset.html:8
+#: djoser/templates/email/username_reset.html:20
+#, python-format
+msgid ""
+"You're receiving this email because you requested a username reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"Usted ha recibido este email porque solicito un cambio de usuario para su "
+"cuenta en %(site_name)s"
+
+#: djoser/templates/email/username_reset.html:10
+#: djoser/templates/email/username_reset.html:22
+msgid "Please go to the following page and choose a new username:"
+msgstr "Por favor diríjase a la siguiente página para seleccionar su nuevo usuario:"
