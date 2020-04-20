@@ -232,11 +232,13 @@ class PasswordRetypeSerializer(PasswordSerializer):
 
 
 class CurrentPasswordSerializer(serializers.Serializer):
-    current_password = serializers.CharField(style={"input_type": "password"})
-
     default_error_messages = {
         "invalid_password": settings.CONSTANTS.messages.INVALID_PASSWORD_ERROR
     }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["current_password"] = serializers.CharField(style={"input_type": "password"})
 
     def validate_current_password(self, value):
         is_password_valid = self.context["request"].user.check_password(value)
@@ -328,9 +330,7 @@ class UserDeleteSerializer(CurrentPasswordSerializer):
 
 
 class SetUsernameSerializer(UsernameSerializer, CurrentPasswordSerializer):
-    class Meta:
-        model = User
-        fields = (settings.LOGIN_FIELD, 'current_password')
+    pass
 
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer, UsernameRetypeSerializer):
