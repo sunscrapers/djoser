@@ -227,7 +227,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if settings.LOGOUT_ON_PASSWORD_CHANGE:
             utils.logout_user(self.request)
         elif settings.CREATE_SESSION_ON_LOGIN:
-            update_session_auth_hash(request, self.request.user)
+            update_session_auth_hash(self.request, self.request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(["post"], detail=False)
