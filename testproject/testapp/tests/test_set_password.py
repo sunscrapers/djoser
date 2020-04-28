@@ -1,4 +1,6 @@
+import importlib
 from django.conf import settings
+from django.contrib.auth import HASH_SESSION_KEY
 from django.test.utils import override_settings
 from djet import assertions
 from rest_framework import status
@@ -151,3 +153,27 @@ class SetPasswordViewTest(
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         is_logged = Token.objects.filter(user=user).exists()
         self.assertFalse(is_logged)
+
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER,
+                    **{"LOGOUT_ON_PASSWORD_CHANGE": False,
+                       "CREATE_SESSION_ON_LOGIN": True})
+    )
+    def test_post_logout_cycle_session(self):
+        user = create_user()
+        data = {"new_password": "new password", "current_password": "secret"}
+        login_user(self.client, user)
+        self.client.force_login(user)
+
+        response = self.client.post(self.base_url, data)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+
+        user.refresh_from_db()
+
+        session_id = self.client.cookies['sessionid'].coded_value
+        engine = importlib.import_module(settings.SESSION_ENGINE)
+        session = engine.SessionStore(session_id)
+        session_key = session[HASH_SESSION_KEY]
+
+        self.assertEqual(session_key, user.get_session_auth_hash())
