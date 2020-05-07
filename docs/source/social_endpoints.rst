@@ -28,6 +28,14 @@ The list of providers is available at
 `social backend docs <https://python-social-auth.readthedocs.io/en/latest/backends/index.html#social-backends>`_.
 please follow the instructions provided there to configure your backend.
 
+Configure ``urls.py``:
+
+.. code-block:: python
+
+    urlpatterns = [
+        (...),
+        url(r'^auth/', include('djoser.social.urls')),
+    ]
 
 **Default URL**: ``/o/{{ provider }}/``
 
