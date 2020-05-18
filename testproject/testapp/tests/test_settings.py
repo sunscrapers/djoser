@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.test.testcases import SimpleTestCase
 from django.test.utils import override_settings
-from django.utils import six
+import six
 from django.utils.module_loading import import_string
 
 

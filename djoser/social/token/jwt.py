@@ -2,7 +2,7 @@ class TokenStrategy:
     @classmethod
     def obtain(cls, user):
         from rest_framework_simplejwt.tokens import RefreshToken
-        from django.utils.six import text_type
+        from six import text_type
 
         refresh = RefreshToken.for_user(user)
         return {
