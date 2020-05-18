@@ -114,7 +114,7 @@ class TokenCreateSerializer(serializers.Serializer):
     def validate(self, attrs):
         password = attrs.get("password")
         params = {settings.LOGIN_FIELD: attrs.get(settings.LOGIN_FIELD)}
-        self.user = authenticate(**params, password=password)
+        self.user = authenticate(request=self.context.get("request"), **params, password=password)
         if not self.user:
             self.user = User.objects.filter(**params).first()
             if self.user and not self.user.check_password(password):
