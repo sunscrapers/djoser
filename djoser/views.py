@@ -1,5 +1,6 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.tokens import default_token_generator
+
 from django.utils.timezone import now
 from rest_framework import generics, status, views, viewsets
 from rest_framework.decorators import action
@@ -225,6 +226,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
         if settings.LOGOUT_ON_PASSWORD_CHANGE:
             utils.logout_user(self.request)
+        elif settings.CREATE_SESSION_ON_LOGIN:
+            update_session_auth_hash(self.request, self.request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(["post"], detail=False)
