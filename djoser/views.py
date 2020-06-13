@@ -59,6 +59,8 @@ class UserViewSet(viewsets.ModelViewSet):
         super().permission_denied(request, message=message)
 
     def get_queryset(self):
+        if not self.request:
+            return User.objects.none()
         user = self.request.user
         queryset = super().get_queryset()
         if settings.HIDE_USERS and self.action == "list" and not user.is_staff:
@@ -222,7 +224,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
             context = {"user": self.request.user}
             to = [get_user_email(self.request.user)]
-            settings.EMAIL.password_changed_confirmation(self.request, context).send(to)
+            settings.EMAIL.password_changed_confirmation(
+                self.request, context).send(to)
 
         if settings.LOGOUT_ON_PASSWORD_CHANGE:
             utils.logout_user(self.request)
@@ -256,7 +259,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
             context = {"user": serializer.user}
             to = [get_user_email(serializer.user)]
-            settings.EMAIL.password_changed_confirmation(self.request, context).send(to)
+            settings.EMAIL.password_changed_confirmation(
+                self.request, context).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(["post"], detail=False, url_path="set_{}".format(User.USERNAME_FIELD))
@@ -271,7 +275,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if settings.USERNAME_CHANGED_EMAIL_CONFIRMATION:
             context = {"user": user}
             to = [get_user_email(user)]
-            settings.EMAIL.username_changed_confirmation(self.request, context).send(to)
+            settings.EMAIL.username_changed_confirmation(
+                self.request, context).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(["post"], detail=False, url_path="reset_{}".format(User.USERNAME_FIELD))
@@ -303,5 +308,6 @@ class UserViewSet(viewsets.ModelViewSet):
         if settings.USERNAME_CHANGED_EMAIL_CONFIRMATION:
             context = {"user": serializer.user}
             to = [get_user_email(serializer.user)]
-            settings.EMAIL.username_changed_confirmation(self.request, context).send(to)
+            settings.EMAIL.username_changed_confirmation(
+                self.request, context).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
