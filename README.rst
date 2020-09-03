@@ -15,6 +15,10 @@ djoser
    :alt: Codacy Badge
    :target: https://app.codacy.com/app/dekoza/djoser?utm_source=github.com&utm_medium=referral&utm_content=sunscrapers/djoser&utm_campaign=Badge_Grade_Dashboard
 
+.. image:: https://img.shields.io/pypi/dm/djoser
+   :target: https://img.shields.io/pypi/dm/djoser
+
+
 REST implementation of `Django <https://www.djangoproject.com/>`_ authentication
 system. **djoser** library provides a set of `Django Rest Framework <https://www.django-rest-framework.org/>`_
 views to handle basic actions such as registration, login, logout, password
