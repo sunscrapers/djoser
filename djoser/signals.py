@@ -1,7 +1,7 @@
 from django.dispatch import Signal
 
-# New user has registered.
-user_registered = Signal(providing_args=["user", "request"])
+# New user has registered. Args: user, request.
+user_registered = Signal()
 
-# User has activated his or her account.
-user_activated = Signal(providing_args=["user", "request"])
+# User has activated his or her account. Args: user, request.
+user_activated = Signal()
