@@ -18,13 +18,14 @@ def get_packages(package):
 
 setup(
     name="djoser",
-    version="2.0.4",
+    version="2.0.5",
     packages=get_packages("djoser"),
     license="MIT",
     author="SUNSCRAPERS",
     description="REST version of Django authentication system.",
     author_email="info@sunscrapers.com",
     long_description=readme,
+    long_description_content_type="text/x-rst",
     install_requires=["django-templated-mail"],
     setup_requires=["Babel>=2.6.0"],
     include_package_data=True,
