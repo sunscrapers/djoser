@@ -25,7 +25,6 @@ setup(
     description="REST version of Django authentication system.",
     author_email="info@sunscrapers.com",
     long_description=readme,
-    long_description_content_type="text/markdown",
     install_requires=["django-templated-mail"],
     setup_requires=["Babel>=2.6.0"],
     include_package_data=True,
