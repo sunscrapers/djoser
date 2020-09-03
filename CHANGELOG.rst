@@ -391,3 +391,5 @@ few bugfixes / documentation updates. List of changes:
 .. _2.0.1: https://github.com/sunscrapers/djoser/compare/2.0.0...2.0.1
 .. _2.0.2: https://github.com/sunscrapers/djoser/compare/2.0.1...2.0.2
 .. _2.0.3: https://github.com/sunscrapers/djoser/compare/2.0.2...2.0.3
+.. _2.0.4: https://github.com/sunscrapers/djoser/compare/2.0.3...2.0.4
+.. _2.0.5: https://github.com/sunscrapers/djoser/compare/2.0.4...2.0.5
