@@ -6,6 +6,13 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.0.4`_ (2020-09-03)
+---------------------
+
+* add official support for Django 3.x
+* resolve all Django 4.x warnings
+
+---------------------
 `2.0.3`_ (2019-08-24)
 ---------------------
 
