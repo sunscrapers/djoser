@@ -15,6 +15,10 @@ djoser
    :alt: Codacy Badge
    :target: https://app.codacy.com/app/dekoza/djoser?utm_source=github.com&utm_medium=referral&utm_content=sunscrapers/djoser&utm_campaign=Badge_Grade_Dashboard
 
+.. image:: https://img.shields.io/pypi/dm/djoser
+   :target: https://img.shields.io/pypi/dm/djoser
+
+
 REST implementation of `Django <https://www.djangoproject.com/>`_ authentication
 system. **djoser** library provides a set of `Django Rest Framework <https://www.django-rest-framework.org/>`_
 views to handle basic actions such as registration, login, logout, password
@@ -36,8 +40,8 @@ Requirements
 To be able to run **djoser** you have to meet following requirements:
 
 - Python (3.5, 3.6, 3.7, 3.8)
-- Django (1.11, 2.2)
-- Django REST Framework (3.9, 3.10)
+- Django (1.11, 2.2, 3.1)
+- Django REST Framework (3.9, 3.10, 3.11.1)
 
 If you need to support other versions, please use djoser<2.
 
