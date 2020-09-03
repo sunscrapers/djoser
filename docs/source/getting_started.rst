@@ -39,12 +39,14 @@ Supported Django versions
 
 * Django 1.11
 * Django 2.2
+* Django 3.1
 
 Supported Django Rest Framework versions
 ----------------------------------------
 
 * Django Rest Framework 3.9
 * Django Rest Framework 3.10
+* Django Rest Framework 3.11
 
 Installation
 ------------
