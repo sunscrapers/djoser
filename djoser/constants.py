@@ -12,4 +12,4 @@ class Messages(object):
     INVALID_PASSWORD_ERROR = _("Invalid password.")
     EMAIL_NOT_FOUND = _("User with given email does not exist.")
     CANNOT_CREATE_USER_ERROR = _("Unable to create account.")
-    INACTIVE_ACCOUNT_ERROR = _("Email not verified")
+    INACTIVE_ACCOUNT_EMAIL = _("Email not verified")
