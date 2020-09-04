@@ -104,7 +104,7 @@ class TokenCreateSerializer(serializers.Serializer):
     default_error_messages = {
         "invalid_credentials": settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR,
         "inactive_account": settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR,
-        "inactive_account_email": settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR
+        "inactive_account_email": settings.CONSTANTS.messages.INACTIVE_ACCOUNT_EMAIL
     }
 
     def __init__(self, *args, **kwargs):
