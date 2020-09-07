@@ -73,7 +73,3 @@ DJOSER = {
     "ACTIVATION_URL": "#/activate/{uid}/{token}",
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": ["http://test.localhost/"],
 }
-
-JWT_AUTH = {"JWT_ALLOW_REFRESH": True}
-STATIC_ROOT = "static"
-ALLOWED_HOSTS = ["*"]
