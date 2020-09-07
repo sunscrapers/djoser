@@ -1,6 +1,11 @@
 JWT Endpoints
 =============
 
+.. note::
+
+    Djoser settings won't have an effect on your JWT resources.
+    Visit `djangorestframework-simplejwt`_  to check what can be configured.
+
 JWT Create
 ----------
 
@@ -56,3 +61,5 @@ Use this endpoint to verify JWT.
 |          |                                 |                                  |
 |          |                                 |  * ``non_field_errors``          |
 +----------+---------------------------------+----------------------------------+
+
+.. _djangorestframework-simplejwt: https://django-rest-framework-simplejwt.readthedocs.io/en/latest/
