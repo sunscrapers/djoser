@@ -34,6 +34,12 @@ custom User model.
 
 **Default**: ``User.USERNAME_FIELD`` where ``User`` is the model set with Django's setting AUTH_USER_MODEL.
 
+.. warning::
+
+    Djoser uses `djangorestframework-simplejwt`_ to provide a convenient integration for JWT.
+    If you want to change `LOGIN_FIELD` for JWT you need to rely on their documentation and their settings
+    as it's another library. Changing Djoser setting doesn't affect JWT resources.
+
 PASSWORD_RESET_CONFIRM_URL
 --------------------------
 
@@ -353,3 +359,6 @@ that user's profile in the list. Beside that, accessing ``/users/<id>/``
 endpoints by user without proper permission will result in HTTP 404 instead of HTTP 403.
 
 **Default**: ``True``
+
+
+.. _djangorestframework-simplejwt: https://django-rest-framework-simplejwt.readthedocs.io/en/latest/

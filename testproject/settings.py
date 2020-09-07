@@ -72,3 +72,6 @@ DJOSER = {
     "ACTIVATION_URL": "#/activate/{uid}/{token}",
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": ["http://test.localhost/"],
 }
+
+
+SIMPLE_JWT = {}  # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html#settings
