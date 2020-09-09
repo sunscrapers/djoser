@@ -73,4 +73,5 @@ DJOSER = {
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": ["http://test.localhost/"],
 }
 
-JWT_AUTH = {"JWT_ALLOW_REFRESH": True}
+
+SIMPLE_JWT = {}  # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html#settings
