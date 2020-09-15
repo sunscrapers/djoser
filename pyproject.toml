@@ -29,11 +29,12 @@ readme = "README.rst"
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
+importlib-metadata = {version = "^1.0", python = "<3.8"}
 djangorestframework-simplejwt = "^4.3.0"
 django-templated-mail = "^1.1.1"
 social-auth-app-django = "^4.0.0"
 coreapi = "^2.3.3"
-
+asgiref = "^3.2.10"
 pytest = {version = "^6.0.2", optional=true}
 codecov = {version="^2.0.16", optional=true}
 coverage = {version="^5.3", optional=true}
@@ -41,7 +42,6 @@ pytest-cov = {version="^2.10.1", optional=true}
 pytest-django = {version="^3.10.0", optional=true}
 pytest-pythonpath = {version="^0.7.3", optional=true}
 djet = {version="^0.2.2", optional=true}
-asgiref = {version="^3.2.10", optional=true}
 
 
 [tool.poetry.dev-dependencies]
@@ -60,7 +60,6 @@ test = [
   "pytest-django",
   "pytest-pythonpath",
   "djet",
-  "asgiref",
 ]
 
 
