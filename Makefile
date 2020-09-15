@@ -1,5 +1,5 @@
 init:
-	poetry install
+	poetry install -e test
 
 build:
 	poetry run pybabel compile --domain django --directory djoser/locale
