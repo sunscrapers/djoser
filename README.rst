@@ -120,5 +120,5 @@ List of projects related to Django, REST and authentication:
 - `django-rest-framework-digestauth <https://github.com/juanriaza/django-rest-framework-digestauth>`_ (not maintained)
 
 Please, keep in mind that while using custom authentication and TokenCreateSerializer
-validation, there is a path that **ignores intentional return of None** from authenticate() 
-and try to find User using parameters. Probably, that will be changed in the future. 
+validation, there is a path that **ignores intentional return of None** from authenticate()
+and try to find User using parameters. Probably, that will be changed in the future.

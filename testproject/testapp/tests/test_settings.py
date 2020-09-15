@@ -1,15 +1,15 @@
+import six
 from django.conf import settings
 from django.test.testcases import SimpleTestCase
 from django.test.utils import override_settings
-import six
 from django.utils.module_loading import import_string
 
 
 class SettingsTestCase(SimpleTestCase):
     @override_settings(DJOSER=dict())
     def test_settings_should_be_default_if_djoser_not_in_django_settings(self):
-        from djoser.conf import settings as djoser_settings
         from djoser.conf import default_settings
+        from djoser.conf import settings as djoser_settings
 
         for setting_name, setting_value in six.iteritems(default_settings):
             overridden_value = getattr(djoser_settings, setting_name)

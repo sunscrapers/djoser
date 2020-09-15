@@ -7,10 +7,10 @@ from rest_framework import __version__ as drf_version
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
-
-from djoser.conf import settings as default_settings
 from testapp.models import CustomUser, ExampleUser
 from testapp.tests.common import create_user, mock, perform_create_mock
+
+from djoser.conf import settings as default_settings
 
 User = get_user_model()
 
