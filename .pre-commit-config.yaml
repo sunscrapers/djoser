@@ -1,23 +1,26 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v1.2.3
-    hooks:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.2.0
+  hooks:
     - id: check-merge-conflict
     - id: debug-statements
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: check-yaml
+    - id: check-toml
+    - id: check-json
 
--   repo: https://github.com/asottile/seed-isort-config
-    rev: v1.9.2
-    hooks:
-    -   id: seed-isort-config
+- repo: https://github.com/pycqa/isort
+  rev: 5.5.2
+  hooks:
+    - id: isort
 
--   repo: https://github.com/pre-commit/mirrors-isort
-    rev: v4.3.21
-    hooks:
-    -   id: isort
-        additional_dependencies: [toml]
-
--   repo: https://github.com/ambv/black
-    rev: stable
-    hooks:
+- repo: https://github.com/psf/black
+  rev: 20.8b1
+  hooks:
     - id: black
-      language_version: python3.7
+
+- repo: https://github.com/pycqa/flake8
+  rev: 3.8.3
+  hooks:
+    - id: flake8

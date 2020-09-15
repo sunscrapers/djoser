@@ -74,4 +74,6 @@ DJOSER = {
 }
 
 
-SIMPLE_JWT = {}  # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html#settings
+SIMPLE_JWT = (
+    {}
+)  # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html#settings

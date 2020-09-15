@@ -7,11 +7,11 @@ from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+from testapp.models import CustomUser
+from testapp.tests.common import create_user, mock
 
 from djoser.compat import get_user_email
 from djoser.conf import settings as default_settings
-from testapp.models import CustomUser
-from testapp.tests.common import create_user, mock
 
 User = get_user_model()
 
@@ -75,7 +75,7 @@ class UsernameResetViewTest(
     @mock.patch("djoser.views.User", CustomUser)
     @override_settings(AUTH_USER_MODEL="testapp.CustomUser")
     def test_post_should_send_email_to_custom_user_with_username_reset_link(
-        self
+        self,
     ):  # noqa
         user = create_user(use_custom_data=True)
         data = {"custom_email": get_user_email(user)}
@@ -97,7 +97,7 @@ class UsernameResetViewTest(
         DJOSER=dict(settings.DJOSER, **{"USERNAME_RESET_SHOW_EMAIL_NOT_FOUND": True}),
     )
     def test_post_should_return_bad_request_with_custom_email_field_if_user_does_not_exist(
-        self
+        self,
     ):  # noqa
         data = {"custom_email": "john@beatles.com"}
 
