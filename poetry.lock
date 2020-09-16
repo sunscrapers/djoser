@@ -10,7 +10,7 @@ version = "1.4.4"
 category = "main"
 description = "ASGI specs, helper code, and adapters"
 name = "asgiref"
-optional = true
+optional = false
 python-versions = ">=3.5"
 version = "3.2.10"
 
@@ -790,10 +790,10 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [extras]
-test = ["pytest", "codecov", "coverage", "pytest-cov", "pytest-django", "pytest-pythonpath", "djet", "asgiref"]
+test = ["pytest", "codecov", "coverage", "pytest-cov", "pytest-django", "pytest-pythonpath", "djet"]
 
 [metadata]
-content-hash = "c236ac20c03164858a42596d43610fdda002c46e7ea2d33a1af2701c478864f8"
+content-hash = "6b558abf241c6a7196d6583eda2799de8c1aad4b504fe76c301d5f84de553ece"
 lock-version = "1.1"
 python-versions = "^3.6.1"
 
