@@ -1,15 +1,16 @@
 init:
-	poetry install -e test
+	pipenv install --dev
+	pipenv run pip install -e .
 
 build:
-	poetry run pybabel compile --domain django --directory djoser/locale
-	poetry build
+	python setup.py compile_catalog
+	python setup.py bdist_wheel
 
 test:
-	poetry run py.test --capture=no --cov-report term-missing --cov-report html --cov=djoser testproject/
+	pipenv run py.test --capture=no --cov-report term-missing --cov-report html --cov=djoser testproject/
 
 migrate:
-	poetry run python testproject/manage.py migrate
+	pipenv run python testproject/manage.py migrate
 
 runserver:
-	poetry run python testproject/manage.py runserver
+	pipenv run python testproject/manage.py runserver
