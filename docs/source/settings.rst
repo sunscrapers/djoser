@@ -149,6 +149,13 @@ If ``True``, setting new password will logout the user.
 
     Logout only works with token based authentication.
 
+CREATE_SESSION_ON_LOGIN
+-----------------------
+
+If ``True``, user will stay logged in after setting a new password.
+
+**Default**: ``False``
+
 PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND
 -----------------------------------
 
