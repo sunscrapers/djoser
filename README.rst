@@ -39,9 +39,9 @@ Requirements
 
 To be able to run **djoser** you have to meet following requirements:
 
-- Python (3.6, 3.7, 3.8)
-- Django (2.2, 3.1)
-- Django REST Framework 3.11.1
+- Python (3.5, 3.6, 3.7, 3.8)
+- Django (1.11, 2.2, 3.1)
+- Django REST Framework (3.9, 3.10, 3.11.1)
 
 If you need to support other versions, please use djoser<2.
 
@@ -74,81 +74,40 @@ To start developing on **djoser**, clone the repository:
 
     $ git clone git@github.com:sunscrapers/djoser.git
 
-We use `poetry <https://python-poetry.org/>`_ as dependency management and packaging tool.
-
-.. code-block:: bash
-
-    $ cd djoser
-    $ poetry install
-
-This will create a virtualenv with all development dependencies.
-
-To activate the virtual environment run
-
-.. code-block:: bash
-
-    $ poetry shell
-
-To run tests outside of tox, install test dependencies with:
-
-..code-block:: bash
-
-    $ poetry install -e test
-
-We also preapred a convenient ``Makefile``
+If you are a **pipenv** user you can quickly setup testing environment by
+using Make commands:
 
 .. code-block:: bash
 
     $ make init
     $ make test
 
-Without poetry
---------------
-
-New versions of ``pip`` can use ``pyproject.toml`` to build the package and install its dependencies.
+Otherwise, if you cannot use Make commands, please create virtualenv and install
+requirements manually:
 
 .. code-block:: bash
 
-    $ pip install .
+    $ pip install django djangorestframework
+    $ pip install -r requirements.txt
 
 .. code-block:: bash
 
     $ cd testproject
     $ ./manage.py test
 
-Tox
----
-
 If you need to run tests against all supported Python and Django versions then invoke:
 
 .. code-block:: bash
 
-    $ poetry run tox -p all
-
-Example project
----------------
+    $ pip install tox
+    $ tox -p all
 
 You can also play with test project by running following commands:
 
 .. code-block:: bash
 
-    $ make migrate
-    $ make runserver
-
-Commiting your code
--------------------
-
-Before sending patches please make sure you have `pre-commit <https://pre-commit.com/>`_ activated in your local git repository:
-
-.. code-block:: bash
-
-    $ pre-commit install
-
-This will ensure that your code is cleaned before you commit it.
-Some steps (like black) automatically fix issues but the show their status as FAILED.
-Just inspect if eveything is OK, git-add the files and retry the commit.
-Other tools (like flake8) require you to manually fix the issues.
-
+    $ ./manage.py migrate
+    $ ./manage.py runserver
 
 Similar projects
 ================
