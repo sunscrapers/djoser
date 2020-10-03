@@ -87,7 +87,7 @@ requirements manually:
 
 .. code-block:: bash
 
-    $ pip install django djangorestframework
+    $ pip install django djangorestframework==3.11
     $ pip install -r requirements.txt
 
 .. code-block:: bash
