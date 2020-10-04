@@ -14,4 +14,3 @@ migrate:
 
 runserver:
 	pipenv run python testproject/manage.py runserver
-

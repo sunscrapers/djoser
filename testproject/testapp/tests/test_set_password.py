@@ -1,4 +1,5 @@
 import importlib
+
 from django.conf import settings
 from django.contrib.auth import HASH_SESSION_KEY
 from django.test.utils import override_settings
@@ -6,26 +7,22 @@ from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
+from testapp.tests.common import create_user, login_user
 
 from djoser.conf import settings as djoser_settings
-from testapp.tests.common import create_user, login_user
 
 Token = djoser_settings.TOKEN_MODEL
 
 
 class SetPasswordViewTest(
-    APITestCase, assertions.EmailAssertionsMixin,
-    assertions.StatusCodeAssertionsMixin
+    APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
 ):
     def setUp(self):
         self.base_url = reverse("user-set-password")
 
     def test_post_set_new_password(self):
         user = create_user()
-        data = {
-            "new_password": "new password",
-            "current_password": "secret"
-        }
+        data = {"new_password": "new password", "current_password": "secret"}
         login_user(self.client, user)
 
         response = self.client.post(self.base_url, data)
@@ -35,14 +32,13 @@ class SetPasswordViewTest(
         self.assertTrue(user.check_password(data["new_password"]))
         self.assert_emails_in_mailbox(0)
 
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
+    @override_settings(DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
     def test_post_set_new_password_with_retype(self):
         user = create_user()
         data = {
             "new_password": "new password",
             "re_new_password": "new password",
-            "current_password": "secret"
+            "current_password": "secret",
         }
         login_user(self.client, user)
 
@@ -62,8 +58,7 @@ class SetPasswordViewTest(
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
+    @override_settings(DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
     def test_post_not_set_new_password_if_mismatch(self):
         user = create_user()
         data = {
@@ -121,8 +116,7 @@ class SetPasswordViewTest(
         self.assertTrue(is_logged)
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER,
-                    **{"PASSWORD_CHANGED_EMAIL_CONFIRMATION": True})
+        DJOSER=dict(settings.DJOSER, **{"PASSWORD_CHANGED_EMAIL_CONFIRMATION": True})
     )
     def test_post_password_changed_confirmation_email(self):
         user = create_user()
@@ -138,10 +132,14 @@ class SetPasswordViewTest(
         self.assert_email_exists(to=[user.email])
 
     @override_settings(
-        DJOSER=dict(settings.DJOSER,
-                    **{"PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
-                       "LOGOUT_ON_PASSWORD_CHANGE": True,
-                       "CREATE_SESSION_ON_LOGIN": True})
+        DJOSER=dict(
+            settings.DJOSER,
+            **{
+                "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
+                "LOGOUT_ON_PASSWORD_CHANGE": True,
+                "CREATE_SESSION_ON_LOGIN": True,
+            },
+        )
     )
     def test_post_logout_with_confirmation_email_if_session_created(self):
         user = create_user()
@@ -154,11 +152,11 @@ class SetPasswordViewTest(
         is_logged = Token.objects.filter(user=user).exists()
         self.assertFalse(is_logged)
 
-
     @override_settings(
-        DJOSER=dict(settings.DJOSER,
-                    **{"LOGOUT_ON_PASSWORD_CHANGE": False,
-                       "CREATE_SESSION_ON_LOGIN": True})
+        DJOSER=dict(
+            settings.DJOSER,
+            **{"LOGOUT_ON_PASSWORD_CHANGE": False, "CREATE_SESSION_ON_LOGIN": True},
+        )
     )
     def test_post_logout_cycle_session(self):
         user = create_user()
@@ -171,7 +169,7 @@ class SetPasswordViewTest(
 
         user.refresh_from_db()
 
-        session_id = self.client.cookies['sessionid'].coded_value
+        session_id = self.client.cookies["sessionid"].coded_value
         engine = importlib.import_module(settings.SESSION_ENGINE)
         session = engine.SessionStore(session_id)
         session_key = session[HASH_SESSION_KEY]

@@ -35,4 +35,3 @@ djangorestframework-simplejwt = "*"
 docutils = "==0.15"
 wheel = "*"
 six = "*"
-

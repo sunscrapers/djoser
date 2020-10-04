@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.tokens import default_token_generator
-
 from django.utils.timezone import now
 from rest_framework import generics, status, views, viewsets
 from rest_framework.decorators import action

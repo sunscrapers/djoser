@@ -2,11 +2,10 @@ from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
-
-import djoser.views
-import djoser.permissions
-
 from testapp.tests.common import create_user, login_user
+
+import djoser.permissions
+import djoser.views
 
 
 class BaseUserViewSetListTest(APITestCase, assertions.StatusCodeAssertionsMixin):
@@ -30,17 +29,16 @@ class ModifiedPermissionsTest(APITestCase):
     def setUp(self):
         super().setUp()
         self.previous_permissions = djoser.views.UserViewSet.permission_classes
-        djoser.views.UserViewSet.permission_classes = \
-            [djoser.permissions.CurrentUserOrAdminOrReadOnly]
+        djoser.views.UserViewSet.permission_classes = [
+            djoser.permissions.CurrentUserOrAdminOrReadOnly
+        ]
 
     def tearDown(self):
         super().tearDown()
-        djoser.views.UserViewSet.permission_classes = \
-            self.previous_permissions
+        djoser.views.UserViewSet.permission_classes = self.previous_permissions
 
 
 class UserViewSetListTest(BaseUserViewSetListTest):
-
     def test_unauthenticated_user_cannot_get_user_detail(self):
         response = self.client.get(reverse("user-detail", args=[self.user.pk]))
 
@@ -69,7 +67,6 @@ class ModifiedPermissionsUserViewSetListTest(
     BaseUserViewSetListTest,
     ModifiedPermissionsTest,
 ):
-
     def test_user_can_get_other_user_detail(self):
         login_user(self.client, self.user)
         response = self.client.get(reverse("user-detail", args=[self.superuser.pk]))
@@ -153,10 +150,8 @@ class UserViewSetEditTest(APITestCase, assertions.StatusCodeAssertionsMixin):
 
 
 class ModifiedPermissionsViewSetEditTest(
-    ModifiedPermissionsTest,
-    assertions.StatusCodeAssertionsMixin
+    ModifiedPermissionsTest, assertions.StatusCodeAssertionsMixin
 ):
-
     def test_put_cant_edit_others_attribute(self):
         user = create_user()
         another_user_data = {
