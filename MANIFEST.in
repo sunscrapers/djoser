@@ -1,5 +1,0 @@
-include README.md
-include LICENSE
-recursive-include djoser/templates *.html
-recursive-include djoser/locale *.mo
-include requirements.txt

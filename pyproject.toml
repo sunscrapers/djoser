@@ -27,6 +27,7 @@ classifiers = [
 repository = "https://github.com/sunscrapers/djoser"
 documentation = "https://djoser.readthedocs.io/"
 readme = "README.rst"
+include = ["djoser/locale/**/*.mo"]
 
 
 [tool.poetry.dependencies]

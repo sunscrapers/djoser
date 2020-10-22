@@ -79,28 +79,28 @@ We use `poetry <https://python-poetry.org/>`_ as dependency management and packa
 .. code-block:: bash
 
     $ cd djoser
-    $ poetry install
+    $ poetry install -E test
 
 This will create a virtualenv with all development dependencies.
+
+To run the test just type:
+
+.. code-block:: bash
+
+    $ poetry run py.test testproject
+
+We also preapred a convenient ``Makefile`` to automate commands above:
+
+.. code-block:: bash
+
+    $ make init
+    $ make test
 
 To activate the virtual environment run
 
 .. code-block:: bash
 
     $ poetry shell
-
-To run tests outside of tox, install test dependencies with:
-
-..code-block:: bash
-
-    $ poetry install -e test
-
-We also preapred a convenient ``Makefile``
-
-.. code-block:: bash
-
-    $ make init
-    $ make test
 
 Without poetry
 --------------
@@ -109,7 +109,7 @@ New versions of ``pip`` can use ``pyproject.toml`` to build the package and inst
 
 .. code-block:: bash
 
-    $ pip install .
+    $ pip install .[test]
 
 .. code-block:: bash
 
