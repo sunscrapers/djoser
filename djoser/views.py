@@ -48,14 +48,14 @@ class UserViewSet(viewsets.ModelViewSet):
     token_generator = default_token_generator
     lookup_field = settings.USER_ID_FIELD
 
-    def permission_denied(self, request, message=None):
+    def permission_denied(self, request, **kwargs):
         if (
             settings.HIDE_USERS
             and request.user.is_authenticated
             and self.action in ["update", "partial_update", "list", "retrieve"]
         ):
             raise NotFound()
-        super().permission_denied(request, message=message)
+        super().permission_denied(request, **kwargs)
 
     def get_queryset(self):
         user = self.request.user
