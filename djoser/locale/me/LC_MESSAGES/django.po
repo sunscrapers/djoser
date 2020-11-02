@@ -1,0 +1,135 @@
+# Copyright (C) Sunscrapers
+# This file is distributed under the same license as the djoser package.
+#
+# Translators:
+# Nikola Kadić <kadicnikola3@gmail.com>, 2020
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: djoser\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-11-02 16:40+0100\n"
+"Last-Translator: Nikola Kadić <kadicnikola3@gmail.com>\n"
+"Language-Team: Montenegrin\n"
+"Language: me\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: constants.py:4
+msgid "Unable to log in with provided credentials."
+msgstr "Nije moguće ulogovati se sa datim kredencijalima."
+
+#: constants.py:5
+msgid "User account is disabled."
+msgstr "Korisnički nalog je ugašen."
+
+#: constants.py:6
+msgid "Invalid token for given user."
+msgstr "Neispravan token za datog korisnika."
+
+#: constants.py:7
+msgid "Invalid user id or user doesn't exist."
+msgstr "Neispravan user id ili korisnik ne postoji."
+
+#: constants.py:8
+msgid "Stale token for given user."
+msgstr "Token za navedenog korisnika je zastario."
+
+#: constants.py:9
+msgid "The two password fields didn't match."
+msgstr "Navedene dvije šifre nisu iste."
+
+#: constants.py:10
+#, python-brace-format
+msgid "The two {0} fields didn't match."
+msgstr "Ovaj par polja {0} se ne poklapa."
+
+#: constants.py:11
+msgid "Invalid password."
+msgstr "Neispravna šifra."
+
+#: constants.py:12
+msgid "User with given email does not exist."
+msgstr "Ne postoji korisnik sa navedenom email adresom."
+
+#: constants.py:13
+msgid "Unable to create account."
+msgstr "Kreiranje naloga nije moguće."
+
+#: constants.py:15
+msgid ""
+"User model does not contain specified email field. Please see http://djoser."
+"readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME for more "
+"details."
+msgstr ""
+"User model ne sadrži navedeni email. Molimo vas pogledajte "
+"http://djoser.readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME za više informacija."
+
+#: templates/email/activation.html:4
+#, python-format
+msgid "Account activation on %(site_name)s"
+msgstr "Akivacija naloga na %(site_name)"
+
+#: templates/email/activation.html:8 templates/email/activation.html:19
+#, python-format
+msgid ""
+"You're receiving this email because you need to finish activation process on "
+"%(site_name)s."
+msgstr ""
+"Dobili ste ovaj email zato što je potrebno da dovršite proces aktivacije na %(site_name)."
+
+#: templates/email/activation.html:10 templates/email/activation.html:22
+msgid "Please go to the following page to activate account:"
+msgstr "Molimo vas da otvorite sljedeću stranicu da biste aktivirali nalog:"
+
+#: templates/email/activation.html:13 templates/email/activation.html:25
+#: templates/email/confirmation.html:10 templates/email/confirmation.html:18
+#: templates/email/password_reset.html:14
+#: templates/email/password_reset.html:26
+msgid "Thanks for using our site!"
+msgstr "Hvala što koristite naš sajt!"
+
+#: templates/email/activation.html:15 templates/email/activation.html:27
+#: templates/email/confirmation.html:12 templates/email/confirmation.html:20
+#: templates/email/password_reset.html:16
+#: templates/email/password_reset.html:28
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "Tim %(site_name)"
+
+#: templates/email/confirmation.html:4
+#, python-format
+msgid ""
+"%(site_name)s - Your account has been successfully created and activated!"
+msgstr ""
+"%(site_name)s - Vaš nalog je uspješno kreiran i aktiviran!"
+
+#: templates/email/confirmation.html:8 templates/email/confirmation.html:16
+msgid "Your account has been created and is ready to use!"
+msgstr "Vaš nalog je kreiran i spreman za korišćenje!"
+
+#: templates/email/password_reset.html:4
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr "Resetovanje šifre za %(site_name)"
+
+#: templates/email/password_reset.html:8 templates/email/password_reset.html:20
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"Dobili ste ovaj email zato što ste tražili resetovanje šifre za vaš nalog za "
+"%(site_name)"
+
+#: templates/email/password_reset.html:10
+#: templates/email/password_reset.html:22
+msgid "Please go to the following page and choose a new password:"
+msgstr "Molimo vas da otvorite sljedeću stranicu i odaberete novu šifru:"
+
+#: templates/email/password_reset.html:12
+#: templates/email/password_reset.html:24
+msgid "Your username, in case you've forgotten:"
+msgstr "Vaše korisničko ime, u slučaju da ste zaboravili:"
