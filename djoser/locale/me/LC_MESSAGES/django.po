@@ -19,44 +19,44 @@ msgstr ""
 
 #: constants.py:4
 msgid "Unable to log in with provided credentials."
-msgstr "Eine Anmeldung ist mit den angegebenen Daten nicht möglich."
+msgstr ""
 
 #: constants.py:5
 msgid "User account is disabled."
-msgstr "Dieses Benutzerkonto ist deaktiviert."
+msgstr ""
 
 #: constants.py:6
 msgid "Invalid token for given user."
-msgstr "Das Token für diesen Benutzer ist ungültig."
+msgstr ""
 
 #: constants.py:7
 msgid "Invalid user id or user doesn't exist."
-msgstr "Die User-ID ist ungültig oder dieser Benutzer existiert nicht."
+msgstr ""
 
 #: constants.py:8
 msgid "Stale token for given user."
-msgstr "Das Token für diesen Benutzer ist abgelaufen."
+msgstr ""
 
 #: constants.py:9
 msgid "The two password fields didn't match."
-msgstr "Die beiden Passwörter stimmen nicht überein."
+msgstr ""
 
 #: constants.py:10
 #, python-brace-format
 msgid "The two {0} fields didn't match."
-msgstr "Die beiden {0}-Felder stimmen nicht überein."
+msgstr ""
 
 #: constants.py:11
 msgid "Invalid password."
-msgstr "Das Passwort ist ungültig."
+msgstr ""
 
 #: constants.py:12
 msgid "User with given email does not exist."
-msgstr "Es existiert kein Benutzer mit dieser E-Mailadresse."
+msgstr ""
 
 #: constants.py:13
 msgid "Unable to create account."
-msgstr "Das Benutzerkonto kann nicht angelegt werden."
+msgstr ""
 
 #: constants.py:15
 msgid ""
@@ -64,9 +64,7 @@ msgid ""
 "readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME for more "
 "details."
 msgstr ""
-"Das user-model enthält kein E-Mail-Feld. Weitere Details unter "
-"http://djoser.readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME "
-"."
+""
 
 #: templates/email/activation.html:4
 #, python-format
