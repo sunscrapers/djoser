@@ -4,6 +4,7 @@ from django.core import exceptions as django_exceptions
 from django.db import IntegrityError, transaction
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.settings import api_settings
 
 from djoser import utils
 from djoser.compat import get_user_email, get_user_email_field_name
@@ -55,7 +56,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         except django_exceptions.ValidationError as e:
             serializer_error = serializers.as_serializer_error(e)
             raise serializers.ValidationError(
-                {"password": serializer_error["non_field_errors"]}
+                {"password": serializer_error[api_settings.NON_FIELD_ERRORS_KEY]}
             )
 
         return attrs
