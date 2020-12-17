@@ -33,7 +33,7 @@ def logout_user(request):
 
 def get_domain_and_protocol():
     data = dict()
-    keys = ("protocol", "domain")
+    keys = ("protocol", "domain", "site_name")
     for key in keys:
         settings_value = getattr(settings, key.upper(), None)
         if settings_value:
