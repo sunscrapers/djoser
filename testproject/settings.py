@@ -73,7 +73,7 @@ DJOSER = {
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": ["http://test.localhost/"],
     "DOMAIN": "localhost:8000",
     "PROTOCOL": "http",
-    "SITE_NAME": "django",
+    "SITE_NAME": "localhost:8000",
 }
 
 

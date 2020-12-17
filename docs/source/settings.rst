@@ -11,6 +11,9 @@ You can provide ``DJOSER`` settings like this:
         'ACTIVATION_URL': '#/activate/{uid}/{token}',
         'SEND_ACTIVATION_EMAIL': True,
         'SERIALIZERS': {},
+        'DOMAIN': 'localhost:8000',
+        'PROTOCOL': 'http',
+        'SITE_NAME': 'localhost:8000',
     }
 
 .. note::
