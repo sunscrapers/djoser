@@ -24,23 +24,20 @@ class PasswordResetViewTest(
         data = {"email": user.email}
 
         response = self.client.post(self.base_url, data)
-        request = response.wsgi_request
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[user.email])
-        site = get_current_site(request)
-        self.assertIn(site.domain, mail.outbox[0].body)
-        self.assertIn(site.name, mail.outbox[0].body)
+        self.assertIn(default_settings.DOMAIN, mail.outbox[0].body)
+        self.assertIn(default_settings.SITE_NAME, mail.outbox[0].body)
 
     def test_post_send_email_to_user_with_request_domain_and_site_name(self):
         user = create_user()
         data = {"email": user.email}
 
         response = self.client.post(self.base_url, data)
-        request = response.wsgi_request
 
-        self.assertIn(request.get_host(), mail.outbox[0].body)
+        self.assertIn(default_settings.DOMAIN, mail.outbox[0].body)
 
     def test_post_should_not_send_email_to_user_if_user_does_not_exist(self):
         data = {"email": "john@beatles.com"}
@@ -78,14 +75,12 @@ class PasswordResetViewTest(
         data = {"custom_email": get_user_email(user)}
 
         response = self.client.post(self.base_url, data)
-        request = response.wsgi_request
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[get_user_email(user)])
-        site = get_current_site(request)
-        self.assertIn(site.domain, mail.outbox[0].body)
-        self.assertIn(site.name, mail.outbox[0].body)
+        self.assertIn(default_settings.DOMAIN, mail.outbox[0].body)
+        self.assertIn(default_settings.SITE_NAME, mail.outbox[0].body)
 
     @mock.patch("djoser.serializers.User", CustomUser)
     @mock.patch("djoser.views.User", CustomUser)
