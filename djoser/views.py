@@ -148,6 +148,11 @@ class UserViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         super().perform_update(serializer)
         user = serializer.instance
+
+        signals.user_updated.send(
+            sender=self.__class__, user=user, request=self.request
+        )
+
         # should we send activation email after update?
         if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
             context = {"user": user}
