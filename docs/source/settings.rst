@@ -179,6 +179,13 @@ an email is registered in the system.
 
 **Default**: ``False``
 
+USER_DELETE_DISABLE
+-----------
+
+If ``True``, deleting own account with the ``DELETE`` method on ``/users/me/`` is disabled.
+
+**Default**: ``False``
+
 TOKEN_MODEL
 -----------
 

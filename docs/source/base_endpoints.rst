@@ -118,8 +118,9 @@ User Delete
 
 Use this endpoint to delete authenticated user. By default it will simply verify
 password provided in ``current_password``, delete the auth token if token
-based authentication is used and invoke delete for a given ``User`` instance.
-One of ways to customize the delete behavior is to override ``User.delete``.
+based authentication is used and invoke delete for a given ``User`` instance. This method
+can be disabled with ``USER_DELETE_DISABLE`` in the settings. One of ways to customize the
+delete behavior is to override ``User.delete``.
 
 **Default URL**: ``/users/me/``
 
@@ -129,6 +130,8 @@ One of ways to customize the delete behavior is to override ``User.delete``.
 | ``DELETE`` | * ``current_password``          | ``HTTP_204_NO_CONTENT``          |
 |            |                                 |                                  |
 |            |                                 | ``HTTP_400_BAD_REQUEST``         |
+|            |                                 |                                  |
+|            |                                 | ``HTTP_405_METHOD_NOT_ALLOWED``  |
 |            |                                 |                                  |
 |            |                                 | * ``current_password``           |
 +------------+---------------------------------+----------------------------------+

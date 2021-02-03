@@ -174,7 +174,10 @@ class UserViewSet(viewsets.ModelViewSet):
         elif request.method == "PATCH":
             return self.partial_update(request, *args, **kwargs)
         elif request.method == "DELETE":
-            return self.destroy(request, *args, **kwargs)
+            if settings.USER_DELETE_DISABLE:
+                return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            else:
+                return self.destroy(request, *args, **kwargs)
 
     @action(["post"], detail=False)
     def activation(self, request, *args, **kwargs):

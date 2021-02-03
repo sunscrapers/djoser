@@ -40,6 +40,7 @@ default_settings = {
     "USERNAME_RESET_SHOW_EMAIL_NOT_FOUND": False,
     "PASSWORD_CHANGED_EMAIL_CONFIRMATION": False,
     "USERNAME_CHANGED_EMAIL_CONFIRMATION": False,
+    "USER_DELETE_DISABLE": False,
     "TOKEN_MODEL": "rest_framework.authtoken.models.Token",
     "SERIALIZERS": ObjDict(
         {
