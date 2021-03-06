@@ -89,7 +89,7 @@ To run the test just type:
 
     $ poetry run py.test testproject
 
-We also preapred a convenient ``Makefile`` to automate commands above:
+We also prepared a convenient ``Makefile`` to automate commands above:
 
 .. code-block:: bash
 
@@ -146,7 +146,7 @@ Before sending patches please make sure you have `pre-commit <https://pre-commit
 
 This will ensure that your code is cleaned before you commit it.
 Some steps (like black) automatically fix issues but the show their status as FAILED.
-Just inspect if eveything is OK, git-add the files and retry the commit.
+Just inspect if everything is OK, git-add the files and retry the commit.
 Other tools (like flake8) require you to manually fix the issues.
 
 
