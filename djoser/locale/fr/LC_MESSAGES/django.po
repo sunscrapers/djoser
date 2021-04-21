@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: djoser\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-14 18:40+0200\n"
+"POT-Creation-Date: 2021-04-21 09:07+0200\n"
 "PO-Revision-Date: 2019-05-14 19:03+0200\n"
 "Last-Translator: Julie Rymer <chadys@hotmail.fr>\n"
 "Language-Team: French\n"
@@ -19,56 +19,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: constants.py:4
+#: constants.py:5
 msgid "Unable to log in with provided credentials."
 msgstr "Impossible de se connecter avec les identifiants fournis."
 
-#: constants.py:5
+#: constants.py:6
 msgid "User account is disabled."
 msgstr "Ce compte utilisateur est désactivé."
 
-#: constants.py:6
+#: constants.py:7
 msgid "Invalid token for given user."
 msgstr "Le jeton d'authentification est invalide pour cet utilisateur."
 
-#: constants.py:7
+#: constants.py:8
 msgid "Invalid user id or user doesn't exist."
 msgstr "L'id de l'utilisateur est invalide ou cet utilisateur n'existe pas."
 
-#: constants.py:8
+#: constants.py:9
 msgid "Stale token for given user."
 msgstr "Le jeton pour cet utilisateur est expiré."
 
-#: constants.py:9
+#: constants.py:10
 msgid "The two password fields didn't match."
 msgstr "Le contenu des deux champs mot de passe est différent."
 
-#: constants.py:10
+#: constants.py:11
 #, python-brace-format
 msgid "The two {0} fields didn't match."
 msgstr "Le contenu des deux champs {0} est différent."
 
-#: constants.py:11
+#: constants.py:12
 msgid "Invalid password."
 msgstr "Mot de passe invalide."
 
-#: constants.py:12
+#: constants.py:13
 msgid "User with given email does not exist."
 msgstr "Cette adresse email ne correspond à aucun utilisateur enregistré."
 
-#: constants.py:13
+#: constants.py:14
 msgid "Unable to create account."
 msgstr "Création de compte impossible."
-
-#: constants.py:15
-msgid ""
-"User model does not contain specified email field. Please see http://djoser."
-"readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME for more "
-"details."
-msgstr ""
-"Le modèle User ne contient pas le champ email indiqué. Veuillez consulter "
-"http://djoser.readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME "
-"pour plus de détails."
 
 #: templates/email/activation.html:4
 #, python-format
@@ -81,24 +71,36 @@ msgid ""
 "You're receiving this email because you need to finish activation process on "
 "%(site_name)s."
 msgstr ""
-"Vous recevez cet email car vous devez finir le processus d'activation de votre "
-"compte sur %(site_name)s."
+"Vous recevez cet email car vous devez finir le processus d'activation de "
+"votre compte sur %(site_name)s."
 
-#: templates/email/activation.html:10 templates/email/activation.html:22
+#: templates/email/activation.html:10 templates/email/activation.html:21
 msgid "Please go to the following page to activate account:"
 msgstr "Veuillez cliquer sur le lien suivant pour activer votre compte :"
 
-#: templates/email/activation.html:13 templates/email/activation.html:25
+#: templates/email/activation.html:13 templates/email/activation.html:24
 #: templates/email/confirmation.html:10 templates/email/confirmation.html:18
+#: templates/email/password_changed_confirmation.html:10
+#: templates/email/password_changed_confirmation.html:18
 #: templates/email/password_reset.html:14
 #: templates/email/password_reset.html:26
+#: templates/email/username_changed_confirmation.html:10
+#: templates/email/username_changed_confirmation.html:18
+#: templates/email/username_reset.html:14
+#: templates/email/username_reset.html:26
 msgid "Thanks for using our site!"
 msgstr "Merci d'avoir utilisé notre site !"
 
-#: templates/email/activation.html:15 templates/email/activation.html:27
+#: templates/email/activation.html:15 templates/email/activation.html:26
 #: templates/email/confirmation.html:12 templates/email/confirmation.html:20
+#: templates/email/password_changed_confirmation.html:12
+#: templates/email/password_changed_confirmation.html:20
 #: templates/email/password_reset.html:16
 #: templates/email/password_reset.html:28
+#: templates/email/username_changed_confirmation.html:12
+#: templates/email/username_changed_confirmation.html:20
+#: templates/email/username_reset.html:16
+#: templates/email/username_reset.html:28
 #, python-format
 msgid "The %(site_name)s team"
 msgstr "L'équipe %(site_name)s"
@@ -107,12 +109,21 @@ msgstr "L'équipe %(site_name)s"
 #, python-format
 msgid ""
 "%(site_name)s - Your account has been successfully created and activated!"
-msgstr ""
-"%(site_name)s - Votre compte a été créé et activé avec succès !"
+msgstr "%(site_name)s - Votre compte a été créé et activé avec succès !"
 
 #: templates/email/confirmation.html:8 templates/email/confirmation.html:16
 msgid "Your account has been created and is ready to use!"
 msgstr "Votre compte a été créé et est prêt a être utilisé !"
+
+#: templates/email/password_changed_confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your password has been successfully changed!"
+msgstr "%(site_name)s - Votre mot de passe a été changé avec succès !"
+
+#: templates/email/password_changed_confirmation.html:8
+#: templates/email/password_changed_confirmation.html:16
+msgid "Your password has been changed!"
+msgstr "Votre mot de passe a été changé !"
 
 #: templates/email/password_reset.html:4
 #, python-format
@@ -131,9 +142,44 @@ msgstr ""
 #: templates/email/password_reset.html:10
 #: templates/email/password_reset.html:22
 msgid "Please go to the following page and choose a new password:"
-msgstr "Merci de cliquer sur le lien suivant pour choisir un nouveau mot de passe :"
+msgstr ""
+"Merci de cliquer sur le lien suivant pour choisir un nouveau mot de passe :"
 
 #: templates/email/password_reset.html:12
 #: templates/email/password_reset.html:24
+#: templates/email/username_reset.html:12
+#: templates/email/username_reset.html:24
 msgid "Your username, in case you've forgotten:"
-msgstr "Votre nom d'utilisateur, au cas où vous l'auriez oublié, est le suivant :"
+msgstr ""
+"Votre nom d'utilisateur, au cas où vous l'auriez oublié, est le suivant :"
+
+#: templates/email/username_changed_confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your username has been successfully changed!"
+msgstr "%(site_name)s - Votre nom d'utilisateur a été changé avec succès !"
+
+#: templates/email/username_changed_confirmation.html:8
+#: templates/email/username_changed_confirmation.html:16
+msgid "Your username has been changed!"
+msgstr "Votre nom d'utilisateur a été changé !"
+
+#: templates/email/username_reset.html:4
+#, python-format
+msgid "Username reset on %(site_name)s"
+msgstr "Réinitialisation du nom d'utilisateur sur %(site_name)s"
+
+#: templates/email/username_reset.html:8 templates/email/username_reset.html:20
+#, python-format
+msgid ""
+"You're receiving this email because you requested a username reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"Vous recevez cet email car vous avez demandé la réinitialisation du nom "
+"d'utilisateur de votre compte sur %(site_name)s."
+
+#: templates/email/username_reset.html:10
+#: templates/email/username_reset.html:22
+msgid "Please go to the following page and choose a new username:"
+msgstr ""
+"Merci de cliquer sur le lien suivant pour choisir un nouveau nom "
+"d'utilisateur :"
