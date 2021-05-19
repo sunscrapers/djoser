@@ -71,7 +71,7 @@ Now let's log out:
 
 .. code-block:: text
 
-    curl -X POST http://127.0.0.1:8088/auth/token/logout/ -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'
+    curl -X POST http://127.0.0.1:8088/auth/token/logout/  --data 'b704c9fc3655635646356ac2950269f352ea1139' -H 'Authorization: Token b704c9fc3655635646356ac2950269f352ea1139'
 
 And try access user profile again:
 
