@@ -51,10 +51,7 @@ class TokenCreateViewTest(
 
         response = self.client.post(self.base_url, data)
 
-        if django.VERSION >= (1, 10):
-            expected_errors = [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR]
-        else:
-            expected_errors = [settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR]
+        expected_errors = [settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR]
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["non_field_errors"], expected_errors)
