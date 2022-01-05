@@ -76,7 +76,7 @@ msgstr "Aktywacja konta na stronie %(site_name)s"
 msgid ""
 "You're receiving this email because you need to finish activation process on "
 "%(site_name)s."
-msgstr "Otrzymałeś tego emaila, ponieważ potrzeujesz dokończyć proces aktywacji na "
+msgstr "Otrzymałeś tego emaila, ponieważ potrzebujesz dokończyć proces aktywacji na "
 "stronie %(site_name)s."
 
 #: djoser/templates/email/activation.html:10
