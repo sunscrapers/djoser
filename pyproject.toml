@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "djoser"
-version = "2.2.0"
+version = "0.0.0"  # managed by plugin
 description = "REST implementation of Django authentication system."
 authors = [
   "Sunscrapers <info@sunscrapers.com>",
@@ -111,6 +111,8 @@ disable = "C0330, C0326"
 [tool.pylint.format]
 max-line-length = "88"
 
+[tool.poetry-version-plugin]
+source = "init"
 
 [build-system]
 requires = ["poetry-core"]
