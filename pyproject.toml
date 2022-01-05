@@ -51,7 +51,7 @@ djet = {version="^0.2.2", optional=true}
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.7.1"
 tox = "^3.20.0"
-babel = "^2.8.0"
+babel = "^2.9.1"
 black = "^20.8b1"
 
 
