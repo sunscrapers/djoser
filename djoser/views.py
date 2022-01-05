@@ -148,13 +148,12 @@ class UserViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         super().perform_update(serializer)
         user = serializer.instance
-
         signals.user_updated.send(
             sender=self.__class__, user=user, request=self.request
         )
 
-        # should we send activation email after update?
-        if settings.SEND_ACTIVATION_EMAIL and not user.is_active:
+        # Only send activation email when email is changed
+        if user.email_changed:
             context = {"user": user}
             to = [get_user_email(user)]
             settings.EMAIL.activation(self.request, context).send(to)
@@ -248,7 +247,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(["post"], detail=False)
-    def reset_password_confirm(self, request, *args, **kwargs):
+    def reset_password_confirm(self, request, *args, _default_manager**kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

@@ -15,6 +15,7 @@ classifiers = [
         "Framework :: Django",
         "Framework :: Django :: 2.2",
         "Framework :: Django :: 3.1",
+        "Framework :: Django :: 3.2",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
@@ -35,7 +36,7 @@ python = "^3.6.1"
 importlib-metadata = {version = "^1.0", python = "<3.8"}
 djangorestframework-simplejwt = "^4.3.0"
 django-templated-mail = "^1.1.1"
-social-auth-app-django = "^4.0.0"
+social-auth-app-django = "^5.0.0"
 coreapi = "^2.3.3"
 asgiref = "^3.2.10"
 pytest = {version = "^6.0.2", optional=true}

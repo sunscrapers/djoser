@@ -40,8 +40,8 @@ Requirements
 To be able to run **djoser** you have to meet following requirements:
 
 - Python (3.6, 3.7, 3.8, 3.9)
-- Django (2.2, 3.1)
-- Django REST Framework 3.11.1
+- Django (2.2, 3.1, 3.2)
+- Django REST Framework (3.11.1, 3.12.1)
 
 If you need to support other versions, please use djoser<2.
 
@@ -89,7 +89,7 @@ To run the test just type:
 
     $ poetry run py.test testproject
 
-We also preapred a convenient ``Makefile`` to automate commands above:
+We also prepared a convenient ``Makefile`` to automate commands above:
 
 .. code-block:: bash
 
@@ -146,7 +146,7 @@ Before sending patches please make sure you have `pre-commit <https://pre-commit
 
 This will ensure that your code is cleaned before you commit it.
 Some steps (like black) automatically fix issues but the show their status as FAILED.
-Just inspect if eveything is OK, git-add the files and retry the commit.
+Just inspect if everything is OK, git-add the files and retry the commit.
 Other tools (like flake8) require you to manually fix the issues.
 
 
