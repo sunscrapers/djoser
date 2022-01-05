@@ -1,4 +1,3 @@
-import six
 from django.conf import settings
 from django.test.testcases import SimpleTestCase
 from django.test.utils import override_settings
@@ -11,7 +10,7 @@ class SettingsTestCase(SimpleTestCase):
         from djoser.conf import default_settings
         from djoser.conf import settings as djoser_settings
 
-        for setting_name, setting_value in six.iteritems(default_settings):
+        for setting_name, setting_value in default_settings.items():
             overridden_value = getattr(djoser_settings, setting_name)
             try:
                 self.assertEqual(setting_value, overridden_value)
