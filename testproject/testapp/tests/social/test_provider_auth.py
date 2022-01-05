@@ -1,4 +1,3 @@
-import six
 from django.contrib.sessions.middleware import SessionMiddleware
 from djet import assertions, restframework
 from rest_framework import status
@@ -47,7 +46,7 @@ class ProviderAuthViewTestCase(
         ).start()
 
         request = self.factory.post()
-        request.GET = {k: v for k, v in six.iteritems(data)}
+        request.GET = {k: v for k, v in data.items()}
         response = self.view(request, provider="facebook")
         self.assert_status_equal(response, status.HTTP_201_CREATED)
         self.assertEqual(set(response.data.keys()), {"access", "refresh", "user"})
@@ -65,7 +64,7 @@ class ProviderAuthViewTestCase(
         ).start()
 
         request = self.factory.post()
-        request.GET = {k: v for k, v in six.iteritems(data)}
+        request.GET = {k: v for k, v in data.items()}
         response = self.view(request, provider="facebook")
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
@@ -78,6 +77,6 @@ class ProviderAuthViewTestCase(
         ).start()
 
         request = self.factory.post()
-        request.GET = {k: v for k, v in six.iteritems(data)}
+        request.GET = {k: v for k, v in data.items()}
         response = self.view(request, provider="facebook")
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
