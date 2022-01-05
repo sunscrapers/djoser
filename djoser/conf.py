@@ -1,3 +1,4 @@
+# flake8: noqa E501
 from django.apps import apps
 from django.conf import settings as django_settings
 from django.test.signals import setting_changed

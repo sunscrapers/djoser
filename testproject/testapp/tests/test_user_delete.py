@@ -94,7 +94,8 @@ class UserViewSetDeletionTest(
         self.client.force_authenticate(user=user)
 
         response = self.client.delete(
-            reverse("user-detail", kwargs={User._meta.pk.name: user.pk}), data=data,
+            reverse("user-detail", kwargs={User._meta.pk.name: user.pk}),
+            data=data,
         )
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
@@ -108,7 +109,8 @@ class UserViewSetDeletionTest(
         self.client.force_authenticate(user=user)
 
         response = self.client.delete(
-            reverse("user-detail", kwargs={User._meta.pk.name: user.pk}), data=data,
+            reverse("user-detail", kwargs={User._meta.pk.name: user.pk}),
+            data=data,
         )
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
@@ -127,7 +129,8 @@ class UserViewSetDeletionTest(
 
             self.client.force_authenticate(user=user)
             self.client.delete(
-                reverse("user-detail", kwargs={User._meta.pk.name: user.pk}), data=data,
+                reverse("user-detail", kwargs={User._meta.pk.name: user.pk}),
+                data=data,
             )
         override_settings(
             DJOSER=dict(settings.DJOSER, **{"PERMISSIONS": {"user_delete": old_value}})
@@ -147,7 +150,8 @@ class UserViewSetDeletionTest(
 
             self.client.force_authenticate(user=user)
             self.client.delete(
-                reverse("user-detail", kwargs={User._meta.pk.name: user.pk}), data=data,
+                reverse("user-detail", kwargs={User._meta.pk.name: user.pk}),
+                data=data,
             )
         override_settings(
             DJOSER=dict(settings.DJOSER, **{"SERIALIZERS": {"user_delete": old_value}})
