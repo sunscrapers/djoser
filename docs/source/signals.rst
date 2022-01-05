@@ -37,3 +37,18 @@ This signal is sent after successful user activation.
 +------------+-------------------+
 
 At this point, ``user`` has already been activated and saved.
+
+user_updated
+--------------
+
+This signal is sent after successful user update.
+
++------------+-------------------+
+| Argument   | Value             |
++============+===================+
+| ``sender`` | sender class      |
++------------+-------------------+
+| ``user``   | user instance     |
++------------+-------------------+
+| ``request``| request instance  |
++------------+-------------------+
