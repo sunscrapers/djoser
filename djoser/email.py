@@ -15,6 +15,8 @@ class ActivationEmail(BaseEmailMessage):
         user = context.get("user")
         context["uid"] = utils.encode_uid(user.pk)
         context["token"] = default_token_generator.make_token(user)
+        domain_protocol_dict = utils.get_domain_and_protocol()
+        context.update(domain_protocol_dict)
         context["url"] = settings.ACTIVATION_URL.format(**context)
         return context
 
@@ -33,6 +35,8 @@ class PasswordResetEmail(BaseEmailMessage):
         user = context.get("user")
         context["uid"] = utils.encode_uid(user.pk)
         context["token"] = default_token_generator.make_token(user)
+        domain_protocol_dict = utils.get_domain_and_protocol()
+        context.update(domain_protocol_dict)
         context["url"] = settings.PASSWORD_RESET_CONFIRM_URL.format(**context)
         return context
 
@@ -54,5 +58,7 @@ class UsernameResetEmail(BaseEmailMessage):
         user = context.get("user")
         context["uid"] = utils.encode_uid(user.pk)
         context["token"] = default_token_generator.make_token(user)
+        domain_protocol_dict = utils.get_domain_and_protocol()
+        context.update(domain_protocol_dict)
         context["url"] = settings.USERNAME_RESET_CONFIRM_URL.format(**context)
         return context

@@ -31,6 +31,16 @@ def logout_user(request):
         logout(request)
 
 
+def get_domain_and_protocol():
+    data = dict()
+    keys = ("protocol", "domain", "site_name")
+    for key in keys:
+        settings_value = getattr(settings, key.upper(), None)
+        if settings_value:
+            data[key] = settings_value
+    return data
+
+
 class ActionViewMixin(object):
     def post(self, request, **kwargs):
         serializer = self.get_serializer(data=request.data)
