@@ -97,6 +97,17 @@ default_settings = {
             "token_destroy": ["rest_framework.permissions.IsAuthenticated"],
         }
     ),
+    "WEBAUTHN": ObjDict(
+        {
+            "RP_NAME": "localhost",
+            "RP_ID": "localhost",
+            "ORIGIN": "http://localhost:8000",
+            "CHALLENGE_LENGTH": 32,
+            "UKEY_LENGTH": 20,
+            "SIGNUP_SERIALIZER": "djoser.webauthn.serializers.WebauthnCreateUserSerializer",
+            "LOGIN_SERIALIZER": "djoser.webauthn.serializers.WebauthnLoginSerializer",
+        }
+    ),
 }
 
 SETTINGS_TO_IMPORT = ["TOKEN_MODEL", "SOCIAL_AUTH_TOKEN_STRATEGY"]
