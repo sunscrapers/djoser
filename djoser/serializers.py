@@ -262,14 +262,12 @@ class UsernameSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
         self.username_field = settings.LOGIN_FIELD
         self._default_username_field = User.USERNAME_FIELD
-        self.fields["new_{}".format(self.username_field)] = self.fields.pop(
-            self.username_field
-        )
+        self.fields[f"new_{self.username_field}"] = self.fields.pop(self.username_field)
 
     def save(self, **kwargs):
         if self.username_field != self._default_username_field:
             kwargs[User.USERNAME_FIELD] = self.validated_data.get(
-                "new_{}".format(self.username_field)
+                f"new_{self.username_field}"
             )
         return super().save(**kwargs)
 
@@ -288,7 +286,7 @@ class UsernameRetypeSerializer(UsernameSerializer):
     def validate(self, attrs):
         attrs = super().validate(attrs)
         new_username = attrs[settings.LOGIN_FIELD]
-        if new_username != attrs["re_new_{}".format(settings.LOGIN_FIELD)]:
+        if new_username != attrs[f"re_new_{settings.LOGIN_FIELD}"]:
             self.fail("username_mismatch")
         else:
             return attrs

@@ -19,7 +19,7 @@ class UsernameResetConfirmViewTest(
     APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
 ):
     def setUp(self):
-        self.base_url = reverse("user-reset-{}-confirm".format(User.USERNAME_FIELD))
+        self.base_url = reverse(f"user-reset-{User.USERNAME_FIELD}-confirm")
 
     def test_post_set_new_username(self):
         user = create_user()

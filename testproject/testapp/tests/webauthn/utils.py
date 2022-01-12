@@ -1,5 +1,6 @@
-from djoser.webauthn.models import CredentialOptions
 from testapp.tests.common import create_user
+
+from djoser.webauthn.models import CredentialOptions
 
 
 def create_credential_options(

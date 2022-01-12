@@ -47,7 +47,7 @@ const transformCredentialCreateOptions = (credentialCreateOptionsFromServer) => 
 
     challenge = Uint8Array.from(
         atob(credentialCreateOptionsFromServer.challenge), c => c.charCodeAt(0));
-    
+
     const transformedCredentialCreateOptions = Object.assign(
             {}, credentialCreateOptionsFromServer,
             {challenge, user});
@@ -62,7 +62,7 @@ const transformNewAssertionForServer = (newAssertion) => {
         newAssertion.response.clientDataJSON);
     const rawId = new Uint8Array(
         newAssertion.rawId);
-    
+
     const registrationClientExtensions = newAssertion.getClientExtensionResults();
 
     return {
@@ -137,7 +137,7 @@ async function handleSignup(e) {
     const displayName = document.getElementById('signup-displayname').value;
 
     const credentialOptions = await getCredentialOptions(username, displayName);
-    
+
     const rawAssertionForServer = await navigator.credentials.create({
         publicKey: credentialOptions,
     });

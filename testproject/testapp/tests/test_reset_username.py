@@ -20,7 +20,7 @@ class UsernameResetViewTest(
     APITestCase, assertions.StatusCodeAssertionsMixin, assertions.EmailAssertionsMixin
 ):
     def setUp(self):
-        self.base_url = reverse("user-reset-{}".format(User.USERNAME_FIELD))
+        self.base_url = reverse(f"user-reset-{User.USERNAME_FIELD}")
 
     def test_post_should_send_email_to_user_with_username_reset_link(self):
         user = create_user()

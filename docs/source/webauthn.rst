@@ -8,7 +8,8 @@ WebAuthn
 Configuration
 =============
 
-Assuming you have Djoser installed, add ``djoser.webauthn`` to ``INSTALLED_APPS``:
+First make sure to install ``webauthn<1.0``. You can use webauthn as "extras" when installing djoser, e.g. ``pip install djoser[webauthn]`` or ``poetry add djoser -E webauthn``.
+Then add ``djoser.webauthn`` to ``INSTALLED_APPS``:
 
 .. code-block:: python
 
@@ -144,7 +145,7 @@ Running example app
 -------------------
 
     .. code-block:: bash
-    
+
         $ git clone git@github.com:sunscrapers/djoser.git
         $ pip install -r requirements.txt
         $ cd djoser/testproject

@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError, transaction
 from rest_framework import serializers
 
 from djoser.conf import settings
@@ -29,9 +28,7 @@ class WebauthnSignupSerializer(serializers.ModelSerializer):
 
     def validate_username(self, username):
         if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError(
-                "User {} already exists.".format(username)
-            )
+            raise serializers.ValidationError(f"User {username} already exists.")
         return username
 
 

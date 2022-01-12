@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # djoser documentation build configuration file, created by
 # sphinx-quickstart on Fri Jun  2 10:56:45 2017.

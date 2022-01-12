@@ -22,7 +22,7 @@ class ObjDict(dict):
                 val = [import_string(v) if isinstance(v, str) else v for v in val]
             self[item] = val
         except KeyError:
-            val = super(ObjDict, self).__getattribute__(item)
+            val = super().__getattribute__(item)
 
         return val
 

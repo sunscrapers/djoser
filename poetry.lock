@@ -73,6 +73,18 @@ python2 = ["typed-ast (>=1.4.3)"]
 uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
+name = "cbor2"
+version = "5.4.2"
+description = "Pure Python CBOR (de)serializer with extensive tag support"
+category = "main"
+optional = true
+python-versions = ">=3.6"
+
+[package.extras]
+doc = ["sphinx-rtd-theme", "sphinx-autodoc-typehints (>=1.2.0)"]
+test = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "certifi"
 version = "2021.10.8"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -294,8 +306,16 @@ docs = ["furo (>=2021.8.17b43)", "sphinx (>=4.1)", "sphinx-autodoc-typehints (>=
 testing = ["covdefaults (>=1.2.0)", "coverage (>=4)", "pytest (>=4)", "pytest-cov", "pytest-timeout (>=1.4.2)"]
 
 [[package]]
+name = "future"
+version = "0.18.2"
+description = "Clean single-source support for Python 3 and 2"
+category = "main"
+optional = true
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
 name = "identify"
-version = "2.4.1"
+version = "2.4.3"
 description = "File identification library for Python"
 category = "dev"
 optional = false
@@ -488,6 +508,22 @@ docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
 tests = ["pytest (>=6.0.0,<7.0.0)", "coverage[toml] (==5.0.4)"]
 
 [[package]]
+name = "pyopenssl"
+version = "21.0.0"
+description = "Python wrapper module around the OpenSSL library"
+category = "main"
+optional = true
+python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*"
+
+[package.dependencies]
+cryptography = ">=3.3"
+six = ">=1.5.2"
+
+[package.extras]
+docs = ["sphinx", "sphinx-rtd-theme"]
+test = ["flaky", "pretend", "pytest (>=3.0.1)"]
+
+[[package]]
 name = "pyparsing"
 version = "3.0.6"
 description = "Python parsing module"
@@ -629,7 +665,7 @@ rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -741,7 +777,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "urllib3"
-version = "1.26.7"
+version = "1.26.8"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "main"
 optional = false
@@ -772,6 +808,21 @@ docs = ["proselint (>=0.10.2)", "sphinx (>=3)", "sphinx-argparse (>=0.2.5)", "sp
 testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", "pytest (>=4)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.1)", "pytest-mock (>=2)", "pytest-randomly (>=1)", "pytest-timeout (>=1)", "packaging (>=20.0)"]
 
 [[package]]
+name = "webauthn"
+version = "0.4.7"
+description = "A WebAuthn Python module."
+category = "main"
+optional = true
+python-versions = "*"
+
+[package.dependencies]
+cbor2 = ">=4.0.1"
+cryptography = ">=2.3.1"
+future = ">=0.17.1"
+pyOpenSSL = ">=16.0.0"
+six = ">=1.11.0"
+
+[[package]]
 name = "zipp"
 version = "3.7.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -785,11 +836,12 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 
 [extras]
 test = ["pytest", "codecov", "coverage", "pytest-cov", "pytest-django", "pytest-pythonpath", "djet"]
+webauthn = ["webauthn"]
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "c4570c105685677b48e31eb4e6fbf79317ae0e2c6e4c123e69048adc46d469a2"
+content-hash = "49e4479bcf2db6321f19c554489a8bd111a22414c471ef33e6d867d968f21a8c"
 
 [metadata.files]
 asgiref = [
@@ -811,6 +863,21 @@ babel = [
 black = [
     {file = "black-21.12b0-py3-none-any.whl", hash = "sha256:a615e69ae185e08fdd73e4715e260e2479c861b5740057fde6e8b4e3b7dd589f"},
     {file = "black-21.12b0.tar.gz", hash = "sha256:77b80f693a569e2e527958459634f18df9b0ba2625ba4e0c2d5da5be42e6f2b3"},
+]
+cbor2 = [
+    {file = "cbor2-5.4.2-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:0153635a78e62d70f26f5b3469cb8de822420eda69c996304fb3d0dc1a53d7f3"},
+    {file = "cbor2-5.4.2-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:70fb47a4bca70ae2d1b2b6c9d5ed6c898494739966653f7c84737f795b26d754"},
+    {file = "cbor2-5.4.2-cp36-cp36m-win_amd64.whl", hash = "sha256:10f178697e66eaae51534c3ef9acce1abf2f747e63c841e8702b9453c5bc4cfe"},
+    {file = "cbor2-5.4.2-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:4c112b21fad53b2d936ef2d55c698641a6d49025c1a9cf73db3ef24684514db1"},
+    {file = "cbor2-5.4.2-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:93baf1ee33a305acf8f1391fed4e63ea2e837b561294fd6275ce8785acb795fa"},
+    {file = "cbor2-5.4.2-cp37-cp37m-win_amd64.whl", hash = "sha256:d9f64241bb30439f6ebde74101683e9dceecab95afe105560ac9d0e54d1b3c2e"},
+    {file = "cbor2-5.4.2-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:2757a7b624478d3b6707adf8ab7aef03d81fdaca6bea981b2323069660b9360f"},
+    {file = "cbor2-5.4.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:32c1d00d8ad1a89f2358bf444fd43cacc3ca61f3c3feb1a2f2b2bea8ba4853d2"},
+    {file = "cbor2-5.4.2-cp38-cp38-win_amd64.whl", hash = "sha256:79c10306d9128258dea110c01abbe9c58c48ee2ffcf995f982fb063f1a82e2ee"},
+    {file = "cbor2-5.4.2-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:0e27c52abdccadadab858437f6d98d5e8711aa84f0af7417dd1404d16127db7f"},
+    {file = "cbor2-5.4.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:395aec8f415f039ab3be6cb58861c21bd2202f5c0ad6537b31956da532ea74ad"},
+    {file = "cbor2-5.4.2-cp39-cp39-win_amd64.whl", hash = "sha256:310c7d7925f7aa6cb90791606be17c164bbf3b28d4d17047b5d19d303f2fe817"},
+    {file = "cbor2-5.4.2.tar.gz", hash = "sha256:e283e70b55a049ff364cc5e648fde587e4d9b0e87e4b2664c69e639135e6b3b8"},
 ]
 certifi = [
     {file = "certifi-2021.10.8-py2.py3-none-any.whl", hash = "sha256:d62a0163eb4c2344ac042ab2bdf75399a71a2d8c7d47eac2e2ee91b9d6339569"},
@@ -1000,9 +1067,12 @@ filelock = [
     {file = "filelock-3.4.2-py3-none-any.whl", hash = "sha256:cf0fc6a2f8d26bd900f19bf33915ca70ba4dd8c56903eeb14e1e7a2fd7590146"},
     {file = "filelock-3.4.2.tar.gz", hash = "sha256:38b4f4c989f9d06d44524df1b24bd19e167d851f19b50bf3e3559952dddc5b80"},
 ]
+future = [
+    {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
+]
 identify = [
-    {file = "identify-2.4.1-py2.py3-none-any.whl", hash = "sha256:0192893ff68b03d37fed553e261d4a22f94ea974093aefb33b29df2ff35fed3c"},
-    {file = "identify-2.4.1.tar.gz", hash = "sha256:64d4885e539f505dd8ffb5e93c142a1db45480452b1594cacd3e91dca9a984e9"},
+    {file = "identify-2.4.3-py2.py3-none-any.whl", hash = "sha256:ac9c919c8ac5b90d03f8e1bce6dedcbd8a3b2a59c46737c04ed852e2d307af29"},
+    {file = "identify-2.4.3.tar.gz", hash = "sha256:8d80d877441073e7222ff272da45ca5ca1d901412790544b446e7d363ad5e9f0"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
@@ -1139,6 +1209,10 @@ pyjwt = [
     {file = "PyJWT-2.3.0-py3-none-any.whl", hash = "sha256:e0c4bb8d9f0af0c7f5b1ec4c5036309617d03d56932877f2f7a0beeb5318322f"},
     {file = "PyJWT-2.3.0.tar.gz", hash = "sha256:b888b4d56f06f6dcd777210c334e69c737be74755d3e5e9ee3fe67dc18a0ee41"},
 ]
+pyopenssl = [
+    {file = "pyOpenSSL-21.0.0-py2.py3-none-any.whl", hash = "sha256:8935bd4920ab9abfebb07c41a4f58296407ed77f04bd1a92914044b848ba1ed6"},
+    {file = "pyOpenSSL-21.0.0.tar.gz", hash = "sha256:5e2d8c5e46d0d865ae933bef5230090bdaf5506281e9eec60fa250ee80600cb3"},
+]
 pyparsing = [
     {file = "pyparsing-3.0.6-py3-none-any.whl", hash = "sha256:04ff808a5b90911829c55c4e26f75fa5ca8a2f5f36aa3a51f68e27033341d3e4"},
     {file = "pyparsing-3.0.6.tar.gz", hash = "sha256:d9bdec0013ef1eb5a84ab39a3b3868911598afa494f5faa038647101504e2b81"},
@@ -1268,12 +1342,16 @@ uritemplate = [
     {file = "uritemplate-4.1.1.tar.gz", hash = "sha256:4346edfc5c3b79f694bccd6d6099a322bbeb628dbf2cd86eea55a456ce5124f0"},
 ]
 urllib3 = [
-    {file = "urllib3-1.26.7-py2.py3-none-any.whl", hash = "sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844"},
-    {file = "urllib3-1.26.7.tar.gz", hash = "sha256:4987c65554f7a2dbf30c18fd48778ef124af6fab771a377103da0585e2336ece"},
+    {file = "urllib3-1.26.8-py2.py3-none-any.whl", hash = "sha256:000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed"},
+    {file = "urllib3-1.26.8.tar.gz", hash = "sha256:0e7c33d9a63e7ddfcb86780aac87befc2fbddf46c58dbb487e0855f7ceec283c"},
 ]
 virtualenv = [
     {file = "virtualenv-20.13.0-py2.py3-none-any.whl", hash = "sha256:339f16c4a86b44240ba7223d0f93a7887c3ca04b5f9c8129da7958447d079b09"},
     {file = "virtualenv-20.13.0.tar.gz", hash = "sha256:d8458cf8d59d0ea495ad9b34c2599487f8a7772d796f9910858376d1600dd2dd"},
+]
+webauthn = [
+    {file = "webauthn-0.4.7-py2.py3-none-any.whl", hash = "sha256:238391b2e2cc60fb51a2cd2d2d6be149920b9af6184651353d9f95856617a9e7"},
+    {file = "webauthn-0.4.7.tar.gz", hash = "sha256:8ad9072ff1d6169f3be30d4dc8733ea563dd266962397bc58b40f674a6af74ac"},
 ]
 zipp = [
     {file = "zipp-3.7.0-py3-none-any.whl", hash = "sha256:b47250dd24f92b7dd6a0a8fc5244da14608f3ca90a5efcd37a3b1642fac9a375"},
