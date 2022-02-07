@@ -15,7 +15,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: djoser/constants.py:4
-msgid "Unable to login with provided credentials."
+msgid "Unable to log in with provided credentials."
 msgstr "入力された情報でログインできませんでした。"
 
 #: djoser/constants.py:5
