@@ -49,15 +49,12 @@ djet = {version="^0.3.0", optional=true}
 pytz = "^2021.3"
 webauthn = {version="<1.0", optional=true}
 
-
-[tool.poetry.group.dev.dependencies]
-pyupgrade = "^2.31.0"
-
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.7.1"
 tox = "^3.20.0"
 babel = "^2.8.0"
 black = "^21.12b0"
+pyupgrade = "^2.31.0"
 
 
 [tool.poetry.extras]
