@@ -89,6 +89,6 @@ Configure ``urls.py`` with ``djoser.url.jwt`` module path:
 
     urlpatterns = [
         (...),
-        url(r'^auth/', include('djoser.urls')),
-        url(r'^auth/', include('djoser.urls.jwt')),
+        re_path(r'^auth/', include('djoser.urls')),
+        re_path(r'^auth/', include('djoser.urls.jwt')),
     ]
