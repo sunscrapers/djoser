@@ -94,7 +94,7 @@ Configure ``urls.py``:
 
     urlpatterns = [
         (...),
-        url(r'^auth/', include('djoser.urls')),
+        re_path(r'^auth/', include('djoser.urls')),
     ]
 
 HTTP Basic Auth strategy is assumed by default as Django Rest Framework does it.
