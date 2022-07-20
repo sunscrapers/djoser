@@ -145,7 +145,7 @@ Before sending patches please make sure you have `pre-commit <https://pre-commit
     $ pre-commit install
 
 This will ensure that your code is cleaned before you commit it.
-Some steps (like black) automatically fix issues but the show their status as FAILED.
+Some steps (like black) automatically fix issues but they show their status as FAILED.
 Just inspect if everything is OK, git-add the files and retry the commit.
 Other tools (like flake8) require you to manually fix the issues.
 
