@@ -53,7 +53,7 @@ class PasswordResetConfirmViewTest(
         Regression test for https://github.com/sunscrapers/djoser/issues/122
 
         When uid was not correct unicode string, error message was a
-        standard Python error messsage. Now we provide human readable message.
+        standard Python error message. Now we provide human readable message.
         """
         user = create_user()
         data = {

@@ -354,7 +354,7 @@ HIDE_USERS
 
 .. versionadded:: 2.0
 
-If set to True, listing ``/users/`` enpoint by normal user will return only
+If set to True, listing ``/users/`` endpoint by normal user will return only
 that user's profile in the list. Beside that, accessing ``/users/<id>/``
 endpoints by user without proper permission will result in HTTP 404 instead of HTTP 403.
 
