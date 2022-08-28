@@ -132,8 +132,8 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_instance(self):
         return self.request.user
 
-    def perform_create(self, serializer):
-        user = serializer.save()
+    def perform_create(self, serializer, *args, **kwargs):
+        user = serializer.save(*args, **kwargs)
         signals.user_registered.send(
             sender=self.__class__, user=user, request=self.request
         )
@@ -145,8 +145,8 @@ class UserViewSet(viewsets.ModelViewSet):
         elif settings.SEND_CONFIRMATION_EMAIL:
             settings.EMAIL.confirmation(self.request, context).send(to)
 
-    def perform_update(self, serializer):
-        super().perform_update(serializer)
+    def perform_update(self, serializer, *args, **kwargs):
+        super().perform_update(serializer, *args, **kwargs)
         user = serializer.instance
         signals.user_updated.send(
             sender=self.__class__, user=user, request=self.request
