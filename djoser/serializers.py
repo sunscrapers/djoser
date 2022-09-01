@@ -176,9 +176,7 @@ class UidAndTokenSerializer(serializers.Serializer):
             self.user = User.objects.get(pk=uid)
         except (User.DoesNotExist, ValueError, TypeError, OverflowError):
             key_error = "invalid_uid"
-            raise ValidationError(
-                {"uid": [self.error_messages[key_error]]}, code=key_error
-            )
+            raise ValidationError(self.error_messages[key_error])
         return value
 
     def validate_token(self, value):
@@ -196,9 +194,7 @@ class UidAndTokenSerializer(serializers.Serializer):
         )
         if not is_token_valid:
             key_error = "invalid_token"
-            raise ValidationError(
-                {"token": [self.error_messages[key_error]]}, code=key_error
-            )
+            raise ValidationError(self.error_messages[key_error])
         return value
 
 
