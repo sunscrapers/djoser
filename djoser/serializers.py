@@ -170,11 +170,7 @@ class UidAndTokenSerializer(serializers.Serializer):
         "invalid_uid": settings.CONSTANTS.messages.INVALID_UID_ERROR,
     }
 
-    def validate(self, attrs):
-        validated_data = super().validate(attrs)
-
-        # uid validation have to be here, because validate_<field_name>
-        # doesn't work with modelserializer
+    def validate_uid(self, value):
         try:
             uid = utils.decode_uid(self.initial_data.get("uid", ""))
             self.user = User.objects.get(pk=uid)
@@ -183,17 +179,27 @@ class UidAndTokenSerializer(serializers.Serializer):
             raise ValidationError(
                 {"uid": [self.error_messages[key_error]]}, code=key_error
             )
+        return value
 
+    def validate_token(self, value):
+        """
+        - The order of the validation matters.
+        - self.user must have already been set by 'validate_uid'
+        - In the future, if for whatever reason, rest_framework
+            decided to change the order of the validation, then this
+            method must been changed accordingly. Alternatively,
+            it's also possible to use one of hasattr(self, 'user') or
+            getattr(self, 'user', None) to prevent an unexpected behavior.
+        """
         is_token_valid = self.context["view"].token_generator.check_token(
-            self.user, self.initial_data.get("token", "")
+            self.user, value
         )
-        if is_token_valid:
-            return validated_data
-        else:
+        if not is_token_valid:
             key_error = "invalid_token"
             raise ValidationError(
                 {"token": [self.error_messages[key_error]]}, code=key_error
             )
+        return value
 
 
 class ActivationSerializer(UidAndTokenSerializer):
