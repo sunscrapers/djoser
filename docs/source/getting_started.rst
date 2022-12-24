@@ -33,6 +33,8 @@ Supported Python versions
 * Python 3.6
 * Python 3.7
 * Python 3.8
+* Python 3.9
+* Python 3.10
 
 Supported Django versions
 -------------------------
@@ -41,6 +43,7 @@ Supported Django versions
 * Django 2.2
 * Django 3.1
 * Django 3.2
+* Django 4.0
 
 Supported Django Rest Framework versions
 ----------------------------------------
@@ -49,6 +52,7 @@ Supported Django Rest Framework versions
 * Django Rest Framework 3.10
 * Django Rest Framework 3.11
 * Django Rest Framework 3.12
+* Django Rest Framework 3.13
 
 Installation
 ------------
