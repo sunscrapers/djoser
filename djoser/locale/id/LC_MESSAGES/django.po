@@ -70,7 +70,7 @@ msgid ""
 "%(site_name)s."
 msgstr ""
 "Anda menerima email ini karena Anda harus menyelesaikan proses aktivasi pada "
-"%(nama_situs)."
+"%(site_name)."
 
 #: .\djoser\templates\email\activation.html:10
 #: .\djoser\templates\email\activation.html:21
@@ -170,7 +170,7 @@ msgstr "Nama pengguna Anda telah diubah!"
 #: .\djoser\templates\email\username_reset.html:4
 #, python-format
 msgid "Username reset on %(site_name)s"
-msgstr "Pengaturan ulang nama pengguna pada %(nama_situs)"
+msgstr "Pengaturan ulang nama pengguna pada %(site_name)"
 
 #: .\djoser\templates\email\username_reset.html:8
 #: .\djoser\templates\email\username_reset.html:20
