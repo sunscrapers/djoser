@@ -60,7 +60,7 @@ msgstr "Tidak dapat membuat akun."
 #: .\djoser\templates\email\activation.html:4
 #, python-format
 msgid "Account activation on %(site_name)s"
-msgstr "Aktivasi akun di %(site_name)"
+msgstr "Aktivasi akun di %(site_name)s"
 
 #: .\djoser\templates\email\activation.html:8
 #: .\djoser\templates\email\activation.html:19
@@ -70,7 +70,7 @@ msgid ""
 "%(site_name)s."
 msgstr ""
 "Anda menerima email ini karena Anda harus menyelesaikan proses aktivasi pada "
-"%(site_name)."
+"%(site_name)s."
 
 #: .\djoser\templates\email\activation.html:10
 #: .\djoser\templates\email\activation.html:21
@@ -106,14 +106,14 @@ msgstr "Terima kasih telah menggunakan situs kami!"
 #: .\djoser\templates\email\username_reset.html:28
 #, python-format
 msgid "The %(site_name)s team"
-msgstr "Tim %(site_name)"
+msgstr "Tim %(site_name)s"
 
 #: .\djoser\templates\email\confirmation.html:4
 #, python-format
 msgid ""
 "%(site_name)s - Your account has been successfully created and activated!"
 msgstr ""
-"%(site_name) - Akun Anda telah berhasil dibuat dan diaktifkan!"
+"%(site_name)s - Akun Anda telah berhasil dibuat dan diaktifkan!"
 
 #: .\djoser\templates\email\confirmation.html:8
 #: .\djoser\templates\email\confirmation.html:16
@@ -123,7 +123,7 @@ msgstr "Akun Anda telah dibuat dan siap digunakan!"
 #: .\djoser\templates\email\password_changed_confirmation.html:4
 #, python-format
 msgid "%(site_name)s - Your password has been successfully changed!"
-msgstr "%(site_name) - Kata sandi Anda telah berhasil diubah!"
+msgstr "%(site_name)s - Kata sandi Anda telah berhasil diubah!"
 
 #: .\djoser\templates\email\password_changed_confirmation.html:8
 #: .\djoser\templates\email\password_changed_confirmation.html:16
@@ -133,7 +133,7 @@ msgstr "Kata sandi Anda telah diubah!"
 #: .\djoser\templates\email\password_reset.html:4
 #, python-format
 msgid "Password reset on %(site_name)s"
-msgstr "Pengaturan ulang kata sandi pada %(site_name)"
+msgstr "Pengaturan ulang kata sandi pada %(site_name)s"
 
 #: .\djoser\templates\email\password_reset.html:8
 #: .\djoser\templates\email\password_reset.html:20
@@ -143,7 +143,7 @@ msgid ""
 "user account at %(site_name)s."
 msgstr ""
 "Anda menerima email ini karena Anda meminta pengaturan ulang kata sandi "
-"untuk akun pengguna di %(site_name)."
+"untuk akun pengguna di %(site_name)s."
 
 #: .\djoser\templates\email\password_reset.html:10
 #: .\djoser\templates\email\password_reset.html:22
@@ -160,7 +160,7 @@ msgstr "Nama pengguna Anda, jika Anda lupa:"
 #: .\djoser\templates\email\username_changed_confirmation.html:4
 #, python-format
 msgid "%(site_name)s - Your username has been successfully changed!"
-msgstr "%(site_name) - Nama pengguna Anda telah berhasil diubah!"
+msgstr "%(site_name)s - Nama pengguna Anda telah berhasil diubah!"
 
 #: .\djoser\templates\email\username_changed_confirmation.html:8
 #: .\djoser\templates\email\username_changed_confirmation.html:16
@@ -170,7 +170,7 @@ msgstr "Nama pengguna Anda telah diubah!"
 #: .\djoser\templates\email\username_reset.html:4
 #, python-format
 msgid "Username reset on %(site_name)s"
-msgstr "Pengaturan ulang nama pengguna pada %(site_name)"
+msgstr "Pengaturan ulang nama pengguna pada %(site_name)s"
 
 #: .\djoser\templates\email\username_reset.html:8
 #: .\djoser\templates\email\username_reset.html:20
@@ -180,7 +180,7 @@ msgid ""
 "user account at %(site_name)s."
 msgstr ""
 "Anda menerima email ini karena Anda meminta pengaturan ulang nama pengguna "
-"untuk akun pengguna di %(site_name)."
+"untuk akun pengguna di %(site_name)s."
 
 #: .\djoser\templates\email\username_reset.html:10
 #: .\djoser\templates\email\username_reset.html:22
