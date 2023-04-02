@@ -49,11 +49,12 @@ class PasswordResetConfirmViewTest(
         self.assertFalse(user.check_password(data["new_password"]))
 
     def test_post_readable_error_message_when_uid_is_broken(self):
-        """
-        Regression test for https://github.com/sunscrapers/djoser/issues/122
+        """Regression test for
+        https://github.com/sunscrapers/djoser/issues/122.
 
         When uid was not correct unicode string, error message was a
-        standard Python error messsage. Now we provide human readable message.
+        standard Python error messsage. Now we provide human readable
+        message.
         """
         user = create_user()
         data = {
