@@ -96,9 +96,9 @@ class UsernameResetViewTest(
         AUTH_USER_MODEL="testapp.CustomUser",
         DJOSER=dict(settings.DJOSER, **{"USERNAME_RESET_SHOW_EMAIL_NOT_FOUND": True}),
     )
-    def test_post_should_return_bad_request_with_custom_email_field_if_user_does_not_exist(
+    def test_post_should_return_bad_request_with_custom_email_field_if_user_does_not_exist(  # NOQA: 501
         self,
-    ):  # noqa
+    ):
         data = {"custom_email": "john@beatles.com"}
 
         response = self.client.post(self.base_url, data)
