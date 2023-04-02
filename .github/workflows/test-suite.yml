@@ -31,12 +31,12 @@ jobs:
           poetry run pip install "djangorestframework~=${{ matrix.drf-version }}"
       - name: Run tests
         run: make test
-#      - name: Upload coverage to Codecov
-#        uses: codecov/codecov-action@v3
-#        with:
-#          files: ./coverage.xml
-#          fail_ci_if_error: true
-#          verbose: true
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: true
+          verbose: true
 
   code-quality:
     strategy:
