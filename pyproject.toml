@@ -40,10 +40,10 @@ django-templated-mail = "^1.1.1"
 social-auth-app-django = "^5.0.0"
 djet = { version = "^0.3.0", optional = true }
 webauthn = { version = "<1.0", optional = true }
-django = "2.2"
+django = "^3.0.0"
 
-# https://python-poetry.org/docs/pyproject/#extras
 [tool.poetry.extras]
+# https://python-poetry.org/docs/pyproject/#extras
 djet = ["djet"]
 webauthn = ["webauthn"]
 
