@@ -6,6 +6,13 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.1.0`_ (2020-10-30)
+---------------------
+
+* fix DRF 3.12 compatibility warnings
+* resolve Django 4.0 warnings
+
+---------------------
 `2.0.5`_ (2020-09-03)
 ---------------------
 
@@ -393,3 +400,4 @@ few bugfixes / documentation updates. List of changes:
 .. _2.0.3: https://github.com/sunscrapers/djoser/compare/2.0.2...2.0.3
 .. _2.0.4: https://github.com/sunscrapers/djoser/compare/2.0.3...2.0.4
 .. _2.0.5: https://github.com/sunscrapers/djoser/compare/2.0.4...2.0.5
+.. _2.1.0: https://github.com/sunscrapers/djoser/compare/2.0.5...2.1.0
