@@ -1,5 +1,7 @@
+.PHONY: init build test migrate runserver run-hooks docs update-deps
+
 init:
-	poetry install -E test
+	poetry install --all-extras
 
 build:
 	poetry run pybabel compile --domain django --directory djoser/locale -f
@@ -13,3 +15,15 @@ migrate:
 
 runserver:
 	poetry run python testproject/manage.py runserver
+
+run-hooks:
+	poetry install --only code-quality
+	pre-commit run --all-files --show-diff-on-failure
+
+docs:
+	poetry config virtualenvs.create false
+	poetry install --only docs
+	cd docs && make html
+
+update-deps:
+	poetry update
