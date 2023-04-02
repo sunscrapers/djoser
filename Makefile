@@ -17,8 +17,7 @@ runserver:
 	poetry run python testproject/manage.py runserver
 
 run-hooks:
-	poetry install --only code-quality
-	pre-commit run --all-files --show-diff-on-failure
+	poetry run pre-commit run --all-files --show-diff-on-failure
 
 docs:
 	poetry config virtualenvs.create false
