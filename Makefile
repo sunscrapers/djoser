@@ -9,6 +9,7 @@ build:
 
 test:
 	poetry run py.test --capture=no --cov-report term-missing --cov-report html --cov=djoser testproject/
+	poetry run coverage xml
 
 migrate:
 	poetry run python testproject/manage.py migrate
