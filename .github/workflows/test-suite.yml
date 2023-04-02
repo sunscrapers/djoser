@@ -8,7 +8,7 @@ jobs:
       matrix:
         python-version: [ 3.8, 3.9, '3.10', 3.11]
         poetry-version: [ 1.3.2 ]
-        django-version: [ "3.0", 4.1 ]
+        django-version: [ 3.2.18, 4.1 ]
         drf-version: [ 3.12, 3.14 ]
         os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
