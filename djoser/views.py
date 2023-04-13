@@ -202,7 +202,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user = serializer.get_user(is_active=False)
 
         if not settings.SEND_ACTIVATION_EMAIL or not user:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
         context = {"user": user}
         to = [get_user_email(user)]
