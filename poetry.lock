@@ -1708,4 +1708,4 @@ webauthn = ["webauthn"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "b93ed60d42d30206b6a204396ec4ff5e9284220f2d72e86c6fbba972b6c332b6"
+content-hash = "d8730b81fd2ed5f2fb36b7bd7f0c8303b9817254e716f9d42e14fa9666723da7"

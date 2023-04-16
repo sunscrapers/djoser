@@ -6,7 +6,7 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
-`2.2.0`_ (TBA)
+`2.2.0`_ (2023-04-16)
 ---------------------
 
 * add WebAuthn support

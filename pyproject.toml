@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "djoser"
-version = "2.2.0a0"
+version = "2.2.0"
 description = "REST implementation of Django authentication system."
 authors = [
     "Sunscrapers <info@sunscrapers.com>",
@@ -12,7 +12,6 @@ license = "MIT"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
-    "Framework :: Django :: 2.2",
     "Framework :: Django :: 3.1",
     "Framework :: Django :: 3.2",
     "Framework :: Django :: 4.0",
