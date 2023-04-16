@@ -29,6 +29,8 @@ jobs:
       - name: Upgrade drf version
         run: |
           poetry run pip install "djangorestframework~=${{ matrix.drf-version }}"
+      - name: Echo env
+        run: poetry run pip freeze | grep -E 'djangorestframework|Django'
       - name: Run tests
         run: make test
       - name: Upload coverage to Codecov
