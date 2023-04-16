@@ -25,10 +25,10 @@ jobs:
         run: poetry install --only main,test --all-extras
       - name: Upgrade django version
         run: |
-          poetry run pip install "Django~=${{ matrix.django-version }}"
+          poetry run pip install "Django==${{ matrix.django-version }}"
       - name: Upgrade drf version
         run: |
-          poetry run pip install "djangorestframework~=${{ matrix.drf-version }}"
+          poetry run pip install "djangorestframework==${{ matrix.drf-version }}"
       - name: Echo env
         run: poetry run pip freeze | grep -E 'djangorestframework|Django'
       - name: Run tests
