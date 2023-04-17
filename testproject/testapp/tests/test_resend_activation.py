@@ -32,7 +32,7 @@ class TestResendActivationEmail(
         response = self.client.post(self.base_url, data)
 
         self.assert_emails_in_mailbox(0)
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
     def test_dont_resend_activation_when_active(self):
@@ -41,7 +41,7 @@ class TestResendActivationEmail(
         response = self.client.post(self.base_url, data)
 
         self.assert_emails_in_mailbox(0)
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
     def test_dont_resend_activation_when_no_password(self):
@@ -50,7 +50,7 @@ class TestResendActivationEmail(
         response = self.client.post(self.base_url, data)
 
         self.assert_emails_in_mailbox(0)
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
 
     @mock.patch("djoser.serializers.User", CustomUser)
     @mock.patch("djoser.views.User", CustomUser)
