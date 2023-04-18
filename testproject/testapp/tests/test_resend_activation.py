@@ -8,6 +8,7 @@ from testapp.models import CustomUser
 from testapp.tests.common import create_user, mock
 
 from djoser.compat import get_user_email
+from djoser.conf import settings as default_settings
 
 
 class TestResendActivationEmail(
@@ -32,7 +33,7 @@ class TestResendActivationEmail(
         response = self.client.post(self.base_url, data)
 
         self.assert_emails_in_mailbox(0)
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
     def test_dont_resend_activation_when_active(self):
@@ -66,3 +67,23 @@ class TestResendActivationEmail(
         self.assert_emails_in_mailbox(1)
         self.assert_email_exists(to=[get_user_email(user)])
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+
+    @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
+    def test_post_should_return_no_content_if_user_does_not_exist(self):
+        data = {"email": "john@beatles.com"}
+
+        response = self.client.post(self.base_url, data)
+
+        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{"RESEND_ACTIVATION_SHOW_EMAIL_NOT_FOUND": True})
+    )
+    def test_post_should_return_bad_request_if_user_does_not_exist(self):
+        data = {"email": "john@beatles.com"}
+
+        response = self.client.post(self.base_url, data)
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json()[0], default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
+        )
