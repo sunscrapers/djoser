@@ -63,9 +63,13 @@ User Resend Activation E-mail
 ------------------------------
 
 Use this endpoint to re-send the activation e-mail. Note that no e-mail would
-be sent if the user is already active or if they don't have a usable password.
-Also if the sending of activation e-mails is disabled in settings, this call
-will result in ``HTTP_400_BAD_REQUEST``
+be sent under these conditions:
+* The user is already active.
+* They don't have a usable password.
+* The sending of activation e-mails is disabled in settings
+
+This call will result in a `HTTP_204_NO_CONTENT` response regardless of whether an email
+is sent.
 
 **Default URL**: ``/users/resend_activation/``
 
