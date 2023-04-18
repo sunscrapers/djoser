@@ -68,8 +68,9 @@ be sent under these conditions:
 * They don't have a usable password.
 * The sending of activation e-mails is disabled in settings
 
-This call will result in a `HTTP_204_NO_CONTENT` response regardless of whether an email
-is sent.
+If the ``SEND_ACTIVATION_EMAIL`` setting is `False` this endpoint will return a `HTTP_400_BAD_REQUEST`
+response. If the user does not exist the response will be a `HTTP_400_BAD_REQUEST` or `HTTP_204_NO_CONTENT`
+depending on the ``RESEND_ACTIVATION_SHOW_EMAIL_NOT_FOUND`` setting.
 
 **Default URL**: ``/users/resend_activation/``
 
