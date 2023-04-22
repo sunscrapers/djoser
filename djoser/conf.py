@@ -116,7 +116,7 @@ default_settings = {
             "LONG_TOKEN_CHARS": "abcdefghijklmnopqrstuvwxyz0123456789",
             "SHORT_TOKEN_LIFETIME": 600,
             "LONG_TOKEN_LIFETIME": 600,
-            "REGISTER_UNEXISTENT_USERS": True,
+            "REGISTER_NONEXISTENT_USERS": True,
             "EMAIL_FIELD_NAME": "email",
             "MOBILE_FIELD_NAME": "mobile",
             "EMAIL_TOKEN_LENGTH_TYPE": "long",

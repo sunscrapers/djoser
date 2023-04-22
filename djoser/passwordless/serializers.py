@@ -26,7 +26,7 @@ class AbstractPasswordlessSignupSerializer(serializers.ModelSerializer):
         identifier_value = data[self.token_request_identifier_field]
         user = self.find_user_by_identifier(identifier_value)
         
-        if not settings.PASSWORDLESS["REGISTER_UNEXISTENT_USERS"] and not user:
+        if not settings.PASSWORDLESS["REGISTER_NONEXISTENT_USERS"] and not user:
             raise serializers.ValidationError(Messages.CANNOT_SEND_TOKEN)
         return super().validate(data)
 
@@ -34,7 +34,7 @@ class AbstractPasswordlessSignupSerializer(serializers.ModelSerializer):
         identifier_value = validated_data[self.token_request_identifier_field]
         user = self.find_user_by_identifier(identifier_value)
 
-        if settings.PASSWORDLESS["REGISTER_UNEXISTENT_USERS"] is True and not user:
+        if settings.PASSWORDLESS["REGISTER_NONEXISTENT_USERS"] is True and not user:
             user = User.objects.create(**{
                 self.token_request_identifier_field: identifier_value, 
                 # In many cases, the username is mandatory
