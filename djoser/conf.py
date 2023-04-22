@@ -108,6 +108,38 @@ default_settings = {
             "LOGIN_SERIALIZER": "djoser.webauthn.serializers.WebauthnLoginSerializer",
         }
     ),
+    "PASSWORDLESS": ObjDict(
+        {
+            "SHORT_TOKEN_LENGTH": 6,
+            "LONG_TOKEN_LENGTH": 64,
+            "SHORT_TOKEN_CHARS": "0123456789",
+            "LONG_TOKEN_CHARS": "abcdefghijklmnopqrstuvwxyz0123456789",
+            "SHORT_TOKEN_LIFETIME": 600,
+            "LONG_TOKEN_LIFETIME": 600,
+            "REGISTER_UNEXISTENT_USERS": True,
+            "EMAIL_FIELD_NAME": "email",
+            "MOBILE_FIELD_NAME": "mobile",
+            "EMAIL_TOKEN_LENGTH_TYPE": "long",
+            "MOBILE_TOKEN_LENGTH_TYPE": "short",
+            # Is the token alone enough to authenticate the user? 
+            # or should the request contain the same information that
+            # requested the token? It is not recommended to set this to True
+            # because it's easy to brute force a 4-6 digit token.
+            "SHORT_TOKEN_STANDALONE": False,
+            "ALLOWED_PASSWORDLESS_METHODS": ["EMAIL"], # or ["MOBILE"] or ["EMAIL", "MOBILE"]
+            "MAX_TOKEN_USES": 1,
+            "USERNAME_GENERATOR": "djoser.passwordless.utils.username_generator",
+            "EMAIL": ObjDict ({
+                "passwordless_request": "djoser.passwordless.email.PasswordlessRequestEmail",
+            }),
+            "SERIALIZERS": ObjDict({
+                "passwordless_token_exchange": "djoser.passwordless.serializers.PasswordlessTokenExchangeSerializer",
+            }),
+            "PERMISSIONS": ObjDict({
+                "passwordless_token_exchange": ["rest_framework.permissions.AllowAny"],
+            }),
+        }
+    ),
 }
 
 SETTINGS_TO_IMPORT = ["TOKEN_MODEL", "SOCIAL_AUTH_TOKEN_STRATEGY"]
