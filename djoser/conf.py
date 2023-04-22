@@ -133,6 +133,8 @@ default_settings = {
                 "passwordless_request": "djoser.passwordless.email.PasswordlessRequestEmail",
             }),
             "SERIALIZERS": ObjDict({
+                "passwordless_request_email_token": "djoser.passwordless.serializers.EmailPasswordlessAuthSerializer",
+                "passwordless_request_mobile_token": "djoser.passwordless.serializers.MobilePasswordlessAuthSerializer",
                 "passwordless_token_exchange": "djoser.passwordless.serializers.PasswordlessTokenExchangeSerializer",
             }),
             "PERMISSIONS": ObjDict({

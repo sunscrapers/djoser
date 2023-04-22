@@ -14,7 +14,7 @@ from .serializers import (
 )
 from .services import PasswordlessTokenService
 
-class AbstractBaseObtainPasswordlessToken(APIView):
+class AbstractPasswordlessTokenRequestView(APIView):
     """
     This returns a callback challenge token we can trade for a user's Auth Token.
     """
@@ -69,9 +69,9 @@ class AbstractBaseObtainPasswordlessToken(APIView):
             return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ObtainEmailCallbackToken(AbstractBaseObtainPasswordlessToken):
+class PasswordlessEmailTokenRequestView(AbstractPasswordlessTokenRequestView):
     permission_classes = (AllowAny,)
-    serializer_class = EmailPasswordlessAuthSerializer
+    serializer_class = settings.PASSWORDLESS.SERIALIZERS.passwordless_request_email_token
     token_request_identifier = 'email'
 
     def send(self, token):
@@ -85,9 +85,9 @@ class ObtainEmailCallbackToken(AbstractBaseObtainPasswordlessToken):
         settings.PASSWORDLESS.EMAIL.passwordless_request(self.request, context).send(to)
 
 
-class ObtainMobileCallbackToken(AbstractBaseObtainPasswordlessToken):
+class PasswordlessMobileTokenRequestView(AbstractPasswordlessTokenRequestView):
     permission_classes = (AllowAny,)
-    serializer_class = MobilePasswordlessAuthSerializer
+    serializer_class = settings.PASSWORDLESS.SERIALIZERS.passwordless_request_mobile_token
     token_request_identifier = 'mobile'
 
     def send(self, token):
