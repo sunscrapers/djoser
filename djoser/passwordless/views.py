@@ -90,6 +90,9 @@ class ObtainMobileCallbackToken(AbstractBaseObtainPasswordlessToken):
     serializer_class = MobilePasswordlessAuthSerializer
     token_request_identifier = 'mobile'
 
+    def send(self, token):
+        return settings.PASSWORDLESS.SMS_SENDER(self.request, token)
+
 
 class ExchangePasswordlessTokenForAuthTokenView(TokenCreateView):
     """Use this endpoint to obtain user authentication token."""

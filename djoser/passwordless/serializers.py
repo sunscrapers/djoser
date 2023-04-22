@@ -13,7 +13,6 @@ User = get_user_model()
 class AbstractPasswordlessSignupSerializer(serializers.ModelSerializer):
     @property
     def token_request_identifier_field(self):
-        # The alias type, either email or mobile
         raise NotImplementedError
     
     def find_user_by_identifier(self, identifier_value):

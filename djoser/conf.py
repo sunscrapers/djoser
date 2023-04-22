@@ -138,6 +138,7 @@ default_settings = {
             "PERMISSIONS": ObjDict({
                 "passwordless_token_exchange": ["rest_framework.permissions.AllowAny"],
             }),
+            "SMS_SENDER": "djoser.passwordless.sms.send_sms",
         }
     ),
 }
