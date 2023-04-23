@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class WebauthnConfig(AppConfig):
+class PasswordlessConfig(AppConfig):
     name = "djoser.passwordless"

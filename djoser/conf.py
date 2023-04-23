@@ -108,8 +108,7 @@ default_settings = {
             "LOGIN_SERIALIZER": "djoser.webauthn.serializers.WebauthnLoginSerializer",
         }
     ),
-    "PASSWORDLESS": ObjDict(
-        {
+    "PASSWORDLESS": {
             "SHORT_TOKEN_LENGTH": 6,
             "LONG_TOKEN_LENGTH": 64,
             "SHORT_TOKEN_CHARS": "0123456789",
@@ -119,8 +118,6 @@ default_settings = {
             "REGISTER_NONEXISTENT_USERS": True,
             "EMAIL_FIELD_NAME": "email",
             "MOBILE_FIELD_NAME": "mobile",
-            "EMAIL_TOKEN_LENGTH_TYPE": "long",
-            "MOBILE_TOKEN_LENGTH_TYPE": "short",
             # Is the token alone enough to authenticate the user? 
             # or should the request contain the same information that
             # requested the token? It is not recommended to set this to True
@@ -128,7 +125,9 @@ default_settings = {
             "SHORT_TOKEN_STANDALONE": False,
             "ALLOWED_PASSWORDLESS_METHODS": ["EMAIL"], # or ["MOBILE"] or ["EMAIL", "MOBILE"]
             "MAX_TOKEN_USES": 1,
-            "USERNAME_GENERATOR": "djoser.passwordless.utils.username_generator",
+            "GENERATORS": ObjDict({
+                "username_generator": "djoser.passwordless.utils.username_generator",
+            }),
             "EMAIL": ObjDict ({
                 "passwordless_request": "djoser.passwordless.email.PasswordlessRequestEmail",
             }),
@@ -142,7 +141,6 @@ default_settings = {
             }),
             "SMS_SENDER": "djoser.passwordless.sms.send_sms",
         }
-    ),
 }
 
 SETTINGS_TO_IMPORT = ["TOKEN_MODEL", "SOCIAL_AUTH_TOKEN_STRATEGY"]

@@ -9,7 +9,8 @@ class PasswordlessRequestEmail(BaseEmailMessage):
     def get_context_data(self):
         context = super().get_context_data()
         user = context.get("user")
-        if getattr(settings, "PASSWORDLESS_EMAIL_LOGIN_URL", None):
+
+        if settings.PASSWORDLESS.get("PASSWORDLESS_EMAIL_LOGIN_URL", None):
             # Eg magic links / Deep links for mobile apps
-            context["url"] = settings.PASSWORDLESS["PASSWORDLESS_EMAIL_LOGIN_URL"]
+            context["url"] = settings.PASSWORDLESS["PASSWORDLESS_EMAIL_LOGIN_URL"].format(**context)
         return context

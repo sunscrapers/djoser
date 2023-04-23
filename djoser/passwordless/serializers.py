@@ -37,7 +37,7 @@ class AbstractPasswordlessSignupSerializer(serializers.ModelSerializer):
             user = User.objects.create(**{
                 self.token_request_identifier_field: identifier_value, 
                 # In many cases, the username is mandatory
-                User.USERNAME_FIELD: settings.PASSWORDLESS.USERNAME_GENERATOR(),
+                User.USERNAME_FIELD: settings.PASSWORDLESS["GENERATORS"].username_generator(),
             })
             user.set_unusable_password()
             user.save()
@@ -116,7 +116,6 @@ class PasswordlessTokenExchangeSerializer(serializers.ModelSerializer):
         # WARNING - We're not checking that the user is valid, because
         # they just confirmed their email/mobile number. User will be
         # marked as active in the Action.
-        print(valid_mobile_token, valid_email_token)
         valid_token = valid_mobile_token or valid_email_token
         if valid_token:
             self.user = valid_token.user

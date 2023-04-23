@@ -71,7 +71,7 @@ class AbstractPasswordlessTokenRequestView(APIView):
 
 class PasswordlessEmailTokenRequestView(AbstractPasswordlessTokenRequestView):
     permission_classes = (AllowAny,)
-    serializer_class = settings.PASSWORDLESS.SERIALIZERS.passwordless_request_email_token
+    serializer_class = settings.PASSWORDLESS["SERIALIZERS"].passwordless_request_email_token
     token_request_identifier = 'email'
 
     def send(self, token):
@@ -82,23 +82,23 @@ class PasswordlessEmailTokenRequestView(AbstractPasswordlessTokenRequestView):
             "short_token": token.short_token
           }
         to = [get_user_email(user)]
-        settings.PASSWORDLESS.EMAIL.passwordless_request(self.request, context).send(to)
+        settings.PASSWORDLESS["EMAIL"].passwordless_request(self.request, context).send(to)
 
 
 class PasswordlessMobileTokenRequestView(AbstractPasswordlessTokenRequestView):
     permission_classes = (AllowAny,)
-    serializer_class = settings.PASSWORDLESS.SERIALIZERS.passwordless_request_mobile_token
+    serializer_class = settings.PASSWORDLESS["SERIALIZERS"].passwordless_request_mobile_token
     token_request_identifier = 'mobile'
 
     def send(self, token):
-        return settings.PASSWORDLESS.SMS_SENDER(self.request, token)
+        return settings.PASSWORDLESS["SMS_SENDER"](self.request, token)
 
 
 class ExchangePasswordlessTokenForAuthTokenView(TokenCreateView):
     """Use this endpoint to obtain user authentication token."""
 
-    serializer_class = settings.PASSWORDLESS.SERIALIZERS.passwordless_token_exchange
-    permission_classes = settings.PASSWORDLESS.PERMISSIONS.passwordless_token_exchange
+    serializer_class = settings.PASSWORDLESS["SERIALIZERS"].passwordless_token_exchange
+    permission_classes = settings.PASSWORDLESS["PERMISSIONS"].passwordless_token_exchange
 
     def _action(self, serializer):
         user = serializer.user
