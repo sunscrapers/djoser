@@ -56,6 +56,23 @@ class PasswordlessTokenService(object):
                 )
             )
         except PasswordlessChallengeToken.DoesNotExist:
+            if identifier_value and identifier_field and settings.PASSWORDLESS["INCORRECT_SHORT_TOKEN_REDEEMS_TOKEN"]:
+                # If the token is not found, we'll check if the identifier_value
+                # and identifier_field match an existing token. If so, we'll increment the
+                # number of attempts for the user. If the user has reached the
+                # max number of attempts, we'll lock the user out.
+                try:
+                    tokens = PasswordlessChallengeToken.objects.filter(
+                        **{
+                            "token_request_identifier": identifier_field,
+                            "user__"+identifier_field: identifier_value,
+                        }
+                    )
+                    for token in tokens:
+                        token.redeem()
+                except PasswordlessChallengeToken.DoesNotExist:
+                    pass
+    
             return None
 
         if not token.is_valid(settings.PASSWORDLESS["TOKEN_LIFETIME"], settings.PASSWORDLESS["MAX_TOKEN_USES"]):

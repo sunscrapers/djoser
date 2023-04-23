@@ -117,6 +117,9 @@ default_settings = {
             "REGISTER_NONEXISTENT_USERS": True,
             "EMAIL_FIELD_NAME": "email",
             "MOBILE_FIELD_NAME": "mobile",
+            # If true, an attempt to redeem a token with the wrong token type
+            # will count for the times a token has been used
+            "INCORRECT_SHORT_TOKEN_REDEEMS_TOKEN": False,
             "ALLOWED_PASSWORDLESS_METHODS": ["EMAIL"], # or ["MOBILE"] or ["EMAIL", "MOBILE"]
             "MAX_TOKEN_USES": 1,
             "GENERATORS": ObjDict({

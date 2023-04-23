@@ -75,3 +75,39 @@ class TestPasswordlessTokenExchange(APITestCase, assertions.StatusCodeAssertions
         self.assert_status_equal(response, status.HTTP_200_OK)
         response = self.client.post(self.url, data=data)
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{
+          "PASSWORDLESS": {"INCORRECT_SHORT_TOKEN_REDEEMS_TOKEN": True}
+        })
+    )
+    def test_redeeming_wrong_token_redeems_it_if_configured(self):
+        token = create_token("email")
+        data = {
+            "token": "bad-token",
+            "email": token.user.email
+        }
+        response = self.client.post(self.url, data=data)
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        response = self.client.post(self.url, data=data)
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        token.refresh_from_db()
+        self.assertEqual(token.uses, 2)
+
+    @override_settings(
+        DJOSER=dict(settings.DJOSER, **{
+          "PASSWORDLESS": {"INCORRECT_SHORT_TOKEN_REDEEMS_TOKEN": False}
+        })
+    )
+    def test_redeeming_wrong_token_does_not_redeem_it_if_configured(self):
+        token = create_token("email")
+        data = {
+            "token": "bad-token",
+            "email": token.user.email
+        }
+        response = self.client.post(self.url, data=data)
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        response = self.client.post(self.url, data=data)
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        token.refresh_from_db()
+        self.assertEqual(token.uses, 0)
