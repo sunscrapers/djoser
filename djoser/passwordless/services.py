@@ -43,21 +43,23 @@ class PasswordlessTokenService(object):
 
     @staticmethod
     def check_token(challenge, identifier_field, identifier_value):
-        PasswordlessChallengeToken.objects.delete_expired(settings.PASSWORDLESS["TOKEN_LIFETIME"], settings.PASSWORDLESS["MAX_TOKEN_USES"])
         if not challenge:
             return None
-
         try:
-            token = PasswordlessChallengeToken.objects.get(Q(token=challenge) | Q(short_token=challenge))
+            token = PasswordlessChallengeToken.objects.get(
+                Q(token=challenge) | Q(
+                  **{
+                    "short_token": challenge,
+                    "token_request_identifier": identifier_field,
+                    "user__"+identifier_field: identifier_value,
+                  }
+                )
+            )
         except PasswordlessChallengeToken.DoesNotExist:
             return None
 
         if not token.is_valid(settings.PASSWORDLESS["TOKEN_LIFETIME"], settings.PASSWORDLESS["MAX_TOKEN_USES"]):
             return None
-        
-        if len(challenge) < settings.PASSWORDLESS["LONG_TOKEN_LENGTH"] and not settings.PASSWORDLESS["SHORT_TOKEN_STANDALONE"]:
-            if getattr(token.user, identifier_field) != identifier_value:
-                return None
             
         token.redeem()
         return token

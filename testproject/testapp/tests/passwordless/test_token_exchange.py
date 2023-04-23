@@ -18,27 +18,11 @@ class TestPasswordlessTokenExchange(APITestCase, assertions.StatusCodeAssertions
         response = self.client.post(self.url, data=data)
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{
-          "PASSWORDLESS": {"SHORT_TOKEN_STANDALONE": False}
-        })
-    )
     def test_should_fail_with_short_token(self):
         token = create_token("email")
         data = {"token": token.short_token}
         response = self.client.post(self.url, data=data)
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{
-          "PASSWORDLESS": {"SHORT_TOKEN_STANDALONE": True}
-        })
-    )
-    def test_should_accept_short_token_standalone_if_configured(self):
-        token = create_token("email")
-        data = {"token": token.short_token}
-        response = self.client.post(self.url, data=data)
-        self.assert_status_equal(response, status.HTTP_200_OK)
 
     def test_should_accept_long_token_standalone(self):
         token = create_token("email")

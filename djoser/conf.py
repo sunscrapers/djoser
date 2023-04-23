@@ -117,11 +117,6 @@ default_settings = {
             "REGISTER_NONEXISTENT_USERS": True,
             "EMAIL_FIELD_NAME": "email",
             "MOBILE_FIELD_NAME": "mobile",
-            # Is the token alone enough to authenticate the user? 
-            # or should the request contain the same information that
-            # requested the token? It is not recommended to set this to True
-            # because it's easy to brute force a 4-6 digit token.
-            "SHORT_TOKEN_STANDALONE": False,
             "ALLOWED_PASSWORDLESS_METHODS": ["EMAIL"], # or ["MOBILE"] or ["EMAIL", "MOBILE"]
             "MAX_TOKEN_USES": 1,
             "GENERATORS": ObjDict({

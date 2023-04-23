@@ -21,7 +21,7 @@ class PasswordlessChallengeToken(models.Model):
     # significantly harder to brute force.
 
     token = models.TextField(unique=True)
-    short_token = models.TextField(unique=True)
+    short_token = models.TextField()
     created_at = models.DateTimeField(auto_now=True)
     uses = models.IntegerField(default=0)
     token_request_identifier = models.TextField()
