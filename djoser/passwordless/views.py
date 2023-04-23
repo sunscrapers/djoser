@@ -76,7 +76,7 @@ class AbstractPasswordlessTokenRequestView(APIView):
 class PasswordlessEmailTokenRequestView(AbstractPasswordlessTokenRequestView):
     permission_classes = (AllowAny,)
     serializer_class = settings.PASSWORDLESS["SERIALIZERS"].passwordless_request_email_token
-    token_request_identifier = 'email'
+    token_request_identifier = settings.PASSWORDLESS["EMAIL_FIELD_NAME"]
 
     def send(self, token):
         user = token.user
@@ -92,7 +92,7 @@ class PasswordlessEmailTokenRequestView(AbstractPasswordlessTokenRequestView):
 class PasswordlessMobileTokenRequestView(AbstractPasswordlessTokenRequestView):
     permission_classes = (AllowAny,)
     serializer_class = settings.PASSWORDLESS["SERIALIZERS"].passwordless_request_mobile_token
-    token_request_identifier = 'mobile'
+    token_request_identifier = settings.PASSWORDLESS["MOBILE_FIELD_NAME"]
 
     def send(self, token):
         return settings.PASSWORDLESS["SMS_SENDER"](self.request, token)
