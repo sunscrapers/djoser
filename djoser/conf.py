@@ -113,8 +113,7 @@ default_settings = {
             "LONG_TOKEN_LENGTH": 64,
             "SHORT_TOKEN_CHARS": "0123456789",
             "LONG_TOKEN_CHARS": "abcdefghijklmnopqrstuvwxyz0123456789",
-            "SHORT_TOKEN_LIFETIME": 600,
-            "LONG_TOKEN_LIFETIME": 600,
+            "TOKEN_LIFETIME": 600,
             "REGISTER_NONEXISTENT_USERS": True,
             "EMAIL_FIELD_NAME": "email",
             "MOBILE_FIELD_NAME": "mobile",
@@ -138,6 +137,10 @@ default_settings = {
             }),
             "PERMISSIONS": ObjDict({
                 "passwordless_token_exchange": ["rest_framework.permissions.AllowAny"],
+            }),
+            "DECORATORS": ObjDict({
+                "token_request_rate_limit_decorator": "djoser.passwordless.utils.token_request_limiter",
+                "token_redeem_rate_limit_decorator": "djoser.passwordless.utils.token_redeem_limiter",
             }),
             "SMS_SENDER": "djoser.passwordless.sms.send_sms",
         }

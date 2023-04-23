@@ -2,8 +2,17 @@ from django.db import models
 from django.conf import settings
 from django.utils.timezone import now, timedelta
 
+
+class PasswordlessChallengeTokenManager(models.Manager):
+    def delete_expired(self, token_lifetime_seconds, max_token_uses):
+        return self.filter(
+            models.Q(created_at__lt=now() - timedelta(seconds=token_lifetime_seconds))
+            | models.Q(uses__gte=max_token_uses)
+        ).delete()  
+
 class PasswordlessChallengeToken(models.Model):
-    
+    objects = PasswordlessChallengeTokenManager()
+
     # We will deliver two tokens. One which is long and one which is short.
     # The short one needs to be redeemed with the same identifier that it was
     # sent to. This is a mitigation to brute force attacks, that might be able 

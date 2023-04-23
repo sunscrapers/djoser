@@ -14,7 +14,7 @@ class PasswordlessTokenService(object):
         # We need to ensure the token is unique, so we'll wrap it in a
         # transaction that retries if the token is not unique.
         tries = 0
-
+        PasswordlessChallengeToken.objects.delete_expired(settings.PASSWORDLESS["TOKEN_LIFETIME"], settings.PASSWORDLESS["MAX_TOKEN_USES"])
         try:
             with transaction.atomic():
                 return PasswordlessTokenService._generate_create_token(user, identifier_type)
@@ -41,6 +41,7 @@ class PasswordlessTokenService(object):
 
     @staticmethod
     def check_token(challenge, identifier_field, identifier_value):
+        PasswordlessChallengeToken.objects.delete_expired(settings.PASSWORDLESS["TOKEN_LIFETIME"], settings.PASSWORDLESS["MAX_TOKEN_USES"])
         if not challenge:
             return None
 
@@ -49,13 +50,11 @@ class PasswordlessTokenService(object):
         except PasswordlessChallengeToken.DoesNotExist:
             return None
 
+        if not token.is_valid(settings.PASSWORDLESS["TOKEN_LIFETIME"], settings.PASSWORDLESS["MAX_TOKEN_USES"]):
+            return None
+        
         if len(challenge) < settings.PASSWORDLESS["LONG_TOKEN_LENGTH"] and not settings.PASSWORDLESS["SHORT_TOKEN_STANDALONE"]:
-            if not token.is_valid(settings.PASSWORDLESS["SHORT_TOKEN_LIFETIME"], settings.PASSWORDLESS["MAX_TOKEN_USES"]):
-                return None
             if getattr(token.user, identifier_field) != identifier_value:
-                return None
-        else:
-            if not token.is_valid(settings.PASSWORDLESS["LONG_TOKEN_LIFETIME"], settings.PASSWORDLESS["MAX_TOKEN_USES"]):
                 return None
             
         token.redeem()

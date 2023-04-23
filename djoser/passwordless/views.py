@@ -1,5 +1,6 @@
 from djoser.conf import settings
 from rest_framework import status
+from django.utils.decorators import method_decorator
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -44,8 +45,9 @@ class AbstractPasswordlessTokenRequestView(APIView):
         response_detail = self.failure_response
         return Response({'detail': response_detail}, status=status_code)
 
-
+    @method_decorator(settings.PASSWORDLESS["DECORATORS"].token_request_rate_limit_decorator)  
     def post(self, request, *args, **kwargs):
+        
         if self.token_request_identifier.upper() not in settings.PASSWORDLESS["ALLOWED_PASSWORDLESS_METHODS"]:
             # Only allow auth types allowed in settings.
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -99,6 +101,10 @@ class ExchangePasswordlessTokenForAuthTokenView(TokenCreateView):
 
     serializer_class = settings.PASSWORDLESS["SERIALIZERS"].passwordless_token_exchange
     permission_classes = settings.PASSWORDLESS["PERMISSIONS"].passwordless_token_exchange
+
+    @method_decorator(settings.PASSWORDLESS["DECORATORS"].token_redeem_rate_limit_decorator)  
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     def _action(self, serializer):
         user = serializer.user

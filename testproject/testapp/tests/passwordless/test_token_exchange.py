@@ -84,7 +84,7 @@ class TestPasswordlessTokenExchange(APITestCase, assertions.StatusCodeAssertions
         data = {
             "token": token.token,
             "email": token.user.email
-            }
+        }
         response = self.client.post(self.url, data=data)
         self.assert_status_equal(response, status.HTTP_200_OK)
         response = self.client.post(self.url, data=data)
