@@ -30,6 +30,8 @@ class PasswordlessTokenService(object):
 
     @staticmethod
     def _generate_create_token(user, identifier_type):
+        # Remove all tokens for this user when issuing a new one
+        user.djoser_passwordless_tokens.all().delete()
         token = PasswordlessChallengeToken.objects.create(
             token = create_challenge(settings.PASSWORDLESS["LONG_TOKEN_LENGTH"], settings.PASSWORDLESS["LONG_TOKEN_CHARS"]),
             short_token = create_challenge(settings.PASSWORDLESS["SHORT_TOKEN_LENGTH"], settings.PASSWORDLESS["SHORT_TOKEN_CHARS"]),

@@ -22,6 +22,8 @@ class AbstractPasswordlessTokenRequestView(APIView):
     success_response = Messages.TOKEN_SENT
     failure_response = Messages.CANNOT_SEND_TOKEN
 
+    permission_classes = settings.PASSWORDLESS["PERMISSIONS"].passwordless_token_request
+
     @property
     def serializer_class(self):
         # Our serializer depending on type
@@ -120,5 +122,3 @@ class ExchangePasswordlessTokenForAuthTokenView(TokenCreateView):
         return Response(
             data=token_serializer_class(token).data, status=status.HTTP_200_OK
         )
-    
-

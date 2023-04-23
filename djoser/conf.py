@@ -137,6 +137,7 @@ default_settings = {
             }),
             "PERMISSIONS": ObjDict({
                 "passwordless_token_exchange": ["rest_framework.permissions.AllowAny"],
+                "passwordless_token_request": ["rest_framework.permissions.AllowAny"],
             }),
             "DECORATORS": ObjDict({
                 "token_request_rate_limit_decorator": "djoser.passwordless.utils.token_request_limiter",

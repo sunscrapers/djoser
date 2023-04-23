@@ -37,3 +37,12 @@ class TestPasswordlessEmailTokenRequest(APITestCase, assertions.StatusCodeAssert
         data = {"email": user.email}
         response = self.client.post(self.url, data=data)
         self.assert_status_equal(response, status.HTTP_200_OK)
+
+    def test_post_request_user_should_not_have_more_than_one_active_token(self):
+        user = create_user()
+        data = {"email": user.email}
+        response = self.client.post(self.url, data=data)
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        response = self.client.post(self.url, data=data)
+        self.assert_status_equal(response, status.HTTP_200_OK)
+        user.djoser_passwordless_tokens.count() == 1
