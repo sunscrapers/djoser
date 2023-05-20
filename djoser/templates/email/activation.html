@@ -1,27 +1,27 @@
 {% load i18n %}
 
 {% block subject %}
-{% blocktrans %}Activate your {{ site_name }} account{% endblocktrans %}
+{% blocktrans %}Account activation on {{ site_name }}{% endblocktrans %}
 {% endblock subject %}
 
 {% block text_body %}
-{% blocktrans %}You're receiving this email because you need to finish the activation process for your {{ site_name }} account.{% endblocktrans %}
+{% blocktrans %}You're receiving this email because you need to finish activation process on {{ site_name }}.{% endblocktrans %}
 
-{% trans "Please click on the link below to complete the activation:" %}
+{% trans "Please go to the following page to activate account:" %}
 {{ protocol }}://{{ domain }}/{{ url|safe }}
 
-{% trans "Thank you for using our site!" %}
+{% trans "Thanks for using our site!" %}
 
 {% blocktrans %}The {{ site_name }} team{% endblocktrans %}
 {% endblock text_body %}
 
 {% block html_body %}
-<p>{% blocktrans %}You're receiving this email because you need to finish the activation process for your {{ site_name }} account.{% endblocktrans %}</p>
+<p>{% blocktrans %}You're receiving this email because you need to finish activation process on {{ site_name }}.{% endblocktrans %}</p>
 
-<p>{% trans "Please click on the link below to complete the activation:" %}</p>
+<p>{% trans "Please go to the following page to activate account:" %}</p>
 <p><a href="{{ protocol }}://{{ domain }}/{{ url|safe }}">{{ protocol }}://{{ domain }}/{{ url|safe }}</a></p>
 
-<p>{% trans "Thank you for using our site!" %}</p>
+<p>{% trans "Thanks for using our site!" %}</p>
 
 <p>{% blocktrans %}The {{ site_name }} team{% endblocktrans %}</p>
 
