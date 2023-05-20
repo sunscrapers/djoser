@@ -14,9 +14,7 @@ User = get_user_model()
 
 
 class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
-    """
-    Use this endpoint to obtain user authentication token.
-    """
+    """Use this endpoint to obtain user authentication token."""
 
     serializer_class = settings.SERIALIZERS.token_create
     permission_classes = settings.PERMISSIONS.token_create
@@ -30,9 +28,7 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
 
 
 class TokenDestroyView(views.APIView):
-    """
-    Use this endpoint to logout user (remove user authentication token).
-    """
+    """Use this endpoint to logout user (remove user authentication token)."""
 
     permission_classes = settings.PERMISSIONS.token_destroy
 

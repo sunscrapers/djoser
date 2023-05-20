@@ -3,10 +3,7 @@ from django.db import IntegrityError
 
 from djoser.conf import settings as djoser_settings
 
-try:
-    from unittest import mock
-except ImportError:
-    from unittest import mock
+from unittest import mock
 
 __all__ = [
     "get_user_model",
