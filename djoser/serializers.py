@@ -34,7 +34,25 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserCreateMixin:
+    def create(self, validated_data):
+        try:
+            user = self.perform_create(validated_data)
+        except IntegrityError:
+            self.fail("cannot_create_user")
+
+        return user
+
+    def perform_create(self, validated_data):
+        with transaction.atomic():
+            user = User.objects.create_user(**validated_data)
+            if settings.SEND_ACTIVATION_EMAIL:
+                user.is_active = False
+                user.save(update_fields=["is_active"])
+        return user
+
+
+class UserCreateSerializer(UserCreateMixin, serializers.ModelSerializer):
     password = serializers.CharField(style={"input_type": "password"}, write_only=True)
 
     default_error_messages = {
@@ -62,22 +80,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
             )
 
         return attrs
-
-    def create(self, validated_data):
-        try:
-            user = self.perform_create(validated_data)
-        except IntegrityError:
-            self.fail("cannot_create_user")
-
-        return user
-
-    def perform_create(self, validated_data):
-        with transaction.atomic():
-            user = User.objects.create_user(**validated_data)
-            if settings.SEND_ACTIVATION_EMAIL:
-                user.is_active = False
-                user.save(update_fields=["is_active"])
-        return user
 
 
 class UserCreatePasswordRetypeSerializer(UserCreateSerializer):
@@ -260,14 +262,12 @@ class UsernameSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
         self.username_field = settings.LOGIN_FIELD
         self._default_username_field = User.USERNAME_FIELD
-        self.fields["new_{}".format(self.username_field)] = self.fields.pop(
-            self.username_field
-        )
+        self.fields[f"new_{self.username_field}"] = self.fields.pop(self.username_field)
 
     def save(self, **kwargs):
         if self.username_field != self._default_username_field:
             kwargs[User.USERNAME_FIELD] = self.validated_data.get(
-                "new_{}".format(self.username_field)
+                f"new_{self.username_field}"
             )
         return super().save(**kwargs)
 
@@ -286,7 +286,7 @@ class UsernameRetypeSerializer(UsernameSerializer):
     def validate(self, attrs):
         attrs = super().validate(attrs)
         new_username = attrs[settings.LOGIN_FIELD]
-        if new_username != attrs["re_new_{}".format(settings.LOGIN_FIELD)]:
+        if new_username != attrs[f"re_new_{settings.LOGIN_FIELD}"]:
             self.fail("username_mismatch")
         else:
             return attrs

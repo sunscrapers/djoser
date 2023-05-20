@@ -21,10 +21,8 @@ class BaseUserViewSetListTest(APITestCase, assertions.StatusCodeAssertionsMixin)
 
 
 class ModifiedPermissionsTest(APITestCase):
-    """
-    Test case that overrides user-detail permission to
-    CurrentUserOrAdminOrReadOnly
-    """
+    """Test case that overrides user-detail permission to
+    CurrentUserOrAdminOrReadOnly."""
 
     def setUp(self):
         super().setUp()

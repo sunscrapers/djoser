@@ -31,6 +31,7 @@ INSTALLED_APPS = (
     "djoser",
     "social_django",
     "testapp",
+    "djoser.webauthn",
 )
 
 STATIC_URL = "/static/"
@@ -74,6 +75,5 @@ DJOSER = {
 }
 
 
-SIMPLE_JWT = (
-    {}
-)  # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html#settings
+# https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html#settings
+SIMPLE_JWT = {}
