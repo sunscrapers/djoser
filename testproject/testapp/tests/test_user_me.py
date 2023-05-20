@@ -85,8 +85,7 @@ class UserViewSetMeTest(
         )
     )
     def test_serializer(self):
-        """
-        Test that the endpoints use the proper serializer.
+        """Test that the endpoints use the proper serializer.
 
         How it works: it adds an additional field to the current_user
         serializer and then checks that the field shows in the response.

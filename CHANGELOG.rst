@@ -6,6 +6,24 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.2.0`_ (2023-04-16)
+---------------------
+
+* add WebAuthn support
+* add translations: Japanese, German, Brazilian
+* add support for Django 3 and 4, drop support for Django 2
+* drop support for Python 3.7
+* use safe urls in templates
+* renamed `ID_FIELD` to `USER_ID_FIELD`
+
+---------------------
+`2.1.0`_ (2020-10-30)
+---------------------
+
+* fix DRF 3.12 compatibility warnings
+* resolve Django 4.0 warnings
+
+---------------------
 `2.0.5`_ (2020-09-03)
 ---------------------
 
@@ -393,3 +411,5 @@ few bugfixes / documentation updates. List of changes:
 .. _2.0.3: https://github.com/sunscrapers/djoser/compare/2.0.2...2.0.3
 .. _2.0.4: https://github.com/sunscrapers/djoser/compare/2.0.3...2.0.4
 .. _2.0.5: https://github.com/sunscrapers/djoser/compare/2.0.4...2.0.5
+.. _2.1.0: https://github.com/sunscrapers/djoser/compare/2.0.5...2.1.0
+.. _2.2.0: https://github.com/sunscrapers/djoser/compare/2.1.0...2.2.0
