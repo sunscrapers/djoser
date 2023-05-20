@@ -1,3 +1,4 @@
+# flake8: noqa E501
 from django.apps import apps
 from django.conf import settings as django_settings
 from django.test.signals import setting_changed
@@ -21,7 +22,7 @@ class ObjDict(dict):
                 val = [import_string(v) if isinstance(v, str) else v for v in val]
             self[item] = val
         except KeyError:
-            val = super(ObjDict, self).__getattribute__(item)
+            val = super().__getattribute__(item)
 
         return val
 
@@ -94,6 +95,17 @@ default_settings = {
             "user_list": ["djoser.permissions.CurrentUserOrAdmin"],
             "token_create": ["rest_framework.permissions.AllowAny"],
             "token_destroy": ["rest_framework.permissions.IsAuthenticated"],
+        }
+    ),
+    "WEBAUTHN": ObjDict(
+        {
+            "RP_NAME": "localhost",
+            "RP_ID": "localhost",
+            "ORIGIN": "http://localhost:8000",
+            "CHALLENGE_LENGTH": 32,
+            "UKEY_LENGTH": 20,
+            "SIGNUP_SERIALIZER": "djoser.webauthn.serializers.WebauthnCreateUserSerializer",
+            "LOGIN_SERIALIZER": "djoser.webauthn.serializers.WebauthnLoginSerializer",
         }
     ),
 }

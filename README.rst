@@ -5,19 +5,19 @@ djoser
 .. image:: https://img.shields.io/pypi/v/djoser.svg
    :target: https://pypi.org/project/djoser
 
-.. image:: https://img.shields.io/travis/sunscrapers/djoser/master.svg
-   :target: https://travis-ci.org/sunscrapers/djoser
+.. image:: https://github.com/sunscrapers/djoser/workflows/Tests/badge.svg
+    :target: https://github.com/sunscrapers/djoser/actions?query=branch%3Amaster+workflow%Tests++
+    :alt: Build Status
 
-.. image:: https://img.shields.io/codecov/c/github/sunscrapers/djoser.svg
-   :target: https://codecov.io/gh/sunscrapers/djoser
-
-.. image:: https://api.codacy.com/project/badge/Grade/c9bf80318d2741e5bb63912a5e0b32dc
-   :alt: Codacy Badge
-   :target: https://app.codacy.com/app/dekoza/djoser?utm_source=github.com&utm_medium=referral&utm_content=sunscrapers/djoser&utm_campaign=Badge_Grade_Dashboard
+.. image:: https://codecov.io/gh/sunscrapers/djoser/branch/master/graph/badge.svg
+ :target: https://codecov.io/gh/sunscrapers/djoser
 
 .. image:: https://img.shields.io/pypi/dm/djoser
    :target: https://img.shields.io/pypi/dm/djoser
 
+.. image:: https://readthedocs.org/projects/djoser/badge/?version=latest
+    :target: https://djoser.readthedocs.io/en/latest/
+    :alt: Docs
 
 REST implementation of `Django <https://www.djangoproject.com/>`_ authentication
 system. **djoser** library provides a set of `Django Rest Framework <https://www.django-rest-framework.org/>`_
@@ -39,11 +39,9 @@ Requirements
 
 To be able to run **djoser** you have to meet following requirements:
 
-- Python (3.6, 3.7, 3.8, 3.9)
-- Django (2.2, 3.1)
-- Django REST Framework 3.11.1
-
-If you need to support other versions, please use djoser<2.
+- Python>=3.8
+- Django>=3.0.0
+- Django REST Framework>=3.12
 
 Installation
 ============
@@ -89,7 +87,7 @@ To run the test just type:
 
     $ poetry run py.test testproject
 
-We also preapred a convenient ``Makefile`` to automate commands above:
+We also prepared a convenient ``Makefile`` to automate commands above:
 
 .. code-block:: bash
 
@@ -116,15 +114,6 @@ New versions of ``pip`` can use ``pyproject.toml`` to build the package and inst
     $ cd testproject
     $ ./manage.py test
 
-Tox
----
-
-If you need to run tests against all supported Python and Django versions then invoke:
-
-.. code-block:: bash
-
-    $ poetry run tox -p all
-
 Example project
 ---------------
 
@@ -145,20 +134,14 @@ Before sending patches please make sure you have `pre-commit <https://pre-commit
     $ pre-commit install
 
 This will ensure that your code is cleaned before you commit it.
-Some steps (like black) automatically fix issues but the show their status as FAILED.
-Just inspect if eveything is OK, git-add the files and retry the commit.
-Other tools (like flake8) require you to manually fix the issues.
-
 
 Similar projects
 ================
 
 List of projects related to Django, REST and authentication:
 
-- `django-rest-framework-simplejwt <https://github.com/davesque/django-rest-framework-simplejwt>`_
+- `django-rest-registration <https://github.com/apragacz/django-rest-registration>`_
 - `django-oauth-toolkit <https://github.com/evonove/django-oauth-toolkit>`_
-- `django-rest-auth <https://github.com/Tivix/django-rest-auth>`_ (not maintained)
-- `django-rest-framework-digestauth <https://github.com/juanriaza/django-rest-framework-digestauth>`_ (not maintained)
 
 Please, keep in mind that while using custom authentication and TokenCreateSerializer
 validation, there is a path that **ignores intentional return of None** from authenticate()

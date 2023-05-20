@@ -15,7 +15,7 @@ class SetUsernameViewTest(
     APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
 ):
     def setUp(self):
-        self.base_url = reverse("user-set-{}".format(User.USERNAME_FIELD))
+        self.base_url = reverse(f"user-set-{User.USERNAME_FIELD}")
 
     def test_post_set_new_username(self):
         user = create_user()

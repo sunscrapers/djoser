@@ -21,10 +21,8 @@ class BaseUserViewSetListTest(APITestCase, assertions.StatusCodeAssertionsMixin)
 
 
 class ModifiedPermissionsTest(APITestCase):
-    """
-    Test case that overrides user-detail permission to
-    CurrentUserOrAdminOrReadOnly
-    """
+    """Test case that overrides user-detail permission to
+    CurrentUserOrAdminOrReadOnly."""
 
     def setUp(self):
         super().setUp()
@@ -79,8 +77,15 @@ class ModifiedPermissionsUserViewSetListTest(
 
 
 class UserViewSetEditTest(APITestCase, assertions.StatusCodeAssertionsMixin):
+    def setUp(self):
+        self.signal_sent = False
+
+    def signal_receiver(self, *args, **kwargs):
+        self.signal_sent = True
+
     def test_patch_edits_user_attribute(self):
         user = create_user()
+        djoser.signals.user_updated.connect(self.signal_receiver)
         login_user(self.client, user)
         response = self.client.patch(
             path=reverse("user-detail", args=(user.pk,)),
@@ -92,6 +97,7 @@ class UserViewSetEditTest(APITestCase, assertions.StatusCodeAssertionsMixin):
 
         user.refresh_from_db()
         self.assertTrue(user.email == "new@gmail.com")
+        self.assertTrue(self.signal_sent)
 
     def test_patch_cant_edit_others_attribute(self):
         user = create_user()

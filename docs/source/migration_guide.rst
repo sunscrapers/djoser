@@ -21,9 +21,9 @@ View class names:
 
 * ``RootView`` has been removed
 * ``UserCreateView``, ``UserDeleteView``, ``UserView``, ``PasswordResetView``,
-``SetPasswordView``,  ``PasswordResetConfirmView``, ``SetUsernameView``,
-``ActivationView``, and ``ResendActivationView`` have all been removed
-and replaced by appropriate sub-views within ``UserViewSet``.
+  ``SetPasswordView``,  ``PasswordResetConfirmView``, ``SetUsernameView``,
+  ``ActivationView``, and ``ResendActivationView`` have all been removed
+  and replaced by appropriate sub-views within ``UserViewSet``.
 
 If you subclassed any of those views, you need to refactor your code - we suggest
 subclassing UserViewSet and overwrite appropriate methods there.
@@ -42,6 +42,7 @@ Token Based Authentication URLs:
 * user ``token/logout`` to invalidate the token
 
 Added URLs:
+
 * ``users/set_{0}/`` format(User.USERNAME_FIELD)
 * ``users/reset_{0}/`` format(User.USERNAME_FIELD)
 * ``users/reset_{0}_confirm/`` format(User.USERNAME_FIELD)

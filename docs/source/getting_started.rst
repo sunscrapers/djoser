@@ -26,27 +26,11 @@ Supported authentication backends
 * Token based authentication from `DRF <http://www.django-rest-framework.org/api-guide/authentication#tokenauthentication>`_
 * JSON Web Token authentication from `django-rest-framework-simplejwt <https://github.com/davesque/django-rest-framework-simplejwt>`_
 
-Supported Python versions
+Supported Python / Django / DRF versions
 -------------------------
 
-* Python 3.5
-* Python 3.6
-* Python 3.7
-* Python 3.8
-
-Supported Django versions
--------------------------
-
-* Django 1.11
-* Django 2.2
-* Django 3.1
-
-Supported Django Rest Framework versions
-----------------------------------------
-
-* Django Rest Framework 3.9
-* Django Rest Framework 3.10
-* Django Rest Framework 3.11
+We aim to always support the latest version.
+For older ones, check `pyproject.toml` `classifiers` section or the test matrix.
 
 Installation
 ------------
