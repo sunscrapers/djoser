@@ -1,32 +1,41 @@
+fail_fast: false
+
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.1.0
-  hooks:
-    - id: check-merge-conflict
-    - id: debug-statements
-    - id: trailing-whitespace
-    - id: end-of-file-fixer
-    - id: check-yaml
-    - id: check-toml
-    - id: check-json
-
-- repo: https://github.com/pycqa/isort
-  rev: 5.10.1
-  hooks:
-    - id: isort
-
-- repo: https://github.com/psf/black
-  rev: 21.12b0
-  hooks:
-    - id: black
-
-- repo: https://github.com/pycqa/flake8
-  rev: 4.0.1
-  hooks:
-    - id: flake8
-
--   repo: https://github.com/asottile/pyupgrade
-    rev: v2.31.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
     hooks:
-    -   id: pyupgrade
-        args: [--py37-plus]
+      - id: debug-statements
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/ambv/black
+    rev: 22.12.0
+    hooks:
+      - id: black
+        language_version: python3
+        entry: black
+        require_serial: true
+        types: [ python ]
+
+  - repo: https://github.com/myint/docformatter
+    rev: v1.5.1
+    hooks:
+      - id: docformatter
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.236'
+    hooks:
+      - id: ruff
+        name: ruff
+        stages: [ commit ]
+        types: [ file, python ]
+        args: ["--fix"]
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.1
+    hooks:
+      - id: pyupgrade
+        args: [ --py38-plus ]
