@@ -6,6 +6,13 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.2.1`_ (2023-06-xx)
+---------------------
+
+* add Indonesian translations https://github.com/sunscrapers/djoser/pull/718
+
+
+---------------------
 `2.2.0`_ (2023-04-16)
 ---------------------
 
@@ -413,3 +420,4 @@ few bugfixes / documentation updates. List of changes:
 .. _2.0.5: https://github.com/sunscrapers/djoser/compare/2.0.4...2.0.5
 .. _2.1.0: https://github.com/sunscrapers/djoser/compare/2.0.5...2.1.0
 .. _2.2.0: https://github.com/sunscrapers/djoser/compare/2.1.0...2.2.0
+.. _2.2.1: https://github.com/sunscrapers/djoser/compare/2.2.0...2.2.1
