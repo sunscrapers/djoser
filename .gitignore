@@ -143,3 +143,4 @@ venv.bak/
 
 .DS_Store
 pip-wheel-metadata/
+/.ruff_cache/

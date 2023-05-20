@@ -1,0 +1,30 @@
+name: Publish to PyPi
+
+on:
+  release:
+    types:
+      - released
+
+jobs:
+  publish:
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: [ 3.8 ]
+        poetry-version: [ 1.3.2 ]
+        os: [ ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3.5.0
+      - name: Set up Python
+        uses: actions/setup-python@v4.6.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: Build and publish
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+          poetry publish --build --no-interaction
