@@ -75,15 +75,3 @@ class TestResendActivationEmail(
         response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{"RESEND_ACTIVATION_SHOW_EMAIL_NOT_FOUND": True})
-    )
-    def test_post_should_return_bad_request_if_user_does_not_exist(self):
-        data = {"email": "john@beatles.com"}
-
-        response = self.client.post(self.base_url, data)
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.json()[0], default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
-        )
