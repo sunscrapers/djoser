@@ -149,21 +149,6 @@ If ``True``, setting new password will logout the user.
 
     Logout only works with token based authentication.
 
-RESEND_ACTIVATION_SHOW_EMAIL_NOT_FOUND
------------------------------------
-
-If ``True``, posting a non-existent ``email`` to ``/users/resend_activation/`` will return
-a ``HTTP_400_BAD_REQUEST`` response with an ``EMAIL_NOT_FOUND`` error message
-('User with given email does not exist.').
-
-If ``False`` (default), the ``/users/resend_activation/`` endpoint will always return
-a ``HTTP_204_NO_CONTENT`` response.
-
-Please note that setting this to ``True`` will expose information whether
-an email is registered in the system.
-
-**Default**: ``False``
-
 PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND
 -----------------------------------
 
