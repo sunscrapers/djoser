@@ -20,7 +20,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 #: djoser/constants.py:4
-msgid "Unable to login with provided credentials."
+msgid "Unable to log in with provided credentials."
 msgstr "Невозможно войти с предоставленными учетными данными."
 
 #: djoser/constants.py:5
@@ -59,15 +59,6 @@ msgstr "Пользователь с данным адресом электрон
 #: djoser/constants.py:13
 msgid "Unable to create account."
 msgstr "Невозможно создать учетную запись."
-
-#: djoser/constants.py:15
-msgid ""
-"User model does not contain specified email field. Please see http://djoser."
-"readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME for more details."
-msgstr ""
-"Модель пользователя не содержит указанное поле для электронной почты. Пожалуйста, "
-"посмотрите http://djoser.readthedocs.io/en/latest/settings."
-"html#USER_EMAIL_FIELD_NAME для получения дополнительной информации."
 
 #: djoser/templates/email/activation.html:4
 #, python-format
