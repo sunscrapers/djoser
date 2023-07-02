@@ -1,0 +1,188 @@
+# Copyright (C) Sunscrapers
+# This file is distributed under the same license as the djoser package.
+# Kira <kiraware@github.com>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: djoser\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-03-06 13:34+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Kira <kiraware@github.com>\n"
+"Language-Team: Indonesian\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+#: .\djoser\constants.py:5
+msgid "Unable to log in with provided credentials."
+msgstr "Tidak dapat masuk dengan kredensial yang diberikan."
+
+#: .\djoser\constants.py:6
+msgid "User account is disabled."
+msgstr "Akun pengguna dinonaktifkan."
+
+#: .\djoser\constants.py:7
+msgid "Invalid token for given user."
+msgstr "Token tidak valid untuk pengguna yang diberikan."
+
+#: .\djoser\constants.py:8
+msgid "Invalid user id or user doesn't exist."
+msgstr "ID pengguna tidak valid atau pengguna tidak ada."
+
+#: .\djoser\constants.py:9
+msgid "Stale token for given user."
+msgstr "Token basi untuk pengguna yang diberikan."
+
+#: .\djoser\constants.py:10
+msgid "The two password fields didn't match."
+msgstr "Kedua bidang kata sandi tidak cocok."
+
+#: .\djoser\constants.py:11
+#, python-brace-format
+msgid "The two {0} fields didn't match."
+msgstr "Dua bidang {0} tidak cocok."
+
+#: .\djoser\constants.py:12
+msgid "Invalid password."
+msgstr "Kata sandi tidak valid."
+
+#: .\djoser\constants.py:13
+msgid "User with given email does not exist."
+msgstr "Pengguna dengan email yang diberikan tidak ada."
+
+#: .\djoser\constants.py:14
+msgid "Unable to create account."
+msgstr "Tidak dapat membuat akun."
+
+#: .\djoser\templates\email\activation.html:4
+#, python-format
+msgid "Account activation on %(site_name)s"
+msgstr "Aktivasi akun di %(site_name)s"
+
+#: .\djoser\templates\email\activation.html:8
+#: .\djoser\templates\email\activation.html:19
+#, python-format
+msgid ""
+"You're receiving this email because you need to finish activation process on "
+"%(site_name)s."
+msgstr ""
+"Anda menerima email ini karena Anda harus menyelesaikan proses aktivasi pada "
+"%(site_name)s."
+
+#: .\djoser\templates\email\activation.html:10
+#: .\djoser\templates\email\activation.html:21
+msgid "Please go to the following page to activate account:"
+msgstr "Silakan buka halaman berikut untuk mengaktifkan akun:"
+
+#: .\djoser\templates\email\activation.html:13
+#: .\djoser\templates\email\activation.html:24
+#: .\djoser\templates\email\confirmation.html:10
+#: .\djoser\templates\email\confirmation.html:18
+#: .\djoser\templates\email\password_changed_confirmation.html:10
+#: .\djoser\templates\email\password_changed_confirmation.html:18
+#: .\djoser\templates\email\password_reset.html:14
+#: .\djoser\templates\email\password_reset.html:26
+#: .\djoser\templates\email\username_changed_confirmation.html:10
+#: .\djoser\templates\email\username_changed_confirmation.html:18
+#: .\djoser\templates\email\username_reset.html:14
+#: .\djoser\templates\email\username_reset.html:26
+msgid "Thanks for using our site!"
+msgstr "Terima kasih telah menggunakan situs kami!"
+
+#: .\djoser\templates\email\activation.html:15
+#: .\djoser\templates\email\activation.html:26
+#: .\djoser\templates\email\confirmation.html:12
+#: .\djoser\templates\email\confirmation.html:20
+#: .\djoser\templates\email\password_changed_confirmation.html:12
+#: .\djoser\templates\email\password_changed_confirmation.html:20
+#: .\djoser\templates\email\password_reset.html:16
+#: .\djoser\templates\email\password_reset.html:28
+#: .\djoser\templates\email\username_changed_confirmation.html:12
+#: .\djoser\templates\email\username_changed_confirmation.html:20
+#: .\djoser\templates\email\username_reset.html:16
+#: .\djoser\templates\email\username_reset.html:28
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "Tim %(site_name)s"
+
+#: .\djoser\templates\email\confirmation.html:4
+#, python-format
+msgid ""
+"%(site_name)s - Your account has been successfully created and activated!"
+msgstr ""
+"%(site_name)s - Akun Anda telah berhasil dibuat dan diaktifkan!"
+
+#: .\djoser\templates\email\confirmation.html:8
+#: .\djoser\templates\email\confirmation.html:16
+msgid "Your account has been created and is ready to use!"
+msgstr "Akun Anda telah dibuat dan siap digunakan!"
+
+#: .\djoser\templates\email\password_changed_confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your password has been successfully changed!"
+msgstr "%(site_name)s - Kata sandi Anda telah berhasil diubah!"
+
+#: .\djoser\templates\email\password_changed_confirmation.html:8
+#: .\djoser\templates\email\password_changed_confirmation.html:16
+msgid "Your password has been changed!"
+msgstr "Kata sandi Anda telah diubah!"
+
+#: .\djoser\templates\email\password_reset.html:4
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr "Pengaturan ulang kata sandi pada %(site_name)s"
+
+#: .\djoser\templates\email\password_reset.html:8
+#: .\djoser\templates\email\password_reset.html:20
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"Anda menerima email ini karena Anda meminta pengaturan ulang kata sandi "
+"untuk akun pengguna di %(site_name)s."
+
+#: .\djoser\templates\email\password_reset.html:10
+#: .\djoser\templates\email\password_reset.html:22
+msgid "Please go to the following page and choose a new password:"
+msgstr "Silakan buka halaman berikut dan pilih kata sandi baru:"
+
+#: .\djoser\templates\email\password_reset.html:12
+#: .\djoser\templates\email\password_reset.html:24
+#: .\djoser\templates\email\username_reset.html:12
+#: .\djoser\templates\email\username_reset.html:24
+msgid "Your username, in case you've forgotten:"
+msgstr "Nama pengguna Anda, jika Anda lupa:"
+
+#: .\djoser\templates\email\username_changed_confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your username has been successfully changed!"
+msgstr "%(site_name)s - Nama pengguna Anda telah berhasil diubah!"
+
+#: .\djoser\templates\email\username_changed_confirmation.html:8
+#: .\djoser\templates\email\username_changed_confirmation.html:16
+msgid "Your username has been changed!"
+msgstr "Nama pengguna Anda telah diubah!"
+
+#: .\djoser\templates\email\username_reset.html:4
+#, python-format
+msgid "Username reset on %(site_name)s"
+msgstr "Pengaturan ulang nama pengguna pada %(site_name)s"
+
+#: .\djoser\templates\email\username_reset.html:8
+#: .\djoser\templates\email\username_reset.html:20
+#, python-format
+msgid ""
+"You're receiving this email because you requested a username reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"Anda menerima email ini karena Anda meminta pengaturan ulang nama pengguna "
+"untuk akun pengguna di %(site_name)s."
+
+#: .\djoser\templates\email\username_reset.html:10
+#: .\djoser\templates\email\username_reset.html:22
+msgid "Please go to the following page and choose a new username:"
+msgstr "Silakan buka halaman berikut dan pilih nama pengguna baru:"
