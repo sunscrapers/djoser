@@ -8,9 +8,7 @@ urlpatterns = [
         views.SingupRequestView.as_view(),
         name="webauthn_signup_request",
     ),
-    path(
-        "signup/<ukey>/", views.SignupView.as_view(), name="webauthn_signup"
-    ),
+    path("signup/<ukey>/", views.SignupView.as_view(), name="webauthn_signup"),
     path(
         "login_request/",
         views.LoginRequestView.as_view(),
