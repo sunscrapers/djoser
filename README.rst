@@ -37,7 +37,7 @@ Developed by `SUNSCRAPERS <http://sunscrapers.com/>`_ with passion & patience.
 Requirements
 ============
 
-To be able to run **djoser** you have to meet following requirements:
+To be able to run **djoser** you have to meet the following requirements:
 
 - Python>=3.8
 - Django>=3.0.0
@@ -77,7 +77,7 @@ We use `poetry <https://python-poetry.org/>`_ as dependency management and packa
 .. code-block:: bash
 
     $ cd djoser
-    $ poetry install -E test
+    $ poetry install --all-extras
 
 This will create a virtualenv with all development dependencies.
 
