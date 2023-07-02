@@ -1,10 +1,10 @@
-from django.urls import re_path
+from django.urls import path
 
 from djoser.social import views
 
 urlpatterns = [
-    re_path(
-        r"^o/(?P<provider>\S+)/$",
+    path(
+        "o/<provider>/",
         views.ProviderAuthView.as_view(),
         name="provider-auth",
     )
