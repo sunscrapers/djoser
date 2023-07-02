@@ -79,6 +79,12 @@ class UserCreateSerializer(UserCreateMixin, serializers.ModelSerializer):
                 {"password": serializer_error[api_settings.NON_FIELD_ERRORS_KEY]}
             )
 
+        user_filter_kwargs = {
+            settings.LOGIN_FIELD: attrs.get(settings.LOGIN_FIELD, None)
+        }
+        if User.objects.filter(**user_filter_kwargs).exists():
+            self.fail("cannot_create_user")
+
         return attrs
 
 
