@@ -15,6 +15,8 @@ classifiers = [
     "Framework :: Django :: 3.1",
     "Framework :: Django :: 3.2",
     "Framework :: Django :: 4.0",
+    "Framework :: Django :: 4.1",
+    "Framework :: Django :: 4.2",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -52,6 +54,7 @@ coverage = "^7.2.2"
 pytest-cov = "^4.0.0"
 pytest-django = "^4.5.2"
 tox = "^4.4.8"
+babel = "^2.12.1"
 
 [tool.poetry.group.code-quality.dependencies]
 black = "^23.1.0"
