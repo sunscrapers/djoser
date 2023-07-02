@@ -15,7 +15,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: djoser/constants.py:4
-msgid "Unable to login with provided credentials."
+msgid "Unable to log in with provided credentials."
 msgstr "入力された情報でログインできませんでした。"
 
 #: djoser/constants.py:5
@@ -54,16 +54,6 @@ msgstr "入力されたemailを使用しているユーザーは見つかりま�
 #: djoser/constants.py:13
 msgid "Unable to create account."
 msgstr "アカウント作成失敗。"
-
-#: djoser/constants.py:15
-msgid ""
-"User model does not contain specified email field. Please see http://djoser."
-"readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME for more "
-"details."
-msgstr ""
-"指定されたemailフィールドを持つユーザーモデルが存在しません。 "
-"http://djoser.readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME "
-"上記から詳細を確認してください。"
 
 #: djoser/templates/email/activation.html:4
 #, python-format
