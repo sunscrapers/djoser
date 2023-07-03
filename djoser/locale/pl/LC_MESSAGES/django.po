@@ -17,7 +17,7 @@ msgstr ""
 "%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
 "%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 #: djoser/constants.py:4
-msgid "Unable to login with provided credentials."
+msgid "Unable to log in with provided credentials."
 msgstr "Nie udało się zalogować przy pomocy tych danych."
 
 #: djoser/constants.py:5
@@ -56,15 +56,6 @@ msgstr "Użytkownik z tym adresem email nie istnieje."
 #: djoser/constants.py:13
 msgid "Unable to create account."
 msgstr "Nie udało się stworzyć konta."
-
-#: djoser/constants.py:15
-msgid ""
-"User model does not contain specified email field. Please see http://djoser."
-"readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME for more "
-"details."
-msgstr "Model użytkownika nie zawiera wskazanego pola email. Zobacz "
-"http://djoser.readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME "
-"by zobaczyć więcej szczegółów"
 
 #: djoser/templates/email/activation.html:4
 #, python-format

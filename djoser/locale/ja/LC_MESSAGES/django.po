@@ -15,7 +15,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: djoser/constants.py:4
-msgid "Unable to login with provided credentials."
+msgid "Unable to log in with provided credentials."
 msgstr "入力された情報でログインできませんでした。"
 
 #: djoser/constants.py:5
@@ -53,22 +53,12 @@ msgstr "入力されたemailを使用しているユーザーは見つかりま�
 
 #: djoser/constants.py:13
 msgid "Unable to create account."
-msgstr "アカウント作成失敗。"
-
-#: djoser/constants.py:15
-msgid ""
-"User model does not contain specified email field. Please see http://djoser."
-"readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME for more "
-"details."
-msgstr ""
-"指定されたemailフィールドを持つユーザーモデルが存在しません。 "
-"http://djoser.readthedocs.io/en/latest/settings.html#USER_EMAIL_FIELD_NAME "
-"上記から詳細を確認してください。"
+msgstr "アカウントを作成できませんでした。"
 
 #: djoser/templates/email/activation.html:4
 #, python-format
 msgid "Account activation on %(site_name)s"
-msgstr "%(site_name)s　のアカウントを有効化してください"
+msgstr "%(site_name)s でアカウントを有効化してください"
 
 #: templates/email/activation.html:8 templates/email/activation.html:19
 #, python-format
@@ -76,13 +66,12 @@ msgid ""
 "You're receiving this email because you need to finish activation process on "
 "%(site_name)s."
 msgstr ""
-"アカウントの有効化を忘れずに行ってください。 "
-"%(site_name)s."
+"%(site_name)s でアカウントを有効化する必要があります。"
 
 #: djoser/templates/email/activation.html:10
 #: djoser/templates/email/activation.html:22
 msgid "Please go to the following page to activate account:"
-msgstr "次に記載されているページでアカウントの有効化を行ってください:"
+msgstr "こちらのページでアカウントの有効化を行ってください:"
 
 #: djoser/templates/email/activation.html:13
 #: djoser/templates/email/activation.html:25
@@ -101,7 +90,7 @@ msgstr "ご利用ありがとうございます!"
 #: djoser/templates/email/password_reset.html:28
 #, python-format
 msgid "The %(site_name)s team"
-msgstr "チーム %(site_name)s"
+msgstr "%(site_name)s チーム"
 
 #: djoser/templates/email/confirmation.html:4
 #, python-format
@@ -112,7 +101,7 @@ msgstr "%(site_name)s - アカウントの有効化が完了しました!"
 #: djoser/templates/email/confirmation.html:8
 #: djoser/templates/email/confirmation.html:16
 msgid "Your account has been created and is ready to use!"
-msgstr "アカウントの有効化が完了し使用可能となりました!"
+msgstr "アカウントが有効になりました!"
 
 #: djoser/templates/email/password_reset.html:4
 #, python-format
@@ -126,14 +115,14 @@ msgid ""
 "You're receiving this email because you requested a password reset for your "
 "user account at %(site_name)s."
 msgstr ""
-"%(site_name)s のパスワードをリセットするためのemailとなります。"
+"%(site_name)s のパスワードリセットを受け付けました。"
 
 #: djoser/templates/email/password_reset.html:10
 #: djoser/templates/email/password_reset.html:22
 msgid "Please go to the following page and choose a new password:"
-msgstr "次のページにて新規パスワードを登録してください:"
+msgstr "こちらのページで新規パスワードを登録してください:"
 
 #: djoser/templates/email/password_reset.html:12
 #: djoser/templates/email/password_reset.html:24
 msgid "Your username, in case you've forgotten:"
-msgstr "念のためこちらがユーザーネームとなります:"
+msgstr "ユーザーネーム:"
