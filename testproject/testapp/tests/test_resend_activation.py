@@ -8,7 +8,6 @@ from testapp.models import CustomUser
 from testapp.tests.common import create_user, mock
 
 from djoser.compat import get_user_email
-from djoser.conf import settings as default_settings
 
 
 class TestResendActivationEmail(
