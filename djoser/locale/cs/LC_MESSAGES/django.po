@@ -46,7 +46,7 @@ msgstr "Heslo z kontrolního pole není stejné."
 #: constants.py:10
 #, python-brace-format
 msgid "The two {0} fields didn't match."
-msgstr "Obě {0} pole nejsou shodné."
+msgstr "Obě {0} pole nejsou shodná."
 
 #: constants.py:11
 msgid "Invalid password."
@@ -79,8 +79,8 @@ msgid ""
 "You're receiving this email because you need to finish activation process on "
 "%(site_name)s."
 msgstr ""
-"Tento e-mail jste obdrželi, abyste dokončili proces registrace a aktivace účtu na "
-"%(site_name)s."
+"Tento e-mail jste obdržel/a, abyste dokončil/a proces registrace a aktivace účtu "
+"na %(site_name)s."
 
 #: templates/email/activation.html:10 templates/email/activation.html:22
 msgid "Please go to the following page to activate account:"
@@ -97,7 +97,7 @@ msgstr "Děkujeme, že používáte naše stránky."
 #: templates/email/password_reset.html:16 templates/email/password_reset.html:28
 #, python-format
 msgid "The %(site_name)s team"
-msgstr "Váš %(site_name)s team"
+msgstr "Váš %(site_name)s tým"
 
 #: templates/email/confirmation.html:4
 #, python-format
@@ -119,7 +119,8 @@ msgid ""
 "You're receiving this email because you requested a password reset for your user "
 "account at %(site_name)s."
 msgstr ""
-"Tento e-mail jste obdrželi, protože zamýšlíte resetovat své heslo na %(site_name)s."
+"Tento e-mail jste obdržel/a, protože zamýšlíte resetovat své heslo na "
+"%(site_name)s."
 
 #: templates/email/password_reset.html:10 templates/email/password_reset.html:22
 msgid "Please go to the following page and choose a new password:"
