@@ -146,8 +146,8 @@ class UserViewSet(viewsets.ModelViewSet):
         elif settings.SEND_CONFIRMATION_EMAIL:
             settings.EMAIL.confirmation(self.request, context).send(to)
 
-    def perform_update(self, serializer, *args, **kwargs):
-        super().perform_update(serializer, *args, **kwargs)
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
         user = serializer.instance
         signals.user_updated.send(
             sender=self.__class__, user=user, request=self.request
