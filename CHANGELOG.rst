@@ -6,6 +6,13 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.2.2`_ (2023-11-09)
+---------------------
+
+* rollback path changes as it resulted in regressions for some https://github.com/sunscrapers/djoser/issues/778
+* Django 5 added to test suite pipeline - consider it being supported https://github.com/sunscrapers/djoser/issues/772
+
+---------------------
 `2.2.1`_ (2023-11-05)
 ---------------------
 
@@ -424,3 +431,4 @@ few bugfixes / documentation updates. List of changes:
 .. _2.1.0: https://github.com/sunscrapers/djoser/compare/2.0.5...2.1.0
 .. _2.2.0: https://github.com/sunscrapers/djoser/compare/2.1.0...2.2.0
 .. _2.2.1: https://github.com/sunscrapers/djoser/compare/2.2.0...2.2.1
+.. _2.2.2: https://github.com/sunscrapers/djoser/compare/2.2.1...2.2.2
