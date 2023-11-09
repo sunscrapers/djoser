@@ -9,8 +9,9 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 `2.2.2`_ (2023-11-09)
 ---------------------
 
-* rollback path changes as it resulted in regressions for some https://github.com/sunscrapers/djoser/issues/778
-* Django 5 added to test suite pipeline - consider it being supported https://github.com/sunscrapers/djoser/issues/772
+* fix regression: rollback path changes as it resulted in regressions for some https://github.com/sunscrapers/djoser/issues/778
+* add Django 5 to test suite pipeline - consider it being supported https://github.com/sunscrapers/djoser/issues/772
+* fix in docs https://github.com/sunscrapers/djoser/commit/641b824353627a73ba901f7e81b86246384d1327
 
 ---------------------
 `2.2.1`_ (2023-11-05)
