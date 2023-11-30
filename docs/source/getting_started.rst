@@ -39,21 +39,21 @@ Installation
 
     $ pip install -U djoser
 
-If you are going to use JWT authentication, you will also need to install
+If you are going to use JWT authentication, you will also need to install the dependency
 `djangorestframework_simplejwt <https://github.com/davesque/django-rest-framework-simplejwt>`_
-with:
+by specifying the ``jwt`` extra:
 
 .. code-block:: bash
 
-    $ pip install -U djangorestframework_simplejwt
+    $ pip install -U djoser[jwt]
 
 Finally if you are going to use third party based authentication e.g. facebook,
 you will need to install `social-auth-app-django <https://github.com/python-social-auth/social-app-django>`_
-with:
+by specifying the ``social-auth`` extra:
 
 .. code-block:: bash
 
-    $ pip install -U social-auth-app-django
+    $ pip install -U djoser[social-auth]
 
 Configuration
 -------------
