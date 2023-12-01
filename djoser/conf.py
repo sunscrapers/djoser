@@ -74,6 +74,9 @@ default_settings = {
             "username_reset": "djoser.email.UsernameResetEmail",
         }
     ),
+    "EMAIL_FRONTEND_DOMAIN": None,
+    "EMAIL_FRONTEND_PROTOCOL": None,
+    "EMAIL_FRONTEND_SITE_NAME": None,
     "CONSTANTS": ObjDict({"messages": "djoser.constants.Messages"}),
     "LOGOUT_ON_PASSWORD_CHANGE": False,
     "CREATE_SESSION_ON_LOGIN": False,
