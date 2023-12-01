@@ -83,6 +83,7 @@ default_settings = {
     "PERMISSIONS": ObjDict(
         {
             "activation": ["rest_framework.permissions.AllowAny"],
+            "activation_resend": ["rest_framework.permissions.AllowAny"],
             "password_reset": ["rest_framework.permissions.AllowAny"],
             "password_reset_confirm": ["rest_framework.permissions.AllowAny"],
             "set_password": ["djoser.permissions.CurrentUserOrAdmin"],
