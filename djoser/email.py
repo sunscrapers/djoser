@@ -13,7 +13,7 @@ class ActivationEmail(BaseEmailMessage):
         context = super().get_context_data()
 
         user = context.get("user")
-        context["uid"] = utils.encode_uid(user.pk)
+        context["uid"] = utils.encode_uid(getattr(user, settings.USER_ID_FIELD))
         context["token"] = default_token_generator.make_token(user)
         context["url"] = settings.ACTIVATION_URL.format(**context)
         return context
@@ -31,7 +31,7 @@ class PasswordResetEmail(BaseEmailMessage):
         context = super().get_context_data()
 
         user = context.get("user")
-        context["uid"] = utils.encode_uid(user.pk)
+        context["uid"] = utils.encode_uid(getattr(user, settings.USER_ID_FIELD))
         context["token"] = default_token_generator.make_token(user)
         context["url"] = settings.PASSWORD_RESET_CONFIRM_URL.format(**context)
         return context
@@ -52,7 +52,7 @@ class UsernameResetEmail(BaseEmailMessage):
         context = super().get_context_data()
 
         user = context.get("user")
-        context["uid"] = utils.encode_uid(user.pk)
+        context["uid"] = utils.encode_uid(getattr(user, settings.USER_ID_FIELD))
         context["token"] = default_token_generator.make_token(user)
         context["url"] = settings.USERNAME_RESET_CONFIRM_URL.format(**context)
         return context
