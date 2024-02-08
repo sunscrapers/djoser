@@ -30,8 +30,8 @@ Configure ``urls.py``. Pay attention to ``djoser.url.authtoken`` module path:
 
     urlpatterns = [
         (...),
-        url(r'^auth/', include('djoser.urls')),
-        url(r'^auth/', include('djoser.urls.authtoken')),
+        path('auth/', include(djoser_urls)),
+        path('auth/', include(authtoken_urls)),
     ]
 
 Add ``rest_framework.authentication.TokenAuthentication`` to Django REST Framework
