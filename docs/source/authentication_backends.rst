@@ -64,10 +64,10 @@ Django REST Framework authentication strategies tuple:
 .. code-block:: python
 
     REST_FRAMEWORK = {
-        'DEFAULT_AUTHENTICATION_CLASSES': (
+        'DEFAULT_AUTHENTICATION_CLASSES': [
             'rest_framework_simplejwt.authentication.JWTAuthentication',
             (...)
-        ),
+        ],
     }
 
 Configure `django-rest-framework-simplejwt` to use the
