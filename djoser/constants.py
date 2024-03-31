@@ -3,7 +3,6 @@ from django.utils.translation import gettext_lazy as _
 
 class Messages:
     INVALID_CREDENTIALS_ERROR = _("Unable to log in with provided credentials.")
-    INACTIVE_ACCOUNT_ERROR = _("User account is disabled.")
     INVALID_TOKEN_ERROR = _("Invalid token for given user.")
     INVALID_UID_ERROR = _("Invalid user id or user doesn't exist.")
     STALE_TOKEN_ERROR = _("Stale token for given user.")
