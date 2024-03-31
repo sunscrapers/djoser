@@ -10,7 +10,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 ---------------------
 
 * add support for protocol, domain and site name customization in the email contents https://github.com/sunscrapers/djoser/issues/781
-
+* remove unused `inactive_account` serializer error, not in use since Django 1.10
 
 ---------------------
 `2.2.2`_ (2023-11-09)

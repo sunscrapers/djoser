@@ -1,4 +1,3 @@
-import django
 from django.conf import settings as django_settings
 from django.contrib.auth import user_logged_in, user_login_failed
 from django.test import override_settings
@@ -48,13 +47,11 @@ class TokenCreateViewTest(
 
         response = self.client.post(self.base_url, data)
 
-        if django.VERSION >= (1, 10):
-            expected_errors = [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR]
-        else:
-            expected_errors = [settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR]
-
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data["non_field_errors"], expected_errors)
+        self.assertEqual(
+            response.data["non_field_errors"],
+            settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR,
+        )
         self.assertFalse(self.signal_sent)
 
     def test_post_should_not_login_if_invalid_credentials(self):
