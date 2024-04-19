@@ -5,6 +5,7 @@ from rest_framework import generics, status, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 
 from djoser import signals, utils
 from djoser.compat import get_user_email
@@ -30,6 +31,7 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
 class TokenDestroyView(views.APIView):
     """Use this endpoint to logout user (remove user authentication token)."""
 
+    serializer_class = Serializer
     permission_classes = settings.PERMISSIONS.token_destroy
 
     def post(self, request):

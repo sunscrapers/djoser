@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 from webauthn import (
@@ -31,6 +32,7 @@ User = get_user_model()
 
 class SingupRequestView(APIView):
     permission_classes = (AllowAny,)
+    serializer_class = Serializer
 
     def post(self, request):
         serializer = WebauthnSignupSerializer(data=request.data)
@@ -95,6 +97,7 @@ class SignupView(APIView):
 
 class LoginRequestView(APIView):
     permission_classes = (AllowAny,)
+    serializer_class = Serializer
 
     def post(self, request):
         serializer = WebauthnLoginSerializer(data=request.data)
