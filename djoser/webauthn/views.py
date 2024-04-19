@@ -30,7 +30,7 @@ from .utils import create_challenge
 User = get_user_model()
 
 
-class SingupRequestView(APIView):
+class SignupRequestView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = Serializer
 
