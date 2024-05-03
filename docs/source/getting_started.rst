@@ -6,7 +6,6 @@ Available endpoints
 
 * ``/users/``
 * ``/users/me/``
-* ``/users/confirm/``
 * ``/users/resend_activation/``
 * ``/users/set_password/``
 * ``/users/reset_password/``
