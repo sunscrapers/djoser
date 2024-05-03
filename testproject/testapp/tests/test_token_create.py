@@ -48,7 +48,7 @@ class TokenCreateViewTest(
     @override_settings(
         DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "username"})
     )
-    def test_post_should_not_login_if_model_backend_user_can_authenticate__LOGIN_FIELD_username__USERNAME_FIELD_username(  # noqa: E501
+    def test_login__LOGIN_FIELD_username__USERNAME_FIELD_username(
         self,
     ):
         user = create_user()
@@ -101,7 +101,7 @@ class TokenCreateViewTest(
         ]
     )
     @override_settings(DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "email"}))
-    def test_post_should_not_login_if_model_backend_user_can_authenticate__LOGIN_FIELD_email__USERNAME_FIELD_username(  # noqa: E501
+    def test_login__LOGIN_FIELD_email__USERNAME_FIELD_username(
         self,
     ):
         user = create_user()
@@ -155,7 +155,7 @@ class TokenCreateViewTest(
     @override_settings(
         DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "username"})
     )
-    def test_post_should_not_login_if_model_backend_user_can_authenticate__LOGIN_FIELD_username__USERNAME_FIELD_email(  # noqa: E501
+    def test_login__LOGIN_FIELD_username__USERNAME_FIELD_email(
         self,
     ):
         user = create_user()
@@ -207,7 +207,7 @@ class TokenCreateViewTest(
         ]
     )
     @override_settings(DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "email"}))
-    def test_post_should_not_login_if_model_backend_user_can_authenticate__LOGIN_FIELD_email__USERNAME_FIELD_email(  # noqa: E501
+    def test_login__LOGIN_FIELD_email__USERNAME_FIELD_email(
         self,
     ):
         user = create_user()
