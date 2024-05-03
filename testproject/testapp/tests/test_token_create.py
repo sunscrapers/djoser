@@ -49,7 +49,7 @@ class TokenCreateViewTest(
 
         self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data["non_field_errors"],
+            response.data["non_field_errors"][0],
             settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR,
         )
         self.assertFalse(self.signal_sent)

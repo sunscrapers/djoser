@@ -6,7 +6,7 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
-`2.2.3`_ (2024-05-01)
+`2.2.3`_ (2024-05-03)
 ---------------------
 
 * add support for protocol, domain and site name customization in the email contents https://github.com/sunscrapers/djoser/issues/781
@@ -440,3 +440,4 @@ few bugfixes / documentation updates. List of changes:
 .. _2.2.0: https://github.com/sunscrapers/djoser/compare/2.1.0...2.2.0
 .. _2.2.1: https://github.com/sunscrapers/djoser/compare/2.2.0...2.2.1
 .. _2.2.2: https://github.com/sunscrapers/djoser/compare/2.2.1...2.2.2
+.. _2.2.3: https://github.com/sunscrapers/djoser/compare/2.2.2...2.2.3

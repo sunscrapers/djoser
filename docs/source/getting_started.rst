@@ -6,7 +6,6 @@ Available endpoints
 
 * ``/users/``
 * ``/users/me/``
-* ``/users/confirm/``
 * ``/users/resend_activation/``
 * ``/users/set_password/``
 * ``/users/reset_password/``
@@ -76,7 +75,7 @@ Configure ``urls.py``:
 
     urlpatterns = [
         (...),
-        url(r'^auth/', include('djoser.urls')),
+        re_path(r'^auth/', include('djoser.urls')),
     ]
 
 HTTP Basic Auth strategy is assumed by default as Django Rest Framework does it.
