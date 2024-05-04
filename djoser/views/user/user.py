@@ -46,11 +46,14 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "create":
             if settings.USER_CREATE_PASSWORD_RETYPE:
-                return settings.SERIALIZERS.user_create_password_retype
-            return settings.SERIALIZERS.user_create
+                serializer_class = settings.SERIALIZERS.user_create_password_retype
+            else:
+                serializer_class = settings.SERIALIZERS.user_create
         elif self.action == "destroy":
-            return settings.SERIALIZERS.user_delete
-        return self.serializer_class
+            serializer_class = settings.SERIALIZERS.user_delete
+        else:
+            serializer_class = self.serializer_class
+        return serializer_class
 
     def perform_create(self, serializer, *args, **kwargs):
         user = serializer.save(*args, **kwargs)
