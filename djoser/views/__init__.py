@@ -1,10 +1,11 @@
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.timezone import now
-from rest_framework import generics, status, views, viewsets
+from rest_framework import status, mixins
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
 from djoser import signals, utils
 from djoser.compat import get_user_email
@@ -13,31 +14,14 @@ from djoser.conf import settings
 User = get_user_model()
 
 
-class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
-    """Use this endpoint to obtain user authentication token."""
-
-    serializer_class = settings.SERIALIZERS.token_create
-    permission_classes = settings.PERMISSIONS.token_create
-
-    def _action(self, serializer):
-        token = utils.login_user(self.request, serializer.user)
-        token_serializer_class = settings.SERIALIZERS.token
-        return Response(
-            data=token_serializer_class(token).data, status=status.HTTP_200_OK
-        )
-
-
-class TokenDestroyView(views.APIView):
-    """Use this endpoint to logout user (remove user authentication token)."""
-
-    permission_classes = settings.PERMISSIONS.token_destroy
-
-    def post(self, request):
-        utils.logout_user(request)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet,
+):
     serializer_class = settings.SERIALIZERS.user
     queryset = User.objects.all()
     permission_classes = settings.PERMISSIONS.user
@@ -61,14 +45,15 @@ class UserViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_permissions(self):
-        if self.action == "create":
-            self.permission_classes = settings.PERMISSIONS.user_create
+        deprecated = ("create", "list")
+        if self.action in deprecated:
+            raise RuntimeError
         elif self.action == "activation":
             self.permission_classes = settings.PERMISSIONS.activation
         elif self.action == "resend_activation":
             self.permission_classes = settings.PERMISSIONS.password_reset
-        elif self.action == "list":
-            self.permission_classes = settings.PERMISSIONS.user_list
+        # elif self.action == "list":
+        #     self.permission_classes = settings.PERMISSIONS.user_list
         elif self.action == "reset_password":
             self.permission_classes = settings.PERMISSIONS.password_reset
         elif self.action == "reset_password_confirm":
@@ -88,10 +73,9 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def get_serializer_class(self):
-        if self.action == "create":
-            if settings.USER_CREATE_PASSWORD_RETYPE:
-                return settings.SERIALIZERS.user_create_password_retype
-            return settings.SERIALIZERS.user_create
+        deprecated = ("create", "list")
+        if self.action in deprecated:
+            raise RuntimeError
         elif self.action == "destroy" or (
             self.action == "me" and self.request and self.request.method == "DELETE"
         ):
@@ -128,18 +112,18 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_instance(self):
         return self.request.user
 
-    def perform_create(self, serializer, *args, **kwargs):
-        user = serializer.save(*args, **kwargs)
-        signals.user_registered.send(
-            sender=self.__class__, user=user, request=self.request
-        )
-
-        context = {"user": user}
-        to = [get_user_email(user)]
-        if settings.SEND_ACTIVATION_EMAIL:
-            settings.EMAIL.activation(self.request, context).send(to)
-        elif settings.SEND_CONFIRMATION_EMAIL:
-            settings.EMAIL.confirmation(self.request, context).send(to)
+    # def perform_create(self, serializer, *args, **kwargs):
+    #     user = serializer.save(*args, **kwargs)
+    #     signals.user_registered.send(
+    #         sender=self.__class__, user=user, request=self.request
+    #     )
+    #
+    #     context = {"user": user}
+    #     to = [get_user_email(user)]
+    #     if settings.SEND_ACTIVATION_EMAIL:
+    #         settings.EMAIL.activation(self.request, context).send(to)
+    #     elif settings.SEND_CONFIRMATION_EMAIL:
+    #         settings.EMAIL.confirmation(self.request, context).send(to)
 
     def perform_update(self, serializer, *args, **kwargs):
         super().perform_update(serializer, *args, **kwargs)

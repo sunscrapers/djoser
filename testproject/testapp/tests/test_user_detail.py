@@ -5,7 +5,9 @@ from rest_framework.test import APITestCase
 from testapp.tests.common import create_user, login_user
 
 import djoser.permissions
-import djoser.views
+
+from djoser.views import UserViewSet as OldUserViewSet
+from djoser.views.user.user import UserViewSet
 
 
 class BaseUserViewSetListTest(APITestCase, assertions.StatusCodeAssertionsMixin):
@@ -26,14 +28,18 @@ class ModifiedPermissionsTest(APITestCase):
 
     def setUp(self):
         super().setUp()
-        self.previous_permissions = djoser.views.UserViewSet.permission_classes
-        djoser.views.UserViewSet.permission_classes = [
+        self.previous_permissions = OldUserViewSet.permission_classes
+        OldUserViewSet.permission_classes = [
+            djoser.permissions.CurrentUserOrAdminOrReadOnly
+        ]
+        UserViewSet.permission_classes = [
             djoser.permissions.CurrentUserOrAdminOrReadOnly
         ]
 
     def tearDown(self):
         super().tearDown()
-        djoser.views.UserViewSet.permission_classes = self.previous_permissions
+        OldUserViewSet.permission_classes = self.previous_permissions
+        UserViewSet.permission_classes = self.previous_permissions
 
 
 class UserViewSetListTest(BaseUserViewSetListTest):
@@ -72,8 +78,11 @@ class ModifiedPermissionsUserViewSetListTest(
 
     def test_user_cant_set_other_user_detail(self):
         login_user(self.client, self.user)
-        response = self.client.get(reverse("user-detail", args=[self.superuser.pk]))
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        response = self.client.patch(
+            reverse("user-detail", args=[self.superuser.pk]),
+            data={"email": "eggs@example.com"},
+        )
+        self.assert_status_equal(response, status.HTTP_404_NOT_FOUND)
 
 
 class UserViewSetEditTest(APITestCase, assertions.StatusCodeAssertionsMixin):
