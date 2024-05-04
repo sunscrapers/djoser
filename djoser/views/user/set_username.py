@@ -1,10 +1,13 @@
+from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.response import Response
 
-from djoser import signals
 from djoser.compat import get_user_email
 from djoser.conf import settings
 from djoser.views.user.base import GenericUserAPIView
+
+
+User = get_user_model()
 
 
 class UserSetUsernameAPIView(GenericUserAPIView):
@@ -19,17 +22,13 @@ class UserSetUsernameAPIView(GenericUserAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.user
-        user.is_active = True
+        user = self.request.user
+        new_username = serializer.data["new_" + User.USERNAME_FIELD]
+
+        setattr(user, User.USERNAME_FIELD, new_username)
         user.save()
-
-        signals.user_activated.send(
-            sender=self.__class__, user=user, request=self.request
-        )
-
-        if settings.SEND_CONFIRMATION_EMAIL:
+        if settings.USERNAME_CHANGED_EMAIL_CONFIRMATION:
             context = {"user": user}
             to = [get_user_email(user)]
-            settings.EMAIL.confirmation(self.request, context).send(to)
-
+            settings.EMAIL.username_changed_confirmation(self.request, context).send(to)
         return Response(status=status.HTTP_204_NO_CONTENT)
