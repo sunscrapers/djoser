@@ -69,7 +69,6 @@ class PasswordResetViewTest(
         )
 
     @mock.patch("djoser.serializers.User", CustomUser)
-    @mock.patch("djoser.views.User", CustomUser)
     @override_settings(AUTH_USER_MODEL="testapp.CustomUser")
     def test_post_should_send_email_to_custom_user_with_password_reset_link(
         self,
@@ -88,7 +87,6 @@ class PasswordResetViewTest(
         self.assertIn(site.name, mail.outbox[0].body)
 
     @mock.patch("djoser.serializers.User", CustomUser)
-    @mock.patch("djoser.views.User", CustomUser)
     @override_settings(
         AUTH_USER_MODEL="testapp.CustomUser",
         DJOSER=dict(settings.DJOSER, **{"PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True}),

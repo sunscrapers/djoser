@@ -53,7 +53,6 @@ class TestResendActivationEmail(
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
 
     @mock.patch("djoser.serializers.User", CustomUser)
-    @mock.patch("djoser.views.User", CustomUser)
     @override_settings(
         AUTH_USER_MODEL="testapp.CustomUser",
         DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}),
