@@ -52,9 +52,6 @@ class UserViewSet(viewsets.ModelViewSet):
             return settings.SERIALIZERS.user_delete
         return self.serializer_class
 
-    def get_instance(self):
-        return self.request.user
-
     def perform_create(self, serializer, *args, **kwargs):
         user = serializer.save(*args, **kwargs)
         signals.user_registered.send(

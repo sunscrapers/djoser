@@ -148,18 +148,6 @@ class UserViewSet(
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(["get", "put", "patch", "delete"], detail=False)
-    def me(self, request, *args, **kwargs):
-        self.get_object = self.get_instance
-        if request.method == "GET":
-            return self.retrieve(request, *args, **kwargs)
-        elif request.method == "PUT":
-            return self.update(request, *args, **kwargs)
-        elif request.method == "PATCH":
-            return self.partial_update(request, *args, **kwargs)
-        elif request.method == "DELETE":
-            return self.destroy(request, *args, **kwargs)
-
     @action(["post"], detail=False)
     def activation(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
