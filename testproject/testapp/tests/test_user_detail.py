@@ -6,7 +6,6 @@ from testapp.tests.common import create_user, login_user
 
 import djoser.permissions
 
-from djoser.views import UserViewSet as OldUserViewSet
 from djoser.views.user.user import UserViewSet
 
 
@@ -28,17 +27,13 @@ class ModifiedPermissionsTest(APITestCase):
 
     def setUp(self):
         super().setUp()
-        self.previous_permissions = OldUserViewSet.permission_classes
-        OldUserViewSet.permission_classes = [
-            djoser.permissions.CurrentUserOrAdminOrReadOnly
-        ]
+        self.previous_permissions = UserViewSet.permission_classes
         UserViewSet.permission_classes = [
             djoser.permissions.CurrentUserOrAdminOrReadOnly
         ]
 
     def tearDown(self):
         super().tearDown()
-        OldUserViewSet.permission_classes = self.previous_permissions
         UserViewSet.permission_classes = self.previous_permissions
 
 

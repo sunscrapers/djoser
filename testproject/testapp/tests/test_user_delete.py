@@ -7,7 +7,6 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-import djoser.views
 from djoser.conf import settings as djoser_settings
 
 from .common import PermCheckClass, RunCheck, SerializerCheckClass, create_user
@@ -21,8 +20,6 @@ class UserMeDeleteViewTest(
     assertions.EmailAssertionsMixin,
     assertions.InstanceAssertionsMixin,
 ):
-    viewset = djoser.views.UserViewSet
-
     def test_delete_user_if_logged_in(self):
         user = create_user()
         self.assert_instance_exists(User, username="john")
