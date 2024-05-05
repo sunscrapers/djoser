@@ -34,7 +34,7 @@ class SignupRequestView(APIView):
     serializer_class = WebauthnSignupSerializer
 
     def post(self, request):
-        serializer = WebauthnSignupSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         co = serializer.save()
 
@@ -99,7 +99,7 @@ class LoginRequestView(APIView):
     serializer_class = WebauthnLoginSerializer
 
     def post(self, request):
-        serializer = WebauthnLoginSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         co = CredentialOptions.objects.get(
             username=serializer.validated_data["username"]
