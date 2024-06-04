@@ -26,5 +26,6 @@ jobs:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Build and publish
         run: |
+          poetry run pybabel compile --domain django --directory djoser/locale -f
           poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
           poetry publish --build --no-interaction
