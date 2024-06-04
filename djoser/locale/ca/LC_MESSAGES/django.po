@@ -2,17 +2,17 @@
 # This file is distributed under the same license as the djoser package.
 #
 # Translators:
-# Ariel Torti <arieltorti14@gmail.com>, 2020
 # Oscar Fonts <oscar.fonts@geomatico.es>, 2024
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: djoser\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-18 20:06-0300\n"
-"Last-Translator: Ariel Torti <arieltorti14@gmail.com>\n"
-"Language-Team: Spanish\n"
-"Language: es\n"
+"POT-Creation-Date: 2024-06-03 13:31+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: # Oscar Fonts <oscar.fonts@geomatico.es>\n"
+"Language-Team: Catalan\n"
+"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,49 +20,49 @@ msgstr ""
 
 #: djoser/constants.py:5
 msgid "Unable to log in with provided credentials."
-msgstr "No es posible iniciar sesión con las credenciales indicadas."
+msgstr "No es pot iniciar sessió amb les credencials proporcionades."
 
 #: djoser/constants.py:6
 msgid "User account is disabled."
-msgstr "Esta cuenta de usuario está deshabilitada."
+msgstr "El compte d'usuari està desactivat."
 
 #: djoser/constants.py:7
 msgid "Invalid token for given user."
-msgstr "El token del usuario no es válido."
+msgstr "El token de l'usuari no és vàlid."
 
 #: djoser/constants.py:8
 msgid "Invalid user id or user doesn't exist."
-msgstr "Id de usuario inválido o usuario inexistente."
+msgstr "Id d'usuari no vàlid o l'usuari no existeix."
 
 #: djoser/constants.py:9
 msgid "Stale token for given user."
-msgstr "El token del usuario ha caducado."
+msgstr "El token d'usuari ha caducat."
 
 #: djoser/constants.py:10
 msgid "The two password fields didn't match."
-msgstr "El contenido de los dos campos de contraseña no coincide."
+msgstr "El contingut dels dos camps de contrasenyes no coincideix."
 
 #: djoser/constants.py:11
 #, python-brace-format
 msgid "The two {0} fields didn't match."
-msgstr "El contenido de los dos campos de {0} no coincide."
+msgstr "El contingut dels dos camps de {0} no coincideix."
 
 #: djoser/constants.py:12
 msgid "Invalid password."
-msgstr "Contraseña inválida."
+msgstr "Contrasenya incorrecta."
 
 #: djoser/constants.py:13
 msgid "User with given email does not exist."
-msgstr "No existe un usuario con el correo indicado."
+msgstr "No existeix un usuari amb el correu indicat."
 
 #: djoser/constants.py:14
 msgid "Unable to create account."
-msgstr "No es posible crear la cuenta de usuario."
+msgstr "No és possible crear el compte d'usuari."
 
 #: djoser/templates/email/activation.html:4
 #, python-format
 msgid "Account activation on %(site_name)s"
-msgstr "Activación de la cuenta %(site_name)s"
+msgstr "Activació del compte %(site_name)s"
 
 #: djoser/templates/email/activation.html:8
 #: djoser/templates/email/activation.html:19
@@ -71,13 +71,13 @@ msgid ""
 "You're receiving this email because you need to finish activation process on "
 "%(site_name)s."
 msgstr ""
-"Usted ha recibido este correo porque necesita finalizar el proceso de activación en "
+"Heu rebut aquest correu per tal de finalitzar el procés d'activació a "
 "%(site_name)s."
 
 #: djoser/templates/email/activation.html:10
 #: djoser/templates/email/activation.html:21
 msgid "Please go to the following page to activate account:"
-msgstr "Por favor diríjase a la siguiente página para activar su cuenta:"
+msgstr "Aneu a la pàgina següent per activar el vostre compte:"
 
 #: djoser/templates/email/activation.html:13
 #: djoser/templates/email/activation.html:24
@@ -92,7 +92,7 @@ msgstr "Por favor diríjase a la siguiente página para activar su cuenta:"
 #: djoser/templates/email/username_reset.html:14
 #: djoser/templates/email/username_reset.html:26
 msgid "Thanks for using our site!"
-msgstr "¡Gracias por usar nuestro sitio!"
+msgstr "Gràcies per utilitzar el nostre lloc!"
 
 #: djoser/templates/email/activation.html:15
 #: djoser/templates/email/activation.html:26
@@ -108,33 +108,33 @@ msgstr "¡Gracias por usar nuestro sitio!"
 #: djoser/templates/email/username_reset.html:28
 #, python-format
 msgid "The %(site_name)s team"
-msgstr "El equipo de %(site_name)s"
+msgstr "L'equip de %(site_name)s"
 
 #: djoser/templates/email/confirmation.html:4
 #, python-format
 msgid ""
 "%(site_name)s - Your account has been successfully created and activated!"
-msgstr "%(site_name)s - ¡Su cuenta ha sido creada y activada con éxito!"
+msgstr "%(site_name)s - El vostre compte s'ha creat correctament i ja està activat!"
 
 #: djoser/templates/email/confirmation.html:8
 #: djoser/templates/email/confirmation.html:16
 msgid "Your account has been created and is ready to use!"
-msgstr "¡Se ha creado su cuenta y está lista para su uso!"
+msgstr "S'ha creat el vostre compte i està llest per utilitzar-lo!"
 
 #: djoser/templates/email/password_changed_confirmation.html:4
 #, python-format
 msgid "%(site_name)s - Your password has been successfully changed!"
-msgstr "%(site_name)s - ¡Su contraseña se ha cambiado con éxito!"
+msgstr "%(site_name)s - La vostra contrasenya s'ha canviat correctament!"
 
 #: djoser/templates/email/password_changed_confirmation.html:8
 #: djoser/templates/email/password_changed_confirmation.html:16
 msgid "Your password has been changed!"
-msgstr "¡Su contraseña ha sido cambiada!"
+msgstr "S'ha canviat la vostra constrasenya!"
 
 #: djoser/templates/email/password_reset.html:4
 #, python-format
 msgid "Password reset on %(site_name)s"
-msgstr "Restablecimiento de contraseña en %(site_name)s"
+msgstr "Restabliment de contrasenya a %(site_name)s"
 
 #: djoser/templates/email/password_reset.html:8
 #: djoser/templates/email/password_reset.html:20
@@ -143,35 +143,35 @@ msgid ""
 "You're receiving this email because you requested a password reset for your "
 "user account at %(site_name)s."
 msgstr ""
-"Usted ha recibido este correo porque solicitó un cambio de contraseña para su "
-"cuenta en %(site_name)s"
+"Heu rebut aquest correu perquè heu sol·licitat un restabliment de contrasenya per al vostre "
+"compte d'usuari a %(site_name)s."
 
 #: djoser/templates/email/password_reset.html:10
 #: djoser/templates/email/password_reset.html:22
 msgid "Please go to the following page and choose a new password:"
-msgstr "Por favor diríjase a la siguiente página para seleccionar su nueva contraseña:"
+msgstr "Aneu a la pàgina següent i trieu una nova contrasenya:"
 
 #: djoser/templates/email/password_reset.html:12
 #: djoser/templates/email/password_reset.html:24
 #: djoser/templates/email/username_reset.html:12
 #: djoser/templates/email/username_reset.html:24
 msgid "Your username, in case you've forgotten:"
-msgstr "Su nombre de usuario, en caso de que lo haya olvidado:"
+msgstr "El vostre nom d'usuari, en cas que l'hàgiu oblidat:"
 
 #: djoser/templates/email/username_changed_confirmation.html:4
 #, python-format
 msgid "%(site_name)s - Your username has been successfully changed!"
-msgstr "%(site_name)s - ¡Su nombre de usuario ha sido cambiado con éxito!"
+msgstr "%(site_name)s - El vostre nom d'usuari s'ha canviat correctament!"
 
 #: djoser/templates/email/username_changed_confirmation.html:8
 #: djoser/templates/email/username_changed_confirmation.html:16
 msgid "Your username has been changed!"
-msgstr "¡Su nombre de usuario ha sido cambiado!"
+msgstr "S'ha canviat el vostre nom d'usuari!"
 
 #: djoser/templates/email/username_reset.html:4
 #, python-format
 msgid "Username reset on %(site_name)s"
-msgstr "Restablecimiento de usuario en %(site_name)s"
+msgstr "Nom d'usuari restablert a %(site_name)s"
 
 #: djoser/templates/email/username_reset.html:8
 #: djoser/templates/email/username_reset.html:20
@@ -180,10 +180,10 @@ msgid ""
 "You're receiving this email because you requested a username reset for your "
 "user account at %(site_name)s."
 msgstr ""
-"Usted ha recibido este correo porque solicitó un cambio de nombre de usuario para su "
-"cuenta en %(site_name)s"
+"Heu rebut aquest correu perquè heu sol·licitat el restabliment del vostre nom d'usuari "
+" a %(site_name)s."
 
 #: djoser/templates/email/username_reset.html:10
 #: djoser/templates/email/username_reset.html:22
 msgid "Please go to the following page and choose a new username:"
-msgstr "Por favor diríjase a la siguiente página para seleccionar un nuevo nombre de usuario:"
+msgstr "Aneu a la pàgina següent i trieu un nou nom d'usuari:"
