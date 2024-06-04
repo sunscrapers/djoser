@@ -34,6 +34,7 @@ jobs:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Build and publish
         run: |
+          poetry run pybabel compile --domain django --directory djoser/locale -f
           poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
 
 #          alternative for the next release. Before, set version in pyproject to 0.0.0
