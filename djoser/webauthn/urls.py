@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     re_path(
         r"^signup_request/$",
-        views.SingupRequestView.as_view(),
+        views.SignupRequestView.as_view(),
         name="webauthn_signup_request",
     ),
     re_path(
