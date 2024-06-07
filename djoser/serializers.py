@@ -117,6 +117,9 @@ class TokenCreateSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         password = attrs.get("password")
+        # https://github.com/sunscrapers/djoser/issues/389
+        # https://github.com/sunscrapers/djoser/issues/429
+        # https://github.com/sunscrapers/djoser/issues/795
         params = {"username": attrs.get(settings.LOGIN_FIELD)}
         self.user = authenticate(
             request=self.context.get("request"), **params, password=password
