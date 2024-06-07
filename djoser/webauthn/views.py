@@ -29,11 +29,12 @@ from .utils import create_challenge
 User = get_user_model()
 
 
-class SingupRequestView(APIView):
+class SignupRequestView(APIView):
     permission_classes = (AllowAny,)
+    serializer_class = WebauthnSignupSerializer
 
     def post(self, request):
-        serializer = WebauthnSignupSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         co = serializer.save()
 
@@ -95,9 +96,10 @@ class SignupView(APIView):
 
 class LoginRequestView(APIView):
     permission_classes = (AllowAny,)
+    serializer_class = WebauthnLoginSerializer
 
     def post(self, request):
-        serializer = WebauthnLoginSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         co = CredentialOptions.objects.get(
             username=serializer.validated_data["username"]
