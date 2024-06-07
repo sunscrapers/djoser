@@ -49,6 +49,7 @@ django = ">=3.0.0"
 djet = ["djet"]
 webauthn = ["webauthn"]
 
+# poetry add <lib name> --group test
 [tool.poetry.group.test.dependencies]
 pytest = "^7.2.2"
 coverage = "^7.2.2"
@@ -56,6 +57,7 @@ pytest-cov = "^4.0.0"
 pytest-django = "^4.5.2"
 tox = "^4.4.8"
 babel = "^2.12.1"
+pytest-mock = "^3.14.0"
 
 [tool.poetry.group.code-quality.dependencies]
 black = "^23.1.0"
