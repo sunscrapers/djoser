@@ -42,10 +42,8 @@ class TokenCreateViewTest(
     @override_settings(
         AUTHENTICATION_BACKENDS=[
             "django.contrib.auth.backends.ModelBackend",
-        ]
-    )
-    @override_settings(
-        DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "username"})
+        ],
+        DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "username"}),
     )
     def test_login__LOGIN_FIELD_username__USERNAME_FIELD_username(
         self,
@@ -97,9 +95,9 @@ class TokenCreateViewTest(
     @override_settings(
         AUTHENTICATION_BACKENDS=[
             "django.contrib.auth.backends.ModelBackend",
-        ]
+        ],
+        DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "email"}),
     )
-    @override_settings(DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "email"}))
     def test_login__LOGIN_FIELD_email__USERNAME_FIELD_username(
         self,
     ):
@@ -149,10 +147,8 @@ class TokenCreateViewTest(
     @override_settings(
         AUTHENTICATION_BACKENDS=[
             "django.contrib.auth.backends.ModelBackend",
-        ]
-    )
-    @override_settings(
-        DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "username"})
+        ],
+        DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "username"}),
     )
     def test_login__LOGIN_FIELD_username__USERNAME_FIELD_email(
         self,
@@ -203,9 +199,9 @@ class TokenCreateViewTest(
     @override_settings(
         AUTHENTICATION_BACKENDS=[
             "django.contrib.auth.backends.ModelBackend",
-        ]
+        ],
+        DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "email"}),
     )
-    @override_settings(DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "email"}))
     def test_login__LOGIN_FIELD_email__USERNAME_FIELD_email(
         self,
     ):
