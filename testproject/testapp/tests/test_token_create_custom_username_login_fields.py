@@ -10,8 +10,12 @@ from testapp.tests.common import create_user
 
 
 @pytest.mark.django_db
-class TestUsernameLoginFields:
+class BaseTestUsernameLoginFields:
     url = reverse("login")
+
+    @pytest.fixture(autouse=True)
+    def add_authentication_backend(self, settings):
+        raise NotImplementedError
 
     @pytest.fixture(autouse=True)
     def settings(self, settings):
@@ -46,14 +50,7 @@ class TestUsernameLoginFields:
             ModelBackend, "user_can_authenticate", return_value=user_can_authenticate
         )
 
-    @pytest.mark.parametrize(
-        "login_field, username_field, send_field",
-        [
-            ("username", "username", "username"),
-            ("email", "email", "email"),
-        ],
-    )
-    def test_successful_login(
+    def _test_successful_login(
         self,
         user,
         client,
@@ -87,22 +84,7 @@ class TestUsernameLoginFields:
         assert user.last_login != previous_last_login
         signal_user_logged_in_patched.assert_called_once()
 
-    @pytest.mark.parametrize(
-        "login_field, username_field, user_can_authenticate, send_field",
-        [
-            ("username", "username", False, "username"),
-            ("username", "username", True, "email"),
-            ("username", "email", True, "username"),
-            ("username", "email", False, "username"),
-            ("email", "username", False, "username"),
-            ("email", "username", True, "email"),
-            ("email", "email", True, "username"),
-            ("email", "email", False, "username"),
-            ("username", "email", True, "email"),
-            ("email", "username", True, "username"),
-        ],
-    )
-    def test_failing_login(
+    def _test_failing_login(
         self,
         user,
         client,
@@ -134,3 +116,162 @@ class TestUsernameLoginFields:
 
         assert user.last_login == previous_last_login
         signal_user_login_failed_patched.assert_called_once()
+
+
+@pytest.mark.django_db
+class TestModelBackendLoginFields(BaseTestUsernameLoginFields):
+    url = reverse("login")
+
+    @pytest.fixture(autouse=True)
+    def add_authentication_backend(self, settings):
+        settings.AUTHENTICATION_BACKENDS = [
+            "django.contrib.auth.backends.ModelBackend",
+        ]
+
+    @pytest.mark.parametrize(
+        "login_field, username_field, send_field",
+        [
+            ("username", "username", "username"),
+            ("email", "email", "email"),
+        ],
+    )
+    def test_successful_login(
+        self,
+        user,
+        client,
+        settings,
+        mocker,
+        signal_user_logged_in_patched,
+        login_field,
+        username_field,
+        send_field,
+    ):
+        self._test_successful_login(
+            user,
+            client,
+            settings,
+            mocker,
+            signal_user_logged_in_patched,
+            login_field,
+            username_field,
+            send_field,
+        )
+
+    @pytest.mark.parametrize(
+        "login_field, username_field, user_can_authenticate, send_field",
+        [
+            ("username", "username", False, "username"),
+            ("username", "username", True, "email"),
+            ("username", "email", True, "username"),
+            ("username", "email", False, "username"),
+            ("email", "username", False, "username"),
+            ("email", "username", True, "email"),
+            ("email", "email", True, "username"),
+            ("email", "email", False, "username"),
+            ("username", "email", True, "email"),
+            ("email", "username", True, "username"),
+        ],
+    )
+    def test_failing_login(
+        self,
+        user,
+        client,
+        settings,
+        mocker,
+        signal_user_login_failed_patched,
+        login_field,
+        username_field,
+        send_field,
+        user_can_authenticate,
+    ):
+        self._test_failing_login(
+            user,
+            client,
+            settings,
+            mocker,
+            signal_user_login_failed_patched,
+            login_field,
+            username_field,
+            send_field,
+            user_can_authenticate,
+        )
+
+
+@pytest.mark.django_db
+class TestLoginFieldBackend(BaseTestUsernameLoginFields):
+    url = reverse("login")
+
+    @pytest.fixture(autouse=True)
+    def add_authentication_backend(self, settings):
+        settings.AUTHENTICATION_BACKENDS = [
+            "djoser.auth_backends.LoginFieldBackend",
+        ]
+
+    @pytest.mark.parametrize(
+        "login_field, username_field, send_field",
+        [
+            ("username", "username", "username"),
+            ("email", "email", "email"),
+            ("email", "username", "email"),
+            ("username", "email", "username"),
+        ],
+    )
+    def test_successful_login(
+        self,
+        user,
+        client,
+        settings,
+        mocker,
+        signal_user_logged_in_patched,
+        login_field,
+        username_field,
+        send_field,
+    ):
+        self._test_successful_login(
+            user,
+            client,
+            settings,
+            mocker,
+            signal_user_logged_in_patched,
+            login_field,
+            username_field,
+            send_field,
+        )
+
+    @pytest.mark.parametrize(
+        "login_field, username_field, user_can_authenticate, send_field",
+        [
+            ("username", "username", False, "username"),
+            ("username", "email", False, "username"),
+            ("email", "username", False, "username"),
+            ("email", "email", False, "username"),
+            ("username", "username", True, "email"),
+            # ("username", "email", True, "username"),
+            ("email", "email", True, "username"),
+            ("username", "email", True, "email"),
+            ("email", "username", True, "username"),
+        ],
+    )
+    def test_failing_login(
+        self,
+        user,
+        client,
+        settings,
+        mocker,
+        signal_user_login_failed_patched,
+        login_field,
+        username_field,
+        send_field,
+        user_can_authenticate,
+    ):
+        self._test_failing_login(
+            user,
+            client,
+            settings,
+            mocker,
+            signal_user_login_failed_patched,
+            login_field,
+            username_field,
+            send_field,
+            user_can_authenticate,
+        )

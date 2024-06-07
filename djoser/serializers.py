@@ -120,7 +120,7 @@ class TokenCreateSerializer(serializers.Serializer):
         # https://github.com/sunscrapers/djoser/issues/389
         # https://github.com/sunscrapers/djoser/issues/429
         # https://github.com/sunscrapers/djoser/issues/795
-        params = {"username": attrs.get(settings.LOGIN_FIELD)}
+        params = {User.USERNAME_FIELD: attrs.get(settings.LOGIN_FIELD)}
         self.user = authenticate(
             request=self.context.get("request"), **params, password=password
         )
