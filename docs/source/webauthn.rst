@@ -29,7 +29,7 @@ Add ``djoser.webauthn.urls`` url patterns to ``urls.py``:
 
     urlpatterns = [
         (...),
-        url(r'^auth/webauthn/', include('djoser.webauthn.urls')),
+        re_path(r'^auth/webauthn/', include('djoser.webauthn.urls')),
     ]
 
 
