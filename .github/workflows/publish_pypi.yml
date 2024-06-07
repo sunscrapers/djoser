@@ -16,9 +16,11 @@ jobs:
         os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3.5.0
-      - name: Fetch All Tags
-        run: git fetch --tags
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # small repo so no biggie
+          fetch-tags: true
       - name: Echo Git Tag
         run: |
           echo "Git tag: $(git describe --tags)"
@@ -33,4 +35,11 @@ jobs:
       - name: Build and publish
         run: |
           poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+
+#          alternative for the next release. Before, set version in pyproject to 0.0.0
+#          upload to test pypi first
+#          TAG=$(git describe --tags)
+#          VERSION=${TAG#v}  # Remove "v" prefix if present
+#          poetry version $VERSION
+
           poetry publish --build --no-interaction
