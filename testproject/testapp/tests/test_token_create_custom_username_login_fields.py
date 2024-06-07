@@ -274,3 +274,17 @@ class TestLoginFieldBackend(BaseTestUsernameLoginFields):
             send_field,
             user_can_authenticate,
         )
+
+    def test_user_does_not_exist(self, client, settings, mocker):
+        self.configure_djoser_settings(
+            settings=settings,
+            mocker=mocker,
+            login_field="username",
+            username_field="username",
+            user_can_authenticate=True,
+        )
+        data = {"username": "idontexist1337", "password": "P455W0RD"}
+
+        response = client.post(self.url, data)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
