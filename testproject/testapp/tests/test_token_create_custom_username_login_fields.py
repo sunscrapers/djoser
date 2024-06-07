@@ -246,7 +246,6 @@ class TestLoginFieldBackend(BaseTestUsernameLoginFields):
             ("email", "username", False, "username"),
             ("email", "email", False, "username"),
             ("username", "username", True, "email"),
-            # ("username", "email", True, "username"),
             ("email", "email", True, "username"),
             ("username", "email", True, "email"),
             ("email", "username", True, "username"),
