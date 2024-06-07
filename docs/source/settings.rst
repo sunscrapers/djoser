@@ -60,6 +60,21 @@ You should pass ``uid`` and ``token`` to reset username confirmation endpoint.
 
 **Required**: ``True``
 
+EMAIL_FRONTEND_PROTOCOL
+-----------------------
+
+If set, it will replace the PROTOCOL part of the url in the emails content.
+
+EMAIL_FRONTEND_DOMAIN
+---------------------
+
+If set, it will replace the DOMAIN part of the url in the emails content.
+
+EMAIL_FRONTEND_SITE_NAME
+------------------------
+
+If set, it will replace the SITE_NAME in the emails content.
+
 SEND_ACTIVATION_EMAIL
 ---------------------
 

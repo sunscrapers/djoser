@@ -12,7 +12,7 @@ Define custom ``urls`` instead of reusing ``djoser.urls``:
 
     urlpatterns = patterns('',
         (...),
-        url(r'^register/$', views.CustomRegistrationView.as_view()),
+        re_path(r'^register/$', views.CustomRegistrationView.as_view()),
     )
 
 Define custom view/serializer (inherit from one of ``djoser`` class) and override necessary method/field:
