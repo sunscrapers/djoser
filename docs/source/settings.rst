@@ -34,6 +34,8 @@ custom User model.
 
 **Default**: ``User.USERNAME_FIELD`` where ``User`` is the model set with Django's setting AUTH_USER_MODEL.
 
+To use this feature you should add "djoser.backends.LoginFieldBackend" to your AUTHENTICATION_BACKENDS at the last position.
+
 .. warning::
 
     Djoser uses `djangorestframework-simplejwt`_ to provide a convenient integration for JWT.

@@ -80,6 +80,13 @@ class TokenCreateViewTest(
         )
 
     @override_settings(DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "email"}))
+    @override_settings(AUTHENTICATION_BACKENDS=[
+        "django.contrib.auth.backends.ModelBackend",
+        "djoser.social.backends.facebook.FacebookOAuth2Override",
+        "social_core.backends.google.GoogleOAuth2",
+        "social_core.backends.steam.SteamOpenId",
+        "djoser.backends.LoginFieldBackend",
+    ])
     def test_login_using_email(self):
         user = create_user()
         previous_last_login = user.last_login
@@ -93,3 +100,19 @@ class TokenCreateViewTest(
         self.assertEqual(response.data["auth_token"], user.auth_token.key)
         self.assertNotEqual(user.last_login, previous_last_login)
         self.assertTrue(self.signal_sent)
+
+    @override_settings(DJOSER=dict(django_settings.DJOSER, **{"LOGIN_FIELD": "email"}))
+    def test_login_using_email_without_login_backend(self):
+        user = create_user()
+        previous_last_login = user.last_login
+        data = {"username": user.email, "password": user.raw_password}
+        user_logged_in.connect(self.signal_receiver)
+
+        response = self.client.post(self.base_url, data)
+        user.refresh_from_db()
+
+        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data["non_field_errors"],
+            [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR],
+        )
