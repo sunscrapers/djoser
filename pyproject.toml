@@ -37,15 +37,17 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-djangorestframework-simplejwt = "^5.0"
+django = ">=3.0.0"
 django-templated-mail = "^1.1.1"
-social-auth-app-django = "^5.0.0"
+djangorestframework-simplejwt = { version = "^5.0", optional = true }
+social-auth-app-django = { version = "^5.0.0", optional = true }
 djet = { version = "^0.3.0", optional = true }
 webauthn = { version = "<1.0", optional = true }
-django = ">=3.0.0"
 
 [tool.poetry.extras]
 # https://python-poetry.org/docs/pyproject/#extras
+jwt = ["djangorestframework-simplejwt"]
+social-auth = ["social-auth-app-django"]
 djet = ["djet"]
 webauthn = ["webauthn"]
 
