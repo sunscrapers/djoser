@@ -62,6 +62,7 @@ default_settings = {
             "current_user": "djoser.serializers.UserSerializer",
             "token": "djoser.serializers.TokenSerializer",
             "token_create": "djoser.serializers.TokenCreateSerializer",
+            "provider_auth": "djoser.social.serializers.ProviderAuthSerializer",
         }
     ),
     "EMAIL": ObjDict(
@@ -122,8 +123,8 @@ class Settings:
             explicit_overriden_settings = {}
 
         overriden_settings = (
-            getattr(django_settings, DJOSER_SETTINGS_NAMESPACE, {})
-            or explicit_overriden_settings
+                getattr(django_settings, DJOSER_SETTINGS_NAMESPACE, {})
+                or explicit_overriden_settings
         )
 
         self._load_default_settings()
