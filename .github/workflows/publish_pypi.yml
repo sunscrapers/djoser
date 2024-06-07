@@ -16,6 +16,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3.5.0
+      - name: Echo Git Tag
+        run: |
+          echo "Git tag: $(git describe --tags)"
       - name: Set up Python
         uses: actions/setup-python@v4.6.0
         with:
