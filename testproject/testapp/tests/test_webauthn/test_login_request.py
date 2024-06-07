@@ -1,15 +1,18 @@
 from django.contrib.auth import get_user_model
+from django.test import override_settings
 from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from testapp.tests.common import create_user
+from django.conf import settings
 
 from .utils import create_credential_options
 
 User = get_user_model()
 
 
+@override_settings(DJOSER=dict(settings.DJOSER, **{"LOGIN_FIELD": "username"}))
 class TestLoginRequestView(APITestCase, assertions.StatusCodeAssertionsMixin):
     url = reverse("webauthn_login_request")
 
