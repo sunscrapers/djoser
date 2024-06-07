@@ -3,12 +3,11 @@ from rest_framework.response import Response
 from social_django.utils import load_backend, load_strategy
 
 from djoser.conf import settings
-from djoser.social.serializers import ProviderAuthSerializer
 
 
 class ProviderAuthView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
-    serializer_class = ProviderAuthSerializer
+    serializer_class = settings.SERIALIZERS.provider_auth
 
     def get(self, request, *args, **kwargs):
         redirect_uri = request.GET.get("redirect_uri")

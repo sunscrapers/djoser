@@ -62,6 +62,7 @@ default_settings = {
             "current_user": "djoser.serializers.UserSerializer",
             "token": "djoser.serializers.TokenSerializer",
             "token_create": "djoser.serializers.TokenCreateSerializer",
+            "provider_auth": "djoser.social.serializers.ProviderAuthSerializer",
         }
     ),
     "EMAIL": ObjDict(
