@@ -127,6 +127,8 @@ class TokenCreateSerializer(serializers.Serializer):
                 self.fail("invalid_credentials")
         if self.user and self.user.is_active:
             return attrs
+        if self.user and not self.user.is_active:
+            self.fail("inactive_account")
         self.fail("invalid_credentials")
 
 
