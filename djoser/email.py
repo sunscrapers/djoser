@@ -16,6 +16,9 @@ class BaseDjoserEmail(BaseEmailMessage):
         for context_key, context_value in overridable.items():
             if context_value:
                 context.update({context_key: context_value})
+        # fix for https://github.com/sunscrapers/djoser/issues/842
+        # to be addressed in https://github.com/sunscrapers/djoser/issues/846
+        context.pop("view", None)
         return context
 
 
