@@ -10,7 +10,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 ---------------------
 
 * add support for Django 5.1.1 (mails serialization was failing) https://github.com/sunscrapers/djoser/issues/842
-
+* remove django-templated-mail from deps https://github.com/sunscrapers/djoser/issues/846
 
 ---------------------
 `2.3.0`_ (2024-11-09)
