@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "djoser"
-version = "2.2.3"
+version = "2.3.0"
 description = "REST implementation of Django authentication system."
 authors = [
     "Sunscrapers <info@sunscrapers.com>",
