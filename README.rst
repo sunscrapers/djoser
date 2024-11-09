@@ -5,8 +5,8 @@ djoser
 .. image:: https://img.shields.io/pypi/v/djoser.svg
    :target: https://pypi.org/project/djoser
 
-.. image:: https://github.com/sunscrapers/djoser/workflows/Tests/badge.svg
-    :target: https://github.com/sunscrapers/djoser/actions?query=branch%3Amaster+workflow%Tests++
+.. image:: https://github.com/sunscrapers/djoser/actions/workflows/test-suite.yml/badge.svg?branch=master
+    :target: https://github.com/sunscrapers/djoser/actions/workflows/test-suite.yml/badge.svg?branch=master
     :alt: Build Status
 
 .. image:: https://codecov.io/gh/sunscrapers/djoser/branch/master/graph/badge.svg
