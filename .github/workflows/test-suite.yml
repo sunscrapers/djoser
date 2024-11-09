@@ -5,7 +5,6 @@ on:
       - master
   pull_request:
   schedule:
-    # Run weekly to test against latest Django
     - cron: '0 0 * * 0'
 
 jobs:
@@ -20,11 +19,12 @@ jobs:
         include:
           # Test latest Django stable with newest Python versions
           - python-version: '3.10'
-            django-version: "*"  # Latest stable
+            django-version: "latest"
             drf-version: 3.14
           - python-version: 3.11
-            django-version: "*"  # Latest stable
+            django-version: "latest"
             drf-version: 3.14
+          # Include Django 5 beta for future compatibility
           - python-version: '3.10'
             django-version: "5.0b1"
             drf-version: 3.14
@@ -32,6 +32,7 @@ jobs:
             django-version: "5.0b1"
             drf-version: 3.14
         exclude:
+          # Exclude older Python versions from newer Django
           - python-version: 3.8
             django-version: "5.0b1"
           - python-version: 3.9
@@ -49,8 +50,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
           restore-keys: |
+            ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}-
             ${{ runner.os }}-poetry-
 
       - name: Setup Poetry
@@ -61,16 +63,16 @@ jobs:
       - name: Install dependencies
         run: poetry install --only main,test --all-extras
 
-      - name: Install specific Django version
+      - name: Install Django version
         run: |
-          if [ "${{ matrix.django-version }}" = "*" ]; then
-            poetry run pip install "Django"  # Latest stable
+          if [ "${{ matrix.django-version }}" = "latest" ]; then
+            poetry run pip install --upgrade "Django"  # Force upgrade to latest
           else
-            poetry run pip install "Django==${{ matrix.django-version }}"
+            poetry run pip install --upgrade "Django==${{ matrix.django-version }}"  # Force specific version
           fi
 
-      - name: Install specific DRF version
-        run: poetry run pip install "djangorestframework==${{ matrix.drf-version }}"
+      - name: Install DRF version
+        run: poetry run pip install --upgrade "djangorestframework==${{ matrix.drf-version }}"
 
       - name: Show environment info
         run: |
