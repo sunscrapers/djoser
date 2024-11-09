@@ -41,7 +41,6 @@ djangorestframework-simplejwt = "^5.0"
 social-auth-app-django = "^5.0.0"
 djet = { version = "^0.3.0", optional = true }
 webauthn = { version = "<1.0", optional = true }
-django = ">=3.0.0"
 
 [tool.poetry.extras]
 # https://python-poetry.org/docs/pyproject/#extras
