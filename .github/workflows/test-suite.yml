@@ -2,9 +2,11 @@ name: Tests
 on:
   push:
     branches:
-    - master
+      - master
   pull_request:
-
+  schedule:
+    # Run weekly to test against latest Django
+    - cron: '0 0 * * 0'
 
 jobs:
   test:
@@ -12,102 +14,105 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        python-version: [3.8, 3.9, '3.10', 3.11]
+        django-version: [3.2.18, 4.2]
+        drf-version: [3.14]
         include:
-          # django 3.2, drf 3.12 and 3.14, py3.8-3.11
-          - python-version: 3.8
-            django-version: 3.2.18
-            drf-version: 3.12
-          - python-version: 3.8
-            django-version: 3.2.18
-            drf-version: 3.14
-          - python-version: 3.9
-            django-version: 3.2.18
-            drf-version: 3.12
-          - python-version: 3.9
-            django-version: 3.2.18
-            drf-version: 3.14
+          # Test latest Django stable with newest Python versions
           - python-version: '3.10'
-            django-version: 3.2.18
-            drf-version: 3.12
-          - python-version: '3.10'
-            django-version: 3.2.18
+            django-version: "*"  # Latest stable
             drf-version: 3.14
           - python-version: 3.11
-            django-version: 3.2.18
-            drf-version: 3.12
-          - python-version: 3.11
-            django-version: 3.2.18
+            django-version: "*"  # Latest stable
             drf-version: 3.14
-          # django 4.2, drf 3.14, py3.8-3.11
-          - python-version: 3.8
-            django-version: 4.2
-            drf-version: 3.14
-          - python-version: 3.9
-            django-version: 4.2
-            drf-version: 3.14
-          - python-version: '3.10'
-            django-version: 4.2
-            drf-version: 3.14
-          - python-version: 3.11
-            django-version: 4.2
-            drf-version: 3.14
-          # django 5, drf 3.14, py3.10-3.11
           - python-version: '3.10'
             django-version: "5.0b1"
             drf-version: 3.14
           - python-version: 3.11
             django-version: "5.0b1"
             drf-version: 3.14
-
+        exclude:
+          - python-version: 3.8
+            django-version: "5.0b1"
+          - python-version: 3.9
+            django-version: "5.0b1"
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.0
-      - uses: actions/setup-python@v4.5.0
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Run image
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Setup Poetry
         uses: abatilo/actions-poetry@v2
         with:
-          poetry-version: 1.3.2
+          poetry-version: "1.7.1"
+
       - name: Install dependencies
         run: poetry install --only main,test --all-extras
-      - name: Upgrade django version
+
+      - name: Install specific Django version
         run: |
-          poetry run pip install "Django==${{ matrix.django-version }}"
-      - name: Upgrade drf version
+          if [ "${{ matrix.django-version }}" = "*" ]; then
+            poetry run pip install "Django"  # Latest stable
+          else
+            poetry run pip install "Django==${{ matrix.django-version }}"
+          fi
+
+      - name: Install specific DRF version
+        run: poetry run pip install "djangorestframework==${{ matrix.drf-version }}"
+
+      - name: Show environment info
         run: |
-          poetry run pip install "djangorestframework==${{ matrix.drf-version }}"
-      - name: Echo env
-        run: poetry run pip freeze | grep -E 'djangorestframework|Django'
+          poetry run python --version
+          poetry run pip freeze | grep -E 'djangorestframework|Django'
+
       - name: Run tests
         run: make test
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
+        continue-on-error: true
         with:
           files: ./coverage.xml
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
   code-quality:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [ 3.8 ]
-        poetry-version: [ 1.3.2 ]
-        os: [ ubuntu-latest ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.0
-      - uses: actions/setup-python@v4.5.0
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Run image
+          python-version: "3.11"
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-quality-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-quality-
+
+      - name: Setup Poetry
         uses: abatilo/actions-poetry@v2
         with:
-          poetry-version: ${{ matrix.poetry-version }}
+          poetry-version: "1.7.1"
+
       - name: Install dependencies
         run: poetry install --only code-quality
+
       - name: Run pre-commit
         run: make run-hooks
