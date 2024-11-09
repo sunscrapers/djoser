@@ -6,8 +6,6 @@ from django.contrib.auth.backends import ModelBackend
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from testapp.tests.common import create_user
-
 
 @pytest.mark.django_db
 class BaseTestUsernameLoginFields:
@@ -23,10 +21,6 @@ class BaseTestUsernameLoginFields:
             "django.contrib.auth.backends.ModelBackend",
         ]
         return settings
-
-    @pytest.fixture
-    def user(self):
-        return create_user()
 
     @pytest.fixture
     def signal_user_logged_in_patched(self):
