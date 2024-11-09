@@ -638,18 +638,6 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
-name = "django-templated-mail"
-version = "1.1.1"
-description = "Send emails using Django template system."
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "django-templated-mail-1.1.1.tar.gz", hash = "sha256:8db807effebb42a532622e2d142dfd453dafcd0d7794c4c3332acb90656315f9"},
-    {file = "django_templated_mail-1.1.1-py3-none-any.whl", hash = "sha256:f7127e1e31d7cad4e6c4b4801d25814d4b8782627ead76f4a75b3b7650687556"},
-]
-
-[[package]]
 name = "djangorestframework"
 version = "3.15.2"
 description = "Web APIs for Django, made easy."
@@ -1927,4 +1915,4 @@ webauthn = ["webauthn"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "21be4e9669daf5a932d57e6c6e8726a5e387a3f93fe3cd0585a3ab764488caac"
+content-hash = "fecacc79fb9a179d312c4241f8380c647ead79bf72c746e4de0abc793c4a9dc7"
