@@ -6,6 +6,13 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.3.1`_ (2024-11-09)
+---------------------
+
+* add support for Django 5.1.1 (mails serialization was failing) https://github.com/sunscrapers/djoser/issues/842
+
+
+---------------------
 `2.3.0`_ (2024-11-09)
 ---------------------
 
@@ -452,3 +459,4 @@ few bugfixes / documentation updates. List of changes:
 .. _2.2.2: https://github.com/sunscrapers/djoser/compare/2.2.1...2.2.2
 .. _2.2.3: https://github.com/sunscrapers/djoser/compare/2.2.2...2.2.3
 .. _2.3.0: https://github.com/sunscrapers/djoser/compare/2.2.3...2.3.0
+.. _2.3.1: https://github.com/sunscrapers/djoser/compare/2.3.0...2.3.1
