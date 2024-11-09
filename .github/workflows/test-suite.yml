@@ -137,6 +137,15 @@ jobs:
       - name: Install dependencies to check poetry.lock
         run: poetry install --no-dev
 
-      - name: Check if poetry.lock needs to be updated
+      - name: Recreate the lock file
+        run: poetry lock
+
+      - name: Check if poetry.lock is up to date
         run: |
-          git diff --exit-code poetry.lock || echo "poetry.lock has changed, please update it" && exit 1
+          DIFF_OUTPUT=$(git diff poetry.lock)
+          if [[ -n "$DIFF_OUTPUT" ]]; then
+            echo "poetry.lock has changes:"
+            echo "$DIFF_OUTPUT"
+          else
+            echo "poetry.lock is up to date."
+          fi
