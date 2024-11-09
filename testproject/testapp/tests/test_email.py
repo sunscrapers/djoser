@@ -9,13 +9,6 @@ from django.test.utils import override_settings
 from djoser.email import BaseDjoserEmail
 from djoser.conf import settings as djoser_settings
 import pytest
-import importlib
-
-
-def load_class_from_string(path):
-    module_path, class_name = path.rsplit(".", 1)
-    module = importlib.import_module(module_path)
-    return getattr(module, class_name)
 
 
 @pytest.mark.django_db
@@ -56,10 +49,10 @@ class TestDjoserEmail:
         )
     )
     def test_all_emails_can_be_pickled(self, user):
-        email_classes = list(djoser_settings.EMAIL.values())
+        email_cls_keys = list(djoser_settings.EMAIL.keys())
         request = mock.MagicMock()
-        for email_class_str in email_classes:
-            email_class = load_class_from_string(email_class_str)
+        for email_cls_key in email_cls_keys:
+            email_class = getattr(djoser_settings.EMAIL, email_cls_key)
             email = email_class(request=request, context={"user": user})
             # not raises
             ctx = email.get_context_data()
