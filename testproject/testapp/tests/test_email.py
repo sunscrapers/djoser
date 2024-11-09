@@ -63,7 +63,7 @@ class TestDjoserEmail:
 @pytest.mark.django_db
 class TestEmailRender:
     @pytest.fixture
-    @patch("templated_mail.mail.get_current_site")
+    @patch("djoser.email.get_current_site")
     def mail_kwargs(self, get_current_site, user):
         site = mock.MagicMock()
         site.id = 1
