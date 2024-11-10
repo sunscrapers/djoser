@@ -1,6 +1,6 @@
 [
   {
-    "pattern": "^auth/^jwt/create/?",
+    "pattern": "^auth/^jwt/create/\\Z",
     "name": "jwt-create",
     "allowed_methods": [
       "get",
@@ -13,7 +13,7 @@
     ]
   },
   {
-    "pattern": "^auth/^jwt/refresh/?",
+    "pattern": "^auth/^jwt/refresh/\\Z",
     "name": "jwt-refresh",
     "allowed_methods": [
       "get",
@@ -26,7 +26,7 @@
     ]
   },
   {
-    "pattern": "^auth/^jwt/verify/?",
+    "pattern": "^auth/^jwt/verify/\\Z",
     "name": "jwt-verify",
     "allowed_methods": [
       "get",
@@ -52,7 +52,7 @@
     ]
   },
   {
-    "pattern": "^auth/^token/login/?$",
+    "pattern": "^auth/^token/login/\\Z",
     "name": "login",
     "allowed_methods": [
       "get",
@@ -65,7 +65,7 @@
     ]
   },
   {
-    "pattern": "^auth/^token/logout/?$",
+    "pattern": "^auth/^token/logout/\\Z",
     "name": "logout",
     "allowed_methods": [
       "get",
