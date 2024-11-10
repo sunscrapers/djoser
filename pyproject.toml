@@ -57,6 +57,7 @@ pytest-django = "^4.5.2"
 tox = "^4.4.8"
 babel = "^2.12.1"
 pytest-mock = "^3.14.0"
+deepdiff = "^8.0.1"
 
 [tool.poetry.group.code-quality.dependencies]
 black = "^23.1.0"
