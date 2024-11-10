@@ -1,5 +1,6 @@
 import json
 import pathlib
+from contextlib import suppress
 
 import pytest
 from deepdiff import DeepDiff
@@ -42,11 +43,9 @@ def test_urls_have_not_changed(settings):
                             "Function based views are not supported"
                         )
                 # head is not present in the CI for some reason...
-                try:
+                with suppress(ValueError):
                     i = allowed_methods.index("head")
                     del allowed_methods[i]
-                except ValueError:
-                    pass
 
                 urls.append(
                     {
