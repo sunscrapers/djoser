@@ -5,10 +5,10 @@ build:
   tools:
     python: "3.11"
   jobs:
-    pre_build:
-      - pip install poetry
-      - poetry config virtualenvs.create false
-      - poetry install --only docs
+    post_create_environment:
+      - python -m pip install poetry
+    post_install:
+      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry install --with docs
 
 sphinx:
   configuration: docs/source/conf.py
