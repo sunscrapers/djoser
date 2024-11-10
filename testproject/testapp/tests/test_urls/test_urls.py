@@ -1,6 +1,5 @@
 import json
 import pathlib
-import re
 
 import pytest
 from deepdiff import DeepDiff
@@ -19,12 +18,8 @@ def test_urls_have_not_changed(settings):
     # Function to normalize URL patterns by removing trailing \Z
     # otherwise fails in CI
     def normalize_pattern(pattern):
-        # Remove trailing \Z
-        pattern = re.sub(r"\\Z$", "", pattern)
-        # Remove any format suffixes by identifying "format" capture groups, with or without leading period  # noqa: E501
-        pattern = re.sub(
-            r"\(\?P<format>\\?\.[a-z0-9]+\(\?/?\)?\)", "", pattern
-        )  # noqa: E501
+        if pattern.endswith("/?$"):
+            pattern = pattern[: -len("/?$")] + r"\Z"
         return pattern
 
     def get_all_urls(patterns, prefix=""):
