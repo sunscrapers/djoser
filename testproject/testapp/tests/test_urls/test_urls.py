@@ -15,28 +15,23 @@ def test_urls_have_not_changed(settings):
     FILE_PATH = TEST_PATH / "urls_snapshot.json"
     url_patterns = get_resolver().url_patterns
 
-    # Function to normalize URL patterns by removing trailing \Z
-    # otherwise fails in CI
-    def normalize_pattern(pattern):
-        if pattern.endswith("/?$"):
-            pattern = pattern[: -len("/?$")] + r"\Z"
-        return pattern
-
     def get_all_urls(patterns, prefix=""):
         urls = []
         for pattern in patterns:
             if hasattr(pattern, "url_patterns"):
                 urls += get_all_urls(
                     pattern.url_patterns,
-                    prefix + normalize_pattern(pattern.pattern.regex.pattern),
+                    prefix + pattern.pattern.regex.pattern,
                 )
             else:
-                pattern_str = prefix + normalize_pattern(pattern.pattern.regex.pattern)
+                pattern_str = prefix + pattern.pattern.regex.pattern
                 name = pattern.name if pattern.name else None
                 urls.append({"pattern": pattern_str, "name": name})
         return urls
 
     current_urls = sorted(get_all_urls(url_patterns), key=lambda x: x["pattern"])
+    # api-root generates different regex pattern locally vs in CI
+    current_urls = [el for el in current_urls if el["name"] != "api-root"]
 
     if not FILE_PATH.exists():
         with open(FILE_PATH, "w") as f:
