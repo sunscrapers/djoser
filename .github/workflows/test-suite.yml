@@ -58,7 +58,7 @@ jobs:
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2
         with:
-          poetry-version: "1.7.1"
+          poetry-version: "1.8.4"
 
       - name: Install dependencies
         run: poetry install --only main,test --all-extras
@@ -118,3 +118,24 @@ jobs:
 
       - name: Run pre-commit
         run: make run-hooks
+
+  lock-file-check:
+    name: Check poetry.lock for changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.8.4"
+
+      - name: Install dependencies to check poetry.lock
+        run: poetry install
+
+      - name: Check if poetry.lock is up to date
+        run: poetry check --lock
