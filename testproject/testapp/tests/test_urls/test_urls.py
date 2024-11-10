@@ -7,6 +7,9 @@ from deepdiff import DeepDiff
 from django.urls import get_resolver
 
 
+ALLOW_RECREATE = False
+
+
 @pytest.mark.django_db
 def test_urls_have_not_changed(settings):
     BASE_DIR = settings.BASE_DIR
@@ -72,8 +75,9 @@ def test_urls_have_not_changed(settings):
 
     diff = DeepDiff(current_urls, saved_urls)
     if diff:
-        with open(FILE_PATH, "w") as f:
-            json.dump(current_urls, f, indent=2)
+        if ALLOW_RECREATE:
+            with open(FILE_PATH, "w") as f:
+                json.dump(current_urls, f, indent=2)
         pytest.fail(
             f"URL structure has changed. Updated snapshot with new URLs and names. Diff:\n\n{diff}"  # noqa: E501
         )

@@ -17,6 +17,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = settings.PERMISSIONS.user
     token_generator = default_token_generator
     lookup_field = settings.USER_ID_FIELD
+    http_method_names = ["get", "post", "path", "put", "delete"]
 
     def permission_denied(self, request, **kwargs):
         if (

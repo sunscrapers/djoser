@@ -10,5 +10,5 @@ User = get_user_model()
 class GenericUserAPIView(generics.GenericAPIView):
     queryset = User.objects.all()
     lookup_field = settings.USER_ID_FIELD
-    http_method_names = ["post"]
     token_generator = default_token_generator  # used in serializers
+    http_method_names = []
