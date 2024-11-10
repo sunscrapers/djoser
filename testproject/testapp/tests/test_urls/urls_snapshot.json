@@ -106,8 +106,9 @@
     "pattern": "^auth/^users/me/\\Z",
     "name": "user-me",
     "allowed_methods": [
-      "post",
       "get",
+      "put",
+      "patch",
       "delete"
     ]
   },

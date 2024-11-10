@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status, mixins
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.viewsets import ViewSetMixin
 
 from djoser import signals, utils
 from djoser.conf import settings
@@ -15,9 +16,10 @@ class UserMeAPIView(
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
+    ViewSetMixin,
     GenericUserAPIView,
 ):
-    http_method_names = ["post", "get", "put", "patch", "delete"]
+    http_method_names = ["get", "put", "patch", "delete"]
     permission_classes = settings.PERMISSIONS.user
     lookup_field = None
 

@@ -40,7 +40,14 @@ user_detail = path(
 # me
 me_list = path(
     "users/me/",
-    UserMeAPIView.as_view(),
+    UserMeAPIView.as_view(
+        {
+            "get": "retrieve",
+            "put": "update",
+            "patch": "partial_update",
+            "delete": "destroy",
+        }
+    ),
     name="user-me",
 )
 

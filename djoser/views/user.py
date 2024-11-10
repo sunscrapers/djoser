@@ -1,22 +1,29 @@
 from django.contrib.auth import get_user_model
-from rest_framework import status, viewsets
+from rest_framework import status, mixins
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.viewsets import ViewSetMixin
 
 from djoser import signals, utils
 from djoser.conf import settings
 from djoser.compat import get_user_email
-from django.contrib.auth.tokens import default_token_generator
+
+from djoser.views.base import GenericUserAPIView
 
 User = get_user_model()
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    ViewSetMixin,
+    GenericUserAPIView,
+):
     serializer_class = settings.SERIALIZERS.user
-    queryset = User.objects.all()
     permission_classes = settings.PERMISSIONS.user
-    token_generator = default_token_generator
-    lookup_field = settings.USER_ID_FIELD
     http_method_names = ["get", "post", "path", "put", "delete"]
 
     def permission_denied(self, request, **kwargs):

@@ -123,7 +123,7 @@ class UserCreateViewTest(
         tuple(CustomUser.REQUIRED_FIELDS)
         + (CustomUser.USERNAME_FIELD, CustomUser._meta.pk.name, "password"),
     )
-    @mock.patch("djoser.views.user.user.User", CustomUser)
+    @mock.patch("djoser.views.user.User", CustomUser)
     @override_settings(AUTH_USER_MODEL="testapp.CustomUser")
     def test_post_create_custom_user_with_all_required_fields(self):
         data = {
@@ -151,7 +151,7 @@ class UserCreateViewTest(
         tuple(CustomUser.REQUIRED_FIELDS)
         + (CustomUser.USERNAME_FIELD, CustomUser._meta.pk.name, "password"),
     )
-    @mock.patch("djoser.views.user.user.User", CustomUser)
+    @mock.patch("djoser.views.user.User", CustomUser)
     @override_settings(AUTH_USER_MODEL="testapp.CustomUser")
     def test_post_not_create_custom_user_with_missing_required_fields(self):
         data = {"custom_username": "john", "password": "secret"}
@@ -168,7 +168,7 @@ class UserCreateViewTest(
         tuple(ExampleUser.REQUIRED_FIELDS)
         + (ExampleUser.USERNAME_FIELD, ExampleUser._meta.pk.name, "password"),
     )
-    @mock.patch("djoser.views.user.user.User", ExampleUser)
+    @mock.patch("djoser.views.user.User", ExampleUser)
     @override_settings(AUTH_USER_MODEL="testapp.ExampleUser")
     def test_post_create_custom_user_without_username(self):
         data = {"password": "secret", "email": "test@user1.com"}
@@ -187,7 +187,7 @@ class UserCreateViewTest(
         tuple(ExampleUser.REQUIRED_FIELDS)
         + (ExampleUser.USERNAME_FIELD, ExampleUser._meta.pk.name, "password"),
     )
-    @mock.patch("djoser.views.user.user.User", ExampleUser)
+    @mock.patch("djoser.views.user.User", ExampleUser)
     @override_settings(AUTH_USER_MODEL="testapp.ExampleUser")
     def test_post_create_custom_user_missing_required_fields(self):
         data = {"password": "secret"}
