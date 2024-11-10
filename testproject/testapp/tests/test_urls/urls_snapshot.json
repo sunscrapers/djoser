@@ -1,0 +1,142 @@
+[
+  {
+    "pattern": "^auth/^(?P<format>\\.[a-z0-9]+/?)\\Z",
+    "name": "api-root"
+  },
+  {
+    "pattern": "^auth/^\\Z",
+    "name": "api-root"
+  },
+  {
+    "pattern": "^auth/^jwt/create/?",
+    "name": "jwt-create"
+  },
+  {
+    "pattern": "^auth/^jwt/refresh/?",
+    "name": "jwt-refresh"
+  },
+  {
+    "pattern": "^auth/^jwt/verify/?",
+    "name": "jwt-verify"
+  },
+  {
+    "pattern": "^auth/^o/(?P<provider>\\S+)/$",
+    "name": "provider-auth"
+  },
+  {
+    "pattern": "^auth/^token/login/?$",
+    "name": "login"
+  },
+  {
+    "pattern": "^auth/^token/logout/?$",
+    "name": "logout"
+  },
+  {
+    "pattern": "^auth/^users/$",
+    "name": "user-list"
+  },
+  {
+    "pattern": "^auth/^users/(?P<id>[^/.]+)/$",
+    "name": "user-detail"
+  },
+  {
+    "pattern": "^auth/^users/(?P<id>[^/.]+)\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-detail"
+  },
+  {
+    "pattern": "^auth/^users/activation/$",
+    "name": "user-activation"
+  },
+  {
+    "pattern": "^auth/^users/activation\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-activation"
+  },
+  {
+    "pattern": "^auth/^users/me/$",
+    "name": "user-me"
+  },
+  {
+    "pattern": "^auth/^users/me\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-me"
+  },
+  {
+    "pattern": "^auth/^users/resend_activation/$",
+    "name": "user-resend-activation"
+  },
+  {
+    "pattern": "^auth/^users/resend_activation\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-resend-activation"
+  },
+  {
+    "pattern": "^auth/^users/reset_password/$",
+    "name": "user-reset-password"
+  },
+  {
+    "pattern": "^auth/^users/reset_password\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-reset-password"
+  },
+  {
+    "pattern": "^auth/^users/reset_password_confirm/$",
+    "name": "user-reset-password-confirm"
+  },
+  {
+    "pattern": "^auth/^users/reset_password_confirm\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-reset-password-confirm"
+  },
+  {
+    "pattern": "^auth/^users/reset_username/$",
+    "name": "user-reset-username"
+  },
+  {
+    "pattern": "^auth/^users/reset_username\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-reset-username"
+  },
+  {
+    "pattern": "^auth/^users/reset_username_confirm/$",
+    "name": "user-reset-username-confirm"
+  },
+  {
+    "pattern": "^auth/^users/reset_username_confirm\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-reset-username-confirm"
+  },
+  {
+    "pattern": "^auth/^users/set_password/$",
+    "name": "user-set-password"
+  },
+  {
+    "pattern": "^auth/^users/set_password\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-set-password"
+  },
+  {
+    "pattern": "^auth/^users/set_username/$",
+    "name": "user-set-username"
+  },
+  {
+    "pattern": "^auth/^users/set_username\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-set-username"
+  },
+  {
+    "pattern": "^auth/^users\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-list"
+  },
+  {
+    "pattern": "^webauthn-example/$",
+    "name": null
+  },
+  {
+    "pattern": "^webauthn/^login/$",
+    "name": "webauthn_login"
+  },
+  {
+    "pattern": "^webauthn/^login_request/$",
+    "name": "webauthn_login_request"
+  },
+  {
+    "pattern": "^webauthn/^signup/(?P<ukey>.+)/$",
+    "name": "webauthn_signup"
+  },
+  {
+    "pattern": "^webauthn/^signup_request/$",
+    "name": "webauthn_signup_request"
+  }
+]
