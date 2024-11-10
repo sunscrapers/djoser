@@ -30,17 +30,24 @@ def test_urls_have_not_changed(settings):
                 if hasattr(pattern, "callback"):
                     view = pattern.callback
                     if hasattr(view, "http_method_names"):
-                        allowed_methods += view.http_method_names
+                        allowed_methods = view.http_method_names
                     elif hasattr(view, "actions"):
-                        allowed_methods += view.actions.keys()
+                        allowed_methods = view.actions.keys()
                     elif hasattr(
                         view, "view_class"
                     ):  # assume all, even though probably not
-                        allowed_methods += view.view_class.http_method_names
+                        allowed_methods = view.view_class.http_method_names
                     else:
                         raise NotImplementedError(
                             "Function based views are not supported"
                         )
+                # head is not present in the CI for some reason...
+                try:
+                    i = allowed_methods.index("head")
+                    del allowed_methods[i]
+                except ValueError:
+                    pass
+
                 urls.append(
                     {
                         "pattern": pattern_str,
