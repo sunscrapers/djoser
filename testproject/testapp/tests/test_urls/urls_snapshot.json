@@ -1,13 +1,5 @@
 [
   {
-    "pattern": "^auth/^(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "api-root"
-  },
-  {
-    "pattern": "^auth/^\\Z",
-    "name": "api-root"
-  },
-  {
     "pattern": "^auth/^jwt/create/?",
     "name": "jwt-create"
   },
@@ -24,11 +16,11 @@
     "name": "provider-auth"
   },
   {
-    "pattern": "^auth/^token/login\\Z",
+    "pattern": "^auth/^token/login/?$",
     "name": "login"
   },
   {
-    "pattern": "^auth/^token/logout\\Z",
+    "pattern": "^auth/^token/logout/?$",
     "name": "logout"
   },
   {
@@ -40,7 +32,7 @@
     "name": "user-detail"
   },
   {
-    "pattern": "^auth/^users/(?P<id>[^/.]+)\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users/(?P<id>[^/.]+)\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-detail"
   },
   {
@@ -48,7 +40,7 @@
     "name": "user-activation"
   },
   {
-    "pattern": "^auth/^users/activation\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users/activation\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-activation"
   },
   {
@@ -56,7 +48,7 @@
     "name": "user-me"
   },
   {
-    "pattern": "^auth/^users/me\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users/me\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-me"
   },
   {
@@ -64,7 +56,7 @@
     "name": "user-resend-activation"
   },
   {
-    "pattern": "^auth/^users/resend_activation\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users/resend_activation\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-resend-activation"
   },
   {
@@ -72,7 +64,7 @@
     "name": "user-reset-password"
   },
   {
-    "pattern": "^auth/^users/reset_password\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users/reset_password\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-reset-password"
   },
   {
@@ -80,7 +72,7 @@
     "name": "user-reset-password-confirm"
   },
   {
-    "pattern": "^auth/^users/reset_password_confirm\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users/reset_password_confirm\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-reset-password-confirm"
   },
   {
@@ -88,7 +80,7 @@
     "name": "user-reset-username"
   },
   {
-    "pattern": "^auth/^users/reset_username\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users/reset_username\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-reset-username"
   },
   {
@@ -96,7 +88,7 @@
     "name": "user-reset-username-confirm"
   },
   {
-    "pattern": "^auth/^users/reset_username_confirm\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users/reset_username_confirm\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-reset-username-confirm"
   },
   {
@@ -104,7 +96,7 @@
     "name": "user-set-password"
   },
   {
-    "pattern": "^auth/^users/set_password\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users/set_password\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-set-password"
   },
   {
@@ -112,11 +104,11 @@
     "name": "user-set-username"
   },
   {
-    "pattern": "^auth/^users/set_username\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users/set_username\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-set-username"
   },
   {
-    "pattern": "^auth/^users\\.(?P<format>[a-z0-9]+)\\Z",
+    "pattern": "^auth/^users\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-list"
   },
   {
