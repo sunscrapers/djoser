@@ -1,18 +1,18 @@
 from django.contrib.auth import get_user_model
 from django.urls import path
 
-from djoser.views.user.activation import (
+from djoser.views.activation import (
     UserActivationAPIView,
     UserResendActivationAPIView,
 )
-from djoser.views.user.me import UserMeAPIView
-from djoser.views.user.password import (
+from djoser.views.me import UserMeAPIView
+from djoser.views.password import (
     ResetPasswordConfirmViewAPIView,
     ResetPasswordViewAPIView,
     SetPasswordViewAPIView,
 )
-from djoser.views.user.user import UserViewSet
-from djoser.views.user.username import (
+from djoser.views.user import UserViewSet
+from djoser.views.username import (
     ResetUsernameAPIView,
     ResetUsernameConfirmAPIView,
     SetUsernameAPIView,

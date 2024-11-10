@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from djoser.conf import settings
 from djoser.compat import get_user_email
-from djoser.views.user.base import GenericUserAPIView
+from djoser.views.base import GenericUserAPIView
 
 User = get_user_model()
 

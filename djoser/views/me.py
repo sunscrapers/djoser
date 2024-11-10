@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from djoser import signals, utils
 from djoser.conf import settings
 from djoser.compat import get_user_email
-from djoser.views.user.base import GenericUserAPIView
+from djoser.views.base import GenericUserAPIView
 
 User = get_user_model()
 
@@ -17,8 +17,9 @@ class UserMeAPIView(
     mixins.DestroyModelMixin,
     GenericUserAPIView,
 ):
-    http_method_names = ["post", "get", "delete"]
+    http_method_names = ["post", "get", "put", "patch", "delete"]
     permission_classes = settings.PERMISSIONS.user
+    lookup_field = None
 
     def get_queryset(self):
         # probably redundant but better safe than sorry

@@ -6,7 +6,7 @@ from testapp.tests.common import create_user, login_user
 
 import djoser.permissions
 
-from djoser.views.user.user import UserViewSet
+from djoser.views.user import UserViewSet
 
 
 class BaseUserViewSetListTest(APITestCase, assertions.StatusCodeAssertionsMixin):
