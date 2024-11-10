@@ -19,7 +19,8 @@ def test_urls_have_not_changed(settings):
     # Function to normalize URL patterns by removing trailing \Z
     # otherwise fails in CI
     def normalize_pattern(pattern):
-        return re.sub(r"\\Z$", "", pattern)
+        pattern = re.sub(r"\(\?P<format>\\\.\[a-z0-9\]\+\[/\]\)\?", "", pattern)
+        return pattern
 
     def get_all_urls(patterns, prefix=""):
         urls = []
