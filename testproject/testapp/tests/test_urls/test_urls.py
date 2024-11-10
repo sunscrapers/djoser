@@ -2,6 +2,7 @@ import json
 import pathlib
 
 import pytest
+from deepdiff import DeepDiff
 from django.urls import get_resolver
 
 
@@ -39,9 +40,10 @@ def test_urls_have_not_changed(settings):
     with open(FILE_PATH) as f:
         saved_urls = json.load(f)
 
-    if current_urls != saved_urls:
+    diff = DeepDiff(current_urls, saved_urls)
+    if diff:
         with open(FILE_PATH, "w") as f:
             json.dump(current_urls, f, indent=2)
         pytest.fail(
-            "URL structure has changed. Updated snapshot with new URLs and names. Review the changes."  # noqa: E501
+            f"URL structure has changed. Updated snapshot with new URLs and names. Diff:\n\n{diff}"  # noqa: E501
         )
