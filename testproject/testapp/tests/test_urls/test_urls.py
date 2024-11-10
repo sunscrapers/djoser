@@ -19,7 +19,12 @@ def test_urls_have_not_changed(settings):
     # Function to normalize URL patterns by removing trailing \Z
     # otherwise fails in CI
     def normalize_pattern(pattern):
-        pattern = re.sub(r"\(\?P<format>\\\.\[a-z0-9\]\+\[/\]\)\?", "", pattern)
+        # Remove trailing \Z and any format suffix
+        pattern = re.sub(r"\\Z$", "", pattern)  # Remove trailing \Z
+        pattern = re.sub(
+            r"\(\?P<format>\\.[a-z0-9]+\(/\)?\)?", "", pattern
+        )  # Remove format suffixes
+        pattern = re.sub(r"\$\Z", "", pattern)  # Remove any remaining `$` markers
         return pattern
 
     def get_all_urls(patterns, prefix=""):
