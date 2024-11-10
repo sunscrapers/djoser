@@ -33,7 +33,7 @@ def test_urls_have_not_changed(settings):
                     if hasattr(view, "http_method_names"):
                         allowed_methods = view.http_method_names
                     elif hasattr(view, "actions"):
-                        allowed_methods = view.actions.keys()
+                        allowed_methods = list(view.actions.keys())
                     elif hasattr(
                         view, "view_class"
                     ):  # assume all, even though probably not
