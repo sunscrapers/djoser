@@ -1,5 +1,6 @@
 import json
 import pathlib
+import re
 
 import pytest
 from deepdiff import DeepDiff
@@ -15,15 +16,21 @@ def test_urls_have_not_changed(settings):
     FILE_PATH = TEST_PATH / "urls_snapshot.json"
     url_patterns = get_resolver().url_patterns
 
+    # Function to normalize URL patterns by removing trailing \Z
+    # otherwise fails in CI
+    def normalize_pattern(pattern):
+        return re.sub(r"\\Z$", "", pattern)
+
     def get_all_urls(patterns, prefix=""):
         urls = []
         for pattern in patterns:
             if hasattr(pattern, "url_patterns"):
                 urls += get_all_urls(
-                    pattern.url_patterns, prefix + pattern.pattern.regex.pattern
+                    pattern.url_patterns,
+                    prefix + normalize_pattern(pattern.pattern.regex.pattern),
                 )
             else:
-                pattern_str = prefix + pattern.pattern.regex.pattern
+                pattern_str = prefix + normalize_pattern(pattern.pattern.regex.pattern)
                 name = pattern.name if pattern.name else None
                 urls.append({"pattern": pattern_str, "name": name})
         return urls
