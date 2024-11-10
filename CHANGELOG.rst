@@ -6,6 +6,30 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.3.1`_ (2024-11-09)
+---------------------
+
+* add support for Django 5.1.1 (mails serialization was failing) https://github.com/sunscrapers/djoser/issues/842
+* remove django-templated-mail from deps https://github.com/sunscrapers/djoser/issues/846
+
+---------------------
+`2.3.0`_ (2024-11-09)
+---------------------
+
+* a potentially breaking change: fix vuln where users were given tokens if the given password was correct, but they haven't passed Django internal AUTHENTICATION_BACKENDS https://github.com/sunscrapers/djoser/issues/795
+
+
+---------------------
+`2.2.3`_ (2024-06-07)
+---------------------
+
+* add support for protocol, domain and site name customization in the email contents https://github.com/sunscrapers/djoser/issues/781
+* remove unused `inactive_account` serializer error, not in use since Django 1.10 https://github.com/sunscrapers/djoser/pull/806/commits/b02c422151035a2616102fbb9b48af28067f9c5d
+* add catalan translations, update spanish translations https://github.com/sunscrapers/djoser/pull/826
+* move serializers for TokenDestroyView and SignupRequestView to class level, so the OpenAPI schema can be automatically generated https://github.com/sunscrapers/djoser/pull/817
+* fixed typo SingupRequestView -> SignupRequestView https://github.com/sunscrapers/djoser/pull/817
+
+---------------------
 `2.2.2`_ (2023-11-09)
 ---------------------
 
@@ -433,3 +457,6 @@ few bugfixes / documentation updates. List of changes:
 .. _2.2.0: https://github.com/sunscrapers/djoser/compare/2.1.0...2.2.0
 .. _2.2.1: https://github.com/sunscrapers/djoser/compare/2.2.0...2.2.1
 .. _2.2.2: https://github.com/sunscrapers/djoser/compare/2.2.1...2.2.2
+.. _2.2.3: https://github.com/sunscrapers/djoser/compare/2.2.2...2.2.3
+.. _2.3.0: https://github.com/sunscrapers/djoser/compare/2.2.3...2.3.0
+.. _2.3.1: https://github.com/sunscrapers/djoser/compare/2.3.0...2.3.1
