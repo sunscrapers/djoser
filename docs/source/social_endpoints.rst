@@ -34,7 +34,7 @@ Configure ``urls.py``:
 
     urlpatterns = [
         (...),
-        url(r'^auth/', include('djoser.social.urls')),
+        re_path(r'^auth/', include('djoser.social.urls')),
     ]
 
 **Default URL**: ``/o/{{ provider }}/``

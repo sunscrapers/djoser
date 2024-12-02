@@ -108,7 +108,6 @@ class TokenCreateSerializer(serializers.Serializer):
 
     default_error_messages = {
         "invalid_credentials": settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR,
-        "inactive_account": settings.CONSTANTS.messages.INACTIVE_ACCOUNT_ERROR,
     }
 
     def __init__(self, *args, **kwargs):
@@ -118,17 +117,16 @@ class TokenCreateSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         password = attrs.get("password")
-        params = {settings.LOGIN_FIELD: attrs.get(settings.LOGIN_FIELD)}
+        # https://github.com/sunscrapers/djoser/issues/389
+        # https://github.com/sunscrapers/djoser/issues/429
+        # https://github.com/sunscrapers/djoser/issues/795
+        params = {User.USERNAME_FIELD: attrs.get(settings.LOGIN_FIELD)}
         self.user = authenticate(
             request=self.context.get("request"), **params, password=password
         )
         if not self.user:
-            self.user = User.objects.filter(**params).first()
-            if self.user and not self.user.check_password(password):
-                self.fail("invalid_credentials")
-        if self.user and self.user.is_active:
-            return attrs
-        self.fail("invalid_credentials")
+            self.fail("invalid_credentials")
+        return attrs
 
 
 class UserFunctionsMixin:
