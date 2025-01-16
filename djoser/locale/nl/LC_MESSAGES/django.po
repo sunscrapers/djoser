@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: djoser\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-14 10:37+0100\n"
-"PO-Revision-Date: 2025-01-14 11:02+0100\n"
+"PO-Revision-Date: 2025-01-16 12:00+0100\n"
 "Last-Translator: Laurent Deketelaere <laurent@geturl.net>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 #: djoser/constants.py:5
 msgid "Unable to log in with provided credentials."
-msgstr "Kan niet inloggen met de opgegeven inloggegevens."
+msgstr "Inloggen met de opgegeven inloggegevens is niet mogelijk."
 
 #: djoser/constants.py:7
 msgid "User account is disabled."
@@ -27,7 +27,7 @@ msgstr "Gebruikersaccount is uitgeschakeld"
 
 #: djoser/constants.py:9
 msgid "Invalid token for given user."
-msgstr "Ongeldig token voor opgegeven gebruiker."
+msgstr "Ongeldige token voor de opgegeven gebruiker."
 
 #: djoser/constants.py:10
 msgid "Invalid user id or user doesn't exist."
@@ -56,7 +56,7 @@ msgstr "Gebruiker met opgegeven e-mailadres bestaat niet."
 
 #: djoser/constants.py:16
 msgid "Unable to create account."
-msgstr "Kan geen account aanmaken."
+msgstr "Account aanmaken niet mogelijk."
 
 #: djoser/templates/email/activation.html:4
 #, python-format
@@ -70,12 +70,12 @@ msgid ""
 "You're receiving this email because you need to finish activation process on "
 "%(site_name)s."
 msgstr ""
-"U ontvangt deze e-mail omdat u het activeringsproces op %(site_name)s moet "
+"U ontvangt deze e-mail omdat u het activeringsproces op %(site_name)s moet voltooien."
 
 #: djoser/templates/email/activation.html:10
 #: djoser/templates/email/activation.html:21
 msgid "Please go to the following page to activate account:"
-msgstr "Ga naar de volgende pagina om het account te activeren:"
+msgstr "Ga naar de volgende pagina om uw account te activeren:"
 
 #: djoser/templates/email/activation.html:13
 #: djoser/templates/email/activation.html:24
