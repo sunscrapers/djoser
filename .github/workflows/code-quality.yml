@@ -41,17 +41,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          poetry install --all-extras
+          poetry install --only code-quality --verbose
           echo "Installed packages:"
           poetry show
           echo "Active environment:"
           poetry env info
-
-      - name: List pre-commit hooks
-        run: |
-          echo "Available pre-commit hooks:"
-          poetry run pre-commit list-files
-          poetry run pre-commit list
 
       - name: Run pre-commit with debug
         run: |
@@ -64,9 +58,3 @@ jobs:
             git diff
             exit 1
           fi
-
-      - name: Run hooks (if previous step failed)
-        if: failure()
-        run: |
-          echo "Attempting to run make run-hooks directly..."
-          make run-hooks --debug
