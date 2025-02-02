@@ -1,0 +1,72 @@
+name: Code Quality
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-quality-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-quality-
+
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.7.1"
+
+      - name: Debug Environment
+        run: |
+          echo "Python version:"
+          python --version
+          echo "Poetry version:"
+          poetry --version
+          echo "Working directory contents:"
+          ls -la
+          echo "Poetry environment info:"
+          poetry env info
+
+      - name: Install dependencies
+        run: |
+          poetry install --all-extras
+          echo "Installed packages:"
+          poetry show
+          echo "Active environment:"
+          poetry env info
+
+      - name: List pre-commit hooks
+        run: |
+          echo "Available pre-commit hooks:"
+          poetry run pre-commit list-files
+          poetry run pre-commit list
+
+      - name: Run pre-commit with debug
+        run: |
+          echo "Running pre-commit hooks with verbose output..."
+          poetry run pre-commit run --all-files --verbose
+          if [ $? -ne 0 ]; then
+            echo "Pre-commit failed. Showing git status:"
+            git status
+            echo "Showing git diff:"
+            git diff
+            exit 1
+          fi
+
+      - name: Run hooks (if previous step failed)
+        if: failure()
+        run: |
+          echo "Attempting to run make run-hooks directly..."
+          make run-hooks --debug
