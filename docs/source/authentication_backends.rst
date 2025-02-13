@@ -84,7 +84,7 @@ Disable TokenAuthentication in Django REST Framework:
 
 .. note::
 
-    If you are using both Token Based Authentication on top of JWT Authentication,you should add 'rest_framework.authtoken' to INSTALLED_APPS and run migrations.
+    Skip this if you are using Token Based Authentication on top of JWT Authentication,you should add 'rest_framework.authtoken' to INSTALLED_APPS and run migrations.
 
 
 .. code-block:: python
