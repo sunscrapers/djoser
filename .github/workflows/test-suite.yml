@@ -56,7 +56,13 @@ jobs:
           if [ "${{ matrix.django-version }}" = "latest" ]; then
             poetry run pip install --upgrade "Django"  # Force upgrade to latest
           else
-            poetry run pip install --upgrade "Django==${{ matrix.django-version }}"  # Force specific version
+            # First try exact version, if it fails try to install the major.minor version
+            echo "Installing Django ${{ matrix.django-version }}..."
+            if ! poetry run pip install --upgrade "Django==${{ matrix.django-version }}"; then
+              echo "Exact version failed, trying to install the latest patch version..."
+              MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
+              poetry run pip install --upgrade "Django~=$MAJOR_MINOR.0"
+            fi
           fi
 
       - name: Install DRF version
@@ -135,7 +141,13 @@ jobs:
           if [ "${{ matrix.django-version }}" = "latest" ]; then
             poetry run pip install --upgrade "Django"  # Force upgrade to latest
           else
-            poetry run pip install --upgrade "Django==${{ matrix.django-version }}"  # Force specific version
+            # First try exact version, if it fails try to install the major.minor version
+            echo "Installing Django ${{ matrix.django-version }}..."
+            if ! poetry run pip install --upgrade "Django==${{ matrix.django-version }}"; then
+              echo "Exact version failed, trying to install the latest patch version..."
+              MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
+              poetry run pip install --upgrade "Django~=$MAJOR_MINOR.0"
+            fi
           fi
 
       - name: Install DRF version
@@ -164,7 +176,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.10', 3.11, 3.12]
-        django-version: ["5.0.13", "5.1"]
+        django-version: ["5.0.12", "5.1.6"]
         drf-version: [3.14]
         include:
           # Test latest Django with newest Python
@@ -211,7 +223,13 @@ jobs:
           if [ "${{ matrix.django-version }}" = "latest" ]; then
             poetry run pip install --upgrade "Django"  # Force upgrade to latest
           else
-            poetry run pip install --upgrade "Django==${{ matrix.django-version }}"  # Force specific version
+            # First try exact version, if it fails try to install the major.minor version
+            echo "Installing Django ${{ matrix.django-version }}..."
+            if ! poetry run pip install --upgrade "Django==${{ matrix.django-version }}"; then
+              echo "Exact version failed, trying to install the latest patch version..."
+              MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
+              poetry run pip install --upgrade "Django~=$MAJOR_MINOR.0"
+            fi
           fi
 
       - name: Install DRF version
