@@ -60,11 +60,11 @@ pytest-mock = "^3.14.0"
 deepdiff = "^8.0.1"
 
 [tool.poetry.group.code-quality.dependencies]
-black = "^23.1.0"
-ruff = "^0.0.241"
+black = ">=23.1,<26.0"
+ruff = ">=0.0.241,<0.9.10"
 docformatter = "^1.7.4"
 pyupgrade = "^3.3.1"
-pre-commit-hooks = "^4.4.0"
+pre-commit-hooks = ">=4.4,<6.0"
 pre-commit = "^4.1.0"
 
 [tool.poetry.group.docs.dependencies]
