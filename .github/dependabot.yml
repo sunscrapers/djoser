@@ -20,7 +20,7 @@ updates:
           - "django*"
           - "djangorestframework*"
           - "social-auth*"
-      
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

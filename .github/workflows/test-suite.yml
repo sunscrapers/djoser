@@ -16,7 +16,7 @@ jobs:
         python-version: [3.9, '3.10', 3.11]
         django-version: [3.2.18]
         drf-version: [3.14]
-        
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-django3-${{ hashFiles('**/poetry.lock') }}-
             ${{ runner.os }}-poetry-django3-
-            
+
       - name: Cache virtual environment
         uses: actions/cache@v4
         with:
@@ -101,7 +101,7 @@ jobs:
           - python-version: 3.11
             django-version: "latest"
             drf-version: 3.14
-            
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -118,7 +118,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-django4-${{ hashFiles('**/poetry.lock') }}-
             ${{ runner.os }}-poetry-django4-
-            
+
       - name: Cache virtual environment
         uses: actions/cache@v4
         with:
@@ -200,7 +200,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-django5-${{ hashFiles('**/poetry.lock') }}-
             ${{ runner.os }}-poetry-django5-
-            
+
       - name: Cache virtual environment
         uses: actions/cache@v4
         with:
