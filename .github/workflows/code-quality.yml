@@ -28,24 +28,16 @@ jobs:
         with:
           poetry-version: "1.8.4"
 
-      - name: Debug Environment
-        run: |
-          echo "Python version:"
-          python --version
-          echo "Poetry version:"
-          poetry --version
-          echo "Working directory contents:"
-          ls -la
-          echo "Poetry environment info:"
-          poetry env info
+      - name: Cache virtual environment
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-
 
       - name: Install dependencies
-        run: |
-          poetry install --only code-quality --verbose
-          echo "Installed packages:"
-          poetry show
-          echo "Active environment:"
-          poetry env info
+        run: poetry install --only code-quality
 
       - name: Run pre-commit with debug
         run: |

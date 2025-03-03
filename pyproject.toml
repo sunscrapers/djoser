@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 repository = "https://github.com/sunscrapers/djoser"
 documentation = "https://djoser.readthedocs.io/"
@@ -36,7 +37,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.8"
 djangorestframework-simplejwt = "^5.0"
 social-auth-app-django = "^5.0.0"
 djet = { version = "^0.3.0", optional = true }
@@ -74,7 +75,7 @@ sphinx-rtd-theme = "^1.2.0"
 
 [tool.black]
 line-length = 88
-target-version = ["py38", "py39", "py310", "py311"]
+target-version = ["py38", "py39", "py310", "py311", "py312"]
 include = '\.pyi?$'
 exclude = '''
 (
@@ -127,7 +128,7 @@ exclude = [
     "migrations"
 ]
 line-length = 88
-target-version = "py38"
+target-version = "py312"
 
 [tool.docformatter]
 recursive = true
@@ -141,6 +142,20 @@ in-place = true
 minversion = "7.0"
 DJANGO_SETTINGS_MODULE = "testproject.settings"
 python_paths = "testproject"
+
+[tool.coverage.run]
+source = ["djoser"]
+omit = ["*/tests/*", "*/migrations/*", "*/conftest.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "pass",
+    "raise ImportError",
+]
 
 [build-system]
 requires = ["poetry-core"]

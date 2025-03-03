@@ -8,13 +8,84 @@ on:
     - cron: '0 0 * * 0'
 
 jobs:
-  test:
-    name: Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}
+  django3-test:
+    name: Django 3 - Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}
     strategy:
       fail-fast: false
       matrix:
         python-version: [3.8, 3.9, '3.10', 3.11]
-        django-version: [3.2.18, 4.2]
+        django-version: [3.2.18]
+        drf-version: [3.14]
+        
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-django3-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-django3-${{ hashFiles('**/poetry.lock') }}-
+            ${{ runner.os }}-poetry-django3-
+            
+      - name: Cache virtual environment
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-django3-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-django3-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-
+            ${{ runner.os }}-venv-django3-py${{ matrix.python-version }}-
+
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.8.4"
+
+      - name: Install dependencies
+        run: poetry install --only main,test --all-extras
+
+      - name: Install Django version
+        run: |
+          if [ "${{ matrix.django-version }}" = "latest" ]; then
+            poetry run pip install --upgrade "Django"  # Force upgrade to latest
+          else
+            poetry run pip install --upgrade "Django==${{ matrix.django-version }}"  # Force specific version
+          fi
+
+      - name: Install DRF version
+        run: poetry run pip install --upgrade "djangorestframework==${{ matrix.drf-version }}"
+
+      - name: Show environment info
+        run: |
+          poetry run python --version
+          poetry run pip freeze | grep -E 'djangorestframework|Django'
+
+      - name: Run tests
+        run: make test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        continue-on-error: true
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  django4-test:
+    name: Django 4 - Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.8, 3.9, '3.10', 3.11]
+        django-version: [4.0, 4.1, 4.2]
         drf-version: [3.14]
         include:
           # Test latest Django stable with newest Python versions
@@ -24,19 +95,82 @@ jobs:
           - python-version: 3.11
             django-version: "latest"
             drf-version: 3.14
-          # Include Django 5 beta for future compatibility
-          - python-version: '3.10'
-            django-version: "5.0b1"
+            
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-django4-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-django4-${{ hashFiles('**/poetry.lock') }}-
+            ${{ runner.os }}-poetry-django4-
+            
+      - name: Cache virtual environment
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-django4-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-django4-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-
+            ${{ runner.os }}-venv-django4-py${{ matrix.python-version }}-
+
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.8.4"
+
+      - name: Install dependencies
+        run: poetry install --only main,test --all-extras
+
+      - name: Install Django version
+        run: |
+          if [ "${{ matrix.django-version }}" = "latest" ]; then
+            poetry run pip install --upgrade "Django"  # Force upgrade to latest
+          else
+            poetry run pip install --upgrade "Django==${{ matrix.django-version }}"  # Force specific version
+          fi
+
+      - name: Install DRF version
+        run: poetry run pip install --upgrade "djangorestframework==${{ matrix.drf-version }}"
+
+      - name: Show environment info
+        run: |
+          poetry run python --version
+          poetry run pip freeze | grep -E 'djangorestframework|Django'
+
+      - name: Run tests
+        run: make test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        continue-on-error: true
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  django5-test:
+    name: Django 5 - Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', 3.11, 3.12]
+        django-version: ["5.0.13", "5.1"]
+        drf-version: [3.14]
+        include:
+          # Test latest Django with newest Python
+          - python-version: 3.12
+            django-version: "latest"
             drf-version: 3.14
-          - python-version: 3.11
-            django-version: "5.0b1"
-            drf-version: 3.14
-        exclude:
-          # Exclude older Python versions from newer Django
-          - python-version: 3.8
-            django-version: "5.0b1"
-          - python-version: 3.9
-            django-version: "5.0b1"
 
     runs-on: ubuntu-latest
     steps:
@@ -50,10 +184,19 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
+          key: ${{ runner.os }}-poetry-django5-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
           restore-keys: |
-            ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}-
-            ${{ runner.os }}-poetry-
+            ${{ runner.os }}-poetry-django5-${{ hashFiles('**/poetry.lock') }}-
+            ${{ runner.os }}-poetry-django5-
+            
+      - name: Cache virtual environment
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-django5-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-django5-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-
+            ${{ runner.os }}-venv-django5-py${{ matrix.python-version }}-
 
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2

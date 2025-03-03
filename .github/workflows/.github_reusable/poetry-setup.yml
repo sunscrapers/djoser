@@ -1,0 +1,65 @@
+name: Setup Poetry
+description: Reusable workflow for setting up Poetry and caching
+
+inputs:
+  python-version:
+    description: 'Python version to use'
+    required: true
+    default: '3.11'
+  poetry-version:
+    description: 'Poetry version to install'
+    required: true
+    default: '1.8.4'
+  cache-prefix:
+    description: 'Prefix for cache keys'
+    required: false
+    default: 'default'
+  poetry-group:
+    description: 'Poetry group to install'
+    required: false
+    default: 'all'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Cache Poetry dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pypoetry
+        key: ${{ runner.os }}-poetry-${{ inputs.cache-prefix }}-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-${{ inputs.cache-prefix }}-
+          ${{ runner.os }}-poetry-
+
+    - name: Cache virtual environment
+      uses: actions/cache@v4
+      with:
+        path: .venv
+        key: ${{ runner.os }}-venv-${{ inputs.cache-prefix }}-py${{ inputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-venv-${{ inputs.cache-prefix }}-py${{ inputs.python-version }}-
+          ${{ runner.os }}-venv-${{ inputs.cache-prefix }}-
+
+    - name: Setup Poetry
+      uses: abatilo/actions-poetry@v2
+      with:
+        poetry-version: ${{ inputs.poetry-version }}
+
+    - name: Configure Poetry to use local virtualenv
+      shell: bash
+      run: |
+        poetry config virtualenvs.in-project true
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        if [ "${{ inputs.poetry-group }}" == "all" ]; then
+          poetry install --all-extras
+        else
+          poetry install --only ${{ inputs.poetry-group }} --all-extras
+        fi
