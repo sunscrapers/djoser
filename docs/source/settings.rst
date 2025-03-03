@@ -248,14 +248,15 @@ to update the defaults, so by providing, e.g. one key, all the others will stay 
 
     {
         'activation': 'djoser.serializers.ActivationSerializer',
-        'password_reset': 'djoser.serializers.SendEmailResetSerializer',
+        'resend_activation': 'djoser.serializers.SendEmailSerializer',
+        'password_reset': 'djoser.serializers.SendEmailSerializer',
         'password_reset_confirm': 'djoser.serializers.PasswordResetConfirmSerializer',
         'password_reset_confirm_retype': 'djoser.serializers.PasswordResetConfirmRetypeSerializer',
         'set_password': 'djoser.serializers.SetPasswordSerializer',
         'set_password_retype': 'djoser.serializers.SetPasswordRetypeSerializer',
         'set_username': 'djoser.serializers.SetUsernameSerializer',
         'set_username_retype': 'djoser.serializers.SetUsernameRetypeSerializer',
-        'username_reset': 'djoser.serializers.SendEmailResetSerializer',
+        'username_reset': 'djoser.serializers.SendEmailSerializer',
         'username_reset_confirm': 'djoser.serializers.UsernameResetConfirmSerializer',
         'username_reset_confirm_retype': 'djoser.serializers.UsernameResetConfirmRetypeSerializer',
         'user_create': 'djoser.serializers.UserCreateSerializer',
@@ -364,6 +365,7 @@ Dictionary that maps permissions to certain views across Djoser.
 
     {
         'activation': ['rest_framework.permissions.AllowAny'],
+        'resend_activation': ['rest_framework.permissions.AllowAny'],
         'password_reset': ['rest_framework.permissions.AllowAny'],
         'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
         'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
