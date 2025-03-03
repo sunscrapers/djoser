@@ -100,12 +100,12 @@ exclude = '''
 
 [tool.ruff]
 select = ["E", "F"]
-exclude = ["conf.py", ".venv"]
-
 fixable = ["A", "B", "C", "D", "E", "F"]
 unfixable = []
 
 exclude = [
+    "conf.py",
+    ".venv",
     ".bzr",
     ".direnv",
     ".eggs",
@@ -117,7 +117,6 @@ exclude = [
     ".ruff_cache",
     ".svn",
     ".tox",
-    ".venv",
     "__pypackages__",
     "_build",
     "buck-out",

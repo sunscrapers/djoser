@@ -26,7 +26,7 @@ jobs:
       - name: Setup Poetry
         uses: abatilo/actions-poetry@v2
         with:
-          poetry-version: "1.7.1"
+          poetry-version: "1.8.4"
 
       - name: Debug Environment
         run: |
