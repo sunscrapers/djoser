@@ -1,4 +1,4 @@
-name: Publish to PyPi
+name: Publish to PyPI
 
 on:
   release:
@@ -7,39 +7,91 @@ on:
 
 jobs:
   publish:
-    strategy:
-      fail-fast: true
-      matrix:
-        python-version: [ 3.8 ]
-        poetry-version: [ 1.3.2 ]
-        os: [ ubuntu-latest ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/djoser/
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # small repo so no biggie
+          fetch-depth: 0
           fetch-tags: true
-      - name: Echo Git Tag
-        run: |
-          echo "Git tag: $(git describe --tags)"
+
       - name: Set up Python
-        uses: actions/setup-python@v4.6.0
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Run image
-        uses: abatilo/actions-poetry@v2
+          python-version: "3.9"
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v4
         with:
-          poetry-version: ${{ matrix.poetry-version }}
-      - name: Build and publish
+          poetry-version: "1.8.4"
+
+      - name: Get release tag
+        id: get_tag
         run: |
+          TAG=$(git describe --tags)
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          VERSION=${TAG#v}  # Remove "v" prefix if present
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Verify package version matches tag
+        run: |
+          PACKAGE_VERSION=$(poetry version -s)
+          if [ "$PACKAGE_VERSION" != "${{ env.VERSION }}" ]; then
+            echo "Package version ($PACKAGE_VERSION) does not match tag version (${{ env.VERSION }})"
+            exit 1
+          fi
+
+      - name: Update package version from tag
+        run: |
+          echo "Updating version to ${{ env.VERSION }}"
+          poetry version ${{ env.VERSION }}
+
+      - name: Compile translations
+        run: |
+          echo "Compiling translation files..."
           poetry run pybabel compile --domain django --directory djoser/locale -f
+
+      - name: Build package
+        run: |
+          echo "Building package..."
+          poetry build
+          echo "Package contents:"
+          ls -l dist/
+
+      # Test PyPI deployment for pre-releases
+      - name: Configure Test PyPI
+        if: github.event.release.prerelease
+        run: |
+          echo "Configuring Test PyPI..."
+          poetry config repositories.testpypi https://test.pypi.org/legacy/
+          poetry config pypi-token.testpypi ${{ secrets.TEST_PYPI_TOKEN }}
+
+      - name: Publish to Test PyPI
+        if: github.event.release.prerelease
+        run: |
+          echo "Publishing to Test PyPI..."
+          poetry publish --no-interaction -r testpypi
+          echo "Package published to Test PyPI successfully"
+
+      # Production PyPI deployment
+      - name: Configure PyPI
+        if: "!github.event.release.prerelease"
+        run: |
+          echo "Configuring PyPI..."
           poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
 
-#          alternative for the next release. Before, set version in pyproject to 0.0.0
-#          upload to test pypi first
-#          TAG=$(git describe --tags)
-#          VERSION=${TAG#v}  # Remove "v" prefix if present
-#          poetry version $VERSION
+      - name: Publish to PyPI
+        if: "!github.event.release.prerelease"
+        run: |
+          echo "Publishing to PyPI..."
+          poetry publish --no-interaction
+          echo "Package published to PyPI successfully"
 
-          poetry publish --build --no-interaction
+      - name: Verify publish
+        run: |
+          echo "Published version ${{ env.VERSION }} successfully"
+          echo "Package is available at https://pypi.org/p/djoser/${{ env.VERSION }}/"

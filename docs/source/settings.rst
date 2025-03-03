@@ -32,6 +32,24 @@ Name of a field in User model to be used as login field. This is useful if you
 want to change the login field from ``username`` to ``email`` without providing
 custom User model.
 
+.. versionchanged:: 2.3.0
+
+As the authentication is happening within the Django's authentication backends, you need a
+custom authentication backend that's using ``LOGIN_FIELD`` instead of ``User.USERNAME_FIELD``
+for this setting to work as expected.
+
+If you don't want to roll out your own authentication backend, ``LoginFieldBackend`` has been prepared.
+It works the same as ``ModelBackend``, but it is using ``LOGIN_FIELD`` instead of ``User.USERNAME_FIELD``.
+
+To make your code backward compatible with previous Djoser versions, add this auth backend to your Django settings:
+
+.. code-block:: python
+
+    AUTHENTICATION_BACKENDS = [
+        "djoser.auth_backends.LoginFieldBackend",
+    ]
+
+Please notice that it is not recommended way of authentication and it may be removed in the future Djoser versions.
 **Default**: ``User.USERNAME_FIELD`` where ``User`` is the model set with Django's setting AUTH_USER_MODEL.
 
 .. warning::

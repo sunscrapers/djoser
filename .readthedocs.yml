@@ -1,5 +1,3 @@
-# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
-
 version: 2
 
 build:
@@ -7,10 +5,10 @@ build:
   tools:
     python: "3.11"
   jobs:
+    post_create_environment:
+      - python -m pip install poetry
     post_install:
-      - pip install poetry
-      - poetry config virtualenvs.create false
-      - poetry install --only docs
+      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry install --with docs
 
 sphinx:
   configuration: docs/source/conf.py
