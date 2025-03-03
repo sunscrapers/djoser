@@ -140,7 +140,6 @@ in-place = true
 [tool.pytest.ini_options]
 minversion = "7.0"
 DJANGO_SETTINGS_MODULE = "testproject.settings"
-python_paths = "testproject"
 
 [tool.coverage.run]
 source = ["djoser"]
