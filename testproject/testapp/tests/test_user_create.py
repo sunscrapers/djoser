@@ -2,8 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
 from djet import assertions
-from pkg_resources import parse_version
-from rest_framework import __version__ as drf_version
+from importlib.metadata import version
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -81,7 +80,7 @@ class UserCreateViewTest(
         self.assertEqual(
             str(response.data["password"][0]), "Password 666 is not allowed."
         )
-        if parse_version(drf_version) >= parse_version("3.9.0"):
+        if version("djangorestframework") >= "3.9.0":
             self.assertEqual(response.data["password"][0].code, "no666")
 
     @override_settings(

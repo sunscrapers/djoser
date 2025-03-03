@@ -47,11 +47,15 @@ class UserMeDeleteViewTest(
 
     def test_permission_class(self):
         old_value = djoser_settings.PERMISSIONS["user_delete"]
-        with override_settings(
-            DJOSER=dict(
-                settings.DJOSER, **{"PERMISSIONS": {"user_delete": [PermCheckClass]}}
-            )
-        ), pytest.raises(RunCheck):
+        with (
+            override_settings(
+                DJOSER=dict(
+                    settings.DJOSER,
+                    **{"PERMISSIONS": {"user_delete": [PermCheckClass]}},
+                )
+            ),
+            pytest.raises(RunCheck),
+        ):
             user = create_user()
             self.assert_instance_exists(User, username="john")
             data = {"current_password": "incorrect"}
@@ -64,12 +68,15 @@ class UserMeDeleteViewTest(
 
     def test_serializer_class(self):
         old_value = djoser_settings.SERIALIZERS["user_delete"]
-        with override_settings(
-            DJOSER=dict(
-                settings.DJOSER,
-                **{"SERIALIZERS": {"user_delete": SerializerCheckClass}},
-            )
-        ), pytest.raises(RunCheck):
+        with (
+            override_settings(
+                DJOSER=dict(
+                    settings.DJOSER,
+                    **{"SERIALIZERS": {"user_delete": SerializerCheckClass}},
+                )
+            ),
+            pytest.raises(RunCheck),
+        ):
             user = create_user()
             self.assert_instance_exists(User, username="john")
             data = {"current_password": "incorrect"}
@@ -118,11 +125,15 @@ class UserViewSetDeletionTest(
 
     def test_permission_class(self):
         old_value = djoser_settings.PERMISSIONS["user_delete"]
-        with override_settings(
-            DJOSER=dict(
-                settings.DJOSER, **{"PERMISSIONS": {"user_delete": [PermCheckClass]}}
-            )
-        ), pytest.raises(RunCheck):
+        with (
+            override_settings(
+                DJOSER=dict(
+                    settings.DJOSER,
+                    **{"PERMISSIONS": {"user_delete": [PermCheckClass]}},
+                )
+            ),
+            pytest.raises(RunCheck),
+        ):
             user = create_user()
             self.assert_instance_exists(User, username="john")
             data = {"current_password": "incorrect"}
@@ -138,12 +149,15 @@ class UserViewSetDeletionTest(
 
     def test_serializer_class(self):
         old_value = djoser_settings.SERIALIZERS["user_delete"]
-        with override_settings(
-            DJOSER=dict(
-                settings.DJOSER,
-                **{"SERIALIZERS": {"user_delete": SerializerCheckClass}},
-            )
-        ), pytest.raises(RunCheck):
+        with (
+            override_settings(
+                DJOSER=dict(
+                    settings.DJOSER,
+                    **{"SERIALIZERS": {"user_delete": SerializerCheckClass}},
+                )
+            ),
+            pytest.raises(RunCheck),
+        ):
             user = create_user()
             self.assert_instance_exists(User, username="john")
             data = {"current_password": "incorrect"}
