@@ -1,0 +1,52 @@
+name: Code Quality
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-quality-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-quality-
+
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.8.4"
+
+      - name: Cache virtual environment
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-
+
+      - name: Install dependencies
+        run: poetry install --only code-quality
+
+      - name: Run pre-commit with debug
+        run: |
+          echo "Running pre-commit hooks with verbose output..."
+          poetry run pre-commit run --all-files --verbose
+          if [ $? -ne 0 ]; then
+            echo "Pre-commit failed. Showing git status:"
+            git status
+            echo "Showing git diff:"
+            git diff
+            exit 1
+          fi
