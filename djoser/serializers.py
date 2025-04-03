@@ -176,6 +176,11 @@ class UidAndTokenSerializer(serializers.Serializer):
         try:
             uid = utils.decode_uid(self.initial_data.get("uid", ""))
             self.user = User.objects.get(pk=uid)
+            # check's the new given password to be not same as current password in DB
+            if settings.DUPLICATION_PASSWORD_CHECK:
+                new_password = self.initial_data.get("new_password" , None)
+                if new_password and self.user.check_password(new_password):
+                    raise ValidationError({"password": "New password cannot be the same as current password"})
         except (User.DoesNotExist, ValueError, TypeError, OverflowError):
             key_error = "invalid_uid"
             raise ValidationError(
