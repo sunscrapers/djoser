@@ -18,7 +18,7 @@ def test_constants_translations_are_up_to_date():
     locale_dir = root / "djoser" / "locale"
     for specific_locale in locale_dir.iterdir():
         po_file = specific_locale / "LC_MESSAGES" / "django.po"
-        po_contents = po_file.read_text()
+        po_contents = po_file.read_text(errors="ignore")
         with StringIO() as buf:
             buf.write(po_contents)
             buf.seek(0)
