@@ -269,7 +269,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 `0.7.0`_ (2017-09-01)
 ---------------------
 
-* Add ``TOKEN_MODEL`` setting to allow third party apps to specify a custom token model
+* Add ``TOKEN_MODEL`` setting to allow third party apps to specify a custom token modelclosed
 * Add ``USER_EMAIL_FIELD_NAME`` setting as a compatibility solution in Django < 1.11
 * Add support for Django Password Validators
 * Add HTML templates for djoser emails
