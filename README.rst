@@ -25,6 +25,13 @@ views to handle basic actions such as registration, login, logout, password
 reset and account activation. It works with
 `custom user model <https://docs.djangoproject.com/en/dev/topics/auth/customizing/>`_.
 
+Supported features include:
+
+- Token-based authentication
+- JWT authentication
+- Social authentication
+- WebAuthn support
+
 Instead of reusing Django code (e.g. ``PasswordResetForm``), we reimplemented
 few things to fit better into `Single Page App <https://en.wikipedia.org/wiki/Single-page_application>`_
 architecture.
@@ -39,8 +46,8 @@ Requirements
 
 To be able to run **djoser** you have to meet the following requirements:
 
-- Python>=3.8
-- Django>=3.0.0
+- Python>=3.9,<4.0 (including 3.10, 3.11, and 3.12)
+- Django>=3.0.0 (supporting Django 3.2 through 5.1)
 - Django REST Framework>=3.12
 
 Installation
@@ -85,7 +92,7 @@ To run the test just type:
 
 .. code-block:: bash
 
-    $ poetry run py.test testproject
+    $ poetry run pytest
 
 We also prepared a convenient ``Makefile`` to automate commands above:
 
@@ -131,9 +138,14 @@ Before sending patches please make sure you have `pre-commit <https://pre-commit
 
 .. code-block:: bash
 
-    $ pre-commit install
+    $ poetry run pre-commit install
 
-This will ensure that your code is cleaned before you commit it.
+This will ensure that your code is cleaned before you commit it. The pre-commit hooks will run:
+
+- Black (code formatting)
+- Ruff (linting)
+- Docformatter (docstring formatting)
+- Other quality checks
 
 Similar projects
 ================
