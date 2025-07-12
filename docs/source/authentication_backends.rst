@@ -80,6 +80,22 @@ Configure `django-rest-framework-simplejwt` to use the
     }
 
 
+Disable TokenAuthentication in Django REST Framework:
+
+.. note::
+
+    Skip this if you are using Token Based Authentication on top of JWT Authentication,you should add 'rest_framework.authtoken' to INSTALLED_APPS and run migrations.
+
+
+.. code-block:: python
+
+    DJOSER = {
+        'TOKEN_MODEL': None,
+        # other settings
+    }
+
+
+
 urls.py
 ~~~~~~~
 
