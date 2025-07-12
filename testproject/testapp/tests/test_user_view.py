@@ -1,92 +1,79 @@
+import pytest
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.test.utils import override_settings
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
-
-from .common import create_user, login_user
 
 User = get_user_model()
 
 
-class UserViewTest(
-    APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
-):
-    def setUp(self):
-        self.user = create_user()
-        self.client.force_authenticate(user=self.user)
-        self.url = reverse("user-detail", kwargs={User._meta.pk.name: self.user.pk})
+@pytest.fixture
+def user_url(user):
+    return reverse("user-detail", kwargs={User._meta.pk.name: user.pk})
 
-    def test_get_return_user(self):
-        login_user(self.client, self.user)
-        response = self.client.get(self.url)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
-        self.assertEqual(
-            set(response.data.keys()),
-            set([User.USERNAME_FIELD, User._meta.pk.name] + User.REQUIRED_FIELDS),
+@pytest.fixture
+def other_user_url(other_user):
+    return reverse("user-detail", kwargs={User._meta.pk.name: other_user.pk})
+
+
+@pytest.mark.django_db
+class TestUserView:
+    def test_get_return_user(self, api_client, user, user_url):
+        response = api_client.get(user_url)
+
+        assert response.status_code == status.HTTP_200_OK
+        expected_keys = {User.USERNAME_FIELD, User._meta.pk.name} | set(
+            User.REQUIRED_FIELDS
         )
+        assert set(response.data.keys()) == expected_keys
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": False}))
-    def test_email_change_with_send_activation_email_false(self):
-        data = {"email": "ringo@beatles.com"}
+    def test_email_change_with_send_activation_email_false(
+        self, api_client, user, user_url
+    ):
+        data = {"username": user.username, "email": "ringo@beatles.com"}
 
-        login_user(self.client, self.user)
-        response = self.client.put(self.url, data=data)
+        response = api_client.put(user_url, data=data)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
-        self.user.refresh_from_db()
-        self.assertEqual(data["email"], self.user.email)
-        self.assertTrue(self.user.is_active)
+        assert response.status_code == status.HTTP_200_OK
+        user.refresh_from_db()
+        assert user.email == data["email"]
+        assert user.is_active
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
-    def test_email_change_with_send_activation_email_true(self):
-        data = {"email": "ringo@beatles.com"}
+    def test_email_change_with_send_activation_email_true(
+        self, api_client, user, user_url
+    ):
+        data = {"username": user.username, "email": "ringo@beatles.com"}
 
-        login_user(self.client, self.user)
-        response = self.client.put(self.url, data=data)
+        response = api_client.put(user_url, data=data)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
-        self.user.refresh_from_db()
-        self.assertEqual(data["email"], self.user.email)
-        self.assertFalse(self.user.is_active)
-        self.assert_emails_in_mailbox(1)
-        self.assert_email_exists(to=[data["email"]])
+        assert response.status_code == status.HTTP_200_OK
+        user.refresh_from_db()
+        assert user.email == data["email"]
+        assert not user.is_active
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].to == [data["email"]]
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"HIDE_USERS": False}))
-    def test_fail_403_without_permission(self):
-        other_user = create_user(
-            **{
-                "username": "paul",
-                "password": "verysecret",
-                "email": "paul@beatles.com",
-            }
-        )
+    def test_fail_403_without_permission(self, api_client, user_url, other_user_url):
         data = {"email": "ringo@beatles.com"}
-        url = reverse("user-detail", kwargs={User._meta.pk.name: other_user.pk})
 
-        login_user(self.client, self.user)
-        response1 = self.client.put(url, data=data)
-        self.assert_status_equal(response1, status.HTTP_403_FORBIDDEN)
-        response2 = self.client.get(self.url)
-        self.assert_status_equal(response2, status.HTTP_200_OK)
+        response1 = api_client.put(other_user_url, data=data)
+        assert response1.status_code == status.HTTP_403_FORBIDDEN
+
+        response2 = api_client.get(user_url)
+        assert response2.status_code == status.HTTP_200_OK
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"HIDE_USERS": True}))
-    def test_fail_404_without_permission(self):
-        other_user = create_user(
-            **{
-                "username": "paul",
-                "password": "verysecret",
-                "email": "paul@beatles.com",
-            }
-        )
+    def test_fail_404_without_permission(self, api_client, user_url, other_user_url):
         data = {"email": "ringo@beatles.com"}
-        url = reverse("user-detail", kwargs={User._meta.pk.name: other_user.pk})
 
-        login_user(self.client, self.user)
-        response1 = self.client.put(url, data=data)
-        self.assert_status_equal(response1, status.HTTP_404_NOT_FOUND)
-        response2 = self.client.get(self.url)
-        self.assert_status_equal(response2, status.HTTP_200_OK)
+        response1 = api_client.put(other_user_url, data=data)
+        assert response1.status_code == status.HTTP_404_NOT_FOUND
+
+        response2 = api_client.get(user_url)
+        assert response2.status_code == status.HTTP_200_OK

@@ -1,172 +1,130 @@
 import pytest
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test import override_settings
-from djet import assertions
+from django.test.utils import override_settings
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
 
-import djoser.views
-from djoser.conf import settings as djoser_settings
-
-from .common import PermCheckClass, RunCheck, SerializerCheckClass, create_user
 
 User = get_user_model()
 
 
-class UserMeDeleteViewTest(
-    APITestCase,
-    assertions.StatusCodeAssertionsMixin,
-    assertions.EmailAssertionsMixin,
-    assertions.InstanceAssertionsMixin,
-):
-    viewset = djoser.views.UserViewSet
+class SerializerCheckClass:
+    def __init__(self, *args, **kwargs):
+        raise RunCheck("working")
 
-    def test_delete_user_if_logged_in(self):
-        user = create_user()
-        self.assert_instance_exists(User, username="john")
+
+class RunCheck(Exception):
+    pass
+
+
+class PermCheckClass:
+    def has_permission(self, *args, **kwargs):
+        raise RunCheck("working")
+
+    def has_object_permission(self, *args, **kwargs):
+        raise RunCheck("working")
+
+
+@pytest.mark.django_db
+class TestUserMeDeleteView:
+    def test_delete_user_if_logged_in(self, api_client, user):
+        assert User.objects.filter(username="john").exists()
         data = {"current_password": "secret"}
+        response = api_client.delete(reverse("user-me"), data=data)
 
-        self.client.force_authenticate(user=user)
-        response = self.client.delete(reverse("user-me"), data=data)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not User.objects.filter(username="john").exists()
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        self.assert_instance_does_not_exist(User, username="john")
-
-    def test_not_delete_if_fails_password_validation(self):
-        user = create_user()
-        self.assert_instance_exists(User, username="john")
+    def test_not_delete_if_fails_password_validation(self, api_client, user):
+        assert User.objects.filter(username="john").exists()
         data = {"current_password": "incorrect"}
+        response = api_client.delete(reverse("user-me"), data=data)
 
-        self.client.force_authenticate(user=user)
-        response = self.client.delete(reverse("user-me"), data=data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {"current_password": ["Invalid password."]}
+        assert User.objects.filter(username="john").exists()
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {"current_password": ["Invalid password."]})
-
-    def test_permission_class(self):
-        old_value = djoser_settings.PERMISSIONS["user_delete"]
+    def test_permission_class(self, api_client, user):
+        perm_check_class_path = f"{PermCheckClass.__module__}.{PermCheckClass.__name__}"
         with (
             override_settings(
                 DJOSER=dict(
                     settings.DJOSER,
-                    **{"PERMISSIONS": {"user_delete": [PermCheckClass]}},
+                    **{"PERMISSIONS": {"user_delete": [perm_check_class_path]}},
                 )
             ),
             pytest.raises(RunCheck),
         ):
-            user = create_user()
-            self.assert_instance_exists(User, username="john")
-            data = {"current_password": "incorrect"}
+            assert User.objects.filter(username="john").exists()
+            data = {"current_password": "secret"}
+            api_client.delete(reverse("user-me"), data=data)
 
-            self.client.force_authenticate(user=user)
-            self.client.delete(reverse("user-me"), data=data)
-        override_settings(
-            DJOSER=dict(settings.DJOSER, **{"PERMISSIONS": {"user_delete": old_value}})
-        ).enable()
-
-    def test_serializer_class(self):
-        old_value = djoser_settings.SERIALIZERS["user_delete"]
+    def test_serializer_class(self, api_client, user):
+        serializer_check_class_path = (
+            f"{SerializerCheckClass.__module__}.{SerializerCheckClass.__name__}"
+        )
         with (
             override_settings(
                 DJOSER=dict(
                     settings.DJOSER,
-                    **{"SERIALIZERS": {"user_delete": SerializerCheckClass}},
+                    **{"SERIALIZERS": {"user_delete": serializer_check_class_path}},
                 )
             ),
             pytest.raises(RunCheck),
         ):
-            user = create_user()
-            self.assert_instance_exists(User, username="john")
-            data = {"current_password": "incorrect"}
-
-            self.client.force_authenticate(user=user)
-            self.client.delete(reverse("user-me"), data=data)
-        override_settings(
-            DJOSER=dict(settings.DJOSER, **{"SERIALIZERS": {"user_delete": old_value}})
-        ).enable()
+            assert User.objects.filter(username="john").exists()
+            data = {"current_password": "secret"}
+            api_client.delete(reverse("user-me"), data=data)
 
 
-class UserViewSetDeletionTest(
-    APITestCase,
-    assertions.StatusCodeAssertionsMixin,
-    assertions.EmailAssertionsMixin,
-    assertions.InstanceAssertionsMixin,
-):
-    def test_delete_user_if_logged_in(self):
-        user = create_user()
-        self.assert_instance_exists(User, username="john")
+@pytest.mark.django_db
+class TestUserViewSetDeletion:
+    def test_delete_user_if_logged_in(self, api_client, user):
+        assert User.objects.filter(username="john").exists()
         data = {"current_password": "secret"}
-        self.client.force_authenticate(user=user)
+        url = reverse("user-detail", kwargs={User._meta.pk.name: user.pk})
+        response = api_client.delete(url, data=data)
 
-        response = self.client.delete(
-            reverse("user-detail", kwargs={User._meta.pk.name: user.pk}),
-            data=data,
-        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not User.objects.filter(username="john").exists()
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        self.assert_instance_does_not_exist(User, username="john")
-
-    def test_not_delete_if_fails_password_validation(self):
-        user = create_user()
-        self.assert_instance_exists(User, username="john")
+    def test_not_delete_if_fails_password_validation(self, api_client, user):
+        assert User.objects.filter(username="john").exists()
         data = {"current_password": "incorrect"}
+        url = reverse("user-detail", kwargs={User._meta.pk.name: user.pk})
+        response = api_client.delete(url, data=data)
 
-        self.client.force_authenticate(user=user)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {"current_password": ["Invalid password."]}
+        assert User.objects.filter(username="john").exists()
 
-        response = self.client.delete(
-            reverse("user-detail", kwargs={User._meta.pk.name: user.pk}),
-            data=data,
+    def test_permission_class(self, api_client, user, other_user):
+        perm_check_class_path = f"{PermCheckClass.__module__}.{PermCheckClass.__name__}"
+        data = {"current_password": "secret"}
+        url_other = reverse("user-detail", kwargs={User._meta.pk.name: other_user.pk})
+
+        with override_settings(
+            DJOSER=dict(
+                settings.DJOSER,
+                **{"PERMISSIONS": {"user_delete": [perm_check_class_path]}},
+            )
+        ):
+            response = api_client.delete(url_other, data=data)
+            assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_serializer_class(self, api_client, user, other_user):
+        serializer_check_class_path = (
+            f"{SerializerCheckClass.__module__}.{SerializerCheckClass.__name__}"
         )
+        data = {"current_password": "secret"}
+        url_other = reverse("user-detail", kwargs={User._meta.pk.name: other_user.pk})
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {"current_password": ["Invalid password."]})
-
-    def test_permission_class(self):
-        old_value = djoser_settings.PERMISSIONS["user_delete"]
-        with (
-            override_settings(
-                DJOSER=dict(
-                    settings.DJOSER,
-                    **{"PERMISSIONS": {"user_delete": [PermCheckClass]}},
-                )
-            ),
-            pytest.raises(RunCheck),
-        ):
-            user = create_user()
-            self.assert_instance_exists(User, username="john")
-            data = {"current_password": "incorrect"}
-
-            self.client.force_authenticate(user=user)
-            self.client.delete(
-                reverse("user-detail", kwargs={User._meta.pk.name: user.pk}),
-                data=data,
+        with override_settings(
+            DJOSER=dict(
+                settings.DJOSER,
+                **{"SERIALIZERS": {"user_delete": serializer_check_class_path}},
             )
-        override_settings(
-            DJOSER=dict(settings.DJOSER, **{"PERMISSIONS": {"user_delete": old_value}})
-        ).enable()
-
-    def test_serializer_class(self):
-        old_value = djoser_settings.SERIALIZERS["user_delete"]
-        with (
-            override_settings(
-                DJOSER=dict(
-                    settings.DJOSER,
-                    **{"SERIALIZERS": {"user_delete": SerializerCheckClass}},
-                )
-            ),
-            pytest.raises(RunCheck),
         ):
-            user = create_user()
-            self.assert_instance_exists(User, username="john")
-            data = {"current_password": "incorrect"}
-
-            self.client.force_authenticate(user=user)
-            self.client.delete(
-                reverse("user-detail", kwargs={User._meta.pk.name: user.pk}),
-                data=data,
-            )
-        override_settings(
-            DJOSER=dict(settings.DJOSER, **{"SERIALIZERS": {"user_delete": old_value}})
-        ).enable()
+            response = api_client.delete(url_other, data=data)
+            assert response.status_code == status.HTTP_403_FORBIDDEN

@@ -1,12 +1,12 @@
+import pytest
 from copy import deepcopy
 
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.test.utils import override_settings
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
 
 from .utils import create_credential_options
 
@@ -28,58 +28,71 @@ SIGNUP_DATA = {
 }
 
 
-@override_settings(
-    DJOSER={
-        **settings.DJOSER,
-        **{"WEBAUTHN": {"RP_NAME": RP_NAME, "RP_ID": RP_ID, "ORIGIN": ORIGIN}},
-    }
-)
-class TestSignupView(
-    APITestCase,
-    assertions.StatusCodeAssertionsMixin,
-    assertions.InstanceAssertionsMixin,
-    assertions.EmailAssertionsMixin,
-):
-    url = reverse("webauthn_signup", args=[USER_ID])
+@pytest.fixture
+def url():
+    return reverse("webauthn_signup", args=[USER_ID])
 
-    def setUp(self):
-        self.co = create_credential_options(
-            challenge=REGISTRATION_CHALLENGE,
-            username=USERNAME,
-            display_name=USER_DISPLAY_NAME,
-            ukey=USER_ID,
-        )
 
-    def test_post_with_invalid_registration_response_should_return_400(self):
-        for invalid_field in ("clientData", "attObj"):
-            with self.subTest(invalid_field=invalid_field):
-                data = deepcopy(SIGNUP_DATA)
-                data[invalid_field] = "invalid_data"
-                response = self.client.post(self.url, data=data)
+@pytest.fixture
+def credential_options(db):
+    return create_credential_options(
+        challenge=REGISTRATION_CHALLENGE,
+        username=USERNAME,
+        display_name=USER_DISPLAY_NAME,
+        ukey=USER_ID,
+        user=None,
+    )
 
-                self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-                self.assert_instance_does_not_exist(User)
 
-    def test_post_with_valid_registration_response_should_create_user(self):
+@pytest.mark.django_db
+class TestSignupView:
+    @pytest.fixture(autouse=True)
+    def settings(self, settings):
+        settings.DJOSER = {
+            **settings.DJOSER,
+            **{"WEBAUTHN": {"RP_NAME": RP_NAME, "RP_ID": RP_ID, "ORIGIN": ORIGIN}},
+        }
+        return settings
+
+    @pytest.mark.parametrize("invalid_field", ["clientData", "attObj"])
+    def test_post_with_invalid_registration_response_should_return_400(
+        self, anonymous_api_client, url, credential_options, invalid_field
+    ):
         data = deepcopy(SIGNUP_DATA)
-        response = self.client.post(self.url, data=data)
+        data[invalid_field] = "invalid_data"
+        response = anonymous_api_client.post(url, data=data)
 
-        self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assert_instance_exists(User, username=USERNAME)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert not User.objects.filter(username=USERNAME).exists()
 
-    def test_challenge_should_not_be_stored_after_successfull_signup(self):
+    def test_post_with_valid_registration_response_should_create_user(
+        self, anonymous_api_client, url, credential_options
+    ):
         data = deepcopy(SIGNUP_DATA)
-        self.client.post(self.url, data=data)
+        response = anonymous_api_client.post(url, data=data)
 
-        self.co.refresh_from_db()
-        self.assertEqual(self.co.challenge, "")
+        assert response.status_code == status.HTTP_201_CREATED
+        assert User.objects.filter(username=USERNAME).exists()
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
-    def test_register_user_when_email_confirmation_is_required(self):
+    def test_challenge_should_not_be_stored_after_successful_signup(
+        self, anonymous_api_client, url, credential_options
+    ):
         data = deepcopy(SIGNUP_DATA)
-        self.client.post(self.url, data=data)
+        anonymous_api_client.post(url, data=data)
 
-        self.assert_instance_exists(User, username=USERNAME)
+        credential_options.refresh_from_db()
+        assert credential_options.challenge == ""
+
+    @override_settings(
+        DJOSER=dict(django_settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True})
+    )
+    def test_register_user_when_email_confirmation_is_required(
+        self, anonymous_api_client, url, credential_options
+    ):
+        data = deepcopy(SIGNUP_DATA)
+        anonymous_api_client.post(url, data=data)
+
+        assert User.objects.filter(username=USERNAME).exists()
         user = User.objects.get(username=USERNAME)
-        self.assertFalse(user.is_active)
-        self.assert_emails_in_mailbox(1)
+        assert not user.is_active
+        assert len(mail.outbox) == 1

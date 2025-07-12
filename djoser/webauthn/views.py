@@ -48,7 +48,7 @@ class SignupRequestView(APIView):
             icon_url="",
         )
 
-        return Response(credential_registration_dict.registration_dict)
+        return Response({"publicKey": credential_registration_dict.registration_dict})
 
 
 class SignupView(APIView):
@@ -76,6 +76,12 @@ class SignupView(APIView):
             )
 
         user = user_serializer.save()
+
+        # Handle activation email logic for webauthn signup
+        if settings.SEND_ACTIVATION_EMAIL:
+            user.is_active = False
+            user.save(update_fields=["is_active"])
+
         co.challenge = ""
         co.user = user
         co.sign_count = webauthn_credential.sign_count
@@ -122,7 +128,7 @@ class LoginRequestView(APIView):
             webauthn_user, co.challenge
         )
 
-        return Response(webauthn_assertion_options.assertion_dict)
+        return Response({"publicKey": webauthn_assertion_options.assertion_dict})
 
 
 # this name looks good :)
