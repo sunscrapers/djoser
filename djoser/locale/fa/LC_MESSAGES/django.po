@@ -1,0 +1,166 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025 Mahdi Rahimi
+# This file is distributed under the same license as the djoser package.
+# Mahdi Rahimi <mahdi.rahimi95@gmail.com>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: djoser\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-21 03:45+0330\n"
+"PO-Revision-Date: 2025-06-21 12:30+0330\n"
+"Last-Translator: Mahdi Rahimi <mahdi.rahimi95@gmail.com>\n"
+"Language-Team: Persian\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: constants.py:5
+msgid "Unable to log in with provided credentials."
+msgstr "امکان ورود با اطلاعات ارائه شده وجود ندارد."
+
+#: constants.py:7
+msgid "User account is disabled."
+msgstr "حساب کاربری غیر فعال شده است."
+
+#: constants.py:9
+msgid "Invalid token for given user."
+msgstr "توکن ارائه شده برای کاربر نامعتبر است."
+
+#: constants.py:10
+msgid "Invalid user id or user doesn't exist."
+msgstr "شناسه کاربری نامعتبر است یا کاربر وجود ندارد."
+
+#: constants.py:11
+msgid "Stale token for given user."
+msgstr "توکن منقضی شده برای کاربر مشخص شده."
+
+#: constants.py:12
+msgid "The two password fields didn't match."
+msgstr "دو فیلد رمز عبور با هم مطابقت ندارند."
+
+#: constants.py:13
+#, python-brace-format
+msgid "The two {0} fields didn't match."
+msgstr "دو فیلد {0} با هم مطابقت ندارند."
+
+#: constants.py:14
+msgid "Invalid password."
+msgstr "رمز عبور نامعتبر است."
+
+#: constants.py:15
+msgid "User with given email does not exist."
+msgstr "کاربری با ایمیل ارائه شده وجود ندارد."
+
+#: constants.py:16
+msgid "Unable to create account."
+msgstr "امکان ایجاد حساب کاربری وجود ندارد."
+
+#: templates/email/activation.html:4
+#, python-format
+msgid "Account activation on %(site_name)s"
+msgstr "فعال‌سازی حساب در %(site_name)s"
+
+#: templates/email/activation.html:8 templates/email/activation.html:19
+#, python-format
+msgid "You're receiving this email because you need to finish activation process on %(site_name)s."
+msgstr "شما این ایمیل را دریافت کرده‌اید زیرا باید فرآیند فعال‌سازی در %(site_name)s را تکمیل کنید."
+
+#: templates/email/activation.html:10 templates/email/activation.html:21
+msgid "Please go to the following page to activate account:"
+msgstr "لطفاً برای فعال‌سازی حساب به صفحه زیر مراجعه کنید:"
+
+#: templates/email/activation.html:13 templates/email/activation.html:24
+#: templates/email/confirmation.html:10 templates/email/confirmation.html:18
+#: templates/email/password_changed_confirmation.html:10
+#: templates/email/password_changed_confirmation.html:18
+#: templates/email/password_reset.html:14
+#: templates/email/password_reset.html:26
+#: templates/email/username_changed_confirmation.html:10
+#: templates/email/username_changed_confirmation.html:18
+#: templates/email/username_reset.html:14
+#: templates/email/username_reset.html:26
+msgid "Thanks for using our site!"
+msgstr "از استفاده شما از سایت ما سپاسگزاریم!"
+
+#: templates/email/activation.html:15 templates/email/activation.html:26
+#: templates/email/confirmation.html:12 templates/email/confirmation.html:20
+#: templates/email/password_changed_confirmation.html:12
+#: templates/email/password_changed_confirmation.html:20
+#: templates/email/password_reset.html:16
+#: templates/email/password_reset.html:28
+#: templates/email/username_changed_confirmation.html:12
+#: templates/email/username_changed_confirmation.html:20
+#: templates/email/username_reset.html:16
+#: templates/email/username_reset.html:28
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "تیم %(site_name)s"
+
+#: templates/email/confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your account has been successfully created and activated!"
+msgstr "%(site_name)s - حساب شما با موفقیت ایجاد و فعال شد!"
+
+#: templates/email/confirmation.html:8 templates/email/confirmation.html:16
+msgid "Your account has been created and is ready to use!"
+msgstr "حساب شما ایجاد شده و آماده استفاده است!"
+
+#: templates/email/password_changed_confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your password has been successfully changed!"
+msgstr "%(site_name)s - رمز عبور شما با موفقیت تغییر یافت!"
+
+#: templates/email/password_changed_confirmation.html:8
+#: templates/email/password_changed_confirmation.html:16
+msgid "Your password has been changed!"
+msgstr "رمز عبور شما تغییر یافت!"
+
+#: templates/email/password_reset.html:4
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr "بازنشانی رمز عبور در %(site_name)s"
+
+#: templates/email/password_reset.html:8 templates/email/password_reset.html:20
+#, python-format
+msgid "You're receiving this email because you requested a password reset for your user account at %(site_name)s."
+msgstr "شما این ایمیل را دریافت کرده‌اید زیرا درخواست بازنشانی رمز عبور حساب کاربری خود را در %(site_name)s داده‌اید."
+
+#: templates/email/password_reset.html:10
+#: templates/email/password_reset.html:22
+msgid "Please go to the following page and choose a new password:"
+msgstr "لطفاً به صفحه زیر بروید و رمز عبور جدیدی انتخاب کنید:"
+
+#: templates/email/password_reset.html:12
+#: templates/email/password_reset.html:24
+#: templates/email/username_reset.html:12
+#: templates/email/username_reset.html:24
+msgid "Your username, in case you've forgotten:"
+msgstr "نام کاربری شما، در صورتی که فراموش کرده‌اید:"
+
+#: templates/email/username_changed_confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your username has been successfully changed!"
+msgstr "%(site_name)s - نام کاربری شما با موفقیت تغییر یافت!"
+
+#: templates/email/username_changed_confirmation.html:8
+#: templates/email/username_changed_confirmation.html:16
+msgid "Your username has been changed!"
+msgstr "نام کاربری شما تغییر یافت!"
+
+#: templates/email/username_reset.html:4
+#, python-format
+msgid "Username reset on %(site_name)s"
+msgstr "بازنشانی نام کاربری در %(site_name)s"
+
+#: templates/email/username_reset.html:8 templates/email/username_reset.html:20
+#, python-format
+msgid "You're receiving this email because you requested a username reset for your user account at %(site_name)s."
+msgstr "شما این ایمیل را دریافت کرده‌اید زیرا درخواست بازنشانی نام کاربری حساب کاربری خود را در %(site_name)s داده‌اید."
+
+#: templates/email/username_reset.html:10
+#: templates/email/username_reset.html:22
+msgid "Please go to the following page and choose a new username:"
+msgstr "لطفاً به صفحه زیر بروید و نام کاربری جدیدی انتخاب کنید:"
