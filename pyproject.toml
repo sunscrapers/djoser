@@ -40,7 +40,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
-django = "^3.2"
+django = ">=3.2"
 djangorestframework = "^3.14"
 djangorestframework-simplejwt = "^5.0"
 social-auth-app-django = "^5.0.0"
