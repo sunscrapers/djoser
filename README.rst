@@ -79,12 +79,12 @@ To start developing on **djoser**, clone the repository:
 
     $ git clone git@github.com:sunscrapers/djoser.git
 
-We use `poetry <https://python-poetry.org/>`_ as dependency management and packaging tool.
+We use `uv <https://docs.astral.sh/uv/>`_ as dependency management and packaging tool.
 
 .. code-block:: bash
 
     $ cd djoser
-    $ poetry install --all-extras
+    $ uv sync --all-extras
 
 This will create a virtualenv with all development dependencies.
 
@@ -92,7 +92,7 @@ To run the test just type:
 
 .. code-block:: bash
 
-    $ poetry run pytest
+    $ uv run pytest
 
 We also prepared a convenient ``Makefile`` to automate commands above:
 
@@ -105,12 +105,12 @@ To activate the virtual environment run
 
 .. code-block:: bash
 
-    $ poetry shell
+    $ source .venv/bin/activate
 
-Without poetry
+Without uv
 --------------
 
-New versions of ``pip`` can use ``pyproject.toml`` to build the package and install its dependencies.
+You can also use ``pip`` with ``pyproject.toml`` to build the package and install its dependencies.
 
 .. code-block:: bash
 
@@ -138,7 +138,7 @@ Before sending patches please make sure you have `pre-commit <https://pre-commit
 
 .. code-block:: bash
 
-    $ poetry run pre-commit install
+    $ uv run pre-commit install
 
 This will ensure that your code is cleaned before you commit it. The pre-commit hooks will run:
 

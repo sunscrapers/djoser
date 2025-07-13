@@ -25,53 +25,35 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Cache Poetry dependencies
-        uses: actions/cache@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-django3-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-django3-${{ hashFiles('**/poetry.lock') }}-
-            ${{ runner.os }}-poetry-django3-
-
-      - name: Cache virtual environment
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: ${{ runner.os }}-venv-django3-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-django3-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-
-            ${{ runner.os }}-venv-django3-py${{ matrix.python-version }}-
-
-      - name: Setup Poetry
-        uses: abatilo/actions-poetry@v4
-        with:
-          poetry-version: "1.8.4"
+          enable-cache: true
 
       - name: Install dependencies
-        run: poetry install --only main,test --all-extras
+        run: uv sync --extra test --extra djet --extra webauthn
 
       - name: Install Django version
         run: |
           if [ "${{ matrix.django-version }}" = "latest" ]; then
-            poetry run pip install --upgrade "Django"  # Force upgrade to latest
+            uv add --upgrade "Django"  # Force upgrade to latest
           else
             # First try exact version, if it fails try to install the major.minor version
             echo "Installing Django ${{ matrix.django-version }}..."
-            if ! poetry run pip install "Django==${{ matrix.django-version }}"; then
+            if ! uv add "Django==${{ matrix.django-version }}"; then
               echo "Exact version failed, trying to install the latest patch version..."
               MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
-              poetry run pip install "Django~=$MAJOR_MINOR.0"
+              uv add "Django~=$MAJOR_MINOR.0"
             fi
           fi
 
       - name: Install DRF version
-        run: poetry run pip install --upgrade "djangorestframework==${{ matrix.drf-version }}"
+        run: uv add --upgrade "djangorestframework==${{ matrix.drf-version }}"
 
       - name: Show environment info
         run: |
-          poetry run python --version
-          poetry run pip freeze | grep -E 'djangorestframework|Django'
+          uv run python --version
+          uv pip freeze | grep -E 'djangorestframework|Django'
 
       - name: Run tests
         run: make test
@@ -110,53 +92,35 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Cache Poetry dependencies
-        uses: actions/cache@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-django4-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-django4-${{ hashFiles('**/poetry.lock') }}-
-            ${{ runner.os }}-poetry-django4-
-
-      - name: Cache virtual environment
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: ${{ runner.os }}-venv-django4-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-django4-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-
-            ${{ runner.os }}-venv-django4-py${{ matrix.python-version }}-
-
-      - name: Setup Poetry
-        uses: abatilo/actions-poetry@v4
-        with:
-          poetry-version: "1.8.4"
+          enable-cache: true
 
       - name: Install dependencies
-        run: poetry install --only main,test --all-extras
+        run: uv sync --extra test --extra djet --extra webauthn
 
       - name: Install Django version
         run: |
           if [ "${{ matrix.django-version }}" = "latest" ]; then
-            poetry run pip install --upgrade "Django"  # Force upgrade to latest
+            uv add --upgrade "Django"  # Force upgrade to latest
           else
             # First try exact version, if it fails try to install the major.minor version
             echo "Installing Django ${{ matrix.django-version }}..."
-            if ! poetry run pip install "Django==${{ matrix.django-version }}"; then
+            if ! uv add "Django==${{ matrix.django-version }}"; then
               echo "Exact version failed, trying to install the latest patch version..."
               MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
-              poetry run pip install "Django~=$MAJOR_MINOR.0"
+              uv add "Django~=$MAJOR_MINOR.0"
             fi
           fi
 
       - name: Install DRF version
-        run: poetry run pip install --upgrade "djangorestframework==${{ matrix.drf-version }}"
+        run: uv add --upgrade "djangorestframework==${{ matrix.drf-version }}"
 
       - name: Show environment info
         run: |
-          poetry run python --version
-          poetry run pip freeze | grep -E 'djangorestframework|Django'
+          uv run python --version
+          uv pip freeze | grep -E 'djangorestframework|Django'
 
       - name: Run tests
         run: make test
@@ -195,53 +159,35 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Cache Poetry dependencies
-        uses: actions/cache@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-django5-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-django5-${{ hashFiles('**/poetry.lock') }}-
-            ${{ runner.os }}-poetry-django5-
-
-      - name: Cache virtual environment
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: ${{ runner.os }}-venv-django5-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-django5-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-
-            ${{ runner.os }}-venv-django5-py${{ matrix.python-version }}-
-
-      - name: Setup Poetry
-        uses: abatilo/actions-poetry@v4
-        with:
-          poetry-version: "1.8.4"
+          enable-cache: true
 
       - name: Install dependencies
-        run: poetry install --only main,test --all-extras
+        run: uv sync --extra test --extra djet --extra webauthn
 
       - name: Install Django version
         run: |
           if [ "${{ matrix.django-version }}" = "latest" ]; then
-            poetry run pip install --upgrade "Django"  # Force upgrade to latest
+            uv add --upgrade "Django"  # Force upgrade to latest
           else
             # First try exact version, if it fails try to install the major.minor version
             echo "Installing Django ${{ matrix.django-version }}..."
-            if ! poetry run pip install "Django==${{ matrix.django-version }}"; then
+            if ! uv add "Django==${{ matrix.django-version }}"; then
               echo "Exact version failed, trying to install the latest patch version..."
               MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
-              poetry run pip install "Django~=$MAJOR_MINOR.0"
+              uv add "Django~=$MAJOR_MINOR.0"
             fi
           fi
 
       - name: Install DRF version
-        run: poetry run pip install --upgrade "djangorestframework==${{ matrix.drf-version }}"
+        run: uv add --upgrade "djangorestframework==${{ matrix.drf-version }}"
 
       - name: Show environment info
         run: |
-          poetry run python --version
-          poetry run pip freeze | grep -E 'djangorestframework|Django'
+          uv run python --version
+          uv pip freeze | grep -E 'djangorestframework|Django'
 
       - name: Run tests
         run: make test
@@ -256,7 +202,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   lock-file-check:
-    name: Check poetry.lock for changes
+    name: Check uv.lock for changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -265,13 +211,13 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Setup Poetry
-        uses: abatilo/actions-poetry@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          poetry-version: "1.8.4"
+          enable-cache: true
 
-      - name: Install dependencies to check poetry.lock
-        run: poetry install
+      - name: Install dependencies to check uv.lock
+        run: uv sync
 
-      - name: Check if poetry.lock is up to date
-        run: poetry check --lock
+      - name: Check if uv.lock is up to date
+        run: uv lock --check

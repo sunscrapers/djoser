@@ -1,18 +1,19 @@
-[tool.poetry]
+[project]
 name = "djoser"
-version = "2.3.2"
+version = "2.3.3"
 description = "REST implementation of Django authentication system."
 authors = [
-    "Sunscrapers <info@sunscrapers.com>",
+    {name = "Sunscrapers", email = "info@sunscrapers.com"},
 ]
 maintainers = [
-    "Tomasz Wojcik <djoser@tomwojcik.com>",
+    {name = "Tomasz Wojcik", email = "djoser@tomwojcik.com"},
 ]
-license = "MIT"
+license = {text = "MIT"}
+readme = "README.rst"
+requires-python = ">=3.9"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
-    "Framework :: Django :: 3.1",
     "Framework :: Django :: 3.2",
     "Framework :: Django :: 4.0",
     "Framework :: Django :: 4.1",
@@ -30,51 +31,56 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-repository = "https://github.com/sunscrapers/djoser"
-documentation = "https://djoser.readthedocs.io/"
-readme = "README.rst"
-include = ["djoser/locale/**/*.mo"]
-packages = [
-    { include = "djoser" },
+dependencies = [
+    "django>=3.2",
+    "djangorestframework>=3.14",
+    "djangorestframework-simplejwt>=5.0",
+    "social-auth-app-django>=5.0.0",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.9,<4.0"
-django = "^3.2"
-djangorestframework = "^3.14"
-djangorestframework-simplejwt = "^5.0"
-social-auth-app-django = "^5.0.0"
-djet = { version = "^0.3.0", optional = true }
-webauthn = { version = "<1.0", optional = true }
+[project.optional-dependencies]
+djet = ["djet>=0.3.0"]
+webauthn = ["webauthn<1.0"]
+test = [
+    "pytest>=7.2.2",
+    "coverage>=7.2.2",
+    "pytest-cov>=4.0.0",
+    "pytest-django>=4.5.2",
+    "tox>=4.4.8",
+    "babel>=2.12.1",
+    "pytest-mock>=3.14.0",
+    "deepdiff>=8.0.1",
+]
+code-quality = [
+    "black>=23.1,<26.0",
+    "ruff>=0.8.0",
+    "docformatter>=1.7.4",
+    "pyupgrade>=3.3.1",
+    "pre-commit-hooks>=4.4,<6.0",
+    "pre-commit>=4.1.0",
+]
+docs = [
+    "sphinx>=6.1.3",
+    "toml>=0.10.2",
+    "sphinx-rtd-theme>=1.2.0",
+]
 
-[tool.poetry.extras]
-# https://python-poetry.org/docs/pyproject/#extras
-djet = ["djet"]
-webauthn = ["webauthn"]
+[project.urls]
+Repository = "https://github.com/sunscrapers/djoser"
+Documentation = "https://djoser.readthedocs.io/"
 
-# poetry add <lib name> --group test
-[tool.poetry.group.test.dependencies]
-pytest = "^7.2.2"
-coverage = "^7.2.2"
-pytest-cov = "^4.0.0"
-pytest-django = "^4.5.2"
-tox = "^4.4.8"
-babel = "^2.12.1"
-pytest-mock = "^3.14.0"
-deepdiff = "^8.0.1"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry.group.code-quality.dependencies]
-black = ">=23.1,<26.0"
-ruff = "^0.8.0"
-docformatter = "^1.7.4"
-pyupgrade = "^3.3.1"
-pre-commit-hooks = ">=4.4,<6.0"
-pre-commit = "^4.1.0"
+[tool.hatch.build.targets.sdist]
+include = [
+    "/djoser",
+    "/djoser/locale/**/*.mo",
+]
 
-[tool.poetry.group.docs.dependencies]
-sphinx = "^6.1.3"
-toml = "^0.10.2"
-sphinx-rtd-theme = "^1.2.0"
+[tool.hatch.build.targets.wheel]
+packages = ["djoser"]
 
 [tool.black]
 line-length = 88
@@ -159,7 +165,3 @@ exclude_lines = [
     "pass",
     "raise ImportError",
 ]
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

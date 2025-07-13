@@ -24,10 +24,10 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          poetry-version: "1.8.4"
+          enable-cache: true
 
       - name: Get release tag
         id: get_tag
@@ -37,58 +37,38 @@ jobs:
           VERSION=${TAG#v}  # Remove "v" prefix if present
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Verify package version matches tag
-        run: |
-          PACKAGE_VERSION=$(poetry version -s)
-          if [ "$PACKAGE_VERSION" != "${{ env.VERSION }}" ]; then
-            echo "Package version ($PACKAGE_VERSION) does not match tag version (${{ env.VERSION }})"
-            exit 1
-          fi
-
       - name: Update package version from tag
         run: |
           echo "Updating version to ${{ env.VERSION }}"
-          poetry version ${{ env.VERSION }}
+          # Update version in pyproject.toml
+          sed -i "s/version = \".*\"/version = \"${{ env.VERSION }}\"/" pyproject.toml
 
       - name: Compile translations
         run: |
           echo "Compiling translation files..."
-          poetry run pybabel compile --domain django --directory djoser/locale -f
+          uv run pybabel compile --domain django --directory djoser/locale -f
 
       - name: Build package
         run: |
           echo "Building package..."
-          poetry build
+          uv build
           echo "Package contents:"
           ls -l dist/
 
       # Test PyPI deployment for pre-releases
-      - name: Configure Test PyPI
-        if: github.event.release.prerelease
-        run: |
-          echo "Configuring Test PyPI..."
-          poetry config repositories.testpypi https://test.pypi.org/legacy/
-          poetry config pypi-token.testpypi ${{ secrets.TEST_PYPI_TOKEN }}
-
       - name: Publish to Test PyPI
         if: github.event.release.prerelease
         run: |
           echo "Publishing to Test PyPI..."
-          poetry publish --no-interaction -r testpypi
+          uv publish --index-url https://test.pypi.org/legacy/ --token ${{ secrets.TEST_PYPI_TOKEN }}
           echo "Package published to Test PyPI successfully"
 
       # Production PyPI deployment
-      - name: Configure PyPI
-        if: "!github.event.release.prerelease"
-        run: |
-          echo "Configuring PyPI..."
-          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-
       - name: Publish to PyPI
         if: "!github.event.release.prerelease"
         run: |
           echo "Publishing to PyPI..."
-          poetry publish --no-interaction
+          uv publish --token ${{ secrets.PYPI_TOKEN }}
           echo "Package published to PyPI successfully"
 
       - name: Verify publish
