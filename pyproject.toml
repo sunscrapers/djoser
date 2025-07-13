@@ -12,7 +12,6 @@ license = "MIT"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
-    "Framework :: Django :: 3.1",
     "Framework :: Django :: 3.2",
     "Framework :: Django :: 4.0",
     "Framework :: Django :: 4.1",
@@ -40,8 +39,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
-django = "^3.2"
-djangorestframework = "^3.14"
+django = ">=3.2"
+djangorestframework = ">=3.14"
 djangorestframework-simplejwt = "^5.0"
 social-auth-app-django = "^5.0.0"
 djet = { version = "^0.3.0", optional = true }
