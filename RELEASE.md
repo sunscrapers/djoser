@@ -19,9 +19,7 @@ Djoser uses [Semantic Versioning](http://semver.org/) and follows this release p
 
 1. **Update Version Number**
    ```bash
-   # Update version in pyproject.toml
-   poetry version [patch|minor|major]
-   # or manually edit pyproject.toml line 3: version = "X.Y.Z"
+   # Manually edit pyproject.toml line 3: version = "X.Y.Z"
    ```
 
 2. **Update CHANGELOG.rst**
@@ -84,7 +82,7 @@ Once a GitHub release is created, the CI/CD pipeline automatically:
 
 1. **Validates** package version matches the git tag
 2. **Compiles** translations (`pybabel compile`)
-3. **Builds** the package (`poetry build`)
+3. **Builds** the package (`uv build`)
 4. **Publishes** to PyPI:
    - Pre-releases → Test PyPI
    - Stable releases → Production PyPI
