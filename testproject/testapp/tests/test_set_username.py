@@ -110,7 +110,7 @@ class SetUsernameViewTest(
         "djoser.serializers.SetUsernameSerializer.Meta.fields",
         (CustomUser.USERNAME_FIELD, "custom_username"),
     )
-    @mock.patch("djoser.views.User", CustomUser)
+    @mock.patch("djoser.views.user.set_username.User", CustomUser)
     @override_settings(
         AUTH_USER_MODEL="testapp.CustomUser",
         DJOSER=dict(settings.DJOSER, **{"LOGIN_FIELD": CustomUser.USERNAME_FIELD}),
@@ -132,7 +132,7 @@ class SetUsernameViewTest(
         "djoser.serializers.SetUsernameSerializer.Meta.fields",
         (CustomUser.USERNAME_FIELD, "custom_username"),
     )
-    @mock.patch("djoser.views.User", CustomUser)
+    @mock.patch("djoser.views.user.set_username.User", CustomUser)
     @override_settings(
         AUTH_USER_MODEL="testapp.CustomUser",
         DJOSER=dict(

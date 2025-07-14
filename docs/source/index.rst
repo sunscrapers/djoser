@@ -8,7 +8,7 @@ Welcome to djoser's documentation!
 
 .. note::
 
-   djoser 2.x is not backward compatible with djoser 1.x
+   djoser 3.x is not backward compatible with djoser 2.x
 
 .. toctree::
     :maxdepth: 2
