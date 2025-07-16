@@ -112,6 +112,41 @@ default_settings = {
             "LOGIN_SERIALIZER": "djoser.webauthn.serializers.WebauthnLoginSerializer",
         }
     ),
+    "PASSWORDLESS": {
+            "SHORT_TOKEN_LENGTH": 6,
+            "LONG_TOKEN_LENGTH": 64,
+            "SHORT_TOKEN_CHARS": "0123456789",
+            "LONG_TOKEN_CHARS": "abcdefghijklmnopqrstuvwxyz0123456789",
+            "TOKEN_LIFETIME": 600,
+            "REGISTER_NONEXISTENT_USERS": True,
+            "EMAIL_FIELD_NAME": "email",
+            "MOBILE_FIELD_NAME": "mobile",
+            # If true, an attempt to redeem a token with the wrong token type
+            # will count for the times a token has been used
+            "INCORRECT_SHORT_TOKEN_REDEEMS_TOKEN": False,
+            "ALLOWED_PASSWORDLESS_METHODS": ["EMAIL"], # or ["MOBILE"] or ["EMAIL", "MOBILE"]
+            "MAX_TOKEN_USES": 1,
+            "GENERATORS": ObjDict({
+                "username_generator": "djoser.passwordless.utils.username_generator",
+            }),
+            "EMAIL": ObjDict ({
+                "passwordless_request": "djoser.passwordless.email.PasswordlessRequestEmail",
+            }),
+            "SERIALIZERS": ObjDict({
+                "passwordless_request_email_token": "djoser.passwordless.serializers.EmailPasswordlessAuthSerializer",
+                "passwordless_request_mobile_token": "djoser.passwordless.serializers.MobilePasswordlessAuthSerializer",
+                "passwordless_token_exchange": "djoser.passwordless.serializers.PasswordlessTokenExchangeSerializer",
+            }),
+            "PERMISSIONS": ObjDict({
+                "passwordless_token_exchange": ["rest_framework.permissions.AllowAny"],
+                "passwordless_token_request": ["rest_framework.permissions.AllowAny"],
+            }),
+            "DECORATORS": ObjDict({
+                "token_request_rate_limit_decorator": "djoser.passwordless.utils.token_request_limiter",
+                "token_redeem_rate_limit_decorator": "djoser.passwordless.utils.token_redeem_limiter",
+            }),
+            "SMS_SENDER": "djoser.passwordless.sms.send_sms",
+        }
 }
 
 SETTINGS_TO_IMPORT = ["TOKEN_MODEL", "SOCIAL_AUTH_TOKEN_STRATEGY"]

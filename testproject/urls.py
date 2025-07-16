@@ -7,6 +7,7 @@ urlpatterns = (
     re_path(r"^auth/", include("djoser.urls.jwt")),
     re_path(r"^auth/", include("djoser.social.urls")),
     re_path(r"^webauthn/", include("djoser.webauthn.urls")),
+    re_path(r"^passwordless/", include("djoser.passwordless.urls")),
     re_path(
         r"^webauthn-example/$", TemplateView.as_view(template_name="webauthn.html")
     ),
