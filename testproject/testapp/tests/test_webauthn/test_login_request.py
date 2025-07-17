@@ -1,39 +1,49 @@
+import pytest
 from django.contrib.auth import get_user_model
-from django.test import override_settings
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
-from testapp.tests.common import create_user
-from django.conf import settings
 
 from .utils import create_credential_options
 
 User = get_user_model()
 
 
-@override_settings(DJOSER=dict(settings.DJOSER, **{"LOGIN_FIELD": "username"}))
-class TestLoginRequestView(APITestCase, assertions.StatusCodeAssertionsMixin):
-    url = reverse("webauthn_login_request")
+@pytest.fixture
+def credential_options(db, user):
+    return create_credential_options(with_user=True, user=user)
 
-    def test_post_with_non_existing_username_should_return_400(self):
-        data = {"username": "john"}
-        response = self.client.post(self.url, data=data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+@pytest.fixture
+def url():
+    return reverse("webauthn_login_request")
 
-    def test_post_with_username_not_registered_with_webauthn_should_return_400(self):
-        user = create_user()
+
+@pytest.mark.django_db
+class TestLoginRequestView:
+    @pytest.fixture(autouse=True)
+    def settings(self, settings):
+        settings.DJOSER = {**settings.DJOSER, **{"LOGIN_FIELD": "username"}}
+        return settings
+
+    def test_post_with_non_existing_username_should_return_400(
+        self, anonymous_api_client, url
+    ):
+        data = {"username": "non_existent_user"}
+        response = anonymous_api_client.post(url, data=data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_post_with_username_not_registered_with_webauthn_should_return_400(
+        self, anonymous_api_client, user, url
+    ):
         data = {"username": user.username}
-        response = self.client.post(self.url, data=data)
-
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        response = anonymous_api_client.post(url, data=data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_post_with_username_registered_with_webauthn_should_return_login_assertion(
-        self,
+        self, anonymous_api_client, credential_options, url
     ):
-        co = create_credential_options(with_user=True)
-        data = {"username": co.username}
-        response = self.client.post(self.url, data=data)
-
-        self.assert_status_equal(response, status.HTTP_200_OK)
+        data = {"username": credential_options.username}
+        response = anonymous_api_client.post(url, data=data)
+        assert response.status_code == status.HTTP_200_OK
+        assert "publicKey" in response.data
+        assert "challenge" in response.data["publicKey"]

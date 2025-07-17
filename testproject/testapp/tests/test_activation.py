@@ -1,105 +1,132 @@
+import pytest
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
+from django.core import mail
 from django.test.utils import override_settings
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
-from testapp.tests.common import create_user
 
 import djoser.signals
 import djoser.utils
 import djoser.views
 from djoser.conf import settings as default_settings
 
+User = get_user_model()
 
-class ActivationViewTest(
-    APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
-):
-    def setUp(self):
-        self.base_url = reverse("user-activation")
-        self.signal_sent = False
 
-    def signal_receiver(self, *args, **kwargs):
-        self.signal_sent = True
+@pytest.fixture
+def user(user):
+    user.is_active = False
+    user.save()
+    return user
 
-    def test_post_activate_user_and_not_login(self):
-        user = create_user()
-        user.is_active = False
-        user.save()
+
+@pytest.fixture
+def url():
+    return reverse("user-activation")
+
+
+@pytest.fixture
+def signal_tracker():
+    class SignalTracker:
+        received = False
+
+        def signal_receiver(self, sender, **kwargs):
+            self.received = True
+
+    tracker = SignalTracker()
+    djoser.signals.user_activated.connect(tracker.signal_receiver)
+    yield tracker
+    djoser.signals.user_activated.disconnect(tracker.signal_receiver)
+
+
+@pytest.mark.django_db
+class TestActivationView:
+    def test_post_activate_user_and_not_login(self, anonymous_api_client, user, url):
+        uid = djoser.utils.encode_uid(user.pk)
+        token = default_token_generator.make_token(user)
         data = {
-            "uid": djoser.utils.encode_uid(user.pk),
-            "token": default_token_generator.make_token(user),
+            "uid": uid,
+            "token": token,
         }
 
-        response = self.client.post(self.base_url, data)
+        response = anonymous_api_client.post(url, data)
         user.refresh_from_db()
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        self.assertTrue(user.is_active)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert user.is_active
 
-    def test_post_respond_with_bad_request_when_wrong_uid(self):
-        user = create_user()
-        data = {"uid": "wrong-uid", "token": default_token_generator.make_token(user)}
+    def test_post_respond_with_bad_request_when_wrong_uid(
+        self, anonymous_api_client, user, url
+    ):
+        token = default_token_generator.make_token(user)
+        data = {"uid": "wrong-uid", "token": token}
 
-        response = self.client.post(self.base_url, data)
+        response = anonymous_api_client.post(url, data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(list(response.data.keys()), ["uid"])
-        self.assertEqual(
-            response.data["uid"],
-            [default_settings.CONSTANTS.messages.INVALID_UID_ERROR],
-        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert list(response.data.keys()) == ["uid"]
+        assert response.data["uid"] == [
+            default_settings.CONSTANTS.messages.INVALID_UID_ERROR
+        ]
 
-    def test_post_respond_with_bad_request_when_stale_token(self):
-        user = create_user()
-        djoser.signals.user_activated.connect(self.signal_receiver)
+    def test_post_respond_with_403_when_already_active(
+        self, anonymous_api_client, user, url, signal_tracker
+    ):
+        user.is_active = True
+        user.save()
+
+        uid = djoser.utils.encode_uid(user.pk)
+        token = default_token_generator.make_token(user)
         data = {
-            "uid": djoser.utils.encode_uid(user.pk),
-            "token": default_token_generator.make_token(user),
+            "uid": uid,
+            "token": token,
         }
 
-        response = self.client.post(self.base_url, data)
+        response = anonymous_api_client.post(url, data)
 
-        self.assert_status_equal(response, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(list(response.data.keys()), ["detail"])
-        self.assertEqual(
-            response.data["detail"],
-            default_settings.CONSTANTS.messages.STALE_TOKEN_ERROR,
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert list(response.data.keys()) == ["detail"]
+        assert (
+            response.data["detail"]
+            == default_settings.CONSTANTS.messages.STALE_TOKEN_ERROR
         )
-        self.assertFalse(self.signal_sent)
+        assert not signal_tracker.received
 
-    def test_post_respond_with_bad_request_when_wrong_token(self):
-        user = create_user()
-        djoser.signals.user_activated.connect(self.signal_receiver)
-        data = {"uid": djoser.utils.encode_uid(user.pk), "token": "wrong-token"}
+    def test_post_respond_with_bad_request_when_wrong_token(
+        self, anonymous_api_client, user, url, signal_tracker
+    ):
+        uid = djoser.utils.encode_uid(user.pk)
+        data = {"uid": uid, "token": "wrong-token"}
 
-        response = self.client.post(self.base_url, data)
+        response = anonymous_api_client.post(url, data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(list(response.data.keys()), ["token"])
-        self.assertEqual(
-            response.data["token"],
-            [default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR],
-        )
-        self.assertFalse(self.signal_sent)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert list(response.data.keys()) == ["token"]
+        assert response.data["token"] == [
+            default_settings.CONSTANTS.messages.INVALID_TOKEN_ERROR
+        ]
+        assert not signal_tracker.received
 
     @override_settings(
         DJOSER=dict(settings.DJOSER, **{"SEND_CONFIRMATION_EMAIL": True})
     )
-    def test_post_sent_confirmation_email(self):
-        user = create_user()
-        user.is_active = False
-        user.save()
-        djoser.signals.user_activated.connect(self.signal_receiver)
+    def test_post_sent_confirmation_email(
+        self, anonymous_api_client, user, url, signal_tracker
+    ):
+        uid = djoser.utils.encode_uid(user.pk)
+        token = default_token_generator.make_token(user)
         data = {
-            "uid": djoser.utils.encode_uid(user.pk),
-            "token": default_token_generator.make_token(user),
+            "uid": uid,
+            "token": token,
         }
 
-        response = self.client.post(self.base_url, data)
+        response = anonymous_api_client.post(url, data)
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        self.assert_emails_in_mailbox(1)
-        self.assert_email_exists(to=[user.email])
-        self.assertTrue(self.signal_sent)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].to == [user.email]
+        assert signal_tracker.received
+        user.refresh_from_db()
+        assert user.is_active

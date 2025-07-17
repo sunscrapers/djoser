@@ -1,76 +1,92 @@
+import pytest
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core import mail
 from django.test.utils import override_settings
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
 from testapp.models import CustomUser
-from testapp.tests.common import create_user, mock
 
 from djoser.compat import get_user_email
 
+User = get_user_model()
 
-class TestResendActivationEmail(
-    APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
-):
-    def setUp(self):
-        self.base_url = reverse("user-resend-activation")
 
+@pytest.fixture
+def url():
+    return reverse("user-resend-activation")
+
+
+@pytest.fixture
+def active_user(user):
+    return user
+
+
+@pytest.fixture
+def inactive_user(user):
+    user.is_active = False
+    user.save()
+    return user
+
+
+@pytest.mark.django_db
+class TestResendActivationEmail:
     @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
-    def test_resend_activation_view(self):
-        user = create_user(is_active=False)
-        data = {"email": user.email}
-        response = self.client.post(self.base_url, data)
+    def test_resend_activation_view(self, client, url, inactive_user):
+        data = {"email": inactive_user.email}
+        response = client.post(url, data)
 
-        self.assert_email_exists(to=[user.email])
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].to == [inactive_user.email]
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": False}))
-    def test_dont_resend_activation_when_disabled(self):
-        user = create_user(is_active=False)
-        data = {"email": user.email}
-        response = self.client.post(self.base_url, data)
+    def test_dont_resend_activation_when_disabled(self, client, url, inactive_user):
+        data = {"email": inactive_user.email}
+        response = client.post(url, data)
 
-        self.assert_emails_in_mailbox(0)
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-
-    @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
-    def test_dont_resend_activation_when_active(self):
-        user = create_user(is_active=True)
-        data = {"email": user.email}
-        response = self.client.post(self.base_url, data)
-
-        self.assert_emails_in_mailbox(0)
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        assert len(mail.outbox) == 0
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
-    def test_dont_resend_activation_when_no_password(self):
-        user = create_user(is_active=False, password=None)
+    def test_dont_resend_activation_when_active(self, client, url, user):
         data = {"email": user.email}
-        response = self.client.post(self.base_url, data)
+        response = client.post(url, data)
 
-        self.assert_emails_in_mailbox(0)
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        assert len(mail.outbox) == 0
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
-    @mock.patch("djoser.serializers.User", CustomUser)
-    @mock.patch("djoser.views.User", CustomUser)
+    @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
+    def test_dont_resend_activation_when_no_password(self, client, url, inactive_user):
+        inactive_user.set_unusable_password()
+        inactive_user.save()
+        data = {"email": inactive_user.email}
+        response = client.post(url, data)
+
+        assert len(mail.outbox) == 0
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
     @override_settings(
         AUTH_USER_MODEL="testapp.CustomUser",
         DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}),
     )
-    def test_resend_activation_view_custom_user(self):
-        user = create_user(use_custom_data=True, is_active=False)
-        data = {"custom_email": get_user_email(user)}
-        response = self.client.post(self.base_url, data)
+    def test_resend_activation_view_custom_user(
+        self, client, url, mocker, inactive_user
+    ):
+        mocker.patch("djoser.serializers.User", CustomUser)
+        mocker.patch("djoser.views.User", CustomUser)
 
-        self.assert_emails_in_mailbox(1)
-        self.assert_email_exists(to=[get_user_email(user)])
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        data = {"custom_email": get_user_email(inactive_user)}
+        response = client.post(url, data)
+
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].to == [get_user_email(inactive_user)]
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
     @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
-    def test_post_should_return_no_content_if_user_does_not_exist(self):
+    def test_post_should_return_no_content_if_user_does_not_exist(self, client, url):
         data = {"email": "john@beatles.com"}
+        response = client.post(url, data)
 
-        response = self.client.post(self.base_url, data)
-
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert len(mail.outbox) == 0

@@ -17,7 +17,10 @@ AUTH_PASSWORD_VALIDATORS = [{"NAME": "testapp.validators.Is666"}]
 
 SECRET_KEY = "_"
 
-MIDDLEWARE = ["django.contrib.sessions.middleware.SessionMiddleware"]
+MIDDLEWARE = (
+    "django.middleware.common.CommonMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+)
 
 
 INSTALLED_APPS = (
@@ -76,3 +79,5 @@ DJOSER = {
 
 # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html#settings
 SIMPLE_JWT = {}
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
