@@ -18,7 +18,7 @@ class TestUserViewSetMe:
     def setup(self):
         self.base_url = reverse("user-me")
 
-    def test_get_return_user(self, authenticated_client):
+    def test_get_current_user_returns_user_data(self, authenticated_client):
         response = authenticated_client.get(self.base_url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -26,7 +26,7 @@ class TestUserViewSetMe:
             [User.USERNAME_FIELD, User._meta.pk.name] + User.REQUIRED_FIELDS
         )
 
-    def test_put_email_change_with_send_activation_email_false(
+    def test_put_email_change_without_activation_email_requirement(
         self, authenticated_client, user, djoser_settings
     ):
         djoser_settings["SEND_ACTIVATION_EMAIL"] = False
@@ -38,7 +38,7 @@ class TestUserViewSetMe:
         assert data["email"] == user.email
         assert user.is_active
 
-    def test_put_email_change_with_send_activation_email_true(
+    def test_put_email_change_with_activation_email_requirement(
         self, authenticated_client, user, mailoutbox, djoser_settings
     ):
         djoser_settings["SEND_ACTIVATION_EMAIL"] = True
@@ -52,7 +52,7 @@ class TestUserViewSetMe:
         assert len(mailoutbox) == 1
         assert mailoutbox[0].to == [data["email"]]
 
-    def test_patch_email_change_with_send_activation_email_false(
+    def test_patch_email_change_without_activation_email_requirement(
         self, authenticated_client, user, djoser_settings
     ):
         djoser_settings["SEND_ACTIVATION_EMAIL"] = False
@@ -64,7 +64,7 @@ class TestUserViewSetMe:
         assert data["email"] == user.email
         assert user.is_active
 
-    def test_patch_email_change_with_send_activation_email_true(
+    def test_patch_email_change_with_activation_email_requirement(
         self, authenticated_client, user, mailoutbox, djoser_settings
     ):
         djoser_settings["SEND_ACTIVATION_EMAIL"] = True
@@ -78,7 +78,9 @@ class TestUserViewSetMe:
         assert len(mailoutbox) == 1
         assert mailoutbox[0].to == [data["email"]]
 
-    def test_serializer(self, djoser_settings, authenticated_client, user):
+    def test_current_user_serializer_configuration(
+        self, djoser_settings, authenticated_client, user
+    ):
         """Test that the endpoints use the proper serializer.
 
         How it works: it adds an additional field to the current_user
@@ -100,7 +102,9 @@ class TestUserViewSetMeDelete:
     def setup(self):
         self.base_url = reverse("user-me")
 
-    def test_delete_user_if_logged_in(self, authenticated_client, user):
+    def test_delete_authenticated_user_with_correct_password(
+        self, authenticated_client, user
+    ):
         assert User.objects.filter(username=user.username).exists()
         data = {"current_password": "secret"}
 
@@ -109,7 +113,9 @@ class TestUserViewSetMeDelete:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not User.objects.filter(username=user.username).exists()
 
-    def test_not_delete_if_fails_password_validation(self, authenticated_client, user):
+    def test_delete_user_fails_with_incorrect_password(
+        self, authenticated_client, user
+    ):
         assert User.objects.filter(username=user.username).exists()
         data = {"current_password": "incorrect"}
 
