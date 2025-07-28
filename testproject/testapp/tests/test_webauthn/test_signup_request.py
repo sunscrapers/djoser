@@ -1,29 +1,26 @@
-from djet import assertions
+import pytest
+from testapp.factories import UserFactory
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
-from testapp.tests.common import create_user
 
 from djoser.webauthn.models import CredentialOptions
 
 
-class SignupRequestViewTest(
-    APITestCase,
-    assertions.StatusCodeAssertionsMixin,
-    assertions.InstanceAssertionsMixin,
-):
+@pytest.mark.django_db
+def test_post_with_duplicate_username_should_fail(api_client):
     url = reverse("webauthn_signup_request")
+    user = UserFactory.create()
+    data = {"username": user.username, "display_name": user.username}
+    response = api_client.post(url, data=data)
 
-    def test_post_with_duplicate_username_should_fail(self):
-        user = create_user()
-        data = {"username": user.username, "display_name": user.username}
-        response = self.client.post(self.url, data=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
 
-    def test_post_should_create_credential_options(self):
-        data = {"username": "john", "display_name": "John Doe"}
-        response = self.client.post(self.url, data=data)
+@pytest.mark.django_db
+def test_post_should_create_credential_options(api_client):
+    url = reverse("webauthn_signup_request")
+    data = {"username": "john", "display_name": "John Doe"}
+    response = api_client.post(url, data=data)
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
-        self.assert_instance_exists(CredentialOptions, username=data["username"])
+    assert response.status_code == status.HTTP_200_OK
+    assert CredentialOptions.objects.filter(username=data["username"]).exists()

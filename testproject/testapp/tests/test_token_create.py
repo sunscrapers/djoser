@@ -1,78 +1,71 @@
+import pytest
 from django.contrib.auth import user_logged_in, user_login_failed
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
-from testapp.tests.common import create_user
 
 from djoser.conf import settings
 
 
-class TokenCreateViewTest(
-    APITestCase,
-    assertions.StatusCodeAssertionsMixin,
-    assertions.InstanceAssertionsMixin,
-):
-    def setUp(self):
-        self.signal_sent = False
+@pytest.mark.django_db
+class TestTokenCreateView:
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
         self.base_url = reverse("login")
 
-    def signal_receiver(self, *args, **kwargs):
-        self.signal_sent = True
-
-    def test_post_should_login_user(self):
-        user = create_user()
+    def test_post_should_login_user(self, api_client, user, signal_tracker):
         previous_last_login = user.last_login
         data = {"username": user.username, "password": user.raw_password}
-        user_logged_in.connect(self.signal_receiver)
+        user_logged_in.connect(signal_tracker.receiver)
 
-        response = self.client.post(self.base_url, data)
+        response = api_client.post(self.base_url, data)
         user.refresh_from_db()
 
-        self.assert_status_equal(response, status.HTTP_200_OK)
-        self.assertEqual(response.data["auth_token"], user.auth_token.key)
-        self.assertNotEqual(user.last_login, previous_last_login)
-        self.assertTrue(self.signal_sent)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["auth_token"] == user.auth_token.key
+        assert user.last_login != previous_last_login
+        assert signal_tracker.signal_sent
 
-    def test_post_should_not_login_if_user_is_not_active(self):
+    def test_post_should_not_login_if_user_is_not_active(
+        self, api_client, inactive_user, signal_tracker
+    ):
         """In Django >= 1.10 authenticate() returns None if user is inactive,
         while in Django < 1.10 authenticate() succeeds if user is inactive."""
-        user = create_user()
-        data = {"username": user.username, "password": user.raw_password}
-        user.is_active = False
-        user.save()
-        user_logged_in.connect(self.signal_receiver)
+        data = {
+            "username": inactive_user.username,
+            "password": inactive_user.raw_password,
+        }
+        user_logged_in.connect(signal_tracker.receiver)
 
-        response = self.client.post(self.base_url, data)
+        response = api_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.data["non_field_errors"][0],
-            settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR,
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert (
+            response.data["non_field_errors"][0]
+            == settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR
         )
-        self.assertFalse(self.signal_sent)
+        assert not signal_tracker.signal_sent
 
-    def test_post_should_not_login_if_invalid_credentials(self):
-        user = create_user()
+    def test_post_should_not_login_if_invalid_credentials(
+        self, api_client, user, signal_tracker
+    ):
         data = {"username": user.username, "password": "wrong"}
-        user_login_failed.connect(self.signal_receiver)
+        user_login_failed.connect(signal_tracker.receiver)
 
-        response = self.client.post(self.base_url, data)
+        response = api_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.data["non_field_errors"],
-            [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR],
-        )
-        self.assertTrue(self.signal_sent)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["non_field_errors"] == [
+            settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR
+        ]
+        assert signal_tracker.signal_sent
 
-    def test_post_should_not_login_if_empty_request(self):
+    def test_post_should_not_login_if_empty_request(self, api_client):
         data = {}
 
-        response = self.client.post(self.base_url, data)
+        response = api_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.data["non_field_errors"],
-            [settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR],
-        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["non_field_errors"] == [
+            settings.CONSTANTS.messages.INVALID_CREDENTIALS_ERROR
+        ]

@@ -1,5 +1,4 @@
-from testapp.tests.common import create_user
-
+from testapp.factories import UserFactory
 from djoser.webauthn.models import CredentialOptions
 
 
@@ -15,6 +14,6 @@ def create_credential_options(
         username=username,
         display_name=display_name,
         ukey=ukey,
-        user=None if not with_user else create_user(username=username),
+        user=None if not with_user else UserFactory.create(username=username),
         credential_id="f00",
     )
