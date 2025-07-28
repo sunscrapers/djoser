@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from social_django.utils import load_backend, load_strategy
+from social_core.exceptions import MissingBackend
 
 from djoser.conf import settings
 
@@ -20,7 +21,13 @@ class ProviderAuthView(generics.CreateAPIView):
         strategy.session_set("redirect_uri", redirect_uri)
 
         backend_name = self.kwargs["provider"]
-        backend = load_backend(strategy, backend_name, redirect_uri=redirect_uri)
+        try:
+            backend = load_backend(strategy, backend_name, redirect_uri=redirect_uri)
+        except MissingBackend:
+            return Response(
+                {"detail": f"Provider '{backend_name}' not supported"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         authorization_url = backend.auth_url()
         return Response(data={"authorization_url": authorization_url})

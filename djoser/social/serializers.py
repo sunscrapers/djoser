@@ -30,6 +30,10 @@ class ProviderAuthSerializer(serializers.Serializer):
             user = backend.auth_complete()
         except exceptions.AuthException as e:
             raise serializers.ValidationError(str(e))
+        except (ConnectionError, OSError) as e:
+            raise serializers.ValidationError(
+                f"Network error during authentication: {str(e)}"
+            )
         return {"user": user}
 
     def _validate_state(self, value):
