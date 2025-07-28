@@ -1,14 +1,12 @@
-from django.conf import settings
+import pytest
+from testapp.factories import UserFactory, CustomUserFactory
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import mail
-from django.test.utils import override_settings
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
 from testapp.models import CustomUser
-from testapp.tests.common import create_user, mock
+from unittest import mock
 
 from djoser.compat import get_user_email
 from djoser.conf import settings as default_settings
@@ -16,92 +14,109 @@ from djoser.conf import settings as default_settings
 User = get_user_model()
 
 
-class UsernameResetViewTest(
-    APITestCase, assertions.StatusCodeAssertionsMixin, assertions.EmailAssertionsMixin
+@pytest.mark.django_db
+def test_post_should_send_email_to_user_with_username_reset_link(
+    api_client, mailoutbox
 ):
-    def setUp(self):
-        self.base_url = reverse(f"user-reset-{User.USERNAME_FIELD}")
+    base_url = reverse(f"user-reset-{User.USERNAME_FIELD}")
+    user = UserFactory.create()
+    data = {"email": user.email}
 
-    def test_post_should_send_email_to_user_with_username_reset_link(self):
-        user = create_user()
-        data = {"email": user.email}
+    response = api_client.post(base_url, data)
+    request = response.wsgi_request
 
-        response = self.client.post(self.base_url, data)
-        request = response.wsgi_request
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert len(mailoutbox) == 1
+    assert user.email in [recipient for email in mailoutbox for recipient in email.to]
+    site = get_current_site(request)
+    assert site.domain in mail.outbox[0].body
+    assert site.name in mail.outbox[0].body
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        self.assert_emails_in_mailbox(1)
-        self.assert_email_exists(to=[user.email])
-        site = get_current_site(request)
-        self.assertIn(site.domain, mail.outbox[0].body)
-        self.assertIn(site.name, mail.outbox[0].body)
 
-    def test_post_send_email_to_user_with_request_domain_and_site_name(self):
-        user = create_user()
-        data = {"email": user.email}
+@pytest.mark.django_db
+def test_post_send_email_to_user_with_request_domain_and_site_name(api_client):
+    base_url = reverse(f"user-reset-{User.USERNAME_FIELD}")
+    user = UserFactory.create()
+    data = {"email": user.email}
 
-        response = self.client.post(self.base_url, data)
-        request = response.wsgi_request
+    response = api_client.post(base_url, data)
+    request = response.wsgi_request
 
-        self.assertIn(request.get_host(), mail.outbox[0].body)
+    assert request.get_host() in mail.outbox[0].body
 
-    def test_post_should_not_send_email_to_user_if_user_does_not_exist(self):
-        data = {"email": "john@beatles.com"}
 
-        response = self.client.post(self.base_url, data)
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        self.assert_emails_in_mailbox(0)
+@pytest.mark.django_db
+def test_post_should_not_send_email_to_user_if_user_does_not_exist(
+    api_client, mailoutbox
+):
+    base_url = reverse(f"user-reset-{User.USERNAME_FIELD}")
+    data = {"email": "john@beatles.com"}
 
-    def test_post_should_return_no_content_if_user_does_not_exist(self):
-        data = {"email": "john@beatles.com"}
+    response = api_client.post(base_url, data)
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert len(mailoutbox) == 0
 
-        response = self.client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+@pytest.mark.django_db
+def test_post_should_return_no_content_if_user_does_not_exist(api_client):
+    base_url = reverse(f"user-reset-{User.USERNAME_FIELD}")
+    data = {"email": "john@beatles.com"}
 
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{"USERNAME_RESET_SHOW_EMAIL_NOT_FOUND": True})
+    response = api_client.post(base_url, data)
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+@pytest.mark.django_db
+def test_post_should_return_bad_request_if_user_does_not_exist(
+    api_client, djoser_settings
+):
+    djoser_settings.update(USERNAME_RESET_SHOW_EMAIL_NOT_FOUND=True)
+    base_url = reverse(f"user-reset-{User.USERNAME_FIELD}")
+    data = {"email": "john@beatles.com"}
+
+    response = api_client.post(base_url, data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()[0] == default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
+
+
+@pytest.mark.django_db
+@mock.patch("djoser.serializers.User", CustomUser)
+@mock.patch("djoser.views.User", CustomUser)
+def test_post_should_send_email_to_custom_user_with_username_reset_link(
+    api_client, djoser_settings, mailoutbox
+):
+    djoser_settings.update(AUTH_USER_MODEL="testapp.CustomUser")
+    base_url = reverse(f"user-reset-{User.USERNAME_FIELD}")
+    user = CustomUserFactory.create(custom_required_field="42")
+    data = {"custom_email": get_user_email(user)}
+
+    response = api_client.post(base_url, data)
+    request = response.wsgi_request
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert len(mailoutbox) == 1
+    assert get_user_email(user) in [
+        recipient for email in mailoutbox for recipient in email.to
+    ]
+    site = get_current_site(request)
+    assert site.domain in mail.outbox[0].body
+    assert site.name in mail.outbox[0].body
+
+
+@pytest.mark.django_db
+@mock.patch("djoser.serializers.User", CustomUser)
+@mock.patch("djoser.views.User", CustomUser)
+def test_post_should_return_bad_request_with_custom_email_field_if_user_does_not_exist(
+    api_client, djoser_settings
+):
+    djoser_settings.update(
+        AUTH_USER_MODEL="testapp.CustomUser", USERNAME_RESET_SHOW_EMAIL_NOT_FOUND=True
     )
-    def test_post_should_return_bad_request_if_user_does_not_exist(self):
-        data = {"email": "john@beatles.com"}
+    base_url = reverse(f"user-reset-{User.USERNAME_FIELD}")
+    data = {"custom_email": "john@beatles.com"}
 
-        response = self.client.post(self.base_url, data)
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.json()[0], default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
-        )
+    response = api_client.post(base_url, data)
 
-    @mock.patch("djoser.serializers.User", CustomUser)
-    @override_settings(AUTH_USER_MODEL="testapp.CustomUser")
-    def test_post_should_send_email_to_custom_user_with_username_reset_link(
-        self,
-    ):  # noqa
-        user = create_user(use_custom_data=True)
-        data = {"custom_email": get_user_email(user)}
-
-        response = self.client.post(self.base_url, data)
-        request = response.wsgi_request
-
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        self.assert_emails_in_mailbox(1)
-        self.assert_email_exists(to=[get_user_email(user)])
-        site = get_current_site(request)
-        self.assertIn(site.domain, mail.outbox[0].body)
-        self.assertIn(site.name, mail.outbox[0].body)
-
-    @mock.patch("djoser.serializers.User", CustomUser)
-    @override_settings(
-        AUTH_USER_MODEL="testapp.CustomUser",
-        DJOSER=dict(settings.DJOSER, **{"USERNAME_RESET_SHOW_EMAIL_NOT_FOUND": True}),
-    )
-    def test_post_should_return_bad_request_with_custom_email_field_if_user_does_not_exist(  # NOQA: E501
-        self,
-    ):
-        data = {"custom_email": "john@beatles.com"}
-
-        response = self.client.post(self.base_url, data)
-
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.json()[0], default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND
-        )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()[0] == default_settings.CONSTANTS.messages.EMAIL_NOT_FOUND

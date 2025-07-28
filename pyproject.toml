@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "djoser"
-version = "2.3.1"
+version = "2.3.3"
 description = "REST implementation of Django authentication system."
 authors = [
     "Sunscrapers <info@sunscrapers.com>",
@@ -12,12 +12,13 @@ license = "MIT"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
-    "Framework :: Django :: 3.1",
     "Framework :: Django :: 3.2",
     "Framework :: Django :: 4.0",
     "Framework :: Django :: 4.1",
     "Framework :: Django :: 4.2",
-    "Framework :: Django :: 5.0",  # 5.0b1 in Djoser test suite
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "Framework :: Django :: 5.2",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -26,6 +27,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 repository = "https://github.com/sunscrapers/djoser"
 documentation = "https://djoser.readthedocs.io/"
@@ -37,11 +39,12 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
+django = ">=3.2"
+djangorestframework = ">=3.14"
 djangorestframework-simplejwt = "^5.0"
 social-auth-app-django = "^5.0.0"
 djet = { version = "^0.3.0", optional = true }
 webauthn = { version = "<1.0", optional = true }
-django = ">=3.0.0"
 
 [tool.poetry.extras]
 # https://python-poetry.org/docs/pyproject/#extras
@@ -58,10 +61,12 @@ tox = "^4.4.8"
 babel = "^2.12.1"
 pytest-mock = "^3.14.0"
 deepdiff = "^8.0.1"
+pytest-env = "^1.1.3"
+factory-boy = "^3.3.0"
 
 [tool.poetry.group.code-quality.dependencies]
 black = ">=23.1,<26.0"
-ruff = ">=0.0.241,<0.9.10"
+ruff = "^0.8.0"
 docformatter = "^1.7.4"
 pyupgrade = "^3.3.1"
 pre-commit-hooks = ">=4.4,<6.0"
@@ -74,7 +79,7 @@ sphinx-rtd-theme = "^1.2.0"
 
 [tool.black]
 line-length = 88
-target-version = ["py39", "py310", "py311", "py312"]
+target-version = ["py39", "py310", "py311", "py312", "py313"]
 include = '\.pyi?$'
 exclude = '''
 (
@@ -127,7 +132,7 @@ exclude = [
     "migrations"
 ]
 line-length = 88
-target-version = "py312"
+target-version = "py39"
 
 [tool.docformatter]
 recursive = true
@@ -140,6 +145,11 @@ in-place = true
 [tool.pytest.ini_options]
 minversion = "7.0"
 DJANGO_SETTINGS_MODULE = "testproject.settings"
+python_paths = ["testproject"]
+addopts = "--tb=short --strict-markers"
+markers = [
+    "django_db: mark test to use django database"
+]
 
 [tool.coverage.run]
 source = ["djoser"]

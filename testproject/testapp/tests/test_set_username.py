@@ -1,156 +1,167 @@
-from django.conf import settings
+import pytest
+from testapp.factories import TokenFactory
+from testapp.factories import UserFactory, CustomUserFactory
 from django.contrib.auth import get_user_model
-from django.test.utils import override_settings
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
 from testapp.models import CustomUser
-from testapp.tests.common import create_user, login_user, mock
+from unittest import mock
 
 User = get_user_model()
 
 
-class SetUsernameViewTest(
-    APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
+@pytest.fixture
+def base_url():
+    return reverse(f"user-set-{User.USERNAME_FIELD}")
+
+
+def test_post_set_new_username(api_client, base_url):
+    user = UserFactory.create()
+    data = {"new_username": "ringo", "current_password": "secret"}
+    token = TokenFactory.create(user=user)
+    api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+
+    response = api_client.post(base_url, data)
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    user.refresh_from_db()
+    assert data["new_username"] == user.username
+
+
+def test_post_not_set_new_username_if_wrong_current_password(api_client, base_url):
+    user = UserFactory.create()
+    orig_username = user.get_username()
+    data = {"new_username": "ringo", "current_password": "wrong"}
+    token = TokenFactory.create(user=user)
+    api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+
+    response = api_client.post(base_url, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    user.refresh_from_db()
+    assert orig_username == user.username
+
+
+def test_post_not_set_new_username_if_mismatch(djoser_settings, api_client, base_url):
+    djoser_settings["SET_USERNAME_RETYPE"] = True
+    user = UserFactory.create()
+    data = {
+        "new_username": "ringo",
+        "re_new_username": "wrong",
+        "current_password": "secret",
+    }
+    token = TokenFactory.create(user=user)
+    api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+
+    response = api_client.post(base_url, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    user.refresh_from_db()
+    assert data["new_username"] != user.username
+
+
+def test_post_not_set_new_username_if_exists(api_client, base_url):
+    username = "tom"
+    UserFactory.create(username=username)
+    user = UserFactory.create(username="john")
+    data = {"new_username": username, "current_password": "secret"}
+    token = TokenFactory.create(user=user)
+    api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+
+    response = api_client.post(base_url, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    user.refresh_from_db()
+    assert user.username != username
+
+
+def test_post_not_set_new_username_if_invalid(api_client, base_url):
+    user = UserFactory.create()
+    data = {"new_username": "$ wrong username #", "current_password": "secret"}
+    token = TokenFactory.create(user=user)
+    api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+
+    response = api_client.post(base_url, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    user.refresh_from_db()
+    assert user.username != data["new_username"]
+
+
+def test_post_update_username_and_send_activation_email(
+    djoser_settings, api_client, base_url, mailoutbox
 ):
-    def setUp(self):
-        self.base_url = reverse(f"user-set-{User.USERNAME_FIELD}")
+    djoser_settings["USERNAME_CHANGED_EMAIL_CONFIRMATION"] = True
+    user = UserFactory.create()
+    data = {"new_username": "dango", "current_password": "secret"}
+    token = TokenFactory.create(user=user)
+    api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
 
-    def test_post_set_new_username(self):
-        user = create_user()
-        data = {"new_username": "ringo", "current_password": "secret"}
-        login_user(self.client, user)
+    response = api_client.post(base_url, data)
 
-        response = self.client.post(self.base_url, data)
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert len(mailoutbox) == 1
+    assert mailoutbox[0].to == [user.email]
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        user.refresh_from_db()
-        self.assertEqual(data["new_username"], user.username)
 
-    def test_post_not_set_new_username_if_wrong_current_password(self):
-        user = create_user()
-        orig_username = user.get_username()
-        data = {"new_username": "ringo", "current_password": "wrong"}
-        login_user(self.client, user)
+def test_post_not_set_new_username_if_same(api_client, base_url):
+    user = UserFactory.create()
+    data = {"new_username": user.username, "current_password": "secret"}
+    token = TokenFactory.create(user=user)
+    api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
 
-        response = self.client.post(self.base_url, data)
+    response = api_client.post(base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user.refresh_from_db()
-        self.assertEqual(orig_username, user.username)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert user.is_active
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{"SET_USERNAME_RETYPE": True}))
-    def test_post_not_set_new_username_if_mismatch(self):
-        user = create_user()
-        data = {
-            "new_username": "ringo",
-            "re_new_username": "wrong",
-            "current_password": "secret",
-        }
-        login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data)
+@mock.patch("djoser.serializers.User", CustomUser)
+@mock.patch("djoser.serializers.SetUsernameSerializer.Meta.model", CustomUser)
+@mock.patch(
+    "djoser.serializers.SetUsernameSerializer.Meta.fields",
+    (CustomUser.USERNAME_FIELD, "custom_username"),
+)
+@mock.patch("djoser.views.User", CustomUser)
+@pytest.mark.django_db(transaction=True)
+def test_post_set_new_custom_username(djoser_settings, api_client, base_url, settings):
+    settings.AUTH_USER_MODEL = "testapp.CustomUser"
+    djoser_settings["LOGIN_FIELD"] = CustomUser.USERNAME_FIELD
+    user = CustomUserFactory.create(custom_required_field="42")
+    data = {"new_custom_username": "ringo", "current_password": "secret"}
+    api_client.force_authenticate(user)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user.refresh_from_db()
-        self.assertNotEqual(data["new_username"], user.username)
+    response = api_client.post(base_url, data)
 
-    def test_post_not_set_new_username_if_exists(self):
-        username = "tom"
-        create_user(username=username)
-        user = create_user(username="john")
-        data = {"new_username": username, "current_password": "secret"}
-        login_user(self.client, user)
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    user.refresh_from_db()
+    assert data["new_custom_username"] == user.get_username()
 
-        response = self.client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user.refresh_from_db()
-        self.assertNotEqual(user.username, username)
+@mock.patch("djoser.serializers.User", CustomUser)
+@mock.patch("djoser.serializers.SetUsernameSerializer.Meta.model", CustomUser)
+@mock.patch(
+    "djoser.serializers.SetUsernameSerializer.Meta.fields",
+    (CustomUser.USERNAME_FIELD, "custom_username"),
+)
+@mock.patch("djoser.views.User", CustomUser)
+@pytest.mark.django_db(transaction=True)
+def test_post_not_set_new_custom_username_if_mismatch(
+    djoser_settings, api_client, base_url, settings
+):
+    settings.AUTH_USER_MODEL = "testapp.CustomUser"
+    djoser_settings["SET_USERNAME_RETYPE"] = True
+    djoser_settings["LOGIN_FIELD"] = CustomUser.USERNAME_FIELD
+    user = CustomUserFactory.create(custom_required_field="42")
+    data = {
+        "new_custom_username": "ringo",
+        "re_new_custom_username": "wrong",
+        "current_password": "secret",
+    }
+    api_client.force_authenticate(user)
 
-    def test_post_not_set_new_username_if_invalid(self):
-        user = create_user()
-        data = {"new_username": "$ wrong username #", "current_password": "secret"}
-        login_user(self.client, user)
+    response = api_client.post(base_url, data)
 
-        response = self.client.post(self.base_url, data)
-
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user.refresh_from_db()
-        self.assertNotEqual(user.username, data["new_username"])
-
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{"USERNAME_CHANGED_EMAIL_CONFIRMATION": True})
-    )
-    def test_post_update_username_and_send_activation_email(self):
-        user = create_user()
-        data = {"new_username": "dango", "current_password": "secret"}
-        login_user(self.client, user)
-
-        response = self.client.post(self.base_url, data)
-
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        self.assert_emails_in_mailbox(1)
-        self.assert_email_exists(to=[user.email])
-
-    def test_post_not_set_new_username_if_same(self):
-        user = create_user()
-        data = {"new_username": "john", "current_password": "secret"}
-        login_user(self.client, user)
-
-        response = self.client.post(self.base_url, data)
-
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertTrue(user.is_active)
-
-    @mock.patch("djoser.serializers.User", CustomUser)
-    @mock.patch("djoser.serializers.SetUsernameSerializer.Meta.model", CustomUser)
-    @mock.patch(
-        "djoser.serializers.SetUsernameSerializer.Meta.fields",
-        (CustomUser.USERNAME_FIELD, "custom_username"),
-    )
-    @mock.patch("djoser.views.user.set_username.User", CustomUser)
-    @override_settings(
-        AUTH_USER_MODEL="testapp.CustomUser",
-        DJOSER=dict(settings.DJOSER, **{"LOGIN_FIELD": CustomUser.USERNAME_FIELD}),
-    )
-    def test_post_set_new_custom_username(self):
-        user = create_user(use_custom_data=True)
-        data = {"new_custom_username": "ringo", "current_password": "secret"}
-        self.client.force_authenticate(user)
-
-        response = self.client.post(self.base_url, data)
-
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
-        user.refresh_from_db()
-        self.assertEqual(data["new_custom_username"], user.get_username())
-
-    @mock.patch("djoser.serializers.User", CustomUser)
-    @mock.patch("djoser.serializers.SetUsernameSerializer.Meta.model", CustomUser)
-    @mock.patch(
-        "djoser.serializers.SetUsernameSerializer.Meta.fields",
-        (CustomUser.USERNAME_FIELD, "custom_username"),
-    )
-    @mock.patch("djoser.views.user.set_username.User", CustomUser)
-    @override_settings(
-        AUTH_USER_MODEL="testapp.CustomUser",
-        DJOSER=dict(
-            settings.DJOSER,
-            **{"SET_USERNAME_RETYPE": True, "LOGIN_FIELD": CustomUser.USERNAME_FIELD},
-        ),
-    )
-    def test_post_not_set_new_custom_username_if_mismatch(self):
-        user = create_user(use_custom_data=True)
-        data = {
-            "new_custom_username": "ringo",
-            "re_new_custom_username": "wrong",
-            "current_password": "secret",
-        }
-        self.client.force_authenticate(user)
-
-        response = self.client.post(self.base_url, data)
-
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        user.refresh_from_db()
-        self.assertNotEqual(data["new_custom_username"], user.get_username())
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    user.refresh_from_db()
+    assert data["new_custom_username"] != user.get_username()
