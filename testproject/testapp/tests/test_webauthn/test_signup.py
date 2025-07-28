@@ -1,17 +1,10 @@
+import pytest
 from copy import deepcopy
-
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test.utils import override_settings
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
-
-from .utils import create_credential_options
 
 User = get_user_model()
-
 
 REGISTRATION_CHALLENGE = "BG7Th4n4iNUmNuRqMjI8NUhFgcNPWmqP"
 RP_NAME = "Web Authentication"
@@ -28,58 +21,59 @@ SIGNUP_DATA = {
 }
 
 
-@override_settings(
-    DJOSER={
-        **settings.DJOSER,
-        **{"WEBAUTHN": {"RP_NAME": RP_NAME, "RP_ID": RP_ID, "ORIGIN": ORIGIN}},
-    }
-)
-class TestSignupView(
-    APITestCase,
-    assertions.StatusCodeAssertionsMixin,
-    assertions.InstanceAssertionsMixin,
-    assertions.EmailAssertionsMixin,
-):
-    url = reverse("webauthn_signup", args=[USER_ID])
+@pytest.mark.django_db
+class TestSignupView:
 
-    def setUp(self):
-        self.co = create_credential_options(
+    @pytest.fixture(autouse=True)
+    def setup(self, djoser_settings):
+        from djoser.webauthn.models import CredentialOptions
+
+        djoser_settings.update(
+            WEBAUTHN={"RP_NAME": RP_NAME, "RP_ID": RP_ID, "ORIGIN": ORIGIN}
+        )
+
+        self.url = reverse("webauthn_signup", args=[USER_ID])
+        self.co = CredentialOptions.objects.create(
             challenge=REGISTRATION_CHALLENGE,
             username=USERNAME,
             display_name=USER_DISPLAY_NAME,
             ukey=USER_ID,
+            credential_id="f00",
         )
 
-    def test_post_with_invalid_registration_response_should_return_400(self):
-        for invalid_field in ("clientData", "attObj"):
-            with self.subTest(invalid_field=invalid_field):
-                data = deepcopy(SIGNUP_DATA)
-                data[invalid_field] = "invalid_data"
-                response = self.client.post(self.url, data=data)
-
-                self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-                self.assert_instance_does_not_exist(User)
-
-    def test_post_with_valid_registration_response_should_create_user(self):
+    @pytest.mark.parametrize("invalid_field", ["clientData", "attObj"])
+    def test_post_with_invalid_registration_response_should_return_400(
+        self, api_client, invalid_field
+    ):
         data = deepcopy(SIGNUP_DATA)
-        response = self.client.post(self.url, data=data)
+        data[invalid_field] = "invalid_data"
+        response = api_client.post(self.url, data=data)
 
-        self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assert_instance_exists(User, username=USERNAME)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert not User.objects.exists()
 
-    def test_challenge_should_not_be_stored_after_successfull_signup(self):
+    def test_post_with_valid_registration_response_should_create_user(self, api_client):
         data = deepcopy(SIGNUP_DATA)
-        self.client.post(self.url, data=data)
+        response = api_client.post(self.url, data=data)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert User.objects.filter(username=USERNAME).exists()
+
+    def test_challenge_should_not_be_stored_after_successfull_signup(self, api_client):
+        data = deepcopy(SIGNUP_DATA)
+        api_client.post(self.url, data=data)
 
         self.co.refresh_from_db()
-        self.assertEqual(self.co.challenge, "")
+        assert self.co.challenge == ""
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{"SEND_ACTIVATION_EMAIL": True}))
-    def test_register_user_when_email_confirmation_is_required(self):
+    def test_register_user_when_email_confirmation_is_required(
+        self, api_client, djoser_settings, mailoutbox
+    ):
+        djoser_settings.update(SEND_ACTIVATION_EMAIL=True)
         data = deepcopy(SIGNUP_DATA)
-        self.client.post(self.url, data=data)
+        api_client.post(self.url, data=data)
 
-        self.assert_instance_exists(User, username=USERNAME)
+        assert User.objects.filter(username=USERNAME).exists()
         user = User.objects.get(username=USERNAME)
-        self.assertFalse(user.is_active)
-        self.assert_emails_in_mailbox(1)
+        assert not user.is_active
+        assert len(mailoutbox) == 1
