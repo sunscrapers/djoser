@@ -2,6 +2,7 @@ import pytest
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.reverse import reverse
+from unittest import mock
 
 from .utils import get_webauthn_signup_data, get_webauthn_settings, WEBAUTHN_TEST_DATA
 
@@ -38,15 +39,39 @@ class TestSignupView:
         assert not User.objects.exists()
 
     def test_post_with_valid_registration_response_should_create_user(self, api_client):
-        data = get_webauthn_signup_data()
-        response = api_client.post(self.url, data=data)
+        # Mock the WebAuthn verification to return a valid credential
+        mock_credential = mock.Mock()
+        mock_credential.credential_id.decode.return_value = "test_credential_id"
+        mock_credential.public_key.decode.return_value = "test_public_key"
+        mock_credential.sign_count = 0
+
+        with mock.patch(
+            "djoser.webauthn.views.WebAuthnRegistrationResponse"
+        ) as mock_response_class:
+            mock_response = mock_response_class.return_value
+            mock_response.verify.return_value = mock_credential
+
+            data = get_webauthn_signup_data()
+            response = api_client.post(self.url, data=data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert User.objects.filter(username=WEBAUTHN_TEST_DATA["USERNAME"]).exists()
 
     def test_challenge_should_not_be_stored_after_successfull_signup(self, api_client):
-        data = get_webauthn_signup_data()
-        api_client.post(self.url, data=data)
+        # Mock the WebAuthn verification to return a valid credential
+        mock_credential = mock.Mock()
+        mock_credential.credential_id.decode.return_value = "test_credential_id"
+        mock_credential.public_key.decode.return_value = "test_public_key"
+        mock_credential.sign_count = 0
+
+        with mock.patch(
+            "djoser.webauthn.views.WebAuthnRegistrationResponse"
+        ) as mock_response_class:
+            mock_response = mock_response_class.return_value
+            mock_response.verify.return_value = mock_credential
+
+            data = get_webauthn_signup_data()
+            api_client.post(self.url, data=data)
 
         self.co.refresh_from_db()
         assert self.co.challenge == ""
@@ -55,8 +80,21 @@ class TestSignupView:
         self, api_client, djoser_settings, mailoutbox
     ):
         djoser_settings.update(SEND_ACTIVATION_EMAIL=True)
-        data = get_webauthn_signup_data()
-        api_client.post(self.url, data=data)
+
+        # Mock the WebAuthn verification to return a valid credential
+        mock_credential = mock.Mock()
+        mock_credential.credential_id.decode.return_value = "test_credential_id"
+        mock_credential.public_key.decode.return_value = "test_public_key"
+        mock_credential.sign_count = 0
+
+        with mock.patch(
+            "djoser.webauthn.views.WebAuthnRegistrationResponse"
+        ) as mock_response_class:
+            mock_response = mock_response_class.return_value
+            mock_response.verify.return_value = mock_credential
+
+            data = get_webauthn_signup_data()
+            api_client.post(self.url, data=data)
 
         assert User.objects.filter(username=WEBAUTHN_TEST_DATA["USERNAME"]).exists()
         user = User.objects.get(username=WEBAUTHN_TEST_DATA["USERNAME"])
