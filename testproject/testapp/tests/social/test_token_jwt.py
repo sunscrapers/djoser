@@ -1,17 +1,17 @@
-from django.test import TestCase
+import pytest
+from testapp.factories import UserFactory
 from rest_framework_simplejwt.serializers import TokenVerifySerializer
 
 from djoser.social.token.jwt import TokenStrategy
 
-from ..common import create_user
 
-
-class JWTStrategyTestCase(TestCase):
+@pytest.mark.django_db
+class TestJWTStrategy:
     def test_obtain_provides_valid_token_for_given_user(self):
-        user = create_user()
+        user = UserFactory.create()
         res = TokenStrategy.obtain(user)
-        self.assertEqual(res["user"], user)
+        assert res["user"] == user
 
         data = {"token": res["access"]}
         serializer = TokenVerifySerializer(data=data)
-        self.assertTrue(serializer.is_valid())
+        assert serializer.is_valid()

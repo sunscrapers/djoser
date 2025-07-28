@@ -1,12 +1,9 @@
+import pytest
 from copy import deepcopy
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test.utils import override_settings
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
 
 from djoser.conf import settings as djoser_settings
 
@@ -31,21 +28,16 @@ LOGIN_DATA = {
 PUBLIC_KEY = "pAEDAzkBACBZAQDKjp4zmIBGEe97svBO9uHFPf2oe-IeMLW3Nq5jkEWeoCpiyPqbkeXo13IZAQMj40uub2QYqXEYugNRkuhCVRUvRbaiW2ws9i2AoukCgR_pB9DHnWPzo1mJEKU0RFUqxD4K1x5CX-JzvO8rsdMxBAz_Ja1piMaj23YgM9WCuRWehLO7P8373KUKCMKbbf6yWVvpeGC-lePjhMOmJkU6EkOFhCSy6pOMDWzTx5es8PC9zUFyrk3yUkhzd69rTu95y5kHnfLBjShlFZnnxpXTfmOOM934rGnkkaLcfTcSu-cckJXG_rh36eDHta-erCwS8ZUbedq5p14bNha4aSCzF115IUMBAAE"  # noqa
 
 
-@override_settings(
-    DJOSER={
-        **settings.DJOSER,
-        **{"WEBAUTHN": {"RP_NAME": RP_NAME, "RP_ID": RP_ID, "ORIGIN": ORIGIN}},
-    }
-)
-class TestLoginView(
-    APITestCase,
-    assertions.StatusCodeAssertionsMixin,
-    assertions.InstanceAssertionsMixin,
-):
-    url = reverse("webauthn_login")
+@pytest.mark.django_db
+class TestLoginView:
 
-    def setUp(self):
-        self.co = co = create_credential_options(
+    @pytest.fixture(autouse=True)
+    def credential_options(self, djoser_settings):
+        djoser_settings.update(
+            WEBAUTHN={"RP_NAME": RP_NAME, "RP_ID": RP_ID, "ORIGIN": ORIGIN}
+        )
+        self.url = reverse("webauthn_login")
+        co = create_credential_options(
             challenge=ASSERTION_CHALLENGE,
             username=USERNAME,
             display_name=USER_DISPLAY_NAME,
@@ -55,27 +47,33 @@ class TestLoginView(
         co.public_key = PUBLIC_KEY
         co.sign_count = 0
         co.save()
+        yield co
 
-    def test_post_with_invalid_login_response_should_return_400(self):
-        for invalid_field in LOGIN_DATA.keys():
-            with self.subTest(invalid_field=invalid_field):
-                data = deepcopy(LOGIN_DATA)
-                data[invalid_field] = "invalid_data"
-                response = self.client.post(self.url, data=data)
-
-                self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-
-    def test_post_with_valid_login_response_should_create_and_return_auth_token(self):
+    @pytest.mark.parametrize("invalid_field", list(LOGIN_DATA.keys()))
+    def test_post_with_invalid_login_response_should_return_400(
+        self, api_client, invalid_field
+    ):
         data = deepcopy(LOGIN_DATA)
-        response = self.client.post(self.url, data=data)
+        data[invalid_field] = "invalid_data"
+        response = api_client.post(self.url, data=data)
 
-        self.assert_status_equal(response, status.HTTP_201_CREATED)
-        self.assert_instance_exists(djoser_settings.TOKEN_MODEL)
-        self.assertTrue("auth_token" in response.json())
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_challenge_should_not_be_stored_after_successful_login(self):
+    def test_post_with_valid_login_response_should_create_and_return_auth_token(
+        self, api_client
+    ):
         data = deepcopy(LOGIN_DATA)
-        self.client.post(self.url, data=data)
+        response = api_client.post(self.url, data=data)
 
-        self.co.refresh_from_db()
-        self.assertEqual(self.co.challenge, "")
+        assert response.status_code == status.HTTP_201_CREATED
+        assert djoser_settings.TOKEN_MODEL.objects.exists()
+        assert "auth_token" in response.json()
+
+    def test_challenge_should_not_be_stored_after_successful_login(
+        self, credential_options, api_client
+    ):
+        data = deepcopy(LOGIN_DATA)
+        api_client.post(self.url, data=data)
+
+        credential_options.refresh_from_db()
+        assert credential_options.challenge == ""

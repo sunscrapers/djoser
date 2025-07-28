@@ -1,177 +1,157 @@
+import pytest
 import importlib
 
 from django.conf import settings
 from django.contrib.auth import HASH_SESSION_KEY
-from django.test.utils import override_settings
-from djet import assertions
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase
-from testapp.tests.common import create_user, login_user
 
 from djoser.conf import settings as djoser_settings
 
 Token = djoser_settings.TOKEN_MODEL
 
 
-class SetPasswordViewTest(
-    APITestCase, assertions.EmailAssertionsMixin, assertions.StatusCodeAssertionsMixin
-):
-    def setUp(self):
+class TestSetPasswordView:
+    @pytest.fixture(autouse=True)
+    def setup(self):
         self.base_url = reverse("user-set-password")
 
-    def test_post_set_new_password(self):
-        user = create_user()
+    def test_post_set_new_password(self, authenticated_client, user, mailoutbox):
         data = {"new_password": "new password", "current_password": "secret"}
-        login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data)
+        response = authenticated_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         user.refresh_from_db()
-        self.assertTrue(user.check_password(data["new_password"]))
-        self.assert_emails_in_mailbox(0)
+        assert user.check_password(data["new_password"])
+        assert len(mailoutbox) == 0
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
-    def test_post_set_new_password_with_retype(self):
-        user = create_user()
+    def test_post_set_new_password_with_retype(
+        self, authenticated_client, user, mailoutbox, djoser_settings
+    ):
+        djoser_settings["SET_PASSWORD_RETYPE"] = True
         data = {
             "new_password": "new password",
             "re_new_password": "new password",
             "current_password": "secret",
         }
-        login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data)
+        response = authenticated_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         user.refresh_from_db()
-        self.assertTrue(user.check_password(data["new_password"]))
-        self.assert_emails_in_mailbox(0)
+        assert user.check_password(data["new_password"])
+        assert len(mailoutbox) == 0
 
-    def test_post_not_set_new_password_if_wrong_current_password(self):
-        user = create_user()
+    def test_post_not_set_new_password_if_wrong_current_password(
+        self, authenticated_client, user
+    ):
         data = {"new_password": "new password", "current_password": "wrong"}
-        login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data)
+        response = authenticated_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    @override_settings(DJOSER=dict(settings.DJOSER, **{"SET_PASSWORD_RETYPE": True}))
-    def test_post_not_set_new_password_if_mismatch(self):
-        user = create_user()
+    def test_post_not_set_new_password_if_mismatch(
+        self, authenticated_client, user, djoser_settings
+    ):
+        djoser_settings["SET_PASSWORD_RETYPE"] = True
         data = {
             "new_password": "new password",
             "re_new_password": "wrong",
             "current_password": "secret",
         }
-        login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data)
+        response = authenticated_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
         user.refresh_from_db()
-        self.assertTrue(user.check_password(data["current_password"]))
+        assert user.check_password(data["current_password"])
 
-    def test_post_not_set_new_password_if_fails_validation(self):
-        user = create_user()
+    def test_post_not_set_new_password_if_fails_validation(
+        self, authenticated_client, user
+    ):
         data = {
             "new_password": "666",
             "re_new_password": "666",
             "current_password": "secret",
         }
-        login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data)
+        response = authenticated_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.data, {"new_password": ["Password 666 is not allowed."]}
-        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {"new_password": ["Password 666 is not allowed."]}
 
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{"LOGOUT_ON_PASSWORD_CHANGE": True})
-    )
-    def test_post_logout_after_password_change(self):
-        user = create_user()
+    def test_post_logout_after_password_change(
+        self, djoser_settings, authenticated_client, user
+    ):
+        djoser_settings["LOGOUT_ON_PASSWORD_CHANGE"] = True
         data = {"new_password": "new password", "current_password": "secret"}
-        login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data)
+        response = authenticated_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         is_logged = Token.objects.filter(user=user).exists()
-        self.assertFalse(is_logged)
+        assert not is_logged
 
-    def test_post_not_logout_after_password_change_if_setting_is_false(self):
-        user = create_user()
+    def test_post_not_logout_after_password_change_if_setting_is_false(
+        self, djoser_settings, authenticated_client, user
+    ):
+        djoser_settings["LOGOUT_ON_PASSWORD_CHANGE"] = False
         data = {"new_password": "new password", "current_password": "secret"}
-        login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data)
+        response = authenticated_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         is_logged = Token.objects.filter(user=user).exists()
-        self.assertTrue(is_logged)
+        assert is_logged
 
-    @override_settings(
-        DJOSER=dict(settings.DJOSER, **{"PASSWORD_CHANGED_EMAIL_CONFIRMATION": True})
-    )
-    def test_post_password_changed_confirmation_email(self):
-        user = create_user()
+    def test_post_password_changed_confirmation_email(
+        self, djoser_settings, authenticated_client, user, mailoutbox
+    ):
+        djoser_settings["PASSWORD_CHANGED_EMAIL_CONFIRMATION"] = True
         data = {"new_password": "new password", "current_password": "secret"}
-        login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data)
+        response = authenticated_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         user.refresh_from_db()
-        self.assertTrue(user.check_password(data["new_password"]))
-        self.assert_emails_in_mailbox(1)
-        self.assert_email_exists(to=[user.email])
+        assert user.check_password(data["new_password"])
+        assert len(mailoutbox) == 1
+        assert mailoutbox[0].to == [user.email]
 
-    @override_settings(
-        DJOSER=dict(
-            settings.DJOSER,
-            **{
-                "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
-                "LOGOUT_ON_PASSWORD_CHANGE": True,
-                "CREATE_SESSION_ON_LOGIN": True,
-            },
-        )
-    )
-    def test_post_logout_with_confirmation_email_if_session_created(self):
-        user = create_user()
+    def test_post_logout_with_confirmation_email_if_session_created(
+        self, djoser_settings, authenticated_client, user
+    ):
+        djoser_settings["PASSWORD_CHANGED_EMAIL_CONFIRMATION"] = True
+        djoser_settings["LOGOUT_ON_PASSWORD_CHANGE"] = True
+        djoser_settings["CREATE_SESSION_ON_LOGIN"] = True
         data = {"new_password": "new password", "current_password": "secret"}
-        login_user(self.client, user)
 
-        response = self.client.post(self.base_url, data)
+        response = authenticated_client.post(self.base_url, data)
 
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         is_logged = Token.objects.filter(user=user).exists()
-        self.assertFalse(is_logged)
+        assert not is_logged
 
-    @override_settings(
-        DJOSER=dict(
-            settings.DJOSER,
-            **{"LOGOUT_ON_PASSWORD_CHANGE": False, "CREATE_SESSION_ON_LOGIN": True},
-        )
-    )
-    def test_post_logout_cycle_session(self):
-        user = create_user()
+    def test_post_logout_cycle_session(self, djoser_settings, api_client, db):
+        djoser_settings["LOGOUT_ON_PASSWORD_CHANGE"] = False
+        djoser_settings["CREATE_SESSION_ON_LOGIN"] = True
+        from testapp.factories import UserFactory
+
+        user = UserFactory.create()
         data = {"new_password": "new password", "current_password": "secret"}
-        login_user(self.client, user)
-        self.client.force_login(user)
+        api_client.force_authenticate(user=user)
+        api_client.force_login(user)
 
-        response = self.client.post(self.base_url, data)
-        self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+        response = api_client.post(self.base_url, data)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
         user.refresh_from_db()
 
-        session_id = self.client.cookies["sessionid"].coded_value
+        session_id = api_client.cookies["sessionid"].coded_value
         engine = importlib.import_module(settings.SESSION_ENGINE)
         session = engine.SessionStore(session_id)
         session_key = session[HASH_SESSION_KEY]
 
-        self.assertEqual(session_key, user.get_session_auth_hash())
+        assert session_key == user.get_session_auth_hash()
