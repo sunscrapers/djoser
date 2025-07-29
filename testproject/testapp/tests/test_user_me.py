@@ -7,8 +7,7 @@ User = get_user_model()
 
 
 @pytest.mark.django_db
-class TestUserViewSetMe:
-
+class TestUserMeView:
     class DummyCurrentUserSerializer(serializers.ModelSerializer):
         class Meta:
             model = User
@@ -81,7 +80,8 @@ class TestUserViewSetMe:
     def test_current_user_serializer_configuration(
         self, djoser_settings, authenticated_client, user
     ):
-        """Test that the endpoints use the proper serializer.
+        """
+        Test that the endpoints use the proper serializer.
 
         How it works: it adds an additional field to the current_user
         serializer and then checks that the field shows in the response.
@@ -96,8 +96,7 @@ class TestUserViewSetMe:
 
 
 @pytest.mark.django_db
-class TestUserViewSetMeDelete:
-
+class TestUserMeDeleteView:
     @pytest.fixture(autouse=True)
     def setup(self):
         self.base_url = reverse("user-me")

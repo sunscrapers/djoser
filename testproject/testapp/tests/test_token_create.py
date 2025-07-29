@@ -29,8 +29,10 @@ class TestTokenCreateView:
     def test_post_should_not_login_if_user_is_not_active(
         self, api_client, inactive_user, signal_tracker
     ):
-        """In Django >= 1.10 authenticate() returns None if user is inactive,
-        while in Django < 1.10 authenticate() succeeds if user is inactive."""
+        """
+        In Django >= 1.10 authenticate() returns None if user is inactive, while in
+        Django < 1.10 authenticate() succeeds if user is inactive.
+        """
         data = {
             "username": inactive_user.username,
             "password": inactive_user.raw_password,

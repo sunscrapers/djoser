@@ -20,12 +20,14 @@ repos:
         require_serial: true
         types: [ python ]
 
-    # broken?
-#  - repo: https://github.com/myint/docformatter
-#    rev: v1.5.1
-#    hooks:
-#      - id: docformatter
-#        language: python
+  - repo: local
+    hooks:
+      - id: docformatter
+        name: docformatter
+        entry: docformatter
+        language: system
+        types: [python]
+        args: [--in-place, --wrap-summaries=88, --wrap-descriptions=88, --make-summary-multi-line]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: 'v0.9.4'

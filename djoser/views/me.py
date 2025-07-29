@@ -28,6 +28,11 @@ class UserMeAPIView(
         queryset = self.queryset.objects.all()
         return queryset.filter(pk=self.request.user.pk)
 
+    def get_permissions(self):
+        if self.request.method == "DELETE":
+            self.permission_classes = settings.PERMISSIONS.user_delete
+        return super().get_permissions()
+
     def get_serializer_class(self):
         if self.request.method == "DELETE":
             return settings.SERIALIZERS.user_delete
@@ -60,7 +65,7 @@ class UserMeAPIView(
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def permission_denied(self, request, **kwargs):
+    def permission_denied(self, request, message=None, code=None):
         if settings.HIDE_USERS and request.user.is_authenticated:
             raise NotFound()
-        super().permission_denied(request, **kwargs)
+        super().permission_denied(request, message, code)

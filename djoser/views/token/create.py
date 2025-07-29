@@ -6,7 +6,9 @@ from djoser.conf import settings
 
 
 class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
-    """Use this endpoint to obtain user authentication token."""
+    """
+    Use this endpoint to obtain user authentication token.
+    """
 
     serializer_class = settings.SERIALIZERS.token_create
     permission_classes = settings.PERMISSIONS.token_create

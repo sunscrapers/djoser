@@ -23,6 +23,8 @@ class SetUsernameAPIView(GenericUserAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = self.request.user
+        # Use get_user_model() to ensure we get the correct model even if it's mocked
+        User = get_user_model()
         new_username = serializer.data["new_" + User.USERNAME_FIELD]
 
         setattr(user, User.USERNAME_FIELD, new_username)
@@ -65,6 +67,8 @@ class ResetUsernameConfirmAPIView(GenericUserAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        # Use get_user_model() to ensure we get the correct model even if it's mocked
+        User = get_user_model()
         new_username = serializer.data["new_" + User.USERNAME_FIELD]
 
         setattr(serializer.user, User.USERNAME_FIELD, new_username)

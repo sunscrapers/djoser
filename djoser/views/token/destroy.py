@@ -6,7 +6,9 @@ from djoser.conf import settings
 
 
 class TokenDestroyView(generics.GenericAPIView):
-    """Use this endpoint to logout user (remove user authentication token)."""
+    """
+    Use this endpoint to logout user (remove user authentication token).
+    """
 
     serializer_class = serializers.Serializer
     permission_classes = settings.PERMISSIONS.token_destroy

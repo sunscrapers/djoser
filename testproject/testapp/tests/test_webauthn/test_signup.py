@@ -102,7 +102,9 @@ class TestSignupView:
         assert len(mailoutbox) == 1
 
     def test_post_with_empty_client_data_should_return_400(self, api_client):
-        """Test error handling for empty client data."""
+        """
+        Test error handling for empty client data.
+        """
         data = get_webauthn_signup_data()
         data["clientData"] = ""
         response = api_client.post(self.url, data=data)
@@ -111,7 +113,9 @@ class TestSignupView:
         assert not User.objects.exists()
 
     def test_post_with_empty_attestation_object_should_return_400(self, api_client):
-        """Test error handling for empty attestation object."""
+        """
+        Test error handling for empty attestation object.
+        """
         data = get_webauthn_signup_data()
         data["attObj"] = ""
         response = api_client.post(self.url, data=data)
@@ -120,7 +124,9 @@ class TestSignupView:
         assert not User.objects.exists()
 
     def test_post_with_malformed_base64_client_data_should_return_400(self, api_client):
-        """Test error handling for malformed base64 client data."""
+        """
+        Test error handling for malformed base64 client data.
+        """
         data = get_webauthn_signup_data()
         data["clientData"] = "not-valid-base64-data!!!"
         response = api_client.post(self.url, data=data)
@@ -131,7 +137,9 @@ class TestSignupView:
     def test_post_with_malformed_base64_attestation_object_should_return_400(
         self, api_client
     ):
-        """Test error handling for malformed base64 attestation object."""
+        """
+        Test error handling for malformed base64 attestation object.
+        """
         data = get_webauthn_signup_data()
         data["attObj"] = "not-valid-base64-data!!!"
         response = api_client.post(self.url, data=data)
@@ -140,7 +148,9 @@ class TestSignupView:
         assert not User.objects.exists()
 
     def test_post_with_missing_required_fields_should_return_400(self, api_client):
-        """Test error handling for missing required fields."""
+        """
+        Test error handling for missing required fields.
+        """
         incomplete_data = {"username": WEBAUTHN_TEST_DATA["USERNAME"]}
         response = api_client.post(self.url, data=incomplete_data)
 
@@ -148,7 +158,9 @@ class TestSignupView:
         assert not User.objects.exists()
 
     def test_post_with_invalid_user_id_should_return_404(self, api_client):
-        """Test error handling for invalid user ID in URL."""
+        """
+        Test error handling for invalid user ID in URL.
+        """
         invalid_url = reverse("webauthn_signup", args=["invalid-user-id"])
         data = get_webauthn_signup_data()
         response = api_client.post(invalid_url, data=data)

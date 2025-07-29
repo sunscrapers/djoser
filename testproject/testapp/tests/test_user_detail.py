@@ -10,18 +10,26 @@ import djoser.signals
 
 @pytest.fixture
 def setup_modified_permissions():
-    """Test case that overrides user-detail permission to
-    CurrentUserOrAdminOrReadOnly."""
-    previous_permissions = djoser.views.UserViewSet.permission_classes
-    djoser.views.UserViewSet.permission_classes = [
+    """
+    Test case that overrides user-detail permission to CurrentUserOrAdminOrReadOnly.
+    """
+    previous_permissions = djoser.views.UserRetrieveView.permission_classes
+    djoser.views.UserRetrieveView.permission_classes = [
+        djoser.permissions.CurrentUserOrAdminOrReadOnly
+    ]
+    # Also update the UpdateView permissions since
+    # they're part of the same functionality
+    previous_update_permissions = djoser.views.UserUpdateView.permission_classes
+    djoser.views.UserUpdateView.permission_classes = [
         djoser.permissions.CurrentUserOrAdminOrReadOnly
     ]
     yield
-    djoser.views.UserViewSet.permission_classes = previous_permissions
+    djoser.views.UserRetrieveView.permission_classes = previous_permissions
+    djoser.views.UserUpdateView.permission_classes = previous_update_permissions
 
 
 @pytest.mark.django_db
-class TestUserViewSetList:
+class TestUserRetrieveView:
     @pytest.fixture(autouse=True)
     def setup(self, user, create_superuser):
         self.user = user
@@ -53,7 +61,7 @@ class TestUserViewSetList:
 
 
 @pytest.mark.django_db
-class TestModifiedPermissionsUserViewSetList:
+class TestModifiedPermissionsUserRetrieveView:
     @pytest.fixture(autouse=True)
     def setup(self, user, create_superuser):
         self.user = user
@@ -75,7 +83,7 @@ class TestModifiedPermissionsUserViewSetList:
 
 
 @pytest.mark.django_db
-class TestUserViewSetEdit:
+class TestUserUpdateView:
     @pytest.fixture(autouse=True)
     def setup(self, user):
         self.user = user
@@ -100,7 +108,6 @@ class TestUserViewSetEdit:
         assert self.signal_sent
 
     def test_patch_cant_edit_others_attribute(self, api_client, db):
-
         another_user = UserFactory.create(
             **{"username": "paul", "password": "secret", "email": "paul@beatles.com"}
         )
@@ -133,7 +140,6 @@ class TestUserViewSetEdit:
         assert self.user.email == user_data["email"]
 
     def test_put_cant_edit_others_attribute(self, api_client, db):
-
         another_user_data = {
             "username": "paul",
             "password": "secret",
@@ -157,7 +163,6 @@ class TestUserViewSetEdit:
 class TestModifiedPermissionsViewSetEdit:
     @pytest.fixture(autouse=True)
     def setup(self, user, create_superuser):
-
         self.user = user
         self.create_user = UserFactory.create
         self.superuser = create_superuser

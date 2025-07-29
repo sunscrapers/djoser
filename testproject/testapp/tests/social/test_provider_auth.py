@@ -24,7 +24,9 @@ class TestProviderAuthView:
         self.view_class = djoser.social.views.ProviderAuthView
 
     def _get_view_response(self, request, **kwargs):
-        """Helper to get view response with middleware applied"""
+        """
+        Helper to get view response with middleware applied.
+        """
         view = self.view_class.as_view()
         # Apply middleware
         middleware = SessionMiddleware(lambda req: None)
@@ -104,7 +106,9 @@ class TestProviderAuthView:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_post_facebook_provider_auth_forbidden_error(self):
-        """Test handling of AuthForbidden exception."""
+        """
+        Test handling of AuthForbidden exception.
+        """
         data = {"code": "XYZ", "state": "ABC"}
 
         mock.patch(
@@ -122,7 +126,9 @@ class TestProviderAuthView:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_post_facebook_provider_auth_canceled_error(self):
-        """Test handling of AuthCanceled exception."""
+        """
+        Test handling of AuthCanceled exception.
+        """
         data = {"code": "XYZ", "state": "ABC"}
 
         mock.patch(
@@ -140,7 +146,9 @@ class TestProviderAuthView:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_post_facebook_provider_auth_unknown_error(self):
-        """Test handling of AuthUnknownError exception."""
+        """
+        Test handling of AuthUnknownError exception.
+        """
         data = {"code": "XYZ", "state": "ABC"}
 
         mock.patch(
@@ -158,7 +166,9 @@ class TestProviderAuthView:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_post_facebook_provider_missing_code_parameter(self):
-        """Test handling of missing code parameter."""
+        """
+        Test handling of missing code parameter.
+        """
         data = {"state": "ABC"}  # Missing code
 
         request = self.factory.post("/auth/facebook/")
@@ -167,7 +177,9 @@ class TestProviderAuthView:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_post_facebook_provider_missing_state_parameter(self):
-        """Test handling of missing state parameter."""
+        """
+        Test handling of missing state parameter.
+        """
         data = {"code": "XYZ"}  # Missing state
 
         request = self.factory.post("/auth/facebook/")
@@ -176,7 +188,9 @@ class TestProviderAuthView:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_get_unsupported_provider_returns_404(self):
-        """Test that unsupported providers return 404."""
+        """
+        Test that unsupported providers return 404.
+        """
         request = self.factory.get(
             "/auth/unsupported/", data={"redirect_uri": "http://test.localhost/"}
         )
@@ -185,7 +199,9 @@ class TestProviderAuthView:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_post_with_expired_authorization_code(self):
-        """Test handling of expired authorization code."""
+        """
+        Test handling of expired authorization code.
+        """
         data = {"code": "EXPIRED_CODE", "state": "ABC"}
 
         # Create a mock backend
@@ -206,7 +222,9 @@ class TestProviderAuthView:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_post_with_network_error_during_auth(self):
-        """Test handling of network errors during authentication."""
+        """
+        Test handling of network errors during authentication.
+        """
         data = {"code": "XYZ", "state": "ABC"}
 
         mock.patch(
