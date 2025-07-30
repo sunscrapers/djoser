@@ -13,8 +13,8 @@ user_list_create_dispatcher = create_configurable_dispatcher(
 user_detail_dispatcher = create_configurable_dispatcher(
     {
         "GET": "user_detail",
-        "PUT": "user_update",
-        "PATCH": "user_update",
+        "PUT": "user_update_put",
+        "PATCH": "user_update_patch",
         "DELETE": "user_delete",
     }
 )

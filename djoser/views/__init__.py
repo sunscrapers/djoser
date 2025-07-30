@@ -5,8 +5,9 @@ from .user import (
     UserListView,
     UserCreateView,
     UserRetrieveView,
-    UserUpdateView,
     UserDeleteView,
+    UserPatchView,
+    UserPutView,
 )
 
 from .activation import UserActivationAPIView, UserResendActivationAPIView
@@ -31,8 +32,9 @@ __all__ = [
     "UserListView",
     "UserCreateView",
     "UserRetrieveView",
-    "UserUpdateView",
     "UserDeleteView",
+    "UserPutView",
+    "UserPatchView",
     # Other views
     "UserActivationAPIView",
     "UserResendActivationAPIView",

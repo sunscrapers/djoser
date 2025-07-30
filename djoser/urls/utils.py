@@ -52,9 +52,10 @@ def create_configurable_dispatcher(
     method_view_map = {}
 
     for method, config_key in method_config_map.items():
-        view_class = getattr(settings.VIEWS, config_key, None)
-        if view_class is not None:
-            method_view_map[method] = view_class
+        if config_key is not None:
+            view_class = getattr(settings.VIEWS, config_key, None)
+            if view_class is not None:
+                method_view_map[method] = view_class
 
     if not method_view_map:
         return None
