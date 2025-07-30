@@ -9,7 +9,6 @@ from .user import (
     UserDeleteView,
 )
 
-from .me import UserMeAPIView
 from .activation import UserActivationAPIView, UserResendActivationAPIView
 from .password import (
     ResetPasswordConfirmViewAPIView,
@@ -35,7 +34,6 @@ __all__ = [
     "UserUpdateView",
     "UserDeleteView",
     # Other views
-    "UserMeAPIView",
     "UserActivationAPIView",
     "UserResendActivationAPIView",
     "ResetPasswordConfirmViewAPIView",
