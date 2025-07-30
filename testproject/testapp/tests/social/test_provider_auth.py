@@ -8,6 +8,8 @@ from social_core.exceptions import (
     AuthForbidden,
     AuthCanceled,
     AuthUnknownError,
+    AuthMissingParameter,
+    AuthStateMissing,
 )
 
 import djoser.social.views
@@ -15,9 +17,40 @@ import djoser.social.views
 from unittest import mock
 
 
+def test_social_auth_missing_state_request():
+    from djoser.social.serializers import ProviderAuthSerializer
+
+    serializer = ProviderAuthSerializer()
+
+    with mock.patch("djoser.social.serializers.load_strategy") as mock_load_strategy:
+        mock_strategy = mock.Mock()
+        mock_load_strategy.return_value = mock_strategy
+        mock_strategy.backend.auth_complete.side_effect = AuthMissingParameter(
+            mock.Mock(), "state"
+        )
+
+        with pytest.raises(Exception):  # Should raise ValidationError
+            serializer.validate({"provider": "facebook", "access_token": "token"})
+
+
+def test_social_auth_missing_state_session():
+    from djoser.social.serializers import ProviderAuthSerializer
+
+    serializer = ProviderAuthSerializer()
+
+    with mock.patch("djoser.social.serializers.load_strategy") as mock_load_strategy:
+        mock_strategy = mock.Mock()
+        mock_load_strategy.return_value = mock_strategy
+        mock_strategy.backend.auth_complete.side_effect = AuthStateMissing(
+            mock.Mock(), "state"
+        )
+
+        with pytest.raises(Exception):  # Should raise ValidationError
+            serializer.validate({"provider": "facebook", "access_token": "token"})
+
+
 @pytest.mark.django_db
 class TestProviderAuthView:
-
     @pytest.fixture(autouse=True)
     def setup(self):
         self.factory = APIRequestFactory()

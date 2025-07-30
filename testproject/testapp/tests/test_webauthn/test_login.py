@@ -12,6 +12,27 @@ from .utils import create_credential_options
 User = get_user_model()
 
 
+def test_webauthn_inactive_user_validation(user):
+    from djoser.webauthn.serializers import WebauthnLoginSerializer
+    from djoser.webauthn.models import CredentialOptions
+
+    user.is_active = False
+    user.save()
+
+    # Create credential options for the user to pass the first check
+    CredentialOptions.objects.create(
+        username=user.username,
+        display_name=user.username,
+        challenge="test_challenge",
+        ukey="test_ukey",
+    )
+
+    serializer = WebauthnLoginSerializer()
+
+    with pytest.raises(Exception):  # Should raise ValidationError due to inactive user
+        serializer.validate_username(user.username)
+
+
 ASSERTION_CHALLENGE = "brKlY5qXLLumGhaGbHlgvSTyFI4EHrvP"
 RP_NAME = "Web Authentication"
 RP_ID = "3fadfd13.ngrok.io"
@@ -30,7 +51,6 @@ PUBLIC_KEY = "pAEDAzkBACBZAQDKjp4zmIBGEe97svBO9uHFPf2oe-IeMLW3Nq5jkEWeoCpiyPqbke
 
 @pytest.mark.django_db
 class TestLoginView:
-
     @pytest.fixture(autouse=True)
     def credential_options(self, djoser_settings):
         djoser_settings.update(

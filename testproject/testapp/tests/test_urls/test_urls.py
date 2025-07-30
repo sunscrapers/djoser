@@ -5,6 +5,27 @@ from contextlib import suppress
 import pytest
 from deepdiff import DeepDiff
 from django.urls import get_resolver
+from django.http import HttpResponseNotAllowed
+from django.test import RequestFactory
+from rest_framework.views import APIView
+
+
+def test_create_dispatcher_not_allowed():
+    from djoser.urls.utils import create_dispatcher
+
+    class DummyView(APIView):
+        def get(self, request):
+            return "response"
+
+    method_view_map = {"GET": DummyView}
+    dispatcher = create_dispatcher(method_view_map)
+
+    factory = RequestFactory()
+    request = factory.post("/")
+
+    response = dispatcher(request)
+    assert isinstance(response, HttpResponseNotAllowed)
+    assert "GET" in response["Allow"]
 
 
 @pytest.mark.django_db
