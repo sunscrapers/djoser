@@ -38,10 +38,19 @@ def test_urls_have_not_changed(settings):
                         view, "view_class"
                     ):  # assume all, even though probably not
                         allowed_methods = view.view_class.http_method_names
+                    elif (
+                        hasattr(view, "__name__")
+                        and view.__name__ == "dispatcher"
+                        and hasattr(view, "_allowed_methods")
+                    ):
+                        allowed_methods = [
+                            method.lower() for method in view._allowed_methods
+                        ]
                     else:
                         raise NotImplementedError(
                             "Function based views are not supported"
                         )
+
                 # head is not present in the CI for some reason...
                 with suppress(ValueError):
                     i = allowed_methods.index("head")

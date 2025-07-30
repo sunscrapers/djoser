@@ -31,6 +31,8 @@ def create_dispatcher(
             allowed_methods = list(method_view_map.keys())
             return HttpResponseNotAllowed(allowed_methods)
 
+    # Store allowed methods as attribute for URL test introspection
+    setattr(dispatcher, "_allowed_methods", list(method_view_map.keys()))
     return dispatcher
 
 

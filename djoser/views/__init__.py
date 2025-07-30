@@ -28,7 +28,6 @@ User = get_user_model()
 __all__ = [
     # User model
     "User",
-    # Individual views for v3
     "UserListView",
     "UserCreateView",
     "UserRetrieveView",

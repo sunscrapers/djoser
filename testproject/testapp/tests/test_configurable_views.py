@@ -188,7 +188,7 @@ class TestViewConfigurationManual(TestCase):
         Test that view paths resolve correctly to actual view classes.
         """
         from djoser.conf import settings
-        from djoser.views.me import UserMeRetrieveView
+        from djoser.views.me.retrieve import UserMeRetrieveView
 
         # Test that view resolution works
         view_class = getattr(settings.VIEWS, "user_me_get", None)
@@ -219,7 +219,9 @@ class TestViewConfigurationManual(TestCase):
         from djoser.conf import ObjDict
 
         # Create test ObjDict with string value
-        test_config = ObjDict({"test_view": "djoser.views.me.UserMeRetrieveView"})
+        test_config = ObjDict(
+            {"test_view": "djoser.views.me.retrieve.UserMeRetrieveView"}
+        )
 
         # First access should import the string
         view_class = test_config.test_view
@@ -245,7 +247,8 @@ class TestDispatcherCreation(TestCase):
         Test that view dispatchers can be created with different configurations.
         """
         from djoser.urls.utils import create_dispatcher, create_configurable_dispatcher
-        from djoser.views.me import UserMeRetrieveView, UserMeUpdateView
+        from djoser.views.me.retrieve import UserMeRetrieveView
+        from djoser.views.me.update import UserMeUpdateView
 
         # Test basic dispatcher creation
         dispatcher = create_dispatcher(

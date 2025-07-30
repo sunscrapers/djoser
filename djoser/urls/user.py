@@ -31,7 +31,7 @@ if user_list_create_dispatcher:
 
 if user_detail_dispatcher:
     # Import to get lookup field - only if needed
-    from djoser.views.user import UserRetrieveView
+    from djoser.views.user.retrieve import UserRetrieveView
 
     user_detail_update_delete = path(
         f"users/<{UserRetrieveView.lookup_field}>/",
