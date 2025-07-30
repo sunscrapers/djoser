@@ -101,6 +101,29 @@ default_settings = {
             "token_destroy": ["rest_framework.permissions.IsAuthenticated"],
         }
     ),
+    "VIEWS": ObjDict(
+        {
+            "activation": "djoser.views.activation.UserActivationAPIView",
+            "resend_activation": "djoser.views.activation.UserResendActivationAPIView",
+            "password_reset": "djoser.views.password.ResetPasswordViewAPIView",
+            "password_reset_confirm": "djoser.views.password.ResetPasswordConfirmViewAPIView",
+            "set_password": "djoser.views.password.SetPasswordViewAPIView",
+            "username_reset": "djoser.views.username.ResetUsernameAPIView",
+            "username_reset_confirm": "djoser.views.username.ResetUsernameConfirmAPIView",
+            "set_username": "djoser.views.username.SetUsernameAPIView",
+            "user_create": "djoser.views.user.UserCreateView",
+            "user_delete": "djoser.views.user.UserDeleteView",
+            "user_list": "djoser.views.user.UserListView",
+            "user_detail": "djoser.views.user.UserRetrieveView",
+            "user_update": "djoser.views.user.UserUpdateView",
+            "user_me_get": "djoser.views.me.UserMeRetrieveView",
+            "user_me_put": "djoser.views.me.UserMeUpdateView",
+            "user_me_patch": "djoser.views.me.UserMeUpdateView",
+            "user_me_delete": "djoser.views.me.UserMeDeleteView",
+            "token_create": "djoser.views.token.create.TokenCreateView",
+            "token_destroy": "djoser.views.token.destroy.TokenDestroyView",
+        }
+    ),
     "WEBAUTHN": ObjDict(
         {
             "RP_NAME": "localhost",
