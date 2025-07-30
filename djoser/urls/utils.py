@@ -2,8 +2,13 @@ from typing import Dict, Type, Callable, Any, Optional
 from django.http import (
     HttpRequest,
     HttpResponseNotAllowed,
-    HttpResponseBase,
 )
+
+try:
+    from django.http import HttpResponseBase
+except ImportError:
+    # Django < 4.1
+    from django.http.response import HttpResponseBase
 from rest_framework.views import APIView
 
 
