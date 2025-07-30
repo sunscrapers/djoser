@@ -44,7 +44,7 @@ class SerializerCheckClass:
 
 
 class TestUserMeDeleteView:
-    viewset = djoser.views.UserMeAPIView
+    viewset = djoser.views.UserDeleteView
 
     def test_delete_user_if_logged_in(self, api_client, db):
         user = UserFactory.create()

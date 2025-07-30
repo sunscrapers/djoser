@@ -17,7 +17,9 @@ class TestUserMeView:
     def setup(self):
         self.base_url = reverse("user-me")
 
-    def test_get_current_user_returns_user_data(self, authenticated_client):
+    def test_get_current_user_returns_user_data(
+        self, authenticated_client, djoser_settings
+    ):
         response = authenticated_client.get(self.base_url)
 
         assert response.status_code == status.HTTP_200_OK

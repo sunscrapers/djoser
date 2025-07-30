@@ -6,6 +6,8 @@ from testapp.factories import (
     UserFactory,
     TokenFactory,
 )
+from django.urls import clear_url_caches
+from djoser.conf import reload_djoser_settings
 
 Token = djoser_settings.TOKEN_MODEL
 
@@ -84,7 +86,7 @@ def signal_tracker():
     return SignalTracker()
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def djoser_settings(settings):
     """
     Fixture to easily modify DJOSER settings in tests.
@@ -147,14 +149,15 @@ def djoser_settings(settings):
             # Update Django settings
             settings.DJOSER = self._settings
             # Force reload of djoser settings
-            from djoser.conf import reload_djoser_settings
 
             reload_djoser_settings(setting="DJOSER", value=self._settings)
+
+            clear_url_caches()
 
     prx = DjoserSettingsProxy(settings.DJOSER)
     yield prx
     # Restore original settings
     settings.DJOSER = prx._original_settings
-    from djoser.conf import reload_djoser_settings
 
     reload_djoser_settings(setting="DJOSER", value=prx._original_settings)
+    clear_url_caches()
