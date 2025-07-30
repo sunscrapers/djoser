@@ -5,6 +5,27 @@ from contextlib import suppress
 import pytest
 from deepdiff import DeepDiff
 from django.urls import get_resolver
+from django.http import HttpResponseNotAllowed
+from django.test import RequestFactory
+from rest_framework.views import APIView
+
+
+def test_create_dispatcher_not_allowed():
+    from djoser.urls.utils import create_dispatcher
+
+    class DummyView(APIView):
+        def get(self, request):
+            return "response"
+
+    method_view_map = {"GET": DummyView}
+    dispatcher = create_dispatcher(method_view_map)
+
+    factory = RequestFactory()
+    request = factory.post("/")
+
+    response = dispatcher(request)
+    assert isinstance(response, HttpResponseNotAllowed)
+    assert "GET" in response["Allow"]
 
 
 @pytest.mark.django_db
@@ -38,10 +59,19 @@ def test_urls_have_not_changed(settings):
                         view, "view_class"
                     ):  # assume all, even though probably not
                         allowed_methods = view.view_class.http_method_names
+                    elif (
+                        hasattr(view, "__name__")
+                        and view.__name__ == "dispatcher"
+                        and hasattr(view, "_allowed_methods")
+                    ):
+                        allowed_methods = [
+                            method.lower() for method in view._allowed_methods
+                        ]
                     else:
                         raise NotImplementedError(
                             "Function based views are not supported"
                         )
+
                 # head is not present in the CI for some reason...
                 with suppress(ValueError):
                     i = allowed_methods.index("head")

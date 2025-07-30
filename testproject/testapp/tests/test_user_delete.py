@@ -15,13 +15,17 @@ User = get_user_model()
 
 # Test-specific classes
 class RunCheck(Exception):
-    """Custom exception for testing."""
+    """
+    Custom exception for testing.
+    """
 
     pass
 
 
 class PermCheckClass:
-    """Mock permission class for testing."""
+    """
+    Mock permission class for testing.
+    """
 
     def has_permission(self, *args, **kwargs):
         raise RunCheck("working")
@@ -31,14 +35,16 @@ class PermCheckClass:
 
 
 class SerializerCheckClass:
-    """Mock serializer class for testing."""
+    """
+    Mock serializer class for testing.
+    """
 
     def __init__(self, *args, **kwargs):
         raise RunCheck("working")
 
 
 class TestUserMeDeleteView:
-    viewset = djoser.views.UserViewSet
+    viewset = djoser.views.UserDeleteView
 
     def test_delete_user_if_logged_in(self, api_client, db):
         user = UserFactory.create()
@@ -105,7 +111,7 @@ class TestUserMeDeleteView:
         ).enable()
 
 
-class TestUserViewSetDeletion:
+class TestUserDeleteView:
     def test_delete_user_if_logged_in(self, api_client, db):
         user = UserFactory.create()
         assert User.objects.filter(username=user.username).exists()

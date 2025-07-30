@@ -6,6 +6,8 @@ from testapp.factories import (
     UserFactory,
     TokenFactory,
 )
+from django.urls import clear_url_caches
+from djoser.conf import reload_djoser_settings
 
 Token = djoser_settings.TOKEN_MODEL
 
@@ -17,19 +19,25 @@ def allow_db_access(db):
 
 @pytest.fixture
 def api_client():
-    """DRF API client fixture."""
+    """
+    DRF API client fixture.
+    """
     return APIClient()
 
 
 @pytest.fixture
 def user(db):
-    """Create a basic user for testing."""
+    """
+    Create a basic user for testing.
+    """
     return UserFactory()
 
 
 @pytest.fixture
 def create_superuser(db):
-    """Create a superuser for testing."""
+    """
+    Create a superuser for testing.
+    """
     return UserFactory.create(
         username="admin",
         email="admin@example.com",
@@ -40,13 +48,17 @@ def create_superuser(db):
 
 @pytest.fixture
 def inactive_user(db):
-    """Create an inactive user for testing."""
+    """
+    Create an inactive user for testing.
+    """
     return UserFactory.create(is_active=False)
 
 
 @pytest.fixture
 def authenticated_client(api_client, user):
-    """API client authenticated with a token."""
+    """
+    API client authenticated with a token.
+    """
     token = TokenFactory.create(user=user)
     api_client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
     return api_client
@@ -54,7 +66,9 @@ def authenticated_client(api_client, user):
 
 @pytest.fixture
 def signal_tracker():
-    """Track Django signals for testing."""
+    """
+    Track Django signals for testing.
+    """
 
     class SignalTracker:
         def __init__(self):
@@ -72,7 +86,7 @@ def signal_tracker():
     return SignalTracker()
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def djoser_settings(settings):
     """
     Fixture to easily modify DJOSER settings in tests.
@@ -135,14 +149,15 @@ def djoser_settings(settings):
             # Update Django settings
             settings.DJOSER = self._settings
             # Force reload of djoser settings
-            from djoser.conf import reload_djoser_settings
 
             reload_djoser_settings(setting="DJOSER", value=self._settings)
+
+            clear_url_caches()
 
     prx = DjoserSettingsProxy(settings.DJOSER)
     yield prx
     # Restore original settings
     settings.DJOSER = prx._original_settings
-    from djoser.conf import reload_djoser_settings
 
     reload_djoser_settings(setting="DJOSER", value=prx._original_settings)
+    clear_url_caches()
