@@ -8,6 +8,7 @@ from testapp.models import CustomUser
 from testapp.tests.common import create_user, mock
 
 from djoser.compat import get_user_email
+from djoser.conf import settings as djoser_settings
 
 
 class TestResendActivationEmail(
@@ -74,3 +75,29 @@ class TestResendActivationEmail(
         response = self.client.post(self.base_url, data)
 
         self.assert_status_equal(response, status.HTTP_204_NO_CONTENT)
+
+    def test_dont_resend_activation_with_authenticated_user_permission(self):
+        old_value = djoser_settings.PERMISSIONS["resend_activation"]
+        with override_settings(
+            DJOSER=dict(
+                settings.DJOSER,
+                **{
+                    "PERMISSIONS": {
+                        "resend_activation": [
+                            "rest_framework.permissions.IsAuthenticated"
+                        ]
+                    }
+                },
+            )
+        ):
+            user = create_user(is_active=False)
+            data = {"email": user.email}
+            response = self.client.post(self.base_url, data)
+
+            self.assert_emails_in_mailbox(0)
+            self.assert_status_equal(response, status.HTTP_401_UNAUTHORIZED)
+        override_settings(
+            DJOSER=dict(
+                settings.DJOSER, **{"PERMISSIONS": {"resend_activation": old_value}}
+            )
+        ).enable()
