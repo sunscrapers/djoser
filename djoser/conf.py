@@ -1,5 +1,5 @@
 # flake8: noqa E501
-from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.conf import settings as django_settings
 from django.test.signals import setting_changed
 from django.utils.functional import LazyObject
@@ -7,9 +7,7 @@ from django.utils.module_loading import import_string
 
 DJOSER_SETTINGS_NAMESPACE = "DJOSER"
 
-auth_module, user_model = django_settings.AUTH_USER_MODEL.rsplit(".", 1)
-
-User = apps.get_model(auth_module, user_model)
+User = get_user_model()
 
 
 class ObjDict(dict):
