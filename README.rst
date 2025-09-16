@@ -92,6 +92,7 @@ To run the test just type:
 
 .. code-block:: bash
 
+    $ cd testproject
     $ poetry run pytest
 
 We also prepared a convenient ``Makefile`` to automate commands above:
