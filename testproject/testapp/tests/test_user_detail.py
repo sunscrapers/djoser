@@ -1,3 +1,5 @@
+from unittest import mock
+
 from testapp.factories import UserFactory
 import pytest
 from rest_framework import status
@@ -7,21 +9,44 @@ import djoser.permissions
 import djoser.views
 import djoser.signals
 
+# The classes handling user-detail requests differ between the monolithic
+# UserViewSet (2.x) and the split views (3.x); patch whichever exist.
+USER_DETAIL_VIEW_CLASS_NAMES = [
+    "UserViewSet",
+    "UserRetrieveView",
+    "UserPutView",
+    "UserPatchView",
+]
+
 
 @pytest.fixture
-def setup_modified_permissions():
-    """Test case that overrides user-detail permission to
-    CurrentUserOrAdminOrReadOnly."""
-    previous_permissions = djoser.views.UserViewSet.permission_classes
-    djoser.views.UserViewSet.permission_classes = [
-        djoser.permissions.CurrentUserOrAdminOrReadOnly
+def set_CurrentUserOrAdminOrReadOnly_permissions():
+    """
+    Test case that overrides user-detail permission to CurrentUserOrAdminOrReadOnly.
+    """
+    views = [
+        getattr(djoser.views, name)
+        for name in USER_DETAIL_VIEW_CLASS_NAMES
+        if hasattr(djoser.views, name)
     ]
+    mockers = []
+    for v in views:
+        mockers.append(
+            mock.patch.object(
+                v,
+                "permission_classes",
+                [djoser.permissions.CurrentUserOrAdminOrReadOnly],
+            )
+        )
+    for m in mockers:
+        m.start()
     yield
-    djoser.views.UserViewSet.permission_classes = previous_permissions
+    for m in mockers:
+        m.stop()
 
 
 @pytest.mark.django_db
-class TestUserViewSetList:
+class TestUserRetrieveView:
     @pytest.fixture(autouse=True)
     def setup(self, user, create_superuser):
         self.user = user
@@ -53,21 +78,21 @@ class TestUserViewSetList:
 
 
 @pytest.mark.django_db
-class TestModifiedPermissionsUserViewSetList:
+class TestModifiedPermissionsUserRetrieveView:
     @pytest.fixture(autouse=True)
     def setup(self, user, create_superuser):
         self.user = user
         self.superuser = create_superuser
 
     def test_user_can_get_other_user_detail(
-        self, api_client, setup_modified_permissions
+        self, api_client, set_CurrentUserOrAdminOrReadOnly_permissions
     ):
         api_client.force_authenticate(user=self.user)
         response = api_client.get(reverse("user-detail", args=[self.superuser.pk]))
         assert response.status_code == status.HTTP_200_OK
 
     def test_user_cant_set_other_user_detail(
-        self, api_client, setup_modified_permissions
+        self, api_client, set_CurrentUserOrAdminOrReadOnly_permissions
     ):
         api_client.force_authenticate(user=self.user)
         response = api_client.get(reverse("user-detail", args=[self.superuser.pk]))
@@ -163,7 +188,7 @@ class TestModifiedPermissionsViewSetEdit:
         self.superuser = create_superuser
 
     def test_put_cant_edit_others_attribute(
-        self, api_client, setup_modified_permissions
+        self, api_client, set_CurrentUserOrAdminOrReadOnly_permissions
     ):
         another_user_data = {
             "username": "paul",
@@ -184,7 +209,9 @@ class TestModifiedPermissionsViewSetEdit:
         another_user.refresh_from_db()
         assert another_user.email == "paul@beatles.com"
 
-    def test_put_cant_edit_own_attribute(self, api_client, setup_modified_permissions):
+    def test_put_cant_edit_own_attribute(
+        self, api_client, set_CurrentUserOrAdminOrReadOnly_permissions
+    ):
         user_data = {
             "username": "paul",
             "password": "secret",
@@ -205,7 +232,7 @@ class TestModifiedPermissionsViewSetEdit:
         assert user.email == "paulmc@beatles.com"
 
     def test_superuser_put_can_edit_others_attribute(
-        self, api_client, setup_modified_permissions
+        self, api_client, set_CurrentUserOrAdminOrReadOnly_permissions
     ):
         another_user_data = {
             "username": "paul",
