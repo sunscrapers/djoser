@@ -223,11 +223,8 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
 
-      - name: Install dependencies to check uv.lock
-        run: uv sync
-
+      # No `uv sync` first: a plain sync re-locks and rewrites a stale
+      # uv.lock on disk, which would make this check unfailable.
       - name: Check if uv.lock is up to date
         run: uv lock --check
