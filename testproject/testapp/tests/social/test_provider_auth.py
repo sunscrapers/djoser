@@ -93,128 +93,69 @@ class TestProviderAuthView:
     def test_post_facebook_provider_success_returns_token(self):
         data = {"code": "XYZ", "state": "ABC"}
 
-        mock.patch(
-            "social_core.backends.facebook.FacebookOAuth2.auth_complete",
-            return_value=UserFactory.create(),
-        ).start()
-        mock.patch(
-            "social_core.backends.oauth.OAuthAuth.get_session_state",
-            return_value=data["state"],
-        ).start()
-
-        request = self.factory.post("/auth/facebook/")
-        request.GET = {k: v for k, v in data.items()}
-        response = self._get_view_response(request, provider="facebook")
+        with (
+            mock.patch(
+                "social_core.backends.facebook.FacebookOAuth2.auth_complete",
+                return_value=UserFactory.create(),
+            ),
+            mock.patch(
+                "social_core.backends.oauth.OAuthAuth.get_session_state",
+                return_value=data["state"],
+            ),
+        ):
+            request = self.factory.post("/auth/facebook/")
+            request.GET = {k: v for k, v in data.items()}
+            response = self._get_view_response(request, provider="facebook")
         assert response.status_code == status.HTTP_201_CREATED
         assert set(response.data.keys()) == {"access", "refresh", "user"}
 
-    def test_post_facebook_provider_code_validation_fails(self):
+    @pytest.mark.parametrize(
+        "auth_error",
+        [
+            AuthException(backend=None),
+            AuthForbidden(backend=None),
+            AuthCanceled(backend=None),
+            AuthUnknownError(backend=None),
+            ConnectionError("Network error"),
+        ],
+        ids=lambda e: type(e).__name__,
+    )
+    def test_post_facebook_provider_fails_if_auth_complete_raises(self, auth_error):
         data = {"code": "XYZ", "state": "ABC"}
 
-        mock.patch(
-            "social_core.backends.facebook.FacebookOAuth2.auth_complete",
-            side_effect=AuthException(backend=None),
-        ).start()
-        mock.patch(
-            "social_core.backends.oauth.OAuthAuth.get_session_state",
-            return_value=data["state"],
-        ).start()
-
-        request = self.factory.post("/auth/facebook/")
-        request.GET = {k: v for k, v in data.items()}
-        response = self._get_view_response(request, provider="facebook")
+        with (
+            mock.patch(
+                "social_core.backends.facebook.FacebookOAuth2.auth_complete",
+                side_effect=auth_error,
+            ),
+            mock.patch(
+                "social_core.backends.oauth.OAuthAuth.get_session_state",
+                return_value=data["state"],
+            ),
+        ):
+            request = self.factory.post("/auth/facebook/")
+            request.GET = {k: v for k, v in data.items()}
+            response = self._get_view_response(request, provider="facebook")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_post_facebook_provider_validation_fails_if_invalid_state(self):
         data = {"code": "XYZ", "state": "ABC"}
 
-        mock.patch(
+        with mock.patch(
             "social_core.backends.oauth.OAuthAuth.get_session_state",
             return_value=data["state"][::-1],
-        ).start()
-
-        request = self.factory.post("/auth/facebook/")
-        request.GET = {k: v for k, v in data.items()}
-        response = self._get_view_response(request, provider="facebook")
+        ):
+            request = self.factory.post("/auth/facebook/")
+            request.GET = {k: v for k, v in data.items()}
+            response = self._get_view_response(request, provider="facebook")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_post_facebook_provider_auth_forbidden_error(self):
-        """
-        Test handling of AuthForbidden exception.
-        """
-        data = {"code": "XYZ", "state": "ABC"}
-
-        mock.patch(
-            "social_core.backends.facebook.FacebookOAuth2.auth_complete",
-            side_effect=AuthForbidden(backend=None),
-        ).start()
-        mock.patch(
-            "social_core.backends.oauth.OAuthAuth.get_session_state",
-            return_value=data["state"],
-        ).start()
-
-        request = self.factory.post("/auth/facebook/")
-        request.GET = {k: v for k, v in data.items()}
-        response = self._get_view_response(request, provider="facebook")
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-    def test_post_facebook_provider_auth_canceled_error(self):
-        """
-        Test handling of AuthCanceled exception.
-        """
-        data = {"code": "XYZ", "state": "ABC"}
-
-        mock.patch(
-            "social_core.backends.facebook.FacebookOAuth2.auth_complete",
-            side_effect=AuthCanceled(backend=None),
-        ).start()
-        mock.patch(
-            "social_core.backends.oauth.OAuthAuth.get_session_state",
-            return_value=data["state"],
-        ).start()
-
-        request = self.factory.post("/auth/facebook/")
-        request.GET = {k: v for k, v in data.items()}
-        response = self._get_view_response(request, provider="facebook")
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-    def test_post_facebook_provider_auth_unknown_error(self):
-        """
-        Test handling of AuthUnknownError exception.
-        """
-        data = {"code": "XYZ", "state": "ABC"}
-
-        mock.patch(
-            "social_core.backends.facebook.FacebookOAuth2.auth_complete",
-            side_effect=AuthUnknownError(backend=None),
-        ).start()
-        mock.patch(
-            "social_core.backends.oauth.OAuthAuth.get_session_state",
-            return_value=data["state"],
-        ).start()
-
-        request = self.factory.post("/auth/facebook/")
-        request.GET = {k: v for k, v in data.items()}
-        response = self._get_view_response(request, provider="facebook")
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-    def test_post_facebook_provider_missing_code_parameter(self):
-        """
-        Test handling of missing code parameter.
-        """
-        data = {"state": "ABC"}  # Missing code
-
-        request = self.factory.post("/auth/facebook/")
-        request.GET = data
-        response = self._get_view_response(request, provider="facebook")
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-    def test_post_facebook_provider_missing_state_parameter(self):
-        """
-        Test handling of missing state parameter.
-        """
-        data = {"code": "XYZ"}  # Missing state
-
+    @pytest.mark.parametrize(
+        "data",
+        [{"state": "ABC"}, {"code": "XYZ"}],
+        ids=["missing-code", "missing-state"],
+    )
+    def test_post_facebook_provider_missing_required_parameter(self, data):
         request = self.factory.post("/auth/facebook/")
         request.GET = data
         response = self._get_view_response(request, provider="facebook")
@@ -230,46 +171,3 @@ class TestProviderAuthView:
         response = self._get_view_response(request, provider="unsupported")
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-
-    def test_post_with_expired_authorization_code(self):
-        """
-        Test handling of expired authorization code.
-        """
-        data = {"code": "EXPIRED_CODE", "state": "ABC"}
-
-        # Create a mock backend
-        mock_backend = mock.Mock()
-
-        mock.patch(
-            "social_core.backends.facebook.FacebookOAuth2.auth_complete",
-            side_effect=AuthException(mock_backend),
-        ).start()
-        mock.patch(
-            "social_core.backends.oauth.OAuthAuth.get_session_state",
-            return_value=data["state"],
-        ).start()
-
-        request = self.factory.post("/auth/facebook/")
-        request.GET = data
-        response = self._get_view_response(request, provider="facebook")
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-    def test_post_with_network_error_during_auth(self):
-        """
-        Test handling of network errors during authentication.
-        """
-        data = {"code": "XYZ", "state": "ABC"}
-
-        mock.patch(
-            "social_core.backends.facebook.FacebookOAuth2.auth_complete",
-            side_effect=ConnectionError("Network error"),
-        ).start()
-        mock.patch(
-            "social_core.backends.oauth.OAuthAuth.get_session_state",
-            return_value=data["state"],
-        ).start()
-
-        request = self.factory.post("/auth/facebook/")
-        request.GET = data
-        response = self._get_view_response(request, provider="facebook")
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
