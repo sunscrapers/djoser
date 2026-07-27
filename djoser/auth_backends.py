@@ -7,8 +7,9 @@ UserModel = get_user_model()
 
 
 class LoginFieldBackend(ModelBackend):
-    """Allows to log in by a different value than the default Django
-    USERNAME_FIELD."""
+    """
+    Allows to log in by a different value than the default Django USERNAME_FIELD.
+    """
 
     def authenticate(self, request, username=None, password=None, **kwargs):
         if username is None:
