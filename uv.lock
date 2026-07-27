@@ -7,6 +7,9 @@ resolution-markers = [
     "python_full_version < '3.10'",
 ]
 
+[manifest]
+constraints = [{ name = "social-auth-app-django", specifier = "<5.5" }]
+
 [[package]]
 name = "alabaster"
 version = "0.7.16"
@@ -594,8 +597,7 @@ dependencies = [
     { name = "django", version = "5.2.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
     { name = "djangorestframework" },
     { name = "djangorestframework-simplejwt" },
-    { name = "social-auth-app-django", version = "5.4.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
-    { name = "social-auth-app-django", version = "5.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "social-auth-app-django" },
 ]
 
 [package.optional-dependencies]
@@ -1398,33 +1400,14 @@ wheels = [
 name = "social-auth-app-django"
 version = "5.4.3"
 source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version < '3.10'",
-]
 dependencies = [
-    { name = "django", version = "4.2.23", source = { registry = "https://pypi.org/simple" } },
+    { name = "django", version = "4.2.23", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
+    { name = "django", version = "5.2.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
     { name = "social-auth-core" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/2a/07/bb2465e4116d4761b028bd07b99087009caa81c1511c886d74c4ccece3a2/social_auth_app_django-5.4.3.tar.gz", hash = "sha256:d1f4286d5ca1e512c9b2f686e7ecb2a0128148f1a33d853b69dc07b58508362e", size = 24860, upload-time = "2025-02-13T13:07:34.557Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e0/cd/43a25dabdf7689109b01ac866848c984594769ec3cbc5ce4c261b4895237/social_auth_app_django-5.4.3-py3-none-any.whl", hash = "sha256:db70b972faeb10ee1ec83d0dc7dbd0558d5f5830417bba317b712b10ff58d031", size = 26241, upload-time = "2025-02-13T13:07:32.787Z" },
-]
-
-[[package]]
-name = "social-auth-app-django"
-version = "5.5.1"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.11'",
-    "python_full_version == '3.10.*'",
-]
-dependencies = [
-    { name = "django", version = "5.2.4", source = { registry = "https://pypi.org/simple" } },
-    { name = "social-auth-core" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/88/f7/7f6c4ae532a0bc690e5c38368607752b17fc098946fd2616dcc3c4e271f2/social_auth_app_django-5.5.1.tar.gz", hash = "sha256:a1435c17227d07d690b06cca54ea47d4ed939de4749dac45dd4393c8a98dac17", size = 26554, upload-time = "2025-06-27T13:11:47.899Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/0f/33/45ba68b2656569b8def10cef20f1574dce0fed787cbc2f7ccc509b1d4ceb/social_auth_app_django-5.5.1-py3-none-any.whl", hash = "sha256:7a6aac52686b9703af57ad1f5935c55fb97404988067e94c4fa32143bc6a02a5", size = 28529, upload-time = "2025-06-27T13:11:46.798Z" },
 ]
 
 [[package]]

@@ -71,6 +71,12 @@ docs = [
 Repository = "https://github.com/sunscrapers/djoser"
 Documentation = "https://djoser.readthedocs.io/"
 
+[tool.uv]
+# social-auth-app-django 5.5 requires Django>=5.1 (CheckConstraint condition=);
+# keep the lock compatible with the Django 3.2-5.0 rows of the CI matrix
+# without constraining the published package metadata.
+constraint-dependencies = ["social-auth-app-django<5.5"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
