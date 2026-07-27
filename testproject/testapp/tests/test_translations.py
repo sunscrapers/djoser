@@ -9,7 +9,7 @@ from djoser.constants import Messages
 
 def test_constants_translations_are_up_to_date():
     messages = {force_str(v) for k, v in vars(Messages).items() if k.isupper()}
-    ERROR_TEMPALTE = (
+    ERROR_TEMPLATE = (
         "Error message '{message}' was found in "
         "locale {locale} but can't be found in the messages class"
     )
@@ -30,7 +30,7 @@ def test_constants_translations_are_up_to_date():
                     continue
                 if message.id not in messages:
                     raise ValueError(
-                        ERROR_TEMPALTE.format(
+                        ERROR_TEMPLATE.format(
                             message=message.id, locale=specific_locale.name
                         )
                     )

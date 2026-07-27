@@ -35,10 +35,14 @@ class BaseTestUsernameLoginFields:
         return signal_handler
 
     def configure_djoser_settings(
-        self, settings, mocker, login_field, username_field, user_can_authenticate
+        self,
+        djoser_settings,
+        mocker,
+        login_field,
+        username_field,
+        user_can_authenticate,
     ):
-        settings.DJOSER["LOGIN_FIELD"] = login_field
-        mocker.patch("djoser.serializers.settings.LOGIN_FIELD", login_field)
+        djoser_settings["LOGIN_FIELD"] = login_field
         mocker.patch("djoser.serializers.User.USERNAME_FIELD", username_field)
         mocker.patch.object(
             ModelBackend, "user_can_authenticate", return_value=user_can_authenticate
@@ -48,7 +52,7 @@ class BaseTestUsernameLoginFields:
         self,
         user,
         client,
-        settings,
+        djoser_settings,
         mocker,
         signal_user_logged_in_patched,
         login_field,
@@ -56,7 +60,7 @@ class BaseTestUsernameLoginFields:
         send_field,
     ):
         self.configure_djoser_settings(
-            settings=settings,
+            djoser_settings=djoser_settings,
             mocker=mocker,
             login_field=login_field,
             username_field=username_field,
@@ -82,7 +86,7 @@ class BaseTestUsernameLoginFields:
         self,
         user,
         client,
-        settings,
+        djoser_settings,
         mocker,
         signal_user_login_failed_patched,
         login_field,
@@ -91,7 +95,7 @@ class BaseTestUsernameLoginFields:
         user_can_authenticate,
     ):
         self.configure_djoser_settings(
-            settings=settings,
+            djoser_settings=djoser_settings,
             mocker=mocker,
             login_field=login_field,
             username_field=username_field,
@@ -133,7 +137,7 @@ class TestModelBackendLoginFields(BaseTestUsernameLoginFields):
         self,
         user,
         client,
-        settings,
+        djoser_settings,
         mocker,
         signal_user_logged_in_patched,
         login_field,
@@ -143,7 +147,7 @@ class TestModelBackendLoginFields(BaseTestUsernameLoginFields):
         self._test_successful_login(
             user,
             client,
-            settings,
+            djoser_settings,
             mocker,
             signal_user_logged_in_patched,
             login_field,
@@ -170,7 +174,7 @@ class TestModelBackendLoginFields(BaseTestUsernameLoginFields):
         self,
         user,
         client,
-        settings,
+        djoser_settings,
         mocker,
         signal_user_login_failed_patched,
         login_field,
@@ -181,7 +185,7 @@ class TestModelBackendLoginFields(BaseTestUsernameLoginFields):
         self._test_failing_login(
             user,
             client,
-            settings,
+            djoser_settings,
             mocker,
             signal_user_login_failed_patched,
             login_field,
@@ -214,7 +218,7 @@ class TestLoginFieldBackend(BaseTestUsernameLoginFields):
         self,
         user,
         client,
-        settings,
+        djoser_settings,
         mocker,
         signal_user_logged_in_patched,
         login_field,
@@ -224,7 +228,7 @@ class TestLoginFieldBackend(BaseTestUsernameLoginFields):
         self._test_successful_login(
             user,
             client,
-            settings,
+            djoser_settings,
             mocker,
             signal_user_logged_in_patched,
             login_field,
@@ -249,7 +253,7 @@ class TestLoginFieldBackend(BaseTestUsernameLoginFields):
         self,
         user,
         client,
-        settings,
+        djoser_settings,
         mocker,
         signal_user_login_failed_patched,
         login_field,
@@ -260,7 +264,7 @@ class TestLoginFieldBackend(BaseTestUsernameLoginFields):
         self._test_failing_login(
             user,
             client,
-            settings,
+            djoser_settings,
             mocker,
             signal_user_login_failed_patched,
             login_field,
@@ -269,9 +273,9 @@ class TestLoginFieldBackend(BaseTestUsernameLoginFields):
             user_can_authenticate,
         )
 
-    def test_user_does_not_exist(self, client, settings, mocker):
+    def test_user_does_not_exist(self, client, djoser_settings, mocker):
         self.configure_djoser_settings(
-            settings=settings,
+            djoser_settings=djoser_settings,
             mocker=mocker,
             login_field="username",
             username_field="username",

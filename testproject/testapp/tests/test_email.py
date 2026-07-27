@@ -2,53 +2,70 @@ import copy
 import pickle
 import re
 from unittest import mock
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
-from django.conf import settings
-from django.test.utils import override_settings
-from djoser.email import BaseDjoserEmail
+from djoser.email import BaseDjoserEmail, BaseEmailMessage, ActivationEmail
 from djoser.conf import settings as djoser_settings
 import pytest
 
 
+def test_base_email_message_with_template_name():
+    custom_template = "custom_template.html"
+    email = BaseEmailMessage(template_name=custom_template)
+    assert email.template_name == custom_template
+
+
+def test_attach_body_html_only():
+    email = BaseEmailMessage()
+    # Use reflection to set html attribute
+    object.__setattr__(email, "html", "<h1>HTML Content</h1>")
+    object.__setattr__(email, "body", None)
+    email._attach_body()
+    assert email.body == "<h1>HTML Content</h1>"
+    assert email.content_subtype == "html"
+
+
+def test_activation_email_with_custom_template(user):
+    request = Mock()
+    context = {"user": user}
+    custom_template = "custom_activation.html"
+
+    email = ActivationEmail(
+        request=request, context=context, template_name=custom_template
+    )
+    assert email.template_name == custom_template
+
+
 @pytest.mark.django_db
 class TestDjoserEmail:
-    @override_settings(DJOSER=dict())
-    def test_base_djoser_email_get_context_data_with_no_settings_uses_defaults(self):
+    def test_base_djoser_email_get_context_data_with_no_settings_uses_defaults(
+        self, djoser_settings
+    ):
+        djoser_settings.clear()
         base_djoser_email = BaseDjoserEmail()
         context_produced_without_settings = base_djoser_email.get_context_data()
         default_context = super(BaseDjoserEmail, base_djoser_email).get_context_data()
         default_context.pop("view")
         assert context_produced_without_settings == default_context
 
-    @override_settings(
-        DJOSER=dict(
-            settings.DJOSER,
-            **{
-                "EMAIL_FRONTEND_DOMAIN": "my_domain",
-                "EMAIL_FRONTEND_SITE_NAME": "my_site_name",
-                "EMAIL_FRONTEND_PROTOCOL": "https",
-            },
-        )
-    )
-    def test_base_djoser_email_get_context_data_overrides_defaults_correctly(self):
+    def test_base_djoser_email_get_context_data_overrides_defaults_correctly(
+        self, djoser_settings
+    ):
+        djoser_settings["EMAIL_FRONTEND_DOMAIN"] = "my_domain"
+        djoser_settings["EMAIL_FRONTEND_SITE_NAME"] = "my_site_name"
+        djoser_settings["EMAIL_FRONTEND_PROTOCOL"] = "https"
+
         base_djoser_email = BaseDjoserEmail()
         context_produced_using_settings = base_djoser_email.get_context_data()
         assert context_produced_using_settings.get("domain") == "my_domain"
         assert context_produced_using_settings.get("site_name") == "my_site_name"
         assert context_produced_using_settings.get("protocol") == "https"
 
-    @override_settings(
-        DJOSER=dict(
-            settings.DJOSER,
-            **{
-                "EMAIL_FRONTEND_DOMAIN": "my_domain",
-                "EMAIL_FRONTEND_SITE_NAME": "my_site_name",
-                "EMAIL_FRONTEND_PROTOCOL": "https",
-            },
-        )
-    )
-    def test_all_emails_can_be_pickled(self, user):
+    def test_all_emails_can_be_pickled(self, djoser_settings, user):
+        djoser_settings["EMAIL_FRONTEND_DOMAIN"] = "my_domain"
+        djoser_settings["EMAIL_FRONTEND_SITE_NAME"] = "my_site_name"
+        djoser_settings["EMAIL_FRONTEND_PROTOCOL"] = "https"
+
         email_cls_keys = list(djoser_settings.EMAIL.keys())
         request = mock.MagicMock()
         for email_cls_key in email_cls_keys:
