@@ -34,12 +34,12 @@ classifiers = [
 dependencies = [
     "django>=3.2",
     "djangorestframework>=3.14",
-    "djangorestframework-simplejwt>=5.0",
-    "social-auth-app-django>=5.0.0",
+    "djangorestframework-simplejwt>=5.0,<6.0",
+    "social-auth-app-django>=5.0.0,<6.0.0",
 ]
 
 [project.optional-dependencies]
-djet = ["djet>=0.3.0"]
+djet = ["djet>=0.3.0,<0.4.0"]
 webauthn = ["webauthn<1.0"]
 test = [
     "pytest>=7.2.2",
