@@ -21,8 +21,8 @@ run-hooks:
 	uv run pre-commit run --all-files --show-diff-on-failure
 
 docs:
-	uv sync --group docs
-	cd docs && make html
+	uv sync --group docs --inexact
+	cd docs && $(MAKE) html SPHINXBUILD="uv run python -msphinx"
 
 update-deps:
 	uv lock --upgrade
