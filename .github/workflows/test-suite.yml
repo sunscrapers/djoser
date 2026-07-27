@@ -149,8 +149,17 @@ jobs:
         django-version: ["5.0.12", "5.1.6", "5.2.0"]
         drf-version: [3.14]
         exclude:
+          # Django 5.0 never supported Python 3.13 (support arrived in 5.1.3)
           - python-version: '3.13'
             django-version: "5.0.12"
+        include:
+          # Latest Django stable requires Python >= 3.12
+          - python-version: 3.12
+            django-version: "latest"
+            drf-version: 3.14
+          - python-version: 3.13
+            django-version: "latest"
+            drf-version: 3.14
 
     runs-on: ubuntu-latest
     steps:
