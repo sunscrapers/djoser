@@ -59,7 +59,9 @@ jobs:
       - name: Show environment info
         run: |
           uv run python --version
-          uv pip freeze | grep -E 'djangorestframework|Django'
+          # -i because uv pip freeze normalizes names to lowercase (django==),
+          # unlike pip which preserved the canonical Django== casing
+          uv pip freeze | grep -iE 'djangorestframework|django'
 
       - name: Run tests
         run: make test
@@ -126,7 +128,9 @@ jobs:
       - name: Show environment info
         run: |
           uv run python --version
-          uv pip freeze | grep -E 'djangorestframework|Django'
+          # -i because uv pip freeze normalizes names to lowercase (django==),
+          # unlike pip which preserved the canonical Django== casing
+          uv pip freeze | grep -iE 'djangorestframework|django'
 
       - name: Run tests
         run: make test
@@ -197,7 +201,9 @@ jobs:
       - name: Show environment info
         run: |
           uv run python --version
-          uv pip freeze | grep -E 'djangorestframework|Django'
+          # -i because uv pip freeze normalizes names to lowercase (django==),
+          # unlike pip which preserved the canonical Django== casing
+          uv pip freeze | grep -iE 'djangorestframework|django'
 
       - name: Run tests
         run: make test
