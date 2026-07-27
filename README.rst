@@ -84,7 +84,7 @@ We use `uv <https://docs.astral.sh/uv/>`_ as dependency management and packaging
 .. code-block:: bash
 
     $ cd djoser
-    $ uv sync --all-extras
+    $ uv sync --all-extras --all-groups
 
 This will create a virtualenv with all development dependencies.
 
@@ -92,7 +92,7 @@ To run the test just type:
 
 .. code-block:: bash
 
-    $ uv run pytest
+    $ uv run pytest testproject/
 
 We also prepared a convenient ``Makefile`` to automate commands above:
 
