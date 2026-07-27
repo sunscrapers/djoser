@@ -4,7 +4,31 @@ from contextlib import suppress
 
 import pytest
 from deepdiff import DeepDiff
+from django.test import Client
 from django.urls import get_resolver
+
+
+@pytest.mark.django_db
+def test_registration_works_with_csrf_middleware_enabled(settings):
+    """
+    Django's default MIDDLEWARE includes CsrfViewMiddleware.
+
+    An API client has no CSRF cookie, so registration must not be rejected by it.
+    """
+    settings.MIDDLEWARE = [
+        "django.contrib.sessions.middleware.SessionMiddleware",
+        "django.middleware.csrf.CsrfViewMiddleware",
+    ]
+    response = Client(enforce_csrf_checks=True).post(
+        "/auth/users/",
+        {
+            "username": "csrfuser",
+            "password": "testing123!",
+            "email": "csrf@example.com",
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 201, response.content
 
 
 @pytest.mark.django_db

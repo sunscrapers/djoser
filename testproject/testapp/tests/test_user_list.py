@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 
-class TestUserViewSetList:
+class TestUserListView:
     @pytest.fixture(autouse=True)
     def setup(self, user, create_superuser):
         self.base_url = reverse("user-list")

@@ -2,11 +2,38 @@ import copy
 import pickle
 import re
 from unittest import mock
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
-from djoser.email import BaseDjoserEmail
+from djoser.email import BaseDjoserEmail, BaseEmailMessage, ActivationEmail
 from djoser.conf import settings as djoser_settings
 import pytest
+
+
+def test_base_email_message_with_template_name():
+    custom_template = "custom_template.html"
+    email = BaseEmailMessage(template_name=custom_template)
+    assert email.template_name == custom_template
+
+
+def test_attach_body_html_only():
+    email = BaseEmailMessage()
+    # Use reflection to set html attribute
+    object.__setattr__(email, "html", "<h1>HTML Content</h1>")
+    object.__setattr__(email, "body", None)
+    email._attach_body()
+    assert email.body == "<h1>HTML Content</h1>"
+    assert email.content_subtype == "html"
+
+
+def test_activation_email_with_custom_template(user):
+    request = Mock()
+    context = {"user": user}
+    custom_template = "custom_activation.html"
+
+    email = ActivationEmail(
+        request=request, context=context, template_name=custom_template
+    )
+    assert email.template_name == custom_template
 
 
 @pytest.mark.django_db

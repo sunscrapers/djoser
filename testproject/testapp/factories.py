@@ -9,7 +9,9 @@ User = get_user_model()
 
 
 class BaseUserFactory(factory.django.DjangoModelFactory):
-    """Base factory with common password handling logic."""
+    """
+    Base factory with common password handling logic.
+    """
 
     class Meta:
         abstract = True

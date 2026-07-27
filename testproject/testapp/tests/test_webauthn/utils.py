@@ -30,7 +30,9 @@ WEBAUTHN_TEST_DATA = {
 
 
 def get_webauthn_signup_data(username=None, email=None):
-    """Get standard WebAuthn signup data."""
+    """
+    Get standard WebAuthn signup data.
+    """
     return {
         "clientData": WEBAUTHN_TEST_DATA["CLIENT_DATA"],
         "attObj": WEBAUTHN_TEST_DATA["ATT_OBJ"],
@@ -40,7 +42,9 @@ def get_webauthn_signup_data(username=None, email=None):
 
 
 def get_webauthn_settings():
-    """Get standard WebAuthn settings for tests."""
+    """
+    Get standard WebAuthn settings for tests.
+    """
     return {
         "RP_NAME": WEBAUTHN_TEST_DATA["RP_NAME"],
         "RP_ID": WEBAUTHN_TEST_DATA["RP_ID"],
