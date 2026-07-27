@@ -107,6 +107,11 @@ jobs:
           uv build
           ls -l dist/
 
+      - name: Verify translations are in the distributions
+        run: |
+          unzip -l dist/*.whl | grep -q 'django\.mo'
+          tar -tzf dist/*.tar.gz | grep -q 'django\.mo'
+
       - name: Upload distribution
         uses: actions/upload-artifact@v4
         with:

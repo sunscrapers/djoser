@@ -81,11 +81,13 @@ constraint-dependencies = ["social-auth-app-django<5.5"]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build]
+# Compiled translation catalogs are gitignored; without this hatchling
+# excludes them from both the sdist and the wheel.
+artifacts = ["djoser/locale/**/*.mo"]
+
 [tool.hatch.build.targets.sdist]
-include = [
-    "/djoser",
-    "/djoser/locale/**/*.mo",
-]
+include = ["/djoser"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["djoser"]
