@@ -7,6 +7,11 @@ on:
   schedule:
     - cron: '0 0 * * 0'
 
+# `uv run` would otherwise re-sync the environment to uv.lock and undo the
+# matrix-specific Django/DRF pins installed with `uv pip install`.
+env:
+  UV_NO_SYNC: "1"
+
 jobs:
   django3-test:
     name: Django 3 - Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}
@@ -36,19 +41,19 @@ jobs:
       - name: Install Django version
         run: |
           if [ "${{ matrix.django-version }}" = "latest" ]; then
-            uv add --upgrade "Django"  # Force upgrade to latest
+            uv pip install --upgrade "Django"  # Force upgrade to latest
           else
             # First try exact version, if it fails try to install the major.minor version
             echo "Installing Django ${{ matrix.django-version }}..."
-            if ! uv add "Django==${{ matrix.django-version }}"; then
+            if ! uv pip install "Django==${{ matrix.django-version }}"; then
               echo "Exact version failed, trying to install the latest patch version..."
               MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
-              uv add "Django~=$MAJOR_MINOR.0"
+              uv pip install "Django~=$MAJOR_MINOR.0"
             fi
           fi
 
       - name: Install DRF version
-        run: uv add --upgrade "djangorestframework==${{ matrix.drf-version }}"
+        run: uv pip install --upgrade "djangorestframework==${{ matrix.drf-version }}"
 
       - name: Show environment info
         run: |
@@ -103,19 +108,19 @@ jobs:
       - name: Install Django version
         run: |
           if [ "${{ matrix.django-version }}" = "latest" ]; then
-            uv add --upgrade "Django"  # Force upgrade to latest
+            uv pip install --upgrade "Django"  # Force upgrade to latest
           else
             # First try exact version, if it fails try to install the major.minor version
             echo "Installing Django ${{ matrix.django-version }}..."
-            if ! uv add "Django==${{ matrix.django-version }}"; then
+            if ! uv pip install "Django==${{ matrix.django-version }}"; then
               echo "Exact version failed, trying to install the latest patch version..."
               MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
-              uv add "Django~=$MAJOR_MINOR.0"
+              uv pip install "Django~=$MAJOR_MINOR.0"
             fi
           fi
 
       - name: Install DRF version
-        run: uv add --upgrade "djangorestframework==${{ matrix.drf-version }}"
+        run: uv pip install --upgrade "djangorestframework==${{ matrix.drf-version }}"
 
       - name: Show environment info
         run: |
@@ -165,19 +170,19 @@ jobs:
       - name: Install Django version
         run: |
           if [ "${{ matrix.django-version }}" = "latest" ]; then
-            uv add --upgrade "Django"  # Force upgrade to latest
+            uv pip install --upgrade "Django"  # Force upgrade to latest
           else
             # First try exact version, if it fails try to install the major.minor version
             echo "Installing Django ${{ matrix.django-version }}..."
-            if ! uv add "Django==${{ matrix.django-version }}"; then
+            if ! uv pip install "Django==${{ matrix.django-version }}"; then
               echo "Exact version failed, trying to install the latest patch version..."
               MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
-              uv add "Django~=$MAJOR_MINOR.0"
+              uv pip install "Django~=$MAJOR_MINOR.0"
             fi
           fi
 
       - name: Install DRF version
-        run: uv add --upgrade "djangorestframework==${{ matrix.drf-version }}"
+        run: uv pip install --upgrade "djangorestframework==${{ matrix.drf-version }}"
 
       - name: Show environment info
         run: |
