@@ -601,6 +601,14 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+djet = [
+    { name = "djet" },
+]
+webauthn = [
+    { name = "webauthn" },
+]
+
+[package.dev-dependencies]
 code-quality = [
     { name = "black" },
     { name = "docformatter" },
@@ -608,9 +616,6 @@ code-quality = [
     { name = "pre-commit-hooks" },
     { name = "pyupgrade" },
     { name = "ruff" },
-]
-djet = [
-    { name = "djet" },
 ]
 docs = [
     { name = "sphinx", version = "7.4.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
@@ -633,39 +638,44 @@ test = [
     { name = "pytest-mock" },
     { name = "tox" },
 ]
-webauthn = [
-    { name = "webauthn" },
-]
 
 [package.metadata]
 requires-dist = [
-    { name = "babel", marker = "extra == 'test'", specifier = ">=2.12.1" },
-    { name = "black", marker = "extra == 'code-quality'", specifier = ">=23.1,<26.0" },
-    { name = "coverage", marker = "extra == 'test'", specifier = ">=7.2.2" },
-    { name = "deepdiff", marker = "extra == 'test'", specifier = ">=8.0.1" },
     { name = "django", specifier = ">=3.2" },
     { name = "djangorestframework", specifier = ">=3.14" },
     { name = "djangorestframework-simplejwt", specifier = ">=5.0,<6.0" },
     { name = "djet", marker = "extra == 'djet'", specifier = ">=0.3.0,<0.4.0" },
-    { name = "docformatter", marker = "extra == 'code-quality'", specifier = ">=1.7.4" },
-    { name = "factory-boy", marker = "extra == 'test'", specifier = ">=3.3.0" },
-    { name = "pre-commit", marker = "extra == 'code-quality'", specifier = ">=4.1.0" },
-    { name = "pre-commit-hooks", marker = "extra == 'code-quality'", specifier = ">=4.4,<6.0" },
-    { name = "pytest", marker = "extra == 'test'", specifier = ">=7.2.2" },
-    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=4.0.0" },
-    { name = "pytest-django", marker = "extra == 'test'", specifier = ">=4.5.2" },
-    { name = "pytest-env", marker = "extra == 'test'", specifier = ">=1.1.3" },
-    { name = "pytest-mock", marker = "extra == 'test'", specifier = ">=3.14.0" },
-    { name = "pyupgrade", marker = "extra == 'code-quality'", specifier = ">=3.3.1" },
-    { name = "ruff", marker = "extra == 'code-quality'", specifier = ">=0.8.0" },
     { name = "social-auth-app-django", specifier = ">=5.0.0,<6.0.0" },
-    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=6.1.3" },
-    { name = "sphinx-rtd-theme", marker = "extra == 'docs'", specifier = ">=1.2.0" },
-    { name = "toml", marker = "extra == 'docs'", specifier = ">=0.10.2" },
-    { name = "tox", marker = "extra == 'test'", specifier = ">=4.4.8" },
     { name = "webauthn", marker = "extra == 'webauthn'", specifier = "<1.0" },
 ]
-provides-extras = ["djet", "webauthn", "test", "code-quality", "docs"]
+provides-extras = ["djet", "webauthn"]
+
+[package.metadata.requires-dev]
+code-quality = [
+    { name = "black", specifier = ">=23.1,<26.0" },
+    { name = "docformatter", specifier = ">=1.7.4" },
+    { name = "pre-commit", specifier = ">=4.1.0" },
+    { name = "pre-commit-hooks", specifier = ">=4.4,<6.0" },
+    { name = "pyupgrade", specifier = ">=3.3.1" },
+    { name = "ruff", specifier = ">=0.8.0" },
+]
+docs = [
+    { name = "sphinx", specifier = ">=6.1.3" },
+    { name = "sphinx-rtd-theme", specifier = ">=1.2.0" },
+    { name = "toml", specifier = ">=0.10.2" },
+]
+test = [
+    { name = "babel", specifier = ">=2.12.1" },
+    { name = "coverage", specifier = ">=7.2.2" },
+    { name = "deepdiff", specifier = ">=8.0.1" },
+    { name = "factory-boy", specifier = ">=3.3.0" },
+    { name = "pytest", specifier = ">=7.2.2" },
+    { name = "pytest-cov", specifier = ">=4.0.0" },
+    { name = "pytest-django", specifier = ">=4.5.2" },
+    { name = "pytest-env", specifier = ">=1.1.3" },
+    { name = "pytest-mock", specifier = ">=3.14.0" },
+    { name = "tox", specifier = ">=4.4.8" },
+]
 
 [[package]]
 name = "docformatter"

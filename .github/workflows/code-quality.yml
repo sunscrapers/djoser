@@ -21,7 +21,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --extra code-quality
+        run: uv sync --group code-quality
 
       - name: Run pre-commit with debug
         run: |

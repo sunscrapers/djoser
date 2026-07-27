@@ -41,6 +41,10 @@ dependencies = [
 [project.optional-dependencies]
 djet = ["djet>=0.3.0,<0.4.0"]
 webauthn = ["webauthn<1.0"]
+
+# Dev dependencies live in PEP 735 groups so they are not published as
+# extras in the wheel metadata; install with `uv sync --group <name>`.
+[dependency-groups]
 test = [
     "pytest>=7.2.2",
     "coverage>=7.2.2",

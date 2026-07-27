@@ -37,7 +37,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --extra test --extra djet --extra webauthn
+        run: uv sync --group test --extra djet --extra webauthn
 
       - name: Install Django version
         run: |
@@ -104,7 +104,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --extra test --extra djet --extra webauthn
+        run: uv sync --group test --extra djet --extra webauthn
 
       - name: Install Django version
         run: |
@@ -166,7 +166,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --extra test --extra djet --extra webauthn
+        run: uv sync --group test --extra djet --extra webauthn
 
       - name: Install Django version
         run: |

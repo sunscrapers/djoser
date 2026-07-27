@@ -10,7 +10,7 @@ build:
     post_install:
       # uv ignores VIRTUAL_ENV; UV_PROJECT_ENVIRONMENT is what points it at
       # the Read the Docs virtualenv instead of a project-local .venv
-      - UV_PROJECT_ENVIRONMENT=$READTHEDOCS_VIRTUALENV_PATH uv sync --extra docs
+      - UV_PROJECT_ENVIRONMENT=$READTHEDOCS_VIRTUALENV_PATH uv sync --group docs
 
 sphinx:
   configuration: docs/source/conf.py

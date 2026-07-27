@@ -100,7 +100,7 @@ jobs:
           enable-cache: true
 
       - name: Compile translations
-        run: uv run --extra test pybabel compile --domain django --directory djoser/locale -f
+        run: uv run --group test pybabel compile --domain django --directory djoser/locale -f
 
       - name: Build package
         run: |

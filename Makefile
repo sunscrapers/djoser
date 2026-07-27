@@ -1,10 +1,10 @@
 .PHONY: init build test migrate runserver run-hooks docs update-deps
 
 init:
-	uv sync --all-extras
+	uv sync --all-extras --all-groups
 
 build:
-	uv run pybabel compile --domain django --directory djoser/locale -f
+	uv run --group test pybabel compile --domain django --directory djoser/locale -f
 	uv build
 
 test:
@@ -21,7 +21,7 @@ run-hooks:
 	uv run pre-commit run --all-files --show-diff-on-failure
 
 docs:
-	uv sync --extra docs
+	uv sync --group docs
 	cd docs && make html
 
 update-deps:
