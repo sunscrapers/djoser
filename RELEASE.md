@@ -20,6 +20,9 @@ Djoser uses [Semantic Versioning](http://semver.org/) and follows this release p
 1. **Update Version Number**
    ```bash
    # Manually edit pyproject.toml line 3: version = "X.Y.Z"
+   # Then update the lockfile — it records djoser's own version,
+   # and CI's `uv lock --check` fails if it is stale:
+   uv lock
    ```
 
 2. **Update CHANGELOG.rst**
@@ -50,7 +53,7 @@ Djoser uses [Semantic Versioning](http://semver.org/) and follows this release p
 
 5. **Commit and Push Release Branch**
    ```bash
-   git add pyproject.toml CHANGELOG.rst
+   git add pyproject.toml uv.lock CHANGELOG.rst
    git commit -m "Bump version to X.Y.Z"
    git push origin release/X.Y.Z
    ```
