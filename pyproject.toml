@@ -125,10 +125,6 @@ exclude = '''
 '''
 
 [tool.ruff]
-select = ["E", "F"]
-fixable = ["A", "B", "C", "D", "E", "F"]
-unfixable = []
-
 exclude = [
     "conf.py",
     ".venv",
@@ -154,6 +150,11 @@ exclude = [
 ]
 line-length = 88
 target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F"]
+fixable = ["A", "B", "C", "D", "E", "F"]
+unfixable = []
 
 [tool.docformatter]
 recursive = true
