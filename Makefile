@@ -26,3 +26,4 @@ docs:
 
 update-deps:
 	uv lock --upgrade
+	uv sync --all-extras --all-groups
