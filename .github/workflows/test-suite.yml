@@ -6,6 +6,7 @@ on:
   pull_request:
   schedule:
     - cron: '0 0 * * 0'
+  workflow_call:
 
 # `uv run` would otherwise re-sync the environment to uv.lock and undo the
 # matrix-specific Django/DRF pins installed with `uv pip install`.

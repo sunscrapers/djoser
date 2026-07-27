@@ -1,0 +1,194 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  validate:
+    name: Validate tag, version and release notes
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      prerelease: ${{ steps.meta.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Parse release tag
+        id: meta
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+((a|b|rc)[0-9]+)?$ ]]; then
+            echo "Tag $GITHUB_REF_NAME is not a release tag (expected vX.Y.Z or vX.Y.Z{a|b|rc}N)"
+            exit 1
+          fi
+          if [[ "$VERSION" =~ (a|b|rc)[0-9]+$ ]]; then
+            PRERELEASE=true
+          else
+            PRERELEASE=false
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+
+      - name: Verify package version matches tag
+        run: |
+          PACKAGE_VERSION=$(uv version --short)
+          if [ "$PACKAGE_VERSION" != "${{ steps.meta.outputs.version }}" ]; then
+            echo "pyproject.toml version ($PACKAGE_VERSION) does not match tag version (${{ steps.meta.outputs.version }})"
+            exit 1
+          fi
+
+      - name: Verify tag commit is on master
+        if: steps.meta.outputs.prerelease == 'false'
+        run: |
+          if ! git merge-base --is-ancestor HEAD origin/master; then
+            echo "Stable release tags must point at a commit that is on master"
+            exit 1
+          fi
+
+      - name: Extract release notes from CHANGELOG.rst
+        run: |
+          VERSION="${{ steps.meta.outputs.version }}"
+          awk -v ver="$VERSION" '
+            index($0, "`" ver "`_") == 1 { found=1; getline; next }
+            found && /^-+$/ { exit }
+            found { print }
+          ' CHANGELOG.rst > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            if [ "${{ steps.meta.outputs.prerelease }}" = "true" ]; then
+              echo "Pre-release $VERSION" > release-notes.md
+            else
+              echo "No CHANGELOG.rst entry found for $VERSION. Add release notes before tagging."
+              exit 1
+            fi
+          fi
+          echo "Release notes:"
+          cat release-notes.md
+
+      - name: Upload release notes
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes.md
+
+  tests:
+    name: Test suite
+    needs: validate
+    uses: ./.github/workflows/test-suite.yml
+    secrets: inherit
+
+  build:
+    name: Build distribution
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Compile translations
+        run: uv run --extra test pybabel compile --domain django --directory djoser/locale -f
+
+      - name: Build package
+        run: |
+          uv build
+          ls -l dist/
+
+      - name: Upload distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish-testpypi:
+    name: Publish to Test PyPI
+    if: needs.validate.outputs.prerelease == 'true'
+    needs: [validate, tests, build]
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/djoser/
+    permissions:
+      id-token: write
+    steps:
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Download distribution
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Publish
+        run: uv publish --publish-url https://test.pypi.org/legacy/ --trusted-publishing always dist/*
+
+  publish-pypi:
+    name: Publish to PyPI
+    if: needs.validate.outputs.prerelease == 'false'
+    needs: [validate, tests, build]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/djoser/
+    permissions:
+      id-token: write
+    steps:
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Download distribution
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Publish
+        run: uv publish --trusted-publishing always dist/*
+
+  github-release:
+    name: Create GitHub release
+    needs: [validate, publish-testpypi, publish-pypi]
+    # exactly one of the publish jobs runs; succeed when that one succeeded
+    if: always() && needs.validate.result == 'success' && (needs.publish-testpypi.result == 'success' || needs.publish-pypi.result == 'success')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download distribution
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Download release notes
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          EXTRA_ARGS=""
+          if [ "${{ needs.validate.outputs.prerelease }}" = "true" ]; then
+            EXTRA_ARGS="--prerelease"
+          fi
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file release-notes.md \
+            $EXTRA_ARGS
