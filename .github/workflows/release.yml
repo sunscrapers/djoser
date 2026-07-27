@@ -1,9 +1,11 @@
 name: Release
 
+# Historical djoser tags are bare X.Y.Z (no v prefix), so trigger on every
+# tag and let the validate job reject anything that is not a release tag.
 on:
   push:
     tags:
-      - 'v*'
+      - '**'
 
 jobs:
   validate:
@@ -23,9 +25,9 @@ jobs:
       - name: Parse release tag
         id: meta
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="$GITHUB_REF_NAME"
           if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+((a|b|rc)[0-9]+)?$ ]]; then
-            echo "Tag $GITHUB_REF_NAME is not a release tag (expected vX.Y.Z or vX.Y.Z{a|b|rc}N)"
+            echo "Tag $GITHUB_REF_NAME is not a release tag (expected X.Y.Z or X.Y.Z{a|b|rc}N)"
             exit 1
           fi
           if [[ "$VERSION" =~ (a|b|rc)[0-9]+$ ]]; then

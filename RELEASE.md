@@ -71,19 +71,20 @@ that triggers publishing — everything after it happens in CI.
 ```bash
 git checkout master
 git pull origin master
-git tag vX.Y.Z
-git push origin vX.Y.Z
+git tag X.Y.Z
+git push origin X.Y.Z
 ```
 
-For pre-releases use a PEP 440 suffix, e.g. `v2.4.0rc1` (`aN`, `bN` and `rcN`
+For pre-releases use a PEP 440 suffix, e.g. `2.4.0rc1` (`aN`, `bN` and `rcN`
 are recognized).
 
 ### 5. Automated Release Pipeline
 
-Pushing a `v*` tag triggers the `Release` workflow, which:
+Pushing a tag triggers the `Release` workflow, which:
 
 1. **Validates** the release before building anything:
-   - the tag looks like `vX.Y.Z` (optionally with an `aN`/`bN`/`rcN` suffix)
+   - the tag looks like `X.Y.Z` (optionally with an `aN`/`bN`/`rcN` suffix);
+     anything else fails validation and nothing is built
    - `pyproject.toml` version matches the tag
    - stable tags point at a commit that is on `master`
    - `CHANGELOG.rst` contains a section for the version (required for stable
@@ -98,14 +99,14 @@ Pushing a `v*` tag triggers the `Release` workflow, which:
    the built distribution attached (only after publishing succeeded)
 
 If any validation or test fails, nothing is built or published — fix the
-problem, delete the tag (`git push --delete origin vX.Y.Z`), and tag again.
+problem, delete the tag (`git push --delete origin X.Y.Z`), and tag again.
 
 ## Claude Code Skill
 
 Steps 1–4 are automated as a Claude Code skill: run `/release` in this
 repository and Claude reviews the diff since the last release, drafts the
 CHANGELOG.rst entry, bumps the version, runs the local checks, prepares the
-release PR and creates the tag — leaving the final `git push origin vX.Y.Z`
+release PR and creates the tag — leaving the final `git push origin X.Y.Z`
 to you.
 
 ## Version Numbering

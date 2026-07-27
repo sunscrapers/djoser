@@ -5,7 +5,7 @@ description: Release a new djoser version - review the diff since the last relea
 
 # Release a new djoser version
 
-Prepare and verify a release end-to-end. The user's `git push origin vX.Y.Z`
+Prepare and verify a release end-to-end. The user's `git push origin X.Y.Z`
 is the only action that triggers anything external: the tag push starts the
 `Release` workflow (validate → test matrix → build → PyPI → GitHub release).
 Never push the tag yourself. Never run `uv publish` or `gh release create`
@@ -72,12 +72,13 @@ Report the results honestly; a failure here aborts the release until fixed.
 
 ## 5. Tag and hand over
 
-1. Tag the merged commit: `git tag vX.Y.Z origin/master` (stable tags must
-   point at a commit on `master` — CI enforces this).
+1. Tag the merged commit: `git tag X.Y.Z origin/master` — tags are bare
+   `X.Y.Z`, no `v` prefix, matching every historical djoser tag (stable tags
+   must point at a commit on `master` — CI enforces this).
 2. Do NOT push the tag. Tell the user to run:
    ```bash
-   git push origin vX.Y.Z
+   git push origin X.Y.Z
    ```
 3. Point them at the Actions tab to watch the `Release` workflow. If it
    fails, the fix path is: correct the problem, `git push --delete origin
-   vX.Y.Z`, delete the local tag, and re-run this skill's relevant stages.
+   X.Y.Z`, delete the local tag, and re-run this skill's relevant stages.
