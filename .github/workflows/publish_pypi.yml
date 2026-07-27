@@ -46,7 +46,7 @@ jobs:
       - name: Compile translations
         run: |
           echo "Compiling translation files..."
-          uv run pybabel compile --domain django --directory djoser/locale -f
+          uv run --extra test pybabel compile --domain django --directory djoser/locale -f
 
       - name: Build package
         run: |
@@ -60,7 +60,7 @@ jobs:
         if: github.event.release.prerelease
         run: |
           echo "Publishing to Test PyPI..."
-          uv publish --index-url https://test.pypi.org/legacy/ --token ${{ secrets.TEST_PYPI_TOKEN }}
+          uv publish --publish-url https://test.pypi.org/legacy/ --token ${{ secrets.TEST_PYPI_TOKEN }}
           echo "Package published to Test PyPI successfully"
 
       # Production PyPI deployment
