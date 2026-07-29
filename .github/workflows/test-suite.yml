@@ -19,14 +19,14 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache Poetry dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/pypoetry
           key: ${{ runner.os }}-poetry-django3-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-poetry-django3-
 
       - name: Cache virtual environment
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .venv
           key: ${{ runner.os }}-venv-django3-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -104,14 +104,14 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache Poetry dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/pypoetry
           key: ${{ runner.os }}-poetry-django4-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
@@ -120,7 +120,7 @@ jobs:
             ${{ runner.os }}-poetry-django4-
 
       - name: Cache virtual environment
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .venv
           key: ${{ runner.os }}-venv-django4-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -189,14 +189,14 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache Poetry dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/pypoetry
           key: ${{ runner.os }}-poetry-django5-${{ hashFiles('**/poetry.lock') }}-${{ matrix.django-version }}
@@ -205,7 +205,7 @@ jobs:
             ${{ runner.os }}-poetry-django5-
 
       - name: Cache virtual environment
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .venv
           key: ${{ runner.os }}-venv-django5-py${{ matrix.python-version }}-django${{ matrix.django-version }}-drf${{ matrix.drf-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -259,9 +259,9 @@ jobs:
     name: Check poetry.lock for changes
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
