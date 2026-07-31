@@ -1,29 +1,29 @@
 .PHONY: init build test migrate runserver run-hooks docs update-deps
 
 init:
-	poetry install --all-extras
+	uv sync --all-extras --all-groups
 
 build:
-	poetry run pybabel compile --domain django --directory djoser/locale -f
-	poetry build
+	uv run --group test pybabel compile --domain django --directory djoser/locale -f
+	uv build
 
 test:
-	poetry run py.test --capture=no --cov-report term-missing --cov-report html --cov=djoser testproject/
-	poetry run coverage xml
+	uv run py.test --capture=no --cov-report term-missing --cov-report html --cov=djoser testproject/
+	uv run coverage xml
 
 migrate:
-	poetry run python testproject/manage.py migrate
+	uv run python testproject/manage.py migrate
 
 runserver:
-	poetry run python testproject/manage.py runserver
+	uv run python testproject/manage.py runserver
 
 run-hooks:
-	poetry run pre-commit run --all-files --show-diff-on-failure
+	uv run pre-commit run --all-files --show-diff-on-failure
 
 docs:
-	poetry config virtualenvs.create false
-	poetry install --only docs
-	cd docs && make html
+	uv sync --group docs --inexact
+	cd docs && $(MAKE) html SPHINXBUILD="uv run python -msphinx"
 
 update-deps:
-	poetry update
+	uv lock --upgrade
+	uv sync --all-extras --all-groups

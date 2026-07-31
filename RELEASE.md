@@ -19,9 +19,10 @@ Djoser uses [Semantic Versioning](http://semver.org/) and follows this release p
 
 1. **Update Version Number**
    ```bash
-   # Update version in pyproject.toml
-   poetry version [patch|minor|major]
-   # or manually edit pyproject.toml line 3: version = "X.Y.Z"
+   # Manually edit pyproject.toml line 3: version = "X.Y.Z"
+   # Then update the lockfile — it records djoser's own version,
+   # and CI's `uv lock --check` fails if it is stale:
+   uv lock
    ```
 
 2. **Update CHANGELOG.rst**
@@ -52,10 +53,9 @@ Djoser uses [Semantic Versioning](http://semver.org/) and follows this release p
 
 5. **Commit and Push Release Branch**
    ```bash
-   git add pyproject.toml CHANGELOG.rst
+   git add pyproject.toml uv.lock CHANGELOG.rst
    git commit -m "Bump version to X.Y.Z"
    git push origin release/X.Y.Z
-   git push origin X.Y.Z
    ```
 
 ### 3. Wait for CI and Merge
@@ -66,30 +66,51 @@ Djoser uses [Semantic Versioning](http://semver.org/) and follows this release p
 2. **Merge Release Branch**
    Merge PR using GH button.
 
-### 4. Create GitHub Release
+### 4. Tag the Release
 
-1. **Create GitHub Release**
-   - Go to [GitHub Releases](https://github.com/sunscrapers/djoser/releases)
-   - Click "Create a new release"
-   - Select the tag you just created (X.Y.Z)
-   - Title: `X.Y.Z`
-   - Description: Copy relevant section from CHANGELOG.rst
-   - Set git tag
-   - Mark as pre-release if it's a pre-release (e.g., `2.4.0a1`)
-   - Publish release
+Tag the merged commit and push the tag. Pushing the tag is the only action
+that triggers publishing — everything after it happens in CI.
 
-### 5. Automated Publishing
+```bash
+git checkout master
+git pull origin master
+git tag X.Y.Z
+git push origin X.Y.Z
+```
 
-Once a GitHub release is created, the CI/CD pipeline automatically:
+For pre-releases use a PEP 440 suffix, e.g. `2.4.0rc1` (`aN`, `bN` and `rcN`
+are recognized).
 
-1. **Validates** package version matches the git tag
-2. **Compiles** translations (`pybabel compile`)
-3. **Builds** the package (`poetry build`)
-4. **Publishes** to PyPI:
-   - Pre-releases → Test PyPI
-   - Stable releases → Production PyPI
+### 5. Automated Release Pipeline
 
-The publish workflow is triggered by the `on.release.types.released` event.
+Pushing a tag triggers the `Release` workflow, which:
+
+1. **Validates** the release before building anything:
+   - the tag looks like `X.Y.Z` (optionally with an `aN`/`bN`/`rcN` suffix);
+     anything else fails validation and nothing is built
+   - `pyproject.toml` version matches the tag
+   - stable tags point at a commit that is on `master`
+   - `CHANGELOG.rst` contains a section for the version (required for stable
+     releases; optional for pre-releases) — it becomes the release notes
+2. **Runs the full test suite** (the same matrix as `test-suite.yml`)
+3. **Compiles** translations (`pybabel compile`) and **builds** the package
+   (`uv build`)
+4. **Publishes** the built distribution:
+   - Pre-releases → Test PyPI (`testpypi` environment)
+   - Stable releases → PyPI (`pypi` environment)
+5. **Creates the GitHub release** with the changelog section as its notes and
+   the built distribution attached (only after publishing succeeded)
+
+If any validation or test fails, nothing is built or published — fix the
+problem, delete the tag (`git push --delete origin X.Y.Z`), and tag again.
+
+## Claude Code Skill
+
+Steps 1–4 are automated as a Claude Code skill: run `/release` in this
+repository and Claude reviews the diff since the last release, drafts the
+CHANGELOG.rst entry, bumps the version, runs the local checks, prepares the
+release PR and creates the tag — leaving the final `git push origin X.Y.Z`
+to you.
 
 ## Version Numbering
 
@@ -97,16 +118,34 @@ The publish workflow is triggered by the `on.release.types.released` event.
 - **Minor** (X.**Y**.0): New features, backwards compatible
 - **Major** (**X**.0.0): Breaking changes
 
+## One-Time Setup
+
+The pipeline authenticates to PyPI with [trusted publishing](https://docs.pypi.org/trusted-publishers/)
+(OIDC) — no API tokens are stored in GitHub secrets. It has to be configured
+once per index:
+
+- On [PyPI](https://pypi.org/manage/project/djoser/settings/publishing/) add a
+  trusted publisher: owner `sunscrapers`, repository `djoser`, workflow
+  `release.yml`, environment `pypi`
+- On [Test PyPI](https://test.pypi.org/manage/project/djoser/settings/publishing/)
+  add the same with environment `testpypi`
+- In the GitHub repository settings, create the `pypi` and `testpypi`
+  environments; optionally add required reviewers to `pypi` to get a manual
+  approval gate before publishing
+
 ## Notes
 
-- The `publish_pypi.yml` workflow handles all PyPI publishing
+- The `release.yml` workflow handles the entire release: validation, tests,
+  build, PyPI upload and the GitHub release
 - Translations are automatically compiled during the release process
-- Version verification ensures pyproject.toml matches the git tag
 - Test PyPI is used for pre-releases to validate the packaging
 
 ## Troubleshooting
 
-- If publishing fails, check the GitHub Actions logs
+- If the pipeline fails, check the GitHub Actions logs — validation failures
+  (version mismatch, missing changelog entry, tag not on master) are reported
+  before anything is built or published
 - Ensure all translations compile without errors
-- Verify the version in pyproject.toml matches your git tag exactly
 - Make sure the CHANGELOG.rst is properly formatted
+- To retry a failed release: fix the problem, delete the tag locally and
+  remotely, then tag and push again
