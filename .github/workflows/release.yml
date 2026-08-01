@@ -57,18 +57,23 @@ jobs:
       - name: Extract release notes from CHANGELOG.rst
         run: |
           VERSION="${{ steps.meta.outputs.version }}"
-          awk -v ver="$VERSION" '
-            index($0, "`" ver "`_") == 1 { found=1; getline; next }
-            found && /^-+$/ { exit }
-            found { print }
-          ' CHANGELOG.rst > release-notes.md
+          extract_section() {
+            awk -v ver="$1" '
+              index($0, "`" ver "`_") == 1 { found=1; getline; next }
+              found && /^-+$/ { exit }
+              found { print }
+            ' CHANGELOG.rst
+          }
+          extract_section "$VERSION" > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md && [ "${{ steps.meta.outputs.prerelease }}" = "true" ]; then
+            # The changelog only carries final versions, so a pre-release reads
+            # the section of the version it is a candidate for.
+            BASE=$(printf '%s' "$VERSION" | sed -E 's/(a|b|rc)[0-9]+$//')
+            { echo "Pre-release of $BASE."; echo; extract_section "$BASE"; } > release-notes.md
+          fi
           if ! grep -q '[^[:space:]]' release-notes.md; then
-            if [ "${{ steps.meta.outputs.prerelease }}" = "true" ]; then
-              echo "Pre-release $VERSION" > release-notes.md
-            else
-              echo "No CHANGELOG.rst entry found for $VERSION. Add release notes before tagging."
-              exit 1
-            fi
+            echo "No CHANGELOG.rst entry found for $VERSION. Add release notes before tagging."
+            exit 1
           fi
           echo "Release notes:"
           cat release-notes.md
@@ -120,9 +125,10 @@ jobs:
           name: dist
           path: dist/
 
-  # Pre-releases publish to PyPI too: pip and uv never resolve a pre-release
-  # version unless asked with --pre or an exact pin, so an aN/bN/rcN upload is
-  # invisible to ordinary installs while still exercising the real pipeline.
+  # Every version publishes to PyPI, pre-releases included: pip and uv never
+  # resolve a pre-release unless asked with --pre or an exact pin, so an
+  # aN/bN/rcN upload is invisible to ordinary installs while still exercising
+  # the real publish path. Test PyPI is deliberately not used.
   publish-pypi:
     name: Publish to PyPI
     needs: [validate, tests, build]
@@ -130,8 +136,6 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/p/djoser/
-    permissions:
-      id-token: write
     steps:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -143,7 +147,14 @@ jobs:
           path: dist
 
       - name: Publish
-        run: uv publish --trusted-publishing always dist/*
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          if [ -z "$UV_PUBLISH_TOKEN" ]; then
+            echo "The PYPI_TOKEN secret is not set on this repository."
+            exit 1
+          fi
+          uv publish dist/*
 
   github-release:
     name: Create GitHub release

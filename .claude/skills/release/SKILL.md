@@ -30,7 +30,9 @@ checked before the tag exists.
      major = breaking changes
    - a PEP 440 pre-release suffix (`a1`, `b1`, `rc1`) publishes to PyPI like
      any other version, but pip/uv never resolve to it without `--pre` or an
-     exact pin; suggest one first when the diff is large or risky
+     exact pin; suggest one first when the diff is large or risky. Write the
+     changelog entry under the final `X.Y.Z` heading — CI falls back to it for
+     the pre-release, and the changelog carries no pre-release sections.
 5. If there is nothing user-facing to release, say so and stop.
 
 ## 2. Prepare the release branch
@@ -49,6 +51,10 @@ checked before the tag exists.
      entry may be missing from the diff
    - the CI extracts this section verbatim as the GitHub release notes, and
      fails a stable release if the section is missing
+   - `docs/source/changelog.rst` includes this file, so the entry is also
+     published on Read the Docs — there is no second place to edit, but the
+     entry must be valid RST (escape `` ``**kwargs`` ``-style markup) or the
+     docs build warns and renders it wrong
 4. Show the changelog entry to the user and get approval before continuing.
 
 ## 3. Verify locally
@@ -59,6 +65,8 @@ Run all of these; all must pass:
 2. `make run-hooks` — pre-commit checks (needs `.venv/bin` on `PATH`)
 3. `make build` — translations compile and the package builds
 4. `uv lock --check` — lockfile consistent with `pyproject.toml`
+5. `make docs` — the docs build, including the rendered changelog entry;
+   it must not add new warnings
 
 Report the results honestly; a failure here aborts the release until fixed.
 
