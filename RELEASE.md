@@ -95,9 +95,9 @@ Pushing a tag triggers the `Release` workflow, which:
 2. **Runs the full test suite** (the same matrix as `test-suite.yml`)
 3. **Compiles** translations (`pybabel compile`) and **builds** the package
    (`uv build`)
-4. **Publishes** the built distribution:
-   - Pre-releases → Test PyPI (`testpypi` environment)
-   - Stable releases → PyPI (`pypi` environment)
+4. **Publishes** the built distribution to PyPI (`pypi` environment) — both
+   stable releases and pre-releases; the GitHub release is marked as a
+   pre-release for the latter
 5. **Creates the GitHub release** with the changelog section as its notes and
    the built distribution attached (only after publishing succeeded)
 
@@ -122,23 +122,24 @@ to you.
 
 The pipeline authenticates to PyPI with [trusted publishing](https://docs.pypi.org/trusted-publishers/)
 (OIDC) — no API tokens are stored in GitHub secrets. It has to be configured
-once per index:
+once:
 
 - On [PyPI](https://pypi.org/manage/project/djoser/settings/publishing/) add a
   trusted publisher: owner `sunscrapers`, repository `djoser`, workflow
   `release.yml`, environment `pypi`
-- On [Test PyPI](https://test.pypi.org/manage/project/djoser/settings/publishing/)
-  add the same with environment `testpypi`
-- In the GitHub repository settings, create the `pypi` and `testpypi`
-  environments; optionally add required reviewers to `pypi` to get a manual
-  approval gate before publishing
+- The `pypi` GitHub environment is created automatically on the first run;
+  optionally add required reviewers to it to get a manual approval gate
+  before publishing
 
 ## Notes
 
 - The `release.yml` workflow handles the entire release: validation, tests,
   build, PyPI upload and the GitHub release
 - Translations are automatically compiled during the release process
-- Test PyPI is used for pre-releases to validate the packaging
+- Pre-releases (`aN`/`bN`/`rcN`) are published to PyPI like any other version,
+  but `pip install djoser` and `uv add djoser` never resolve to them — only an
+  explicit `--pre` or an exact pin (`djoser==X.Y.ZaN`) installs one, which
+  makes them a safe way to validate a release end to end
 
 ## Troubleshooting
 

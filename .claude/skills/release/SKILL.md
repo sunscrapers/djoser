@@ -28,8 +28,9 @@ checked before the tag exists.
    version number:
    - patch = bug fixes, minor = backwards-compatible features,
      major = breaking changes
-   - a PEP 440 pre-release suffix (`a1`, `b1`, `rc1`) publishes to Test PyPI
-     instead of PyPI; suggest an `rc` first when the diff is large or risky
+   - a PEP 440 pre-release suffix (`a1`, `b1`, `rc1`) publishes to PyPI like
+     any other version, but pip/uv never resolve to it without `--pre` or an
+     exact pin; suggest one first when the diff is large or risky
 5. If there is nothing user-facing to release, say so and stop.
 
 ## 2. Prepare the release branch

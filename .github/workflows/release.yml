@@ -120,32 +120,11 @@ jobs:
           name: dist
           path: dist/
 
-  publish-testpypi:
-    name: Publish to Test PyPI
-    if: needs.validate.outputs.prerelease == 'true'
-    needs: [validate, tests, build]
-    runs-on: ubuntu-latest
-    environment:
-      name: testpypi
-      url: https://test.pypi.org/p/djoser/
-    permissions:
-      id-token: write
-    steps:
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-
-      - name: Download distribution
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist
-
-      - name: Publish
-        run: uv publish --publish-url https://test.pypi.org/legacy/ --trusted-publishing always dist/*
-
+  # Pre-releases publish to PyPI too: pip and uv never resolve a pre-release
+  # version unless asked with --pre or an exact pin, so an aN/bN/rcN upload is
+  # invisible to ordinary installs while still exercising the real pipeline.
   publish-pypi:
     name: Publish to PyPI
-    if: needs.validate.outputs.prerelease == 'false'
     needs: [validate, tests, build]
     runs-on: ubuntu-latest
     environment:
@@ -168,9 +147,7 @@ jobs:
 
   github-release:
     name: Create GitHub release
-    needs: [validate, publish-testpypi, publish-pypi]
-    # exactly one of the publish jobs runs; succeed when that one succeeded
-    if: always() && needs.validate.result == 'success' && (needs.publish-testpypi.result == 'success' || needs.publish-pypi.result == 'success')
+    needs: [validate, publish-pypi]
     runs-on: ubuntu-latest
     permissions:
       contents: write
