@@ -6,6 +6,13 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.3.4`_ (2026-08-01)
+---------------------
+
+* return ``404 Not Found`` instead of an unhandled server error when requesting social authentication for a provider that is not configured https://github.com/sunscrapers/djoser/pull/893
+* return ``400 Bad Request`` instead of a server error when the social auth provider is unreachable while completing authentication https://github.com/sunscrapers/djoser/pull/893
+
+---------------------
 `2.3.3`_ (2025-07-13)
 ---------------------
 
@@ -159,7 +166,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 * Added endpoint to resend activation email.
 * Added Polish and Georgian translations.
-* Fix missing **kwargs in ActionViewmixin.post() handler.
+* Fix missing ``**kwargs`` in ActionViewmixin.post() handler.
 * Fixed documentation.
 * Other small fixes.
 
@@ -477,3 +484,4 @@ few bugfixes / documentation updates. List of changes:
 .. _2.3.1: https://github.com/sunscrapers/djoser/compare/2.3.0...2.3.1
 .. _2.3.2: https://github.com/sunscrapers/djoser/compare/2.3.1...2.3.2
 .. _2.3.3: https://github.com/sunscrapers/djoser/compare/2.3.2...2.3.3
+.. _2.3.4: https://github.com/sunscrapers/djoser/compare/2.3.3...2.3.4

@@ -90,14 +90,16 @@ Pushing a tag triggers the `Release` workflow, which:
      anything else fails validation and nothing is built
    - `pyproject.toml` version matches the tag
    - stable tags point at a commit that is on `master`
-   - `CHANGELOG.rst` contains a section for the version (required for stable
-     releases; optional for pre-releases) — it becomes the release notes
+   - `CHANGELOG.rst` contains a section for the version — a pre-release falls
+     back to the section of the version it is a candidate for, so `2.3.4rc1`
+     uses the `2.3.4` entry and the changelog never carries pre-release
+     headings; the section becomes the release notes
 2. **Runs the full test suite** (the same matrix as `test-suite.yml`)
 3. **Compiles** translations (`pybabel compile`) and **builds** the package
    (`uv build`)
-4. **Publishes** the built distribution:
-   - Pre-releases → Test PyPI (`testpypi` environment)
-   - Stable releases → PyPI (`pypi` environment)
+4. **Publishes** the built distribution to PyPI (`pypi` environment) — every
+   version, pre-release or stable; the GitHub release is marked as a
+   pre-release for the former
 5. **Creates the GitHub release** with the changelog section as its notes and
    the built distribution attached (only after publishing succeeded)
 
@@ -120,25 +122,28 @@ to you.
 
 ## One-Time Setup
 
-The pipeline authenticates to PyPI with [trusted publishing](https://docs.pypi.org/trusted-publishers/)
-(OIDC) — no API tokens are stored in GitHub secrets. It has to be configured
-once per index:
+The pipeline authenticates to PyPI with the `PYPI_TOKEN` Actions secret — a
+PyPI API token with upload rights to the `djoser` project. Scope it to the
+project rather than the whole account, so a leak cannot be used to publish
+other packages. The publish step fails with an explicit message when the secret
+is missing, rather than a bare 403.
 
-- On [PyPI](https://pypi.org/manage/project/djoser/settings/publishing/) add a
-  trusted publisher: owner `sunscrapers`, repository `djoser`, workflow
-  `release.yml`, environment `pypi`
-- On [Test PyPI](https://test.pypi.org/manage/project/djoser/settings/publishing/)
-  add the same with environment `testpypi`
-- In the GitHub repository settings, create the `pypi` and `testpypi`
-  environments; optionally add required reviewers to `pypi` to get a manual
-  approval gate before publishing
+Test PyPI is not used: pre-releases are published to PyPI itself, where pip and
+uv will not install them by default (see Notes).
+
+The `pypi` GitHub environment is created automatically on the first run;
+optionally add required reviewers to it to get a manual approval gate before
+publishing.
 
 ## Notes
 
 - The `release.yml` workflow handles the entire release: validation, tests,
   build, PyPI upload and the GitHub release
 - Translations are automatically compiled during the release process
-- Test PyPI is used for pre-releases to validate the packaging
+- Pre-releases (`aN`/`bN`/`rcN`) are published to PyPI like any other version,
+  but `pip install djoser` and `uv add djoser` never resolve to them — only an
+  explicit `--pre` or an exact pin (`djoser==X.Y.ZaN`) installs one, which
+  makes them a safe way to validate a release end to end
 
 ## Troubleshooting
 
