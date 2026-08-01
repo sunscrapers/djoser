@@ -40,7 +40,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-djet = ["djet>=0.3.0,<0.4.0"]
 webauthn = ["webauthn<1.0"]
 
 # Dev dependencies live in PEP 735 groups so they are not published as

@@ -580,15 +580,6 @@ wheels = [
 ]
 
 [[package]]
-name = "djet"
-version = "0.3.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f8/d2/7f95f1bc2c4f5007773c986a64adf7f5bf548b2adcec2a5c58b9fb604c38/djet-0.3.0.tar.gz", hash = "sha256:44e59b880fccd36a34d9eae1ac150129ad3bf339f953e32a47e1cda3dc412819", size = 34390, upload-time = "2021-07-29T21:20:13.806Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/99/45b40707de13e14f3798070912a1b2eb6891e0c9f3b445804adc8f3f25e1/djet-0.3.0-py3-none-any.whl", hash = "sha256:94506c7f62f00d706a1c990acea1c3e35e26e6c0bf3d374675f8fd3d7daeaedf", size = 7879, upload-time = "2021-07-29T21:20:11.769Z" },
-]
-
-[[package]]
 name = "djoser"
 version = "2.3.4"
 source = { editable = "." }
@@ -601,9 +592,6 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
-djet = [
-    { name = "djet" },
-]
 webauthn = [
     { name = "webauthn" },
 ]
@@ -644,11 +632,10 @@ requires-dist = [
     { name = "django", specifier = ">=3.2" },
     { name = "djangorestframework", specifier = ">=3.14" },
     { name = "djangorestframework-simplejwt", specifier = ">=5.0,<6.0" },
-    { name = "djet", marker = "extra == 'djet'", specifier = ">=0.3.0,<0.4.0" },
     { name = "social-auth-app-django", specifier = ">=5.0.0,<6.0.0" },
     { name = "webauthn", marker = "extra == 'webauthn'", specifier = "<1.0" },
 ]
-provides-extras = ["djet", "webauthn"]
+provides-extras = ["webauthn"]
 
 [package.metadata.requires-dev]
 code-quality = [
