@@ -8,6 +8,7 @@ never the other way around.
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.test import override_settings
 from rest_framework.test import APIClient
 
 User = get_user_model()
@@ -68,17 +69,22 @@ def test_unmapped_method_gets_401_for_anonymous_clients(db):
 
 
 @pytest.mark.django_db
-def test_me_returns_200_for_authenticated_user(parity_user):
+def test_me_delete_returns_403_not_404_when_permission_denied(parity_user):
     """
-    The 2.x `me` action allows any authenticated user to fetch their own profile.
-    Unlike user detail/list, it doesn't check DJOSER permission overrides;
-    authentication alone is sufficient.
+    HIDE_USERS (default True) converts 403->404 for user list/detail, but the
+    2.x `me` action was deliberately excluded — a denied /users/me/ request
+    answers a plain 403. DELETE is used because its permission (user_delete)
+    is resolved at request time, so the override below actually applies.
     """
     client = APIClient()
     client.force_authenticate(user=parity_user)
-    response = client.get("/auth/users/me/")
-    assert response.status_code == 200
-    assert response.data["username"] == "parity"
+    with override_settings(
+        DJOSER={
+            "PERMISSIONS": {"user_delete": ["rest_framework.permissions.IsAdminUser"]}
+        }
+    ):
+        response = client.delete("/auth/users/me/")
+    assert response.status_code == 403
 
 
 @pytest.mark.django_db
