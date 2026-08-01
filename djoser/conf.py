@@ -140,7 +140,7 @@ class Settings:
         for setting_name, setting_value in overriden_settings.items():
             value = setting_value
             if isinstance(setting_value, dict):
-                value = getattr(self, setting_name, {})
+                value = ObjDict(getattr(self, setting_name, {}))
                 value.update(ObjDict(setting_value))
             setattr(self, setting_name, value)
 
