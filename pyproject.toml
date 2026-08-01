@@ -1,6 +1,6 @@
 [project]
 name = "djoser"
-version = "2.3.4a1"
+version = "2.3.4"
 description = "REST implementation of Django authentication system."
 authors = [
     {name = "Sunscrapers", email = "info@sunscrapers.com"},
