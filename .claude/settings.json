@@ -6,6 +6,7 @@
       "Bash(git tag --delete*)",
       "Bash(git gc --prune*)",
       "Bash(git prune*)",
+      "Bash(git push --delete*)",
       "Bash(git update-ref -d*)",
       "Bash(git remote remove*)",
       "Bash(git remote rm*)",
