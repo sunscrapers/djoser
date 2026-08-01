@@ -65,3 +65,55 @@ def test_unmapped_method_gets_drf_json_405_after_auth(auth_client):
 @pytest.mark.django_db
 def test_unmapped_method_gets_401_for_anonymous_clients(db):
     assert APIClient().put("/auth/users/", {}, format="json").status_code == 401
+
+
+@pytest.mark.django_db
+def test_me_returns_200_for_authenticated_user(parity_user):
+    """
+    The 2.x `me` action allows any authenticated user to fetch their own profile.
+    Unlike user detail/list, it doesn't check DJOSER permission overrides;
+    authentication alone is sufficient.
+    """
+    client = APIClient()
+    client.force_authenticate(user=parity_user)
+    response = client.get("/auth/users/me/")
+    assert response.status_code == 200
+    assert response.data["username"] == "parity"
+
+
+@pytest.mark.django_db
+def test_api_root_lists_users_endpoint(auth_client):
+    """DefaultRouter's api-root at the include prefix: GET /auth/ is a live endpoint."""
+    response = auth_client.get("/auth/")
+    assert response.status_code == 200
+    assert "users" in response.data
+
+
+@pytest.mark.django_db
+def test_slashless_token_login_serves_request_directly(parity_user):
+    """2.x matched token URLs with an optional trailing slash — no redirect."""
+    response = APIClient().post(
+        "/auth/token/login",
+        {"username": "parity", "password": "secret123!"},
+        format="json",
+    )
+    assert response.status_code == 200
+    assert "auth_token" in response.data
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/auth/jwt/create",
+        "/auth/jwt/create/",
+        "/auth/jwt/create/extra",
+        "/auth/jwt/createx",
+    ],
+)
+def test_jwt_create_matches_with_and_without_anchor(parity_user, path):
+    """2.x jwt regexes were unanchored — all of these resolve to the same view."""
+    response = APIClient().post(
+        path, {"username": "parity", "password": "secret123!"}, format="json"
+    )
+    assert response.status_code == 200
