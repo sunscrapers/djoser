@@ -110,3 +110,28 @@ def test_fail_404_without_permission(
     assert response1.status_code == status.HTTP_404_NOT_FOUND
     response2 = authenticated_client.get(user_url)
     assert response2.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.parametrize("action", ["list", "retrieve", "update", "partial_update"])
+def test_hide_users_404s_regardless_of_permission_class(djoser_settings, user, action):
+    """
+    HIDE_USERS exists to stop user enumeration, so it must 404 for every permission
+    class, including djoser's own defaults.
+    """
+    from rest_framework.exceptions import NotFound
+    from rest_framework.test import APIRequestFactory
+
+    from djoser.permissions import CurrentUserOrAdmin, CurrentUserOrAdminOrReadOnly
+    from djoser.views.user.retrieve import UserRetrieveView
+
+    djoser_settings["HIDE_USERS"] = True
+
+    for permission_class in (CurrentUserOrAdmin, CurrentUserOrAdminOrReadOnly):
+        view = UserRetrieveView()
+        view.action = action
+        view.permission_classes = [permission_class]
+        request = APIRequestFactory().get("/users/1/")
+        request.user = user
+
+        with pytest.raises(NotFound):
+            view.permission_denied(request)
