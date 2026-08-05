@@ -31,6 +31,7 @@ INSTALLED_APPS = (
     "social_django",
     "testapp",
     "djoser.webauthn",
+    "djoser.passwordless",
 )
 
 STATIC_URL = "/static/"
@@ -71,6 +72,9 @@ DJOSER = {
     "USERNAME_RESET_CONFIRM_URL": "#/username/reset/confirm/{uid}/{token}",
     "ACTIVATION_URL": "#/activate/{uid}/{token}",
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": ["http://test.localhost/"],
+    "PASSWORDLESS": {
+        "PASSWORDLESS_EMAIL_LOGIN_URL": "app://login?token={token}",
+    }
 }
 
 
