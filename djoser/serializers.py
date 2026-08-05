@@ -175,7 +175,7 @@ class UidAndTokenSerializer(serializers.Serializer):
         # doesn't work with modelserializer
         try:
             uid = utils.decode_uid(self.initial_data.get("uid", ""))
-            self.user = User.objects.get(pk=uid)
+            self.user = User.objects.get(**{settings.USER_ID_FIELD: uid})
         except (User.DoesNotExist, ValueError, TypeError, OverflowError):
             key_error = "invalid_uid"
             raise ValidationError(
