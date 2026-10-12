@@ -10,8 +10,8 @@ STATE_INVALID = "Invalid state has been provided."
 
 def legacy(name, *args):
     """
-    Instantiate a social-auth-core < 6 exception class with the given
-    constructor arguments, or skip if this core no longer ships it.
+    Instantiate a social-auth-core < 6 exception class with the given constructor
+    arguments, or skip if this core no longer ships it.
     """
     cls = getattr(exceptions, name, None)
     if cls is None:
@@ -21,8 +21,10 @@ def legacy(name, *args):
 
 def structured(code):
     """
-    Model a social-auth-core >= 6 exception: a plain AuthException carrying a
-    reason ``code``. Built this way so the branch is exercised on every core.
+    Model a social-auth-core >= 6 exception: a plain AuthException carrying a reason
+    ``code``.
+
+    Built this way so the branch is exercised on every core.
     """
     exc = exceptions.AuthException(None)
     exc.code = code

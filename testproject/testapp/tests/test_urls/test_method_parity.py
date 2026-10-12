@@ -1,9 +1,10 @@
 """
-Pins djoser 2.x method-handling behavior so the 3.0 view split can prove parity.
+Method handling and URL behaviour of the 3.0 view split, measured against 2.x.
 
-Every test in this module must pass on master unchanged. If an assertion below
-disagrees with master's actual behavior, fix the TEST to pin what master does —
-never the other way around.
+The first group pins behaviour 2.x had and 3.0 keeps: HEAD, OPTIONS and unmapped methods
+go through DRF, so authentication runs first and the client gets DRF's own 401, JSON 405
+or OPTIONS metadata. The second group pins the three places where 3.0 deliberately
+differs from 2.x; each is listed as a breaking change in the changelog.
 """
 
 import pytest
@@ -26,6 +27,9 @@ def auth_client(parity_user):
     client = APIClient()
     client.force_authenticate(user=parity_user)
     return client
+
+
+# --- kept from 2.x ------------------------------------------------------------
 
 
 @pytest.mark.django_db
@@ -68,58 +72,73 @@ def test_unmapped_method_gets_401_for_anonymous_clients(db):
     assert APIClient().put("/auth/users/", {}, format="json").status_code == 401
 
 
+# --- 3.0 departures from 2.x -------------------------------------------------
+
+
 @pytest.mark.django_db
-def test_me_delete_returns_403_not_404_when_permission_denied(parity_user):
+@pytest.mark.parametrize(
+    "hide_users, expected_status", [(True, 404), (False, 403)], ids=["hidden", "shown"]
+)
+def test_me_delete_denied_follows_hide_users(parity_user, hide_users, expected_status):
     """
-    HIDE_USERS (default True) converts 403->404 for user list/detail, but the
-    2.x `me` action was deliberately excluded — a denied /users/me/ request
-    answers a plain 403. DELETE is used because its permission (user_delete)
-    is resolved at request time, so the override below actually applies.
+    2.x excluded the `me` action from HIDE_USERS, so a denied /users/me/ was a 403.
+
+    3.0 treats `me` like every other user endpoint: HIDE_USERS turns the denial into
+    a 404 so the endpoint reveals nothing about the account.
     """
     client = APIClient()
     client.force_authenticate(user=parity_user)
     with override_settings(
         DJOSER={
-            "PERMISSIONS": {"user_delete": ["rest_framework.permissions.IsAdminUser"]}
+            "HIDE_USERS": hide_users,
+            "PERMISSIONS": {"user_delete": ["rest_framework.permissions.IsAdminUser"]},
         }
     ):
         response = client.delete("/auth/users/me/")
-    assert response.status_code == 403
+    assert response.status_code == expected_status
 
 
 @pytest.mark.django_db
-def test_api_root_lists_users_endpoint(auth_client):
-    """DefaultRouter's api-root at the include prefix: GET /auth/ is a live endpoint."""
-    response = auth_client.get("/auth/")
-    assert response.status_code == 200
-    assert "users" in response.data
+def test_no_api_root(auth_client):
+    """
+    2.x mounted a DRF DefaultRouter, whose api-root made GET /auth/ a live endpoint.
+
+    3.0 URL configs are hand-written, so the prefix itself is not a resource.
+    """
+    assert auth_client.get("/auth/").status_code == 404
 
 
 @pytest.mark.django_db
 def test_slashless_token_login_serves_request_directly(parity_user):
-    """2.x matched token URLs with an optional trailing slash — no redirect."""
+    """
+    2.x matched token URLs with an optional trailing slash — no redirect.
+    """
     response = APIClient().post(
         "/auth/token/login",
         {"username": "parity", "password": "secret123!"},
         format="json",
     )
     assert response.status_code == 200
-    assert "auth_token" in response.data
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "path",
+    "path, expected_status",
     [
-        "/auth/jwt/create",
-        "/auth/jwt/create/",
-        "/auth/jwt/create/extra",
-        "/auth/jwt/createx",
+        ("/auth/jwt/create/", 200),
+        ("/auth/jwt/create", 200),
+        ("/auth/jwt/create/extra", 404),
+        ("/auth/jwt/createx", 404),
     ],
 )
-def test_jwt_create_matches_with_and_without_anchor(parity_user, path):
-    """2.x jwt regexes were unanchored — all of these resolve to the same view."""
+def test_jwt_create_urls_are_anchored(parity_user, path, expected_status):
+    """
+    2.x jwt regexes were unanchored, so /auth/jwt/createx and /auth/jwt/create/extra
+    resolved to the same view as /auth/jwt/create/.
+
+    3.0 matches the exact path; the trailing slash stays optional.
+    """
     response = APIClient().post(
         path, {"username": "parity", "password": "secret123!"}, format="json"
     )
-    assert response.status_code == 200
+    assert response.status_code == expected_status

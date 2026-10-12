@@ -2,11 +2,18 @@ import copy
 import pickle
 import re
 from unittest import mock
-from unittest.mock import patch, Mock
+from unittest.mock import Mock
+
+from templated_mail import mail as templated_mail
 
 from djoser.email import BaseDjoserEmail, BaseEmailMessage, ActivationEmail
 from djoser.conf import settings as djoser_settings
 import pytest
+
+
+def test_base_email_message_comes_from_django_templated_mail():
+    # Custom email classes written against djoser.email keep importing it from here.
+    assert BaseEmailMessage is templated_mail.BaseEmailMessage
 
 
 def test_base_email_message_with_template_name():
@@ -80,17 +87,34 @@ class TestDjoserEmail:
 @pytest.mark.django_db
 class TestEmailRender:
     @pytest.fixture
-    @patch("djoser.email.get_current_site")
-    def mail_kwargs(self, get_current_site, user):
-        site = mock.MagicMock()
-        site.id = 1
-        site.name = "Example"
-        site.domain = "example.com"
-        get_current_site.return_value = site
+    def mail_kwargs(self, user):
+        # Without django.contrib.sites the site comes from the request's host.
         request = mock.MagicMock()
         request.get_host.return_value = "my_host"
 
         return {"request": request, "context": {"user": user}}
+
+    def test_template_extending_a_djoser_template(self, mail_kwargs):
+        default = djoser_settings.EMAIL.activation(**mail_kwargs)
+        default.render()
+        extended = djoser_settings.EMAIL.activation(
+            template_name="email/extended_activation.html", **mail_kwargs
+        )
+        extended.render()
+
+        # djoser's subject block spans several lines; the subject stays on one.
+        assert extended.subject == "[Example] Account activation on my_host"
+        assert extended.body.startswith(default.body)
+        assert extended.body.endswith(
+            "P.S. Reply to this email if the link does not work."
+        )
+        # Blocks the template does not override come from the parent.
+        assert extended.alternatives == default.alternatives
+
+    def test_send_returns_the_number_of_sent_messages(self, mail_kwargs, mailoutbox):
+        email = djoser_settings.EMAIL.confirmation(**mail_kwargs)
+        assert email.send(["user@example.com"]) == 1
+        assert mailoutbox[0].to == ["user@example.com"]
 
     def test_activation(self, mail_kwargs):
         email_class = djoser_settings.EMAIL.activation

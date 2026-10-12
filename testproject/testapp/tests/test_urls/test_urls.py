@@ -5,7 +5,24 @@ from contextlib import suppress
 import pytest
 from deepdiff import DeepDiff
 from django.test import Client
-from django.urls import get_resolver
+from django.urls import get_resolver, resolve
+from django.test import RequestFactory
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+
+@pytest.mark.parametrize(
+    "path",
+    ["/auth/users/", "/auth/users/me/", "/auth/users/1/"],
+)
+def test_dispatcher_routed_urls_are_csrf_exempt(path):
+    """
+    CsrfViewMiddleware inspects the callable the resolver returns.
+
+    The dispatcher wraps the view, so it has to carry csrf_exempt itself or CSRF gets
+    enforced on endpoints that DRF exempts.
+    """
+    assert getattr(resolve(path).func, "csrf_exempt", False) is True
 
 
 @pytest.mark.django_db
@@ -31,6 +48,56 @@ def test_registration_works_with_csrf_middleware_enabled(settings):
     assert response.status_code == 201, response.content
 
 
+class _DispatcherGetView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request):
+        return Response({"method": "GET"})
+
+
+class _DispatcherPostView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        return Response({"method": "POST"})
+
+
+@pytest.fixture
+def two_method_dispatcher():
+    from djoser.urls.utils import create_dispatcher
+
+    return create_dispatcher({"GET": _DispatcherGetView, "POST": _DispatcherPostView})
+
+
+def test_create_dispatcher_unmapped_method_gets_drf_405(two_method_dispatcher):
+    """
+    An unmapped method is answered by DRF, not by Django's HTML 405.
+
+    2.x routed every method through one DRF view, so clients got a JSON body and an
+    Allow header listing every method the path accepts.
+    """
+    response = two_method_dispatcher(RequestFactory().put("/"))
+    response.render()
+    assert response.status_code == 405
+    assert response["Content-Type"].startswith("application/json")
+    assert "detail" in response.data
+    assert set(response["Allow"].split(", ")) >= {"GET", "POST"}
+
+
+def test_create_dispatcher_head_is_served_by_get_view(two_method_dispatcher):
+    response = two_method_dispatcher(RequestFactory().head("/"))
+    assert response.status_code == 200
+
+
+def test_create_dispatcher_options_returns_metadata(two_method_dispatcher):
+    response = two_method_dispatcher(RequestFactory().options("/"))
+    response.render()
+    assert response.status_code == 200
+    assert set(response["Allow"].split(", ")) >= {"GET", "POST", "OPTIONS"}
+
+
 @pytest.mark.django_db
 def test_urls_have_not_changed(settings):
     BASE_DIR = settings.BASE_DIR
@@ -54,18 +121,28 @@ def test_urls_have_not_changed(settings):
                 allowed_methods = []
                 if hasattr(pattern, "callback"):
                     view = pattern.callback
+                    # Copy: the "head" removal below must not mutate the class.
                     if hasattr(view, "http_method_names"):
-                        allowed_methods = view.http_method_names
+                        allowed_methods = list(view.http_method_names)
                     elif hasattr(view, "actions"):
                         allowed_methods = list(view.actions.keys())
                     elif hasattr(
                         view, "view_class"
                     ):  # assume all, even though probably not
-                        allowed_methods = view.view_class.http_method_names
+                        allowed_methods = list(view.view_class.http_method_names)
+                    elif (
+                        hasattr(view, "__name__")
+                        and view.__name__ == "dispatcher"
+                        and hasattr(view, "_allowed_methods")
+                    ):
+                        allowed_methods = [
+                            method.lower() for method in view._allowed_methods
+                        ]
                     else:
                         raise NotImplementedError(
                             "Function based views are not supported"
                         )
+
                 # head is not present in the CI for some reason...
                 with suppress(ValueError):
                     i = allowed_methods.index("head")
@@ -101,3 +178,25 @@ def test_urls_have_not_changed(settings):
         pytest.fail(
             f"URL structure has changed. Updated snapshot with new URLs and names. Diff:\n\n{diff}"  # noqa: E501
         )
+
+
+@pytest.mark.parametrize(
+    "path,expected_kwargs",
+    [
+        ("/auth/users/1.json", {"id": "1", "format": "json"}),
+        ("/auth/users.json", {"format": "json"}),
+        ("/auth/users/1/", {"id": "1"}),
+    ],
+)
+def test_format_suffix_routes_resolve(path, expected_kwargs):
+    """
+    DRF's DefaultRouter generated these before the URLs were hand-written.
+    """
+    assert resolve(path).kwargs == expected_kwargs
+
+
+def test_user_lookup_does_not_swallow_dots():
+    """
+    A dotted segment must be read as a format suffix, not as the lookup value.
+    """
+    assert resolve("/auth/users/1.json").kwargs["id"] == "1"

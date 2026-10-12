@@ -52,8 +52,8 @@ def is_missing_backend(exc):
 
 def state_error_message(exc):
     """
-    The djoser error message for a ``validate_state()`` failure, or None when
-    ``exc`` is not one of the known state errors.
+    The djoser error message for a ``validate_state()`` failure, or None when ``exc`` is
+    not one of the known state errors.
     """
     for cls, message in _STATE_MESSAGES_BY_CLASS:
         if cls is not None and isinstance(exc, cls):

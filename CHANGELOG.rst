@@ -5,6 +5,23 @@ Change Log
 This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
+-------------------
+3.0.0 (unreleased)
+-------------------
+
+Breaking changes:
+
+* ``UserViewSet`` is replaced by one view per endpoint under ``djoser.views``, configurable through the new ``VIEWS`` setting; the DRF router is replaced by hand-written URL configs
+* the DRF router's API root is gone: ``GET /auth/`` is no longer a live endpoint
+* a denied request to ``/users/me/`` returns ``404 Not Found`` when ``HIDE_USERS`` is on, like every other user endpoint; 2.x answered ``403 Forbidden`` there
+* JWT URLs are anchored: ``/auth/jwt/createx`` and ``/auth/jwt/create/extra`` are ``404 Not Found`` instead of matching ``/auth/jwt/create/``
+* drop support for Django older than 5.2 and Python older than 3.10; ``social-auth-app-django`` 6.0 or newer is required
+* ``djoser.email.BaseEmailMessage`` is ``django-templated-mail`` 2.0's again, not a copy of its 1.x code: ``send()`` returns the number of messages sent, a message without ``template_name`` raises ``ImproperlyConfigured``, a ``PROTOCOL`` Django setting sets the protocol in email links (``EMAIL_FRONTEND_PROTOCOL`` still wins), and the private ``_process_node()`` hook is gone
+
+Other changes:
+
+* email templates that ``{% extends %}`` another template now render; djoser's copy of the email code sent them with an empty subject and body. ``{{ block.super }}`` works in them too
+
 ---------------------
 `2.3.5`_ (2026-10-12)
 ---------------------
