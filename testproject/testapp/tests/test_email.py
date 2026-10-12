@@ -102,7 +102,8 @@ class TestEmailRender:
         )
         extended.render()
 
-        assert extended.subject == "Activate your Example account"
+        # djoser's subject block spans several lines; the subject stays on one.
+        assert extended.subject == "[Example] Account activation on my_host"
         assert extended.body.startswith(default.body)
         assert extended.body.endswith(
             "P.S. Reply to this email if the link does not work."

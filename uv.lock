@@ -522,7 +522,7 @@ wheels = [
 [[package]]
 name = "django-templated-mail"
 version = "2.0.0"
-source = { git = "https://github.com/sunscrapers/django-templated-mail?rev=ceff2b6e9af94dcae0419e4dceeb6d5d09f4b9dc#ceff2b6e9af94dcae0419e4dceeb6d5d09f4b9dc" }
+source = { git = "https://github.com/sunscrapers/django-templated-mail?rev=dd4945e8516e52ae143873b89e6e8d036a663ad6#dd4945e8516e52ae143873b89e6e8d036a663ad6" }
 dependencies = [
     { name = "django" },
 ]
@@ -601,7 +601,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "django", specifier = ">=5.2" },
-    { name = "django-templated-mail", git = "https://github.com/sunscrapers/django-templated-mail?rev=ceff2b6e9af94dcae0419e4dceeb6d5d09f4b9dc" },
+    { name = "django-templated-mail", git = "https://github.com/sunscrapers/django-templated-mail?rev=dd4945e8516e52ae143873b89e6e8d036a663ad6" },
     { name = "djangorestframework", specifier = ">=3.14" },
     { name = "djangorestframework-simplejwt", specifier = ">=5.0,<6.0" },
     { name = "social-auth-app-django", specifier = ">=6.0.0,<8.0.0" },

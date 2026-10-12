@@ -72,7 +72,7 @@ docs = [
 # only carry the requirement in [project]; drop this table and re-lock once 2.0.0 is
 # released.
 [tool.uv.sources]
-django-templated-mail = { git = "https://github.com/sunscrapers/django-templated-mail", rev = "ceff2b6e9af94dcae0419e4dceeb6d5d09f4b9dc" }
+django-templated-mail = { git = "https://github.com/sunscrapers/django-templated-mail", rev = "dd4945e8516e52ae143873b89e6e8d036a663ad6" }
 
 [project.urls]
 Homepage = "https://github.com/sunscrapers/djoser"

@@ -35,8 +35,8 @@ Templates
 
 An email template defines up to three blocks: ``subject``, ``text_body`` and
 ``html_body``. With both bodies the email is sent as text with an HTML alternative;
-with only ``html_body`` it is sent as HTML. Keep the subject on one line once it is
-rendered: email headers cannot contain line breaks.
+with only ``html_body`` it is sent as HTML. If the subject renders to several
+lines, they are joined with spaces, since email headers cannot contain line breaks.
 
 Every template gets these variables:
 
@@ -84,6 +84,8 @@ The others, and ``{{ block.super }}``, come from djoser's template:
 
     {# myapp/templates/myapp/email/activation.html #}
     {% extends "email/activation.html" %}
+
+    {% block subject %}[Example] {{ block.super }}{% endblock subject %}
 
     {% block text_body %}
     {{ block.super }}

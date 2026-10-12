@@ -1,6 +1,6 @@
 {% extends "email/activation.html" %}
 
-{% block subject %}Activate your Example account{% endblock subject %}
+{% block subject %}[Example] {{ block.super }}{% endblock subject %}
 
 {% block text_body %}
 {{ block.super }}
