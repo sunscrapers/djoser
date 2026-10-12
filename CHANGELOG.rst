@@ -16,6 +16,11 @@ Breaking changes:
 * a denied request to ``/users/me/`` returns ``404 Not Found`` when ``HIDE_USERS`` is on, like every other user endpoint; 2.x answered ``403 Forbidden`` there
 * JWT URLs are anchored: ``/auth/jwt/createx`` and ``/auth/jwt/create/extra`` are ``404 Not Found`` instead of matching ``/auth/jwt/create/``
 * drop support for Django older than 5.2 and Python older than 3.10; ``social-auth-app-django`` 6.0 or newer is required
+* ``djoser.email.BaseEmailMessage`` is ``django-templated-mail`` 2.0's again, not a copy of its 1.x code: ``send()`` returns the number of messages sent, a message without ``template_name`` raises ``ImproperlyConfigured``, a ``PROTOCOL`` Django setting sets the protocol in email links (``EMAIL_FRONTEND_PROTOCOL`` still wins), and the private ``_process_node()`` hook is gone
+
+Other changes:
+
+* email templates that ``{% extends %}`` another template now render; djoser's copy of the email code sent them with an empty subject and body. ``{{ block.super }}`` works in them too
 
 ---------------------
 `2.3.5`_ (2026-10-12)

@@ -46,7 +46,6 @@ dependencies = [
     { name = "packaging" },
     { name = "pathspec" },
     { name = "platformdirs" },
-    { name = "tomli", version = "2.2.1", source = { registry = "https://pypi.org/simple" }, marker = "python_version < '0'" },
     { name = "tomli", version = "2.4.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
@@ -521,6 +520,14 @@ wheels = [
 ]
 
 [[package]]
+name = "django-templated-mail"
+version = "2.0.0"
+source = { git = "https://github.com/sunscrapers/django-templated-mail?rev=ceff2b6e9af94dcae0419e4dceeb6d5d09f4b9dc#ceff2b6e9af94dcae0419e4dceeb6d5d09f4b9dc" }
+dependencies = [
+    { name = "django" },
+]
+
+[[package]]
 name = "djangorestframework"
 version = "3.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -552,6 +559,7 @@ version = "2.3.5"
 source = { editable = "." }
 dependencies = [
     { name = "django" },
+    { name = "django-templated-mail" },
     { name = "djangorestframework" },
     { name = "djangorestframework-simplejwt" },
     { name = "social-auth-app-django" },
@@ -593,6 +601,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "django", specifier = ">=5.2" },
+    { name = "django-templated-mail", git = "https://github.com/sunscrapers/django-templated-mail?rev=ceff2b6e9af94dcae0419e4dceeb6d5d09f4b9dc" },
     { name = "djangorestframework", specifier = ">=3.14" },
     { name = "djangorestframework-simplejwt", specifier = ">=5.0,<6.0" },
     { name = "social-auth-app-django", specifier = ">=6.0.0,<8.0.0" },
@@ -903,7 +912,6 @@ version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ruamel-yaml" },
-    { name = "tomli", version = "2.2.1", source = { registry = "https://pypi.org/simple" }, marker = "python_version < '0'" },
     { name = "tomli", version = "2.4.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ac/7d/3299241a753c738d114600c360d754550b28c285281dc6a5132c4ccfae65/pre_commit_hooks-5.0.0.tar.gz", hash = "sha256:10626959a9eaf602fbfc22bc61b6e75801436f82326bfcee82bb1f2fc4bc646e", size = 29747, upload-time = "2024-10-05T18:43:11.225Z" }

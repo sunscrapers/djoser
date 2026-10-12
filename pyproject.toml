@@ -30,6 +30,7 @@ classifiers = [
 dependencies = [
     "django>=5.2",
     "djangorestframework>=3.14",
+    "django-templated-mail>=2.0.0,<3.0.0",
     "djangorestframework-simplejwt>=5.0,<6.0",
     "social-auth-app-django>=6.0.0,<8.0.0",
 ]
@@ -65,6 +66,13 @@ docs = [
     "toml>=0.10.2",
     "sphinx-rtd-theme>=1.2.0",
 ]
+
+# django-templated-mail 2.0.0 is not on PyPI yet, so uv installs it from this commit
+# of https://github.com/sunscrapers/django-templated-mail/pull/33. Built packages
+# only carry the requirement in [project]; drop this table and re-lock once 2.0.0 is
+# released.
+[tool.uv.sources]
+django-templated-mail = { git = "https://github.com/sunscrapers/django-templated-mail", rev = "ceff2b6e9af94dcae0419e4dceeb6d5d09f4b9dc" }
 
 [project.urls]
 Homepage = "https://github.com/sunscrapers/djoser"
