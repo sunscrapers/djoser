@@ -76,6 +76,8 @@ You should pass ``uid`` and ``token`` to reset username confirmation endpoint.
 
 **Required**: ``True``
 
+.. _email-frontend-settings:
+
 EMAIL_FRONTEND_PROTOCOL
 -----------------------
 
@@ -268,11 +270,14 @@ to update the defaults, so by providing, e.g. one key, all the others will stay 
         'provider_auth': 'djoser.social.serializers.ProviderAuthSerializer',
     }
 
+.. _email-setting:
+
 EMAIL
 -----
 
 Dictionary which maps djoser email names to paths to email classes.
 Same as in case of ``SERIALIZERS`` it allows partial override.
+See :doc:`emails` for when each email is sent and how to customize it.
 
 **Examples**
 

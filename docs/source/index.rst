@@ -29,6 +29,7 @@ Welcome to djoser's documentation!
     jwt_endpoints
     social_endpoints
     signals
+    emails
     webauthn
 
 .. toctree::
