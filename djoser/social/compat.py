@@ -8,8 +8,6 @@ the view and serializer ask this module instead of importing classes that only
 exist on one side.
 """
 
-from social_core import exceptions
-
 try:
     from social_core.exceptions import MissingBackend
 except ImportError:  # social-auth-core >= 6
