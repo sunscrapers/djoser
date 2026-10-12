@@ -6,6 +6,15 @@ This document records all notable changes to djoser.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 ---------------------
+`2.3.5`_ (2026-10-12)
+---------------------
+
+* allow ``social-auth-app-django`` 6.x and 7.x (``social-auth-core`` 5 and 6), which carry the fixes for CVE-2026-57175 through CVE-2026-57179; the 2.x pin kept every install on the unpatched ``social-auth-core`` 4.x. Resolving to the patched releases requires Django 5.2 and Python 3.10; older Django keeps ``social-auth-app-django`` 5.4.x https://github.com/sunscrapers/djoser/issues/924
+* fix reloading djoser settings (for example with ``override_settings``) mutating the default values of dict-valued settings https://github.com/sunscrapers/djoser/pull/921
+* remove the unused ``djet`` extra; it only ever installed a test helper djoser does not use, and ``pip install djoser[djet]`` now warns instead of installing it https://github.com/sunscrapers/djoser/pull/919
+* declare Django 6.0 and 6.1 support; the test suite runs on Django 6.1 in CI https://github.com/sunscrapers/djoser/pull/925
+
+---------------------
 `2.3.4`_ (2026-08-01)
 ---------------------
 
@@ -485,3 +494,4 @@ few bugfixes / documentation updates. List of changes:
 .. _2.3.2: https://github.com/sunscrapers/djoser/compare/2.3.1...2.3.2
 .. _2.3.3: https://github.com/sunscrapers/djoser/compare/2.3.2...2.3.3
 .. _2.3.4: https://github.com/sunscrapers/djoser/compare/2.3.3...2.3.4
+.. _2.3.5: https://github.com/sunscrapers/djoser/compare/2.3.4...2.3.5
