@@ -5,48 +5,13 @@ from rest_framework import status
 from rest_framework.test import APIRequestFactory
 from social_core.exceptions import (
     AuthException,
-    AuthForbidden,
     AuthCanceled,
     AuthUnknownError,
-    AuthMissingParameter,
-    AuthStateMissing,
 )
 
 import djoser.social.views
 
 from unittest import mock
-
-
-def test_social_auth_missing_state_request():
-    from djoser.social.serializers import ProviderAuthSerializer
-
-    serializer = ProviderAuthSerializer()
-
-    with mock.patch("djoser.social.serializers.load_strategy") as mock_load_strategy:
-        mock_strategy = mock.Mock()
-        mock_load_strategy.return_value = mock_strategy
-        mock_strategy.backend.auth_complete.side_effect = AuthMissingParameter(
-            mock.Mock(), "state"
-        )
-
-        with pytest.raises(Exception):  # Should raise ValidationError
-            serializer.validate({"provider": "facebook", "access_token": "token"})
-
-
-def test_social_auth_missing_state_session():
-    from djoser.social.serializers import ProviderAuthSerializer
-
-    serializer = ProviderAuthSerializer()
-
-    with mock.patch("djoser.social.serializers.load_strategy") as mock_load_strategy:
-        mock_strategy = mock.Mock()
-        mock_load_strategy.return_value = mock_strategy
-        mock_strategy.backend.auth_complete.side_effect = AuthStateMissing(
-            mock.Mock(), "state"
-        )
-
-        with pytest.raises(Exception):  # Should raise ValidationError
-            serializer.validate({"provider": "facebook", "access_token": "token"})
 
 
 @pytest.mark.django_db
@@ -113,7 +78,6 @@ class TestProviderAuthView:
         "auth_error",
         [
             AuthException(backend=None),
-            AuthForbidden(backend=None),
             AuthCanceled(backend=None),
             AuthUnknownError(backend=None),
             ConnectionError("Network error"),
@@ -149,6 +113,49 @@ class TestProviderAuthView:
             request.GET = {k: v for k, v in data.items()}
             response = self._get_view_response(request, provider="facebook")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {
+            "non_field_errors": ["Invalid state has been provided."]
+        }
+
+    def test_post_facebook_provider_validation_fails_if_session_state_missing(
+        self,
+    ):
+        data = {"code": "XYZ", "state": "ABC"}
+
+        with mock.patch(
+            "social_core.backends.oauth.OAuthAuth.get_session_state",
+            return_value=None,
+        ):
+            request = self.factory.post("/auth/facebook/")
+            request.GET = {k: v for k, v in data.items()}
+            response = self._get_view_response(request, provider="facebook")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {
+            "non_field_errors": [
+                "State could not be found in server-side session data."
+            ]
+        }
+
+    def test_post_facebook_provider_validation_fails_if_request_state_empty(self):
+        data = {"code": "XYZ", "state": "ABC"}
+
+        with (
+            mock.patch(
+                "social_core.backends.oauth.OAuthAuth.get_session_state",
+                return_value=data["state"],
+            ),
+            mock.patch(
+                "social_core.backends.oauth.OAuthAuth.get_request_state",
+                return_value="",
+            ),
+        ):
+            request = self.factory.post("/auth/facebook/")
+            request.GET = {k: v for k, v in data.items()}
+            response = self._get_view_response(request, provider="facebook")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {
+            "non_field_errors": ["State could not be found in request data."]
+        }
 
     @pytest.mark.parametrize(
         "data",
