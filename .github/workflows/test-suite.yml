@@ -173,7 +173,7 @@ jobs:
             drf-version: 3.14
             social-auth-version: "~=6.0"
           - python-version: 3.13
-            django-version: "latest"
+            django-version: "5.2.0"
             drf-version: 3.14
             social-auth-version: "~=7.0"
 
@@ -210,9 +210,11 @@ jobs:
       - name: Install DRF version
         run: uv pip install "djangorestframework==${{ matrix.drf-version }}"
 
+      # --no-config: pyproject.toml carries a uv constraint pinning
+      # social-auth-app-django<5.5 for the lock; it must not apply here.
       - name: Install social-auth-app-django version
         if: matrix.social-auth-version
-        run: uv pip install "social-auth-app-django${{ matrix.social-auth-version }}"
+        run: uv pip install --no-config "social-auth-app-django${{ matrix.social-auth-version }}"
 
       - name: Show environment info
         run: |
