@@ -1,9 +1,10 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from social_django.utils import load_backend, load_strategy
-from social_core.exceptions import MissingBackend
+from social_core.exceptions import SocialAuthBaseException
 
 from djoser.conf import settings
+from djoser.social import compat
 
 
 class ProviderAuthView(generics.CreateAPIView):
@@ -23,7 +24,9 @@ class ProviderAuthView(generics.CreateAPIView):
         backend_name = self.kwargs["provider"]
         try:
             backend = load_backend(strategy, backend_name, redirect_uri=redirect_uri)
-        except MissingBackend:
+        except SocialAuthBaseException as e:
+            if not compat.is_missing_backend(e):
+                raise
             return Response(
                 {"detail": f"Provider '{backend_name}' not supported"},
                 status=status.HTTP_404_NOT_FOUND,

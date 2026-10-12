@@ -3,6 +3,7 @@ from social_core import exceptions
 from social_django.utils import load_backend, load_strategy
 
 from djoser.conf import settings
+from djoser.social import compat
 
 
 class ProviderAuthSerializer(serializers.Serializer):
@@ -46,15 +47,7 @@ class ProviderAuthSerializer(serializers.Serializer):
 
         try:
             backend.validate_state()
-        except exceptions.AuthMissingParameter:
-            raise serializers.ValidationError(
-                "State could not be found in request data."
-            )
-        except exceptions.AuthStateMissing:
-            raise serializers.ValidationError(
-                "State could not be found in server-side session data."
-            )
-        except exceptions.AuthStateForbidden:
-            raise serializers.ValidationError("Invalid state has been provided.")
+        except exceptions.AuthException as e:
+            raise serializers.ValidationError(compat.state_error_message(e) or str(e))
 
         return value
