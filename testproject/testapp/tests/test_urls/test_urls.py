@@ -6,8 +6,8 @@ import pytest
 from deepdiff import DeepDiff
 from django.test import Client
 from django.urls import get_resolver, resolve
-from django.http import HttpResponseNotAllowed
 from django.test import RequestFactory
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
@@ -48,22 +48,54 @@ def test_registration_works_with_csrf_middleware_enabled(settings):
     assert response.status_code == 201, response.content
 
 
-def test_create_dispatcher_not_allowed():
+class _DispatcherGetView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request):
+        return Response({"method": "GET"})
+
+
+class _DispatcherPostView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        return Response({"method": "POST"})
+
+
+@pytest.fixture
+def two_method_dispatcher():
     from djoser.urls.utils import create_dispatcher
 
-    class DummyView(APIView):
-        def get(self, request):
-            return "response"
+    return create_dispatcher({"GET": _DispatcherGetView, "POST": _DispatcherPostView})
 
-    method_view_map = {"GET": DummyView}
-    dispatcher = create_dispatcher(method_view_map)
 
-    factory = RequestFactory()
-    request = factory.post("/")
+def test_create_dispatcher_unmapped_method_gets_drf_405(two_method_dispatcher):
+    """
+    An unmapped method is answered by DRF, not by Django's HTML 405.
 
-    response = dispatcher(request)
-    assert isinstance(response, HttpResponseNotAllowed)
-    assert "GET" in response["Allow"]
+    2.x routed every method through one DRF view, so clients got a JSON body and an
+    Allow header listing every method the path accepts.
+    """
+    response = two_method_dispatcher(RequestFactory().put("/"))
+    response.render()
+    assert response.status_code == 405
+    assert response["Content-Type"].startswith("application/json")
+    assert "detail" in response.data
+    assert set(response["Allow"].split(", ")) >= {"GET", "POST"}
+
+
+def test_create_dispatcher_head_is_served_by_get_view(two_method_dispatcher):
+    response = two_method_dispatcher(RequestFactory().head("/"))
+    assert response.status_code == 200
+
+
+def test_create_dispatcher_options_returns_metadata(two_method_dispatcher):
+    response = two_method_dispatcher(RequestFactory().options("/"))
+    response.render()
+    assert response.status_code == 200
+    assert set(response["Allow"].split(", ")) >= {"GET", "POST", "OPTIONS"}
 
 
 @pytest.mark.django_db
@@ -89,14 +121,15 @@ def test_urls_have_not_changed(settings):
                 allowed_methods = []
                 if hasattr(pattern, "callback"):
                     view = pattern.callback
+                    # Copy: the "head" removal below must not mutate the class.
                     if hasattr(view, "http_method_names"):
-                        allowed_methods = view.http_method_names
+                        allowed_methods = list(view.http_method_names)
                     elif hasattr(view, "actions"):
                         allowed_methods = list(view.actions.keys())
                     elif hasattr(
                         view, "view_class"
                     ):  # assume all, even though probably not
-                        allowed_methods = view.view_class.http_method_names
+                        allowed_methods = list(view.view_class.http_method_names)
                     elif (
                         hasattr(view, "__name__")
                         and view.__name__ == "dispatcher"

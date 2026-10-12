@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
+from djoser.conf import settings as djoser_settings
 from djoser.views.me import UserMeRetrieveView
 
 
@@ -316,3 +317,20 @@ def test_every_configured_view_key_is_used(settings):
     assert (
         defined - read == set()
     ), f"VIEWS keys never read by any URLConf: {defined - read}"
+
+
+@pytest.mark.parametrize("name", sorted(djoser_settings.VIEWS.keys()))
+def test_configured_views_keep_head_and_options(name):
+    """
+    Every view lists its methods explicitly so PUT and PATCH can be split.
+
+    That must not strip HEAD (served by GET) and OPTIONS, which Django and DRF allow by
+    default and which the 2.x viewset answered.
+    """
+    view_class = getattr(djoser_settings.VIEWS, name)
+    if view_class is None:
+        pytest.skip(f"VIEWS.{name} is disabled")
+    names = view_class.http_method_names
+    assert "options" in names
+    if "get" in names:
+        assert "head" in names

@@ -182,14 +182,16 @@
     "pattern": "^auth/^users/activation(?P<format>\\.[a-z0-9]+/?)\\Z",
     "name": "user-activation",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/activation/\\Z",
     "name": "user-activation",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
@@ -216,98 +218,112 @@
     "pattern": "^auth/^users/resend_activation(?P<format>\\.[a-z0-9]+/?)\\Z",
     "name": "user-resend-activation",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/resend_activation/\\Z",
     "name": "user-resend-activation",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/reset_password(?P<format>\\.[a-z0-9]+/?)\\Z",
     "name": "user-reset-password",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/reset_password/\\Z",
     "name": "user-reset-password",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/reset_password_confirm(?P<format>\\.[a-z0-9]+/?)\\Z",
     "name": "user-reset-password-confirm",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/reset_password_confirm/\\Z",
     "name": "user-reset-password-confirm",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/reset_username(?P<format>\\.[a-z0-9]+/?)\\Z",
     "name": "user-reset-username",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/reset_username/\\Z",
     "name": "user-reset-username",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/reset_username_confirm(?P<format>\\.[a-z0-9]+/?)\\Z",
     "name": "user-reset-username-confirm",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/reset_username_confirm/\\Z",
     "name": "user-reset-username-confirm",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/set_password(?P<format>\\.[a-z0-9]+/?)\\Z",
     "name": "user-set-password",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/set_password/\\Z",
     "name": "user-set-password",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/set_username(?P<format>\\.[a-z0-9]+/?)\\Z",
     "name": "user-set-username",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {
     "pattern": "^auth/^users/set_username/\\Z",
     "name": "user-set-username",
     "allowed_methods": [
-      "post"
+      "post",
+      "options"
     ]
   },
   {

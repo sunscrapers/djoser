@@ -1,17 +1,11 @@
 from typing import Dict, Type, Callable, Any, Optional
 from django.http import (
     HttpRequest,
-    HttpResponseNotAllowed,
+    HttpResponseBase,
     HttpResponsePermanentRedirect,
 )
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-
-try:
-    from django.http import HttpResponseBase
-except ImportError:
-    # Django < 4.1
-    from django.http.response import HttpResponseBase
 from rest_framework.views import APIView
 
 
@@ -57,14 +51,35 @@ def create_dispatcher(
         A dispatcher function that can be used directly in URL patterns
     """
 
+    allowed_methods = list(method_view_map.keys())
+    if "GET" in method_view_map and "HEAD" not in method_view_map:
+        allowed_methods.append("HEAD")
+    if "OPTIONS" not in method_view_map:
+        allowed_methods.append("OPTIONS")
+    allow_header = ", ".join(allowed_methods)
+    # Given to the fallback view so DRF answers 405 for every method that is not
+    # mapped here, even one the fallback view class itself implements.
+    fallback_method_names = [method.lower() for method in allowed_methods]
+    fallback_view_class = next(iter(method_view_map.values()), APIView)
+
     def dispatcher(request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         method = request.method
-        if method in method_view_map:
-            view_class = method_view_map[method]
+        view_class = method_view_map.get(method)
+        if view_class is None and method == "HEAD":
+            # Django serves HEAD with the GET handler.
+            view_class = method_view_map.get("GET")
+        if view_class is not None:
             return view_class.as_view()(request, *args, **kwargs)
-        else:
-            allowed_methods = list(method_view_map.keys())
-            return HttpResponseNotAllowed(allowed_methods)
+
+        # OPTIONS, or a method no view is mapped to. 2.x routed every method through
+        # one DRF view, so authentication ran first and the client got DRF's own
+        # 401, JSON 405 or OPTIONS metadata. Hand the request to a mapped view with
+        # its method list narrowed to what this path accepts to get the same result.
+        view = fallback_view_class.as_view(http_method_names=fallback_method_names)
+        response = view(request, *args, **kwargs)
+        # DRF derives Allow from the handlers of that one view; advertise the path.
+        response["Allow"] = allow_header
+        return response
 
     # CsrfViewMiddleware decides exemption by inspecting the callable the URL resolver
     # returns, which is this dispatcher rather than the wrapped view. Without this,
