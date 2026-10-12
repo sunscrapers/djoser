@@ -14,179 +14,36 @@ env:
   UV_NO_SYNC: "1"
 
 jobs:
-  django3-test:
-    name: Django 3 - Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.9, '3.10', 3.11]
-        django-version: [3.2.18]
-        drf-version: [3.14]
-
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-
-      - name: Install dependencies
-        run: uv sync --group test --extra webauthn
-
-      - name: Install Django version
-        run: |
-          if [ "${{ matrix.django-version }}" = "latest" ]; then
-            uv pip install --upgrade "Django"  # Force upgrade to latest
-          else
-            # First try exact version, if it fails try to install the major.minor version
-            echo "Installing Django ${{ matrix.django-version }}..."
-            if ! uv pip install "Django==${{ matrix.django-version }}"; then
-              echo "Exact version failed, trying to install the latest patch version..."
-              MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
-              uv pip install "Django~=$MAJOR_MINOR.0"
-            fi
-          fi
-
-      - name: Install DRF version
-        run: |
-          if [ "${{ matrix.drf-version }}" = "latest" ]; then
-            uv pip install --upgrade "djangorestframework"
-          else
-            uv pip install "djangorestframework==${{ matrix.drf-version }}"
-          fi
-
-      - name: Show environment info
-        run: |
-          uv run python --version
-          # -i because uv pip freeze normalizes names to lowercase (django==),
-          # unlike pip which preserved the canonical Django== casing
-          uv pip freeze | grep -iE 'djangorestframework|django'
-
-      - name: Run tests
-        run: make test
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        continue-on-error: true
-        with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
-          verbose: true
-          token: ${{ secrets.CODECOV_TOKEN }}
-
-  django4-test:
-    name: Django 4 - Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.9, '3.10', 3.11]
-        django-version: [4.0, 4.1, 4.2]
-        drf-version: [3.14]
-        include:
-          # Test latest Django stable with newest Python versions. DRF 3.14 no
-          # longer imports on Django >= 6.1, so these rows take latest DRF too.
-          - python-version: '3.10'
-            django-version: "latest"
-            drf-version: "latest"
-          - python-version: 3.11
-            django-version: "latest"
-            drf-version: "latest"
-
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-
-      - name: Install dependencies
-        run: uv sync --group test --extra webauthn
-
-      - name: Install Django version
-        run: |
-          if [ "${{ matrix.django-version }}" = "latest" ]; then
-            uv pip install --upgrade "Django"  # Force upgrade to latest
-          else
-            # First try exact version, if it fails try to install the major.minor version
-            echo "Installing Django ${{ matrix.django-version }}..."
-            if ! uv pip install "Django==${{ matrix.django-version }}"; then
-              echo "Exact version failed, trying to install the latest patch version..."
-              MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
-              uv pip install "Django~=$MAJOR_MINOR.0"
-            fi
-          fi
-
-      - name: Install DRF version
-        run: |
-          if [ "${{ matrix.drf-version }}" = "latest" ]; then
-            uv pip install --upgrade "djangorestframework"
-          else
-            uv pip install "djangorestframework==${{ matrix.drf-version }}"
-          fi
-
-      - name: Show environment info
-        run: |
-          uv run python --version
-          # -i because uv pip freeze normalizes names to lowercase (django==),
-          # unlike pip which preserved the canonical Django== casing
-          uv pip freeze | grep -iE 'djangorestframework|django'
-
-      - name: Run tests
-        run: make test
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        continue-on-error: true
-        with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
-          verbose: true
-          token: ${{ secrets.CODECOV_TOKEN }}
-
-  django5-test:
-    name: Django 5 - Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}${{ matrix.social-auth-version && format(' - social-auth-app-django {0}', matrix.social-auth-version) || '' }}
+  test:
+    name: Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}${{ matrix.social-auth-version && format(' - social-auth-app-django {0}', matrix.social-auth-version) || '' }}
     strategy:
       fail-fast: false
       matrix:
         python-version: ['3.10', 3.11, 3.12, 3.13]
-        django-version: ["5.0.12", "5.1.6", "5.2.0"]
+        # Oldest supported Django (an LTS) with the oldest supported DRF.
+        django-version: ["5.2"]
         drf-version: [3.14]
-        exclude:
-          # Django 5.0 never supported Python 3.13 (support arrived in 5.1.3)
-          - python-version: '3.13'
-            django-version: "5.0.12"
         include:
-          # Latest Django stable requires Python >= 3.12; see the DRF note above.
+          # Django 6.x requires Python >= 3.12. DRF 3.14 does not import on
+          # Django >= 6.1, so these rows take latest DRF.
+          - python-version: 3.12
+            django-version: "6.0"
+            drf-version: "latest"
+          - python-version: 3.13
+            django-version: "6.0"
+            drf-version: "latest"
           - python-version: 3.12
             django-version: "latest"
             drf-version: "latest"
           - python-version: 3.13
             django-version: "latest"
             drf-version: "latest"
-          # uv.lock keeps social-auth-app-django 5.4.x so the Django 3.2-5.0
-          # rows resolve; these rows cover the newer majors the package
-          # metadata allows (6.x = social-auth-core 5, 7.x = social-auth-core 6).
-          # Both need Django >= 5.2.
+          # uv.lock resolves social-auth-app-django 7.x (social-auth-core 6);
+          # the package metadata also allows 6.x (social-auth-core 5).
           - python-version: 3.12
-            django-version: "5.2.0"
+            django-version: "5.2"
             drf-version: 3.14
             social-auth-version: "~=6.0"
-          - python-version: 3.13
-            django-version: "5.2.0"
-            drf-version: 3.14
-            social-auth-version: "~=7.0"
 
     runs-on: ubuntu-latest
     steps:
@@ -207,15 +64,10 @@ jobs:
       - name: Install Django version
         run: |
           if [ "${{ matrix.django-version }}" = "latest" ]; then
-            uv pip install --upgrade "Django"  # Force upgrade to latest
+            uv pip install --upgrade "Django"
           else
-            # First try exact version, if it fails try to install the major.minor version
-            echo "Installing Django ${{ matrix.django-version }}..."
-            if ! uv pip install "Django==${{ matrix.django-version }}"; then
-              echo "Exact version failed, trying to install the latest patch version..."
-              MAJOR_MINOR=$(echo "${{ matrix.django-version }}" | cut -d. -f1,2)
-              uv pip install "Django~=$MAJOR_MINOR.0"
-            fi
+            # Latest patch release of the given minor
+            uv pip install "Django~=${{ matrix.django-version }}.0"
           fi
 
       - name: Install DRF version
@@ -226,11 +78,9 @@ jobs:
             uv pip install "djangorestframework==${{ matrix.drf-version }}"
           fi
 
-      # --no-config: pyproject.toml carries a uv constraint pinning
-      # social-auth-app-django<5.5 for the lock; it must not apply here.
       - name: Install social-auth-app-django version
         if: matrix.social-auth-version
-        run: uv pip install --no-config "social-auth-app-django${{ matrix.social-auth-version }}"
+        run: uv pip install "social-auth-app-django${{ matrix.social-auth-version }}"
 
       - name: Show environment info
         run: |

@@ -10,16 +10,10 @@ maintainers = [
 ]
 license = {text = "MIT"}
 readme = "README.rst"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
-    "Framework :: Django :: 3.2",
-    "Framework :: Django :: 4.0",
-    "Framework :: Django :: 4.1",
-    "Framework :: Django :: 4.2",
-    "Framework :: Django :: 5.0",
-    "Framework :: Django :: 5.1",
     "Framework :: Django :: 5.2",
     "Framework :: Django :: 6.0",
     "Framework :: Django :: 6.1",
@@ -28,17 +22,16 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "django>=3.2",
+    "django>=5.2",
     "djangorestframework>=3.14",
     "djangorestframework-simplejwt>=5.0,<6.0",
-    "social-auth-app-django>=5.0.0,<8.0.0",
+    "social-auth-app-django>=6.0.0,<8.0.0",
 ]
 
 [project.optional-dependencies]
@@ -78,14 +71,6 @@ Homepage = "https://github.com/sunscrapers/djoser"
 Repository = "https://github.com/sunscrapers/djoser"
 Documentation = "https://djoser.readthedocs.io/"
 
-[tool.uv]
-# social-auth-app-django 5.5 requires Django>=5.1 (CheckConstraint condition=);
-# keep the lock compatible with the Django 3.2-5.0 rows of the CI matrix
-# without constraining the published package metadata, which allows up to
-# 7.x (social-auth-core 6). The Django 5 CI job installs 6.x and 7.x
-# explicitly on top of the lock so those majors are tested too.
-constraint-dependencies = ["social-auth-app-django<5.5"]
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -103,7 +88,7 @@ packages = ["djoser"]
 
 [tool.black]
 line-length = 88
-target-version = ["py39", "py310", "py311", "py312", "py313"]
+target-version = ["py310", "py311", "py312", "py313"]
 include = '\.pyi?$'
 exclude = '''
 (
@@ -152,7 +137,7 @@ exclude = [
     "migrations"
 ]
 line-length = 88
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F"]
