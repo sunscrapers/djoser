@@ -171,8 +171,8 @@ class TestProviderAuthView:
 
     def test_post_facebook_provider_validation_reports_unknown_state_error(self):
         """
-        A state error djoser has no dedicated message for is still a 400 and
-        surfaces the exception's own text.
+        A state error djoser has no dedicated message for is still a 400 and surfaces
+        the exception's own text.
         """
         data = {"code": "XYZ", "state": "ABC"}
         error = AuthException(None, "something else went wrong")
