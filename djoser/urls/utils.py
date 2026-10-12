@@ -1,39 +1,33 @@
-from typing import Dict, Type, Callable, Any, Optional
-from django.http import (
-    HttpRequest,
-    HttpResponseBase,
-    HttpResponsePermanentRedirect,
-)
+from typing import Dict, Type, Callable, Any, List, Optional
+
+from django.contrib.auth import get_user_model
+from django.http import HttpRequest, HttpResponseBase
+from django.urls import URLPattern, re_path
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View
 from rest_framework.views import APIView
 
 
-class HttpResponsePermanentRedirectPreserveMethod(HttpResponsePermanentRedirect):
+def user_url_name(suffix: str) -> str:
     """
-    308 Permanent Redirect.
+    The name 2.x's router gave a user URL, e.g. "user-me".
 
-    Unlike a 301, clients must repeat the request with the original method and body,
-    which is what makes this usable in front of POST-only endpoints.
+    The router named the routes after the user model class, so a project whose model is
+    CustomUser reverses "customuser-me".
     """
+    return f"{get_user_model()._meta.object_name.lower()}-{suffix}"
 
-    status_code = 308
 
-
-class AppendSlashRedirectView(View):
+def schema_patterns(regex: str, dispatcher: Callable) -> List[URLPattern]:
     """
-    Redirects a slash-less URL to its canonical slash-terminated form.
+    URL patterns that show a dispatcher's views to schema generators.
 
-    djoser 2.x matched these endpoints with an optional trailing slash. Switching to
-    path() made the slash mandatory, so callers using the slash-less form got a 404.
+    The generators of DRF, drf-spectacular and drf-yasg describe each URL pattern whose
+    callback is a DRF view, so they skip a dispatcher, which hands each method to a
+    different view. These patterns repeat the dispatcher's path once per view. Placed
+    after the dispatcher's pattern, they are never reached when resolving a request.
     """
-
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any):
-        target = f"{request.path}/"
-        query_string = request.META.get("QUERY_STRING")
-        if query_string:
-            target = f"{target}?{query_string}"
-        return HttpResponsePermanentRedirectPreserveMethod(target)
+    view_classes = dict.fromkeys(dispatcher.method_view_map.values())
+    return [re_path(regex, view_class.as_view()) for view_class in view_classes]
 
 
 def create_dispatcher(
@@ -89,6 +83,8 @@ def create_dispatcher(
 
     # Store allowed methods as attribute for URL test introspection
     setattr(dispatcher, "_allowed_methods", list(method_view_map.keys()))
+    # Read by schema_patterns().
+    dispatcher.method_view_map = method_view_map
     return dispatcher
 
 

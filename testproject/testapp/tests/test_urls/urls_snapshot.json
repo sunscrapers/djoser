@@ -1,6 +1,6 @@
 [
   {
-    "pattern": "^auth/^jwt/create/\\Z",
+    "pattern": "^auth/^jwt/create/?$",
     "name": "jwt-create",
     "allowed_methods": [
       "get",
@@ -13,20 +13,7 @@
     ]
   },
   {
-    "pattern": "^auth/^jwt/create\\Z",
-    "name": null,
-    "allowed_methods": [
-      "get",
-      "post",
-      "put",
-      "patch",
-      "delete",
-      "options",
-      "trace"
-    ]
-  },
-  {
-    "pattern": "^auth/^jwt/refresh/\\Z",
+    "pattern": "^auth/^jwt/refresh/?$",
     "name": "jwt-refresh",
     "allowed_methods": [
       "get",
@@ -39,34 +26,8 @@
     ]
   },
   {
-    "pattern": "^auth/^jwt/refresh\\Z",
-    "name": null,
-    "allowed_methods": [
-      "get",
-      "post",
-      "put",
-      "patch",
-      "delete",
-      "options",
-      "trace"
-    ]
-  },
-  {
-    "pattern": "^auth/^jwt/verify/\\Z",
+    "pattern": "^auth/^jwt/verify/?$",
     "name": "jwt-verify",
-    "allowed_methods": [
-      "get",
-      "post",
-      "put",
-      "patch",
-      "delete",
-      "options",
-      "trace"
-    ]
-  },
-  {
-    "pattern": "^auth/^jwt/verify\\Z",
-    "name": null,
     "allowed_methods": [
       "get",
       "post",
@@ -91,7 +52,7 @@
     ]
   },
   {
-    "pattern": "^auth/^token/login/\\Z",
+    "pattern": "^auth/^token/login/?$",
     "name": "login",
     "allowed_methods": [
       "get",
@@ -104,20 +65,7 @@
     ]
   },
   {
-    "pattern": "^auth/^token/login\\Z",
-    "name": null,
-    "allowed_methods": [
-      "get",
-      "post",
-      "put",
-      "patch",
-      "delete",
-      "options",
-      "trace"
-    ]
-  },
-  {
-    "pattern": "^auth/^token/logout/\\Z",
+    "pattern": "^auth/^token/logout/?$",
     "name": "logout",
     "allowed_methods": [
       "get",
@@ -130,28 +78,73 @@
     ]
   },
   {
-    "pattern": "^auth/^token/logout\\Z",
+    "pattern": "^auth/^users/$",
+    "name": "user-list",
+    "allowed_methods": [
+      "get",
+      "post"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/$",
     "name": null,
     "allowed_methods": [
       "get",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/$",
+    "name": null,
+    "allowed_methods": [
       "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/(?P<id>[^/.]+)/$",
+    "name": "user-detail",
+    "allowed_methods": [
+      "get",
       "put",
       "patch",
+      "delete"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/(?P<id>[^/.]+)/$",
+    "name": null,
+    "allowed_methods": [
+      "get",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/(?P<id>[^/.]+)/$",
+    "name": null,
+    "allowed_methods": [
+      "put",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/(?P<id>[^/.]+)/$",
+    "name": null,
+    "allowed_methods": [
+      "patch",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/(?P<id>[^/.]+)/$",
+    "name": null,
+    "allowed_methods": [
       "delete",
-      "options",
-      "trace"
+      "options"
     ]
   },
   {
-    "pattern": "^auth/^users(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "user-list",
-    "allowed_methods": [
-      "get",
-      "post"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/(?P<id>[^/.]+)(?P<format>\\.[a-z0-9]+/?)\\Z",
+    "pattern": "^auth/^users/(?P<id>[^/.]+)\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-detail",
     "allowed_methods": [
       "get",
@@ -161,8 +154,24 @@
     ]
   },
   {
-    "pattern": "^auth/^users/(?P<id>[^/.]+)/\\Z",
-    "name": "user-detail",
+    "pattern": "^auth/^users/activation/$",
+    "name": "user-activation",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/activation\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-activation",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/me/$",
+    "name": "user-me",
     "allowed_methods": [
       "get",
       "put",
@@ -171,159 +180,158 @@
     ]
   },
   {
-    "pattern": "^auth/^users/\\Z",
+    "pattern": "^auth/^users/me/$",
+    "name": null,
+    "allowed_methods": [
+      "get",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/me/$",
+    "name": null,
+    "allowed_methods": [
+      "put",
+      "patch",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/me/$",
+    "name": null,
+    "allowed_methods": [
+      "delete",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/me\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-me",
+    "allowed_methods": [
+      "get",
+      "put",
+      "patch",
+      "delete"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/resend_activation/$",
+    "name": "user-resend-activation",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/resend_activation\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-resend-activation",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/reset_password/$",
+    "name": "user-reset-password",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/reset_password\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-reset-password",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/reset_password_confirm/$",
+    "name": "user-reset-password-confirm",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/reset_password_confirm\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-reset-password-confirm",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/reset_username/$",
+    "name": "user-reset-username",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/reset_username\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-reset-username",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/reset_username_confirm/$",
+    "name": "user-reset-username-confirm",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/reset_username_confirm\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-reset-username-confirm",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/set_password/$",
+    "name": "user-set-password",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/set_password\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-set-password",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/set_username/$",
+    "name": "user-set-username",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users/set_username\\.(?P<format>[a-z0-9]+)/?$",
+    "name": "user-set-username",
+    "allowed_methods": [
+      "post",
+      "options"
+    ]
+  },
+  {
+    "pattern": "^auth/^users\\.(?P<format>[a-z0-9]+)/?$",
     "name": "user-list",
     "allowed_methods": [
       "get",
       "post"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/activation(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "user-activation",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/activation/\\Z",
-    "name": "user-activation",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/me(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "user-me",
-    "allowed_methods": [
-      "get",
-      "put",
-      "patch",
-      "delete"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/me/\\Z",
-    "name": "user-me",
-    "allowed_methods": [
-      "get",
-      "put",
-      "patch",
-      "delete"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/resend_activation(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "user-resend-activation",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/resend_activation/\\Z",
-    "name": "user-resend-activation",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/reset_password(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "user-reset-password",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/reset_password/\\Z",
-    "name": "user-reset-password",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/reset_password_confirm(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "user-reset-password-confirm",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/reset_password_confirm/\\Z",
-    "name": "user-reset-password-confirm",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/reset_username(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "user-reset-username",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/reset_username/\\Z",
-    "name": "user-reset-username",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/reset_username_confirm(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "user-reset-username-confirm",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/reset_username_confirm/\\Z",
-    "name": "user-reset-username-confirm",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/set_password(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "user-set-password",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/set_password/\\Z",
-    "name": "user-set-password",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/set_username(?P<format>\\.[a-z0-9]+/?)\\Z",
-    "name": "user-set-username",
-    "allowed_methods": [
-      "post",
-      "options"
-    ]
-  },
-  {
-    "pattern": "^auth/^users/set_username/\\Z",
-    "name": "user-set-username",
-    "allowed_methods": [
-      "post",
-      "options"
     ]
   },
   {

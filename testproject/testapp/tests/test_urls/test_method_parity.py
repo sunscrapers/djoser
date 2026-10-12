@@ -3,7 +3,7 @@ Method handling and URL behaviour of the 3.0 view split, measured against 2.x.
 
 The first group pins behaviour 2.x had and 3.0 keeps: HEAD, OPTIONS and unmapped methods
 go through DRF, so authentication runs first and the client gets DRF's own 401, JSON 405
-or OPTIONS metadata. The second group pins the four places where 3.0 deliberately
+or OPTIONS metadata. The second group pins the three places where 3.0 deliberately
 differs from 2.x; each is listed as a breaking change in the changelog.
 """
 
@@ -109,20 +109,16 @@ def test_no_api_root(auth_client):
 
 
 @pytest.mark.django_db
-def test_slashless_token_login_redirects_with_308(parity_user):
+def test_slashless_token_login_serves_request_directly(parity_user):
     """
-    2.x matched token URLs with an optional trailing slash and served them directly.
-
-    3.0 redirects to the canonical slash-terminated URL with a 308, which keeps the
-    POST method and body (see test_urls for the full set of redirected paths).
+    2.x matched token URLs with an optional trailing slash — no redirect.
     """
     response = APIClient().post(
         "/auth/token/login",
         {"username": "parity", "password": "secret123!"},
         format="json",
     )
-    assert response.status_code == 308
-    assert response["Location"] == "/auth/token/login/"
+    assert response.status_code == 200
 
 
 @pytest.mark.django_db
@@ -130,7 +126,7 @@ def test_slashless_token_login_redirects_with_308(parity_user):
     "path, expected_status",
     [
         ("/auth/jwt/create/", 200),
-        ("/auth/jwt/create", 308),
+        ("/auth/jwt/create", 200),
         ("/auth/jwt/create/extra", 404),
         ("/auth/jwt/createx", 404),
     ],
@@ -140,7 +136,7 @@ def test_jwt_create_urls_are_anchored(parity_user, path, expected_status):
     2.x jwt regexes were unanchored, so /auth/jwt/createx and /auth/jwt/create/extra
     resolved to the same view as /auth/jwt/create/.
 
-    3.0 matches the exact path; only the slash-less form is redirected.
+    3.0 matches the exact path; the trailing slash stays optional.
     """
     response = APIClient().post(
         path, {"username": "parity", "password": "secret123!"}, format="json"

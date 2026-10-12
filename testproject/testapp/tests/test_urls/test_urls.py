@@ -200,20 +200,3 @@ def test_user_lookup_does_not_swallow_dots():
     A dotted segment must be read as a format suffix, not as the lookup value.
     """
     assert resolve("/auth/users/1.json").kwargs["id"] == "1"
-
-
-@pytest.mark.parametrize(
-    "path",
-    ["/auth/token/login", "/auth/token/logout", "/auth/jwt/create", "/auth/jwt/verify"],
-)
-@pytest.mark.django_db
-def test_slashless_token_urls_redirect_preserving_method(path):
-    """
-    Djoser 2.x matched these with an optional trailing slash.
-
-    A 308 is used rather than a 301 so clients repeat the POST with its body instead of
-    downgrading to GET.
-    """
-    response = Client().post(path, {}, content_type="application/json")
-    assert response.status_code == 308
-    assert response["Location"] == f"{path}/"

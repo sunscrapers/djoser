@@ -12,7 +12,6 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
 
     serializer_class = settings.SERIALIZERS.token_create
     permission_classes = settings.PERMISSIONS.token_create
-    queryset = settings.TOKEN_MODEL.objects.none()
 
     def _action(self, serializer):
         token = utils.login_user(self.request, serializer.user)

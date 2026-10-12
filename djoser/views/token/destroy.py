@@ -1,11 +1,11 @@
-from rest_framework import status, generics, serializers
+from rest_framework import serializers, status, views
 from rest_framework.response import Response
 
 from djoser import utils
 from djoser.conf import settings
 
 
-class TokenDestroyView(generics.GenericAPIView):
+class TokenDestroyView(views.APIView):
     """
     Use this endpoint to logout user (remove user authentication token).
     """

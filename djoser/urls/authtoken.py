@@ -1,12 +1,9 @@
-from django.urls import path
+from django.urls import re_path
 
 from djoser.conf import settings
-from djoser.urls.utils import AppendSlashRedirectView
 
+# The trailing slash is optional, as in 2.x: reverse() returns the slash-less URL.
 urlpatterns = [
-    path("token/login/", settings.VIEWS.token_create.as_view(), name="login"),
-    path("token/logout/", settings.VIEWS.token_destroy.as_view(), name="logout"),
-    # djoser 2.x accepted these without the trailing slash.
-    path("token/login", AppendSlashRedirectView.as_view()),
-    path("token/logout", AppendSlashRedirectView.as_view()),
+    re_path(r"^token/login/?$", settings.VIEWS.token_create.as_view(), name="login"),
+    re_path(r"^token/logout/?$", settings.VIEWS.token_destroy.as_view(), name="logout"),
 ]

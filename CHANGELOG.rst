@@ -14,7 +14,6 @@ Breaking changes:
 * ``UserViewSet`` is replaced by one view per endpoint under ``djoser.views``, configurable through the new ``VIEWS`` setting; the DRF router is replaced by hand-written URL configs
 * the DRF router's API root is gone: ``GET /auth/`` is no longer a live endpoint
 * a denied request to ``/users/me/`` returns ``404 Not Found`` when ``HIDE_USERS`` is on, like every other user endpoint; 2.x answered ``403 Forbidden`` there
-* slash-less token and JWT URLs (for example ``/auth/token/login``) redirect to the slash-terminated URL with ``308 Permanent Redirect`` instead of being served directly
 * JWT URLs are anchored: ``/auth/jwt/createx`` and ``/auth/jwt/create/extra`` are ``404 Not Found`` instead of matching ``/auth/jwt/create/``
 * drop support for Django older than 5.2 and Python older than 3.10; ``social-auth-app-django`` 6.0 or newer is required
 
