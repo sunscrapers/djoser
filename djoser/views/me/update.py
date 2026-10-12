@@ -13,9 +13,6 @@ class UserMeUpdateView(mixins.UpdateModelMixin, BaseMeAPIView):
 
     http_method_names = ["put", "patch"]
 
-    def get_serializer_class(self):
-        return settings.SERIALIZERS.current_user
-
     def perform_update(self, serializer):
         super().perform_update(serializer)
         user = serializer.instance

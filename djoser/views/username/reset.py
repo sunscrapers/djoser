@@ -10,9 +10,10 @@ User = get_user_model()
 
 
 class ResetUsernameAPIView(GenericUserAPIView):
-    permission_classes = settings.PERMISSIONS.username_reset
-    serializer_class = settings.SERIALIZERS.username_reset
     http_method_names = ["post"]
+    action = "reset_username"
+    permission_key = "username_reset"
+    serializer_key = "username_reset"
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

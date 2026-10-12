@@ -9,14 +9,14 @@ from .base import UserBaseView
 class UserCreateView(UserBaseView, generics.CreateAPIView):
     """POST /users/ - Create user"""
 
-    permission_classes = settings.PERMISSIONS.user_create
     http_method_names = ["post"]
     action = "create"
+    permission_key = "user_create"
 
-    def get_serializer_class(self):
+    def get_serializer_key(self):
         if settings.USER_CREATE_PASSWORD_RETYPE:
-            return settings.SERIALIZERS.user_create_password_retype
-        return settings.SERIALIZERS.user_create
+            return "user_create_password_retype"
+        return "user_create"
 
     def perform_create(self, serializer, *args, **kwargs):
         user = serializer.save(*args, **kwargs)

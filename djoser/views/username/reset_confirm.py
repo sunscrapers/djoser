@@ -11,13 +11,14 @@ User = get_user_model()
 
 
 class ResetUsernameConfirmAPIView(GenericUserAPIView):
-    permission_classes = settings.PERMISSIONS.username_reset_confirm
     http_method_names = ["post"]
+    action = "reset_username_confirm"
+    permission_key = "username_reset_confirm"
 
-    def get_serializer_class(self):
+    def get_serializer_key(self):
         if settings.USERNAME_RESET_CONFIRM_RETYPE:
-            return settings.SERIALIZERS.username_reset_confirm_retype
-        return settings.SERIALIZERS.username_reset_confirm
+            return "username_reset_confirm_retype"
+        return "username_reset_confirm"
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

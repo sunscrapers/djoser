@@ -10,9 +10,11 @@ User = get_user_model()
 
 
 class UserResendActivationAPIView(GenericUserAPIView):
-    permission_classes = settings.PERMISSIONS.password_reset
-    serializer_class = settings.SERIALIZERS.password_reset
     http_method_names = ["post"]
+    action = "resend_activation"
+    # 2.x used the password reset permission and serializer here.
+    permission_key = "password_reset"
+    serializer_key = "password_reset"
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

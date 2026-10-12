@@ -12,14 +12,14 @@ class UserBaseView(GenericUserAPIView):
     Base view for user views with common methods.
     """
 
-    serializer_class = settings.SERIALIZERS.user
+    permission_key = "user"
+    serializer_key = "user"
 
     def permission_denied(self, request, message=None, code=None):
-        action = getattr(self, "action", None)
         if (
             settings.HIDE_USERS
             and request.user.is_authenticated
-            and action in ["update", "partial_update", "list", "retrieve"]
+            and self.action in ["update", "partial_update", "list", "retrieve"]
         ):
             raise NotFound()
         super().permission_denied(request, message, code)
@@ -27,7 +27,6 @@ class UserBaseView(GenericUserAPIView):
     def get_queryset(self):
         user = self.request.user
         queryset = super().get_queryset()
-        action = getattr(self, "action", None)
-        if settings.HIDE_USERS and action == "list" and not user.is_staff:
+        if settings.HIDE_USERS and self.action == "list" and not user.is_staff:
             queryset = queryset.filter(pk=user.pk)
         return queryset

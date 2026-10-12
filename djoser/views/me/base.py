@@ -12,8 +12,10 @@ class BaseMeAPIView(GenericUserAPIView):
     Base class for user 'me' views with common functionality.
     """
 
-    permission_classes = settings.PERMISSIONS.user
     lookup_field = None
+    action = "me"
+    permission_key = "user"
+    serializer_key = "current_user"
 
     def get_queryset(self):
         return super().get_queryset().filter(pk=self.request.user.pk)

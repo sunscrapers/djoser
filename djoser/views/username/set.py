@@ -10,13 +10,14 @@ User = get_user_model()
 
 
 class SetUsernameAPIView(GenericUserAPIView):
-    permission_classes = settings.PERMISSIONS.set_username
     http_method_names = ["post"]
+    action = "set_username"
+    permission_key = "set_username"
 
-    def get_serializer_class(self):
+    def get_serializer_key(self):
         if settings.SET_USERNAME_RETYPE:
-            return settings.SERIALIZERS.set_username_retype
-        return settings.SERIALIZERS.set_username
+            return "set_username_retype"
+        return "set_username"
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

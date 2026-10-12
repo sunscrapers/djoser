@@ -2,7 +2,6 @@ from rest_framework import status, mixins
 from rest_framework.response import Response
 
 from djoser import utils
-from djoser.conf import settings
 from .base import BaseMeAPIView
 
 
@@ -12,13 +11,8 @@ class UserMeDeleteView(mixins.DestroyModelMixin, BaseMeAPIView):
     """
 
     http_method_names = ["delete"]
-
-    def get_permissions(self):
-        self.permission_classes = settings.PERMISSIONS.user_delete
-        return super().get_permissions()
-
-    def get_serializer_class(self):
-        return settings.SERIALIZERS.user_delete
+    permission_key = "user_delete"
+    serializer_key = "user_delete"
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

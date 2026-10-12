@@ -12,17 +12,6 @@ class UserPatchView(UserBaseView, generics.UpdateAPIView):
     http_method_names = ["patch"]
     action = "partial_update"
 
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions that this view requires.
-        """
-        # Check if permission_classes was set directly on this class (not inherited)
-        if "permission_classes" in self.__class__.__dict__:
-            permission_classes = self.permission_classes
-        else:
-            permission_classes = settings.PERMISSIONS.user
-        return [permission() for permission in permission_classes]
-
     def perform_update(self, serializer, *args, **kwargs):
         super().perform_update(serializer, *args, **kwargs)
         user = serializer.instance

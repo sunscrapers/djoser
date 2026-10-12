@@ -11,9 +11,10 @@ User = get_user_model()
 
 
 class UserActivationAPIView(GenericUserAPIView):
-    permission_classes = settings.PERMISSIONS.activation
-    serializer_class = settings.SERIALIZERS.activation
     http_method_names = ["post"]
+    action = "activation"
+    permission_key = "activation"
+    serializer_key = "activation"
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

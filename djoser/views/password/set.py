@@ -11,13 +11,14 @@ User = get_user_model()
 
 
 class SetPasswordViewAPIView(GenericUserAPIView):
-    permission_classes = settings.PERMISSIONS.set_password
     http_method_names = ["post"]
+    action = "set_password"
+    permission_key = "set_password"
 
-    def get_serializer_class(self):
+    def get_serializer_key(self):
         if settings.SET_PASSWORD_RETYPE:
-            return settings.SERIALIZERS.set_password_retype
-        return settings.SERIALIZERS.set_password
+            return "set_password_retype"
+        return "set_password"
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
