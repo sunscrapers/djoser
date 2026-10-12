@@ -54,6 +54,14 @@ with:
 
     $ pip install -U social-auth-app-django
 
+.. note::
+
+    The ``social-auth-core`` releases that fix the CVEs published in
+    September 2026 (5.0.0 and later) are only pulled in by
+    ``social-auth-app-django`` 6.0 and later, which require Django 5.2 and
+    Python 3.10. On older Django versions pip resolves
+    ``social-auth-app-django`` to 5.4.x with ``social-auth-core`` 4.x.
+
 Configuration
 -------------
 

@@ -36,7 +36,7 @@ dependencies = [
     "django>=3.2",
     "djangorestframework>=3.14",
     "djangorestframework-simplejwt>=5.0,<6.0",
-    "social-auth-app-django>=5.0.0,<6.0.0",
+    "social-auth-app-django>=5.0.0,<8.0.0",
 ]
 
 [project.optional-dependencies]
@@ -79,7 +79,9 @@ Documentation = "https://djoser.readthedocs.io/"
 [tool.uv]
 # social-auth-app-django 5.5 requires Django>=5.1 (CheckConstraint condition=);
 # keep the lock compatible with the Django 3.2-5.0 rows of the CI matrix
-# without constraining the published package metadata.
+# without constraining the published package metadata, which allows up to
+# 7.x (social-auth-core 6). The Django 5 CI job installs 6.x and 7.x
+# explicitly on top of the lock so those majors are tested too.
 constraint-dependencies = ["social-auth-app-django<5.5"]
 
 [build-system]

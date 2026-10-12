@@ -632,7 +632,7 @@ requires-dist = [
     { name = "django", specifier = ">=3.2" },
     { name = "djangorestframework", specifier = ">=3.14" },
     { name = "djangorestframework-simplejwt", specifier = ">=5.0,<6.0" },
-    { name = "social-auth-app-django", specifier = ">=5.0.0,<6.0.0" },
+    { name = "social-auth-app-django", specifier = ">=5.0.0,<8.0.0" },
     { name = "webauthn", marker = "extra == 'webauthn'", specifier = "<1.0" },
 ]
 provides-extras = ["webauthn"]

@@ -145,7 +145,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   django5-test:
-    name: Django 5 - Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}
+    name: Django 5 - Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - DRF ${{ matrix.drf-version }}${{ matrix.social-auth-version && format(' - social-auth-app-django {0}', matrix.social-auth-version) || '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -164,6 +164,18 @@ jobs:
           - python-version: 3.13
             django-version: "latest"
             drf-version: 3.14
+          # uv.lock keeps social-auth-app-django 5.4.x so the Django 3.2-5.0
+          # rows resolve; these rows cover the newer majors the package
+          # metadata allows (6.x = social-auth-core 5, 7.x = social-auth-core 6).
+          # Both need Django >= 5.2.
+          - python-version: 3.12
+            django-version: "5.2.0"
+            drf-version: 3.14
+            social-auth-version: "~=6.0"
+          - python-version: 3.13
+            django-version: "latest"
+            drf-version: 3.14
+            social-auth-version: "~=7.0"
 
     runs-on: ubuntu-latest
     steps:
@@ -198,12 +210,16 @@ jobs:
       - name: Install DRF version
         run: uv pip install "djangorestframework==${{ matrix.drf-version }}"
 
+      - name: Install social-auth-app-django version
+        if: matrix.social-auth-version
+        run: uv pip install "social-auth-app-django${{ matrix.social-auth-version }}"
+
       - name: Show environment info
         run: |
           uv run python --version
           # -i because uv pip freeze normalizes names to lowercase (django==),
           # unlike pip which preserved the canonical Django== casing
-          uv pip freeze | grep -iE 'djangorestframework|django'
+          uv pip freeze | grep -iE 'djangorestframework|django|social-auth'
 
       - name: Run tests
         run: make test
