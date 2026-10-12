@@ -61,22 +61,21 @@ jobs:
       - name: Install dependencies
         run: uv sync --group test --extra webauthn
 
-      - name: Install Django version
+      # One resolver call for both: upgrading DRF on its own re-resolves
+      # Django too and silently moved a 6.0 row onto 6.1.
+      - name: Install Django and DRF versions
         run: |
           if [ "${{ matrix.django-version }}" = "latest" ]; then
-            uv pip install --upgrade "Django"
+            DJANGO="Django"
           else
-            # Latest patch release of the given minor
-            uv pip install "Django~=${{ matrix.django-version }}.0"
+            DJANGO="Django~=${{ matrix.django-version }}.0"  # latest patch of the minor
           fi
-
-      - name: Install DRF version
-        run: |
           if [ "${{ matrix.drf-version }}" = "latest" ]; then
-            uv pip install --upgrade "djangorestframework"
+            DRF="djangorestframework"
           else
-            uv pip install "djangorestframework==${{ matrix.drf-version }}"
+            DRF="djangorestframework==${{ matrix.drf-version }}"
           fi
+          uv pip install --upgrade "$DJANGO" "$DRF"
 
       - name: Install social-auth-app-django version
         if: matrix.social-auth-version
