@@ -54,7 +54,12 @@ jobs:
           fi
 
       - name: Install DRF version
-        run: uv pip install "djangorestframework==${{ matrix.drf-version }}"
+        run: |
+          if [ "${{ matrix.drf-version }}" = "latest" ]; then
+            uv pip install --upgrade "djangorestframework"
+          else
+            uv pip install "djangorestframework==${{ matrix.drf-version }}"
+          fi
 
       - name: Show environment info
         run: |
@@ -84,13 +89,14 @@ jobs:
         django-version: [4.0, 4.1, 4.2]
         drf-version: [3.14]
         include:
-          # Test latest Django stable with newest Python versions
+          # Test latest Django stable with newest Python versions. DRF 3.14 no
+          # longer imports on Django >= 6.1, so these rows take latest DRF too.
           - python-version: '3.10'
             django-version: "latest"
-            drf-version: 3.14
+            drf-version: "latest"
           - python-version: 3.11
             django-version: "latest"
-            drf-version: 3.14
+            drf-version: "latest"
 
     runs-on: ubuntu-latest
     steps:
@@ -123,7 +129,12 @@ jobs:
           fi
 
       - name: Install DRF version
-        run: uv pip install "djangorestframework==${{ matrix.drf-version }}"
+        run: |
+          if [ "${{ matrix.drf-version }}" = "latest" ]; then
+            uv pip install --upgrade "djangorestframework"
+          else
+            uv pip install "djangorestframework==${{ matrix.drf-version }}"
+          fi
 
       - name: Show environment info
         run: |
@@ -157,13 +168,13 @@ jobs:
           - python-version: '3.13'
             django-version: "5.0.12"
         include:
-          # Latest Django stable requires Python >= 3.12
+          # Latest Django stable requires Python >= 3.12; see the DRF note above.
           - python-version: 3.12
             django-version: "latest"
-            drf-version: 3.14
+            drf-version: "latest"
           - python-version: 3.13
             django-version: "latest"
-            drf-version: 3.14
+            drf-version: "latest"
           # uv.lock keeps social-auth-app-django 5.4.x so the Django 3.2-5.0
           # rows resolve; these rows cover the newer majors the package
           # metadata allows (6.x = social-auth-core 5, 7.x = social-auth-core 6).
@@ -208,7 +219,12 @@ jobs:
           fi
 
       - name: Install DRF version
-        run: uv pip install "djangorestframework==${{ matrix.drf-version }}"
+        run: |
+          if [ "${{ matrix.drf-version }}" = "latest" ]; then
+            uv pip install --upgrade "djangorestframework"
+          else
+            uv pip install "djangorestframework==${{ matrix.drf-version }}"
+          fi
 
       # --no-config: pyproject.toml carries a uv constraint pinning
       # social-auth-app-django<5.5 for the lock; it must not apply here.
