@@ -165,3 +165,26 @@ def test_post_not_set_new_custom_username_if_mismatch(
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     user.refresh_from_db()
     assert data["new_custom_username"] != user.get_username()
+
+
+@mock.patch(
+    "djoser.serializers.SetUsernameSerializer.Meta.fields",
+    ("email", "current_password"),
+)
+def test_post_set_new_username_with_custom_login_field(
+    djoser_settings, api_client, base_url
+):
+    # Regression: when LOGIN_FIELD differs from USERNAME_FIELD the serializer
+    # exposes the field as `new_<LOGIN_FIELD>`, so the view must read the same
+    # key or it crashes with a KeyError (HTTP 500). See issue #922.
+    djoser_settings["LOGIN_FIELD"] = "email"
+    user = UserFactory.create()
+    data = {"new_email": "newlogin@example.com", "current_password": "secret"}
+    token = TokenFactory.create(user=user)
+    api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+
+    response = api_client.post(base_url, data)
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    user.refresh_from_db()
+    assert user.username == "newlogin@example.com"

@@ -266,7 +266,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = self.request.user
-        new_username = serializer.data["new_" + User.USERNAME_FIELD]
+        new_username = serializer.data["new_" + settings.LOGIN_FIELD]
 
         setattr(user, User.USERNAME_FIELD, new_username)
         user.save()
@@ -293,7 +293,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def reset_username_confirm(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        new_username = serializer.data["new_" + User.USERNAME_FIELD]
+        new_username = serializer.data["new_" + settings.LOGIN_FIELD]
 
         setattr(serializer.user, User.USERNAME_FIELD, new_username)
         if hasattr(serializer.user, "last_login"):

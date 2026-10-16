@@ -1,4 +1,5 @@
 import pytest
+from unittest import mock
 from testapp.factories import UserFactory
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
@@ -185,3 +186,28 @@ def test_post_username_changed_confirmation_email(
     assert user.username == data["new_username"]
     assert len(mailoutbox) == 1
     assert user.email in [recipient for email in mailoutbox for recipient in email.to]
+
+
+@pytest.mark.django_db
+@mock.patch(
+    "djoser.serializers.UsernameResetConfirmSerializer.Meta.fields",
+    ("email",),
+)
+def test_post_set_new_username_with_custom_login_field(api_client, djoser_settings):
+    # Regression: when LOGIN_FIELD differs from USERNAME_FIELD the serializer
+    # exposes the field as `new_<LOGIN_FIELD>`, so the view must read the same
+    # key or it crashes with a KeyError (HTTP 500). See issue #922.
+    djoser_settings["LOGIN_FIELD"] = "email"
+    base_url = reverse(f"user-reset-{User.USERNAME_FIELD}-confirm")
+    user = UserFactory.create()
+    data = {
+        "uid": djoser.utils.encode_uid(user.pk),
+        "token": default_token_generator.make_token(user),
+        "new_email": "newlogin@example.com",
+    }
+
+    response = api_client.post(base_url, data)
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    user.refresh_from_db()
+    assert user.username == "newlogin@example.com"
