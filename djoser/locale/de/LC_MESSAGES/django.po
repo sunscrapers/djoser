@@ -80,7 +80,7 @@ msgid ""
 "You're receiving this email because you need to finish activation process on "
 "%(site_name)s."
 msgstr ""
-"Sie erhalten diese E-Mail, da Sie den Aktivierungsprozess auf %(site_name)s."
+"Sie erhalten diese E-Mail, da Sie den Aktivierungsprozess auf %(site_name)s "
 "abschließen müssen."
 
 #: templates/email/activation.html:10 templates/email/activation.html:22
