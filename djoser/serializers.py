@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.settings import api_settings
 
 from djoser import utils
-from djoser.compat import get_user_email, get_user_email_field_name
+from djoser.compat import get_user_email
 from djoser.conf import settings
 
 User = get_user_model()
@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = (settings.LOGIN_FIELD,)
 
     def update(self, instance, validated_data):
-        email_field = get_user_email_field_name(User)
+        email_field = User.get_email_field_name()
         instance.email_changed = False
         if settings.SEND_ACTIVATION_EMAIL and email_field in validated_data:
             instance_email = get_user_email(instance)
@@ -155,7 +155,7 @@ class SendEmailResetSerializer(serializers.Serializer, UserFunctionsMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.email_field = get_user_email_field_name(User)
+        self.email_field = User.get_email_field_name()
         self.fields[self.email_field] = serializers.EmailField()
 
 
