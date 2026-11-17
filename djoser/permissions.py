@@ -8,7 +8,7 @@ class CurrentUserOrAdmin(permissions.IsAuthenticated):
         return user.is_staff or obj.pk == user.pk
 
 
-class CurrentUserOrAdminOrReadOnly(permissions.IsAuthenticated):
+class CurrentUserOrAdminOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
     def has_object_permission(self, request, view, obj):
         user = request.user
         if type(obj) is type(user) and obj == user:
