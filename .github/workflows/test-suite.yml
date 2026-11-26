@@ -177,8 +177,9 @@ jobs:
             drf-version: "latest"
           # uv.lock keeps social-auth-app-django 5.4.x so the Django 3.2-5.0
           # rows resolve; these rows cover the newer majors the package
-          # metadata allows (6.x = social-auth-core 5, 7.x = social-auth-core 6).
-          # Both need Django >= 5.2.
+          # metadata allows (6.x = social-auth-core 5, 7.x = social-auth-core 6,
+          # 8.x = social-auth-core 7). All need Django >= 5.2; 8.x also needs
+          # Python >= 3.11.
           - python-version: 3.12
             django-version: "5.2.0"
             drf-version: 3.14
@@ -187,6 +188,12 @@ jobs:
             django-version: "5.2.0"
             drf-version: 3.14
             social-auth-version: "~=7.0"
+          # Python 3.11, because an include that matched the 3.13 row above
+          # would replace its social-auth-version instead of adding a job.
+          - python-version: 3.11
+            django-version: "5.2.0"
+            drf-version: 3.14
+            social-auth-version: "~=8.0"
 
     runs-on: ubuntu-latest
     steps:
